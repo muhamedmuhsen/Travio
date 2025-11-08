@@ -2,11 +2,12 @@ package com.example.designsystem.theme
 
 import androidx.compose.ui.unit.dp
 
-object Elevation {
-    val level0 = 0.dp
-    val level1 = 1.dp
-    val level2 = 3.dp
-    val level3 = 6.dp
-    val level4 = 8.dp
-    val level5 = 12.dp
+object AppElevation {
+    val None = 0.dp
+    val XS = 1.dp
+    val SM = 2.dp
+    val MD = 4.dp
+    val LG = 8.dp
+    val XL = 12.dp
+    val XXL = 16.dp
 }

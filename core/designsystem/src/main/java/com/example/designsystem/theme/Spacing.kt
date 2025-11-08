@@ -8,12 +8,16 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
 data class Spacing(
-    val default: Dp = 0.dp,
-    val extraSmall: Dp = 4.dp,
-    val small: Dp = 8.dp,
-    val medium: Dp = 16.dp,
-    val large: Dp = 32.dp,
-    val extraLarge: Dp = 64.dp
+    val none: Dp = 0.dp,
+    val xxs: Dp = 4.dp,
+    val xs: Dp = 8.dp,
+    val sm: Dp = 12.dp,
+    val md: Dp = 16.dp,
+    val lg: Dp = 24.dp,
+    val xlg: Dp = 28.dp,
+    val xl: Dp = 32.dp,
+    val xxl: Dp = 40.dp,
+    val xxxl: Dp = 48.dp
 )
 
 val LocalSpacing = staticCompositionLocalOf { Spacing() }

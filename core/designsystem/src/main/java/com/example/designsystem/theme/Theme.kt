@@ -25,22 +25,24 @@ private val DarkColorScheme = darkColorScheme(
     secondaryContainer = SecondaryColors.Secondary100,
     onSecondaryContainer = SecondaryColors.Secondary40,
 
-    tertiary = PrimaryColors.Primary40,
-    onTertiary = PrimaryColors.Primary100,
+    tertiary = SecondaryUIColors.FillTeal,
+    onTertiary = Color.White,
 
-    error = SemanticColors.Error,
+    error = SecondaryUIColors.FillRed,
     onError = Color.White,
+    errorContainer = Color(0xFF5C1A1A),
+    onErrorContainer = SecondaryUIColors.SurfaceRed,
 
-    background = NeutralColors.Gray900,
-    onBackground = NeutralColors.Gray50,
+    background = NeutralColors.Black,
+    onBackground = NeutralColors.Gray20,
 
-    surface = NeutralColors.Gray800,
-    onSurface = NeutralColors.Gray50,
-    surfaceVariant = NeutralColors.Gray700,
-    onSurfaceVariant = NeutralColors.Gray300,
+    surface = NeutralColors.Gray100,
+    onSurface = NeutralColors.Gray20,
+    surfaceVariant = NeutralColors.Gray90,
+    onSurfaceVariant = NeutralColors.Gray40,
 
-    outline = NeutralColors.Gray600,
-    outlineVariant = NeutralColors.Gray700,
+    outline = NeutralColors.Gray70,
+    outlineVariant = NeutralColors.Gray80,
 )
 
 private val LightColorScheme = lightColorScheme(
@@ -54,22 +56,24 @@ private val LightColorScheme = lightColorScheme(
     secondaryContainer = SecondaryColors.Secondary40,
     onSecondaryContainer = SecondaryColors.Secondary100,
 
-    tertiary = PrimaryColors.Primary60,
+    tertiary = SecondaryUIColors.FillTeal,
     onTertiary = Color.White,
 
-    error = SemanticColors.Error,
+    error = SecondaryUIColors.FillRed,
     onError = Color.White,
+    errorContainer = SecondaryUIColors.SurfaceRed,
+    onErrorContainer = SecondaryUIColors.FillRed,
 
-    background = NeutralColors.Gray50,
-    onBackground = NeutralColors.Gray900,
+    background = NeutralColors.White,
+    onBackground = NeutralColors.Gray100,
 
-    surface = Color.White,
-    onSurface = NeutralColors.Gray900,
-    surfaceVariant = NeutralColors.Gray100,
-    onSurfaceVariant = NeutralColors.Gray700,
+    surface = NeutralColors.White,
+    onSurface = NeutralColors.Gray100,
+    surfaceVariant = NeutralColors.Gray20,
+    onSurfaceVariant = NeutralColors.Gray70,
 
-    outline = NeutralColors.Gray300,
-    outlineVariant = NeutralColors.Gray200,
+    outline = NeutralColors.Gray50,
+    outlineVariant = NeutralColors.Gray30,
 )
 
 @Composable
