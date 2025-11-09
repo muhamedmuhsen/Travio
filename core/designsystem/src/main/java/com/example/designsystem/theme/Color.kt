@@ -12,35 +12,32 @@ object PrimaryColors {
 }
 
 object SecondaryColors {
-    val Secondary100 = Color(0xFFFF7300)
-    val Secondary80 = Color(0xFFFF9400)
-    val Secondary60 = Color(0xFFFFB803)
+    val SecondaryBlue = Color(0xFF247CFF)
+    val SecondaryGreen = Color(0xFF22C55E)
+    val SecondaryRed = Color(0xFFFF4C5E)
     val Secondary40 = Color(0xFFFECE2B)
     val Secondary20 = Color(0xFFFFE384)
-    val Surface = Color(0xFFFFFF9E1)
+    val SurfaceText = Color(0xFFFAFAFB)
+    val SurfaceBlue = Color(0xFFEAF2FF)
+    val SurfaceGreen = Color(0xFFE9FAEF)
+    val SurfaceRed = Color(0xFFFFEEEF)
 }
 
-// Neutral Colors (Grayscale)
 object NeutralColors {
     val White = Color(0xFFFFFFFF)
-    val Black = Color(0xFF161616)
-
-    // Grey Scale
-    val Gray100 = Color(0xFF262626)
-    val Gray90 = Color(0xFF404040)
-    val Gray80 = Color(0xFF6B6B6B)
-    val Gray70 = Color(0xFF7D7D7D)
-    val Gray60 = Color(0xFF8E8E8E)
-    val Gray50 = Color(0xFFC2C2C2)
-    val Gray40 = Color(0xFFD5D5D5)
-    val Gray30 = Color(0xFFE0E0E0)
-    val Gray20 = Color(0xFFEFEFEF)
-
-    // Background
     val Body = Color(0xFF7A7A7A)
+    val Black = Color(0xFF161616)
+    val Grey100 = Color(0xFF242424)
+    val Grey90 = Color(0xFF404040)
+    val Grey80 = Color(0xFF616161)
+    val Grey70 = Color(0xFF757575)
+    val Grey60 = Color(0xFF9E9E9E)
+    val Grey50 = Color(0xFFC2C2C2)
+    val Grey40 = Color(0xFFE0E0E0)
+    val Grey30 = Color(0xFFEDEDED)
+    val Grey20 = Color(0xFFF5F5F5)
 }
 
-// Semantic Colors
 object SemanticColors {
     val Success = Color(0xFF00A96E)
     val Warning = Color(0xFFFF9D00)
@@ -48,31 +45,3 @@ object SemanticColors {
     val Info = Color(0xFF0096C7)
 }
 
-// Secondary UI Colors
-object SecondaryUIColors {
-    val SurfaceBlue = Color(0xFFE4F1FF)
-    val FillBlue = Color(0xFF2C7CF7)
-
-    val SurfaceGreen = Color(0xFFDAF5E7)
-    val FillGreen = Color(0xFF23C563)
-
-    val SurfaceRed = Color(0xFFFEE4E2)
-    val FillRed = Color(0xFFFF4C4C)
-
-    val SurfaceTeal = Color(0xFFE3F6FB)
-    val FillTeal = Color(0xFF1994A4)
-    // Text & Form
-
-    val SurfaceText = Color(0xFFF5F5F5)
-    val FormBackground = Color(0xFFFAFAFA)
-    val ChatBackground = Color(0xFFF5F5F5)
-}
-
-object WarningColors {
-    val Warning100 = Color(0xFFEEC200)
-    val Warning80 = Color(0xFFF7F3A0)
-    val Warning60 = Color(0xFFFF1B8)
-    val Warning40 = Color(0xFFFFE766)
-    val Warning20 = Color(0xFFF5CA5)
-    val WarningSurface = Color(0xFFFFF6D9)
-}
