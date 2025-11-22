@@ -26,26 +26,18 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.designsystem.R
 import com.example.designsystem.components.AppButton
+import com.example.designsystem.components.LanguageButton
 import com.example.designsystem.theme.TravioTheme
 import com.example.designsystem.theme.spacing
 
 
-// Data model (e.g., in a 'model' package)
-data class Language(val code: String, val name: String)
-
-val availableLanguages = listOf(
-    Language(code = "en", name = "English"),
-    Language(code = "ar", name = "اللغة العربية")
-)
-
-// Main screen composable
 @Composable
 fun LanguageScreen(modifier: Modifier = Modifier) {
     Box(
         modifier = modifier.fillMaxSize()
     ) {
         Image(
-            painter = painterResource(R.drawable.wall),
+            painter = painterResource(R.drawable.ishan_seefromthesky),
             contentDescription = null, // Decorative background
             contentScale = ContentScale.Crop,
             modifier = Modifier.matchParentSize()
@@ -59,7 +51,6 @@ fun LanguageScreen(modifier: Modifier = Modifier) {
     }
 }
 
-// Extracted, reusable, and data-driven bottom sheet
 @Composable
 private fun LanguageSelectionSheet(modifier: Modifier = Modifier) {
     Box(
@@ -98,16 +89,20 @@ private fun LanguageSelectionSheet(modifier: Modifier = Modifier) {
                 fontWeight = FontWeight.Bold
             )
 
-            // Generate buttons from the list of languages
-            availableLanguages.forEach { language ->
-                AppButton(
-                    onClick = { /* TODO: Implement language change logic with language.code */ },
-                    text = language.name,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(MaterialTheme.spacing.xxxl)
-                )
-            }
+            AppButton(
+                onClick = { /* TODO: Implement language change logic with language.code */ },
+                text = "English",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(MaterialTheme.spacing.xxxl)
+            )
+            LanguageButton(
+                onClick = { /* TODO: Implement language change logic with language.code */ },
+                language = "اللغة العربية",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(MaterialTheme.spacing.xxxl)
+            )
         }
     }
 }
