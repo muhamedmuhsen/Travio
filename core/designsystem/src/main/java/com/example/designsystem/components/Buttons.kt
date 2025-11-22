@@ -41,7 +41,7 @@ fun AppButton(
             disabledContentColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
         )
     ) {
-        Text(text = text)
+        Text(text = text, style = MaterialTheme.typography.labelLarge)
     }
 }
 
