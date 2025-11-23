@@ -1,5 +1,4 @@
 package com.example.domain
 
 
-
-class MyClass{}
+class MyClass()

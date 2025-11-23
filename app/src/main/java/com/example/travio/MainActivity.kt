@@ -24,6 +24,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         splashScreen.setKeepOnScreenCondition { keepSplashScreen }
         lifecycleScope.launch {
+            // TODO: Replace with actual initialization/data loading logic
             delay(3000)
             keepSplashScreen = false
         }
