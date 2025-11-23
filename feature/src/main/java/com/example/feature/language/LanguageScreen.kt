@@ -20,19 +20,26 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.designsystem.R
 import com.example.designsystem.components.AppButton
 import com.example.designsystem.components.LanguageButton
 import com.example.designsystem.theme.TravioTheme
 import com.example.designsystem.theme.spacing
 
-
 @Composable
-fun LanguageScreen(modifier: Modifier = Modifier) {
+fun LanguageScreen(
+    modifier: Modifier = Modifier,
+    viewModel: LanguageViewModel = hiltViewModel()
+) {
+    val languageState = viewModel.languageState.collectAsStateWithLifecycle()
+    val context = LocalContext.current
     Box(
         modifier = modifier.fillMaxSize()
     ) {
@@ -46,19 +53,27 @@ fun LanguageScreen(modifier: Modifier = Modifier) {
         LanguageSelectionSheet(
             modifier = Modifier
                 .fillMaxWidth()
-                .align(Alignment.BottomCenter)
+                .align(Alignment.BottomCenter),
+            onLanguageSelected = {
+                viewModel.changeLanguage(
+                    context = context,
+                    languageCode = languageState.value.selectedLanguage
+                )
+            }
         )
     }
 }
 
 @Composable
-private fun LanguageSelectionSheet(modifier: Modifier = Modifier) {
+private fun LanguageSelectionSheet(
+    modifier: Modifier = Modifier,
+    onLanguageSelected: (String) -> Unit = {},
+) {
     Box(
         modifier = modifier
             .clip(
                 RoundedCornerShape(
-                    topStart = MaterialTheme.spacing.lg,
-                    topEnd = MaterialTheme.spacing.lg
+                    topStart = MaterialTheme.spacing.lg, topEnd = MaterialTheme.spacing.lg
                 )
             )
             .background(
@@ -90,14 +105,14 @@ private fun LanguageSelectionSheet(modifier: Modifier = Modifier) {
             )
 
             AppButton(
-                onClick = { /* TODO: Implement language change logic with language.code */ },
+                onClick = { onLanguageSelected("en") },
                 text = "English",
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(MaterialTheme.spacing.xxxl)
             )
             LanguageButton(
-                onClick = { /* TODO: Implement language change logic with language.code */ },
+                onClick = { onLanguageSelected("ar") },
                 language = "اللغة العربية",
                 modifier = Modifier
                     .fillMaxWidth()
