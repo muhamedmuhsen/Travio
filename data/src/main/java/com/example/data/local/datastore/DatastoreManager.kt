@@ -27,6 +27,7 @@ class DataStoreManager(private val context: Context) : TokenProvider {
         private val IS_LOGGED_IN = booleanPreferencesKey("is_logged_in")
         private val SAVED_EMAIL_KEY = stringPreferencesKey("saved_email")
         private val SAVED_PASSWORD_KEY = stringPreferencesKey("saved_password_encrypted")
+        private val REMEMBER_ME_KEY = booleanPreferencesKey("remember_me")
         private const val KEYSET_NAME = "master_keyset"
         private const val PREFERENCE_FILE = "master_key_preference"
         private const val MASTER_KEY_URI = "android-keystore://master_key"
@@ -55,10 +56,10 @@ class DataStoreManager(private val context: Context) : TokenProvider {
     }
 
     suspend fun saveCredentials(email: String, password: String, rememberMe: Boolean) {
-        /*TODO: check if saving password is necessary*/
         dataStore.edit { preferences ->
             preferences[SAVED_EMAIL_KEY] = email
             preferences[SAVED_PASSWORD_KEY] = encrypt(password)
+            preferences[REMEMBER_ME_KEY] = rememberMe
         }
     }
 
@@ -78,6 +79,7 @@ class DataStoreManager(private val context: Context) : TokenProvider {
         dataStore.edit { preferences ->
             preferences.remove(SAVED_EMAIL_KEY)
             preferences.remove(SAVED_PASSWORD_KEY)
+            preferences.remove(REMEMBER_ME_KEY)
         }
     }
 
@@ -111,5 +113,15 @@ class DataStoreManager(private val context: Context) : TokenProvider {
 
     suspend fun isLoggedIn(): Boolean {
         return dataStore.data.first()[IS_LOGGED_IN] ?: false
+    }
+
+    suspend fun setRememberMe(isChecked: Boolean) {
+        dataStore.edit { preference ->
+            preference[REMEMBER_ME_KEY] = isChecked
+        }
+    }
+
+    suspend fun isRememberMeEnabled(): Boolean {
+        return dataStore.data.first()[REMEMBER_ME_KEY] ?: false
     }
 }

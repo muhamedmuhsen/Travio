@@ -62,4 +62,8 @@ class LoginViewModel @Inject constructor(private val loginUseCase: LoginUseCase)
     fun onPasswordVisibilityCheck() {
         _state.update { it.copy(isPasswordVisible = !_state.value.isPasswordVisible) }
     }
+
+    fun onRememberMeChecked() {
+        _state.update { it.copy(isRememberMeChecked = !_state.value.isRememberMeChecked) }
+    }
 }

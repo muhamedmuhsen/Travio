@@ -18,6 +18,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -46,7 +47,6 @@ import com.example.designsystem.components.AppTextField
 import com.example.designsystem.components.SigninOptionsButton
 import com.example.designsystem.components.TextFieldType
 import com.example.designsystem.theme.TravioTheme
-import com.example.designsystem.theme.spacing
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -141,19 +141,10 @@ fun LoginScreen(
                 modifier = Modifier.fillMaxWidth()
             )
 
-            Row(
-                horizontalArrangement = Arrangement.End,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = MaterialTheme.spacing.lg)
-            ) {
-                Text(
-                    text = stringResource(id = R.string.forgot_password),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.primary,
-                    fontWeight = FontWeight.Medium,
-                    modifier = Modifier.clickable { viewModel.onForgotPasswordClicked() })
-            }
+            RememberMeAndForgetPasswordSection(
+                checked = uiState.value.isRememberMeChecked,
+                onRememberMeCheckedChange = { viewModel.onRememberMeChecked() },
+                onForgetPasswordClicked = { viewModel.onForgotPasswordClicked() })
 
             AppButton(
                 onClick = { viewModel.onLoginClicked(uiState.value.email, uiState.value.password) },
@@ -271,6 +262,38 @@ fun OrSignInWithText(modifier: Modifier = Modifier) {
     }
 }
 
+@Composable
+fun RememberMeAndForgetPasswordSection(
+    checked: Boolean,
+    onRememberMeCheckedChange: (Boolean) -> Unit,
+    onForgetPasswordClicked: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween,
+        modifier = modifier.fillMaxWidth()
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Checkbox(
+                checked = checked,
+                onCheckedChange = onRememberMeCheckedChange,
+            )
+            Text(
+                text = stringResource(R.string.remember_me),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.bodySmall
+            )
+        }
+        Text(
+            text = stringResource(R.string.forgot_password),
+            color = MaterialTheme.colorScheme.primary,
+            style = MaterialTheme.typography.bodySmall,
+            modifier = Modifier.clickable { onForgetPasswordClicked() })
+    }
+}
 
 @Preview(
     name = "Light Mode", group = "Login Screen", device = "id:pixel_9", showSystemUi = true
