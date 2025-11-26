@@ -1,5 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="choose_language">اختر اللغة</string>
-
+    <string name="log_in">تسجيل الدخول</string>
+    <string name="continue_using_your">أكمل باستخدام:</string>
+    <string name="email_or_user_name">بريدك الالكتروني أو اسم المستخدم</string>
+    <string name="password">كلمة المرور</string>
+    <string name="forgot_password">هل نسيت كلمة المرور؟</string>
+    <string name="or_sign_in_with">أو سجل الدخول باستخدام</string>
+    <string name="continue_with_google">أكمل باستخدام جوجل</string>
+    <string name="continue_with_facebook">أكمل باستخدام فيسبوك</string>
+    <string name="by_logging_you_agree_to_our">بتسجيل الدخول، أنت توافق على </string>
+    <string name="terms_and_conditions">الشروط والأحكام</string>
+    <string name="and"> و </string>
+    <string name="privacy_policy">سياسة الخصوصية.</string>
+    <string name="dont_have_an_account_yet">ليس لديك حساب بعد؟ </string>
+    <string name="create_an_account">أنشئ حساب</string>
 </resources>
