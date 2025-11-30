@@ -73,7 +73,7 @@ dependencies {
     implementation(libs.androidx.credentials)
     implementation(libs.androidx.credentials.play.services.auth)
     implementation(libs.googleid)
-    implementation("com.facebook.android:facebook-login:17.0.0")
+    implementation(libs.facebook.login)
 
     // Testing
     testImplementation(libs.junit)

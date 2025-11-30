@@ -1,5 +1,6 @@
 package com.example.feature.login
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.res.Configuration
@@ -35,8 +36,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -79,25 +82,22 @@ fun LoginScreen(
     if (uiState.value.showGoogleSignIn) {
         GoogleSignin(
             context = context,
-            webServerId = "YOUR_WEB_SERVER_ID", // TODO: Replace with actual Web Server ID
+            webServerId = stringResource(R.string.web_server_id), // TODO: Replace with actual Web Server ID
             scope = scope,
             onTokenReceived = { token ->
                 viewModel.onGoogleSignin(token)
                 viewModel.onGoogleSigninResult()
-            }
-        )
+            })
     }
 
     if (uiState.value.showFacebookSignIn) {
         FacebookSignin(
             context = context,
-            webServerId = "", // Not used for Facebook
             scope = scope,
             onTokenReceived = { token ->
                 viewModel.onFacebookSignin(token)
                 viewModel.onFacebookSigninResult()
-            }
-        )
+            })
     }
 
     LaunchedEffect(Unit) {
@@ -115,35 +115,35 @@ fun LoginScreen(
         topBar = {
             TopAppBar(
                 title = {
-                    Text(
-                        text = stringResource(id = R.string.log_in),
-                        style = MaterialTheme.typography.titleLarge,
-                        fontWeight = FontWeight.SemiBold,
-                        modifier = Modifier.fillMaxWidth(),
-                        textAlign = TextAlign.Center
-                    )
-                }, navigationIcon = {
-                    Box(
-                        modifier = Modifier
-                            .padding(start = 16.dp)
-                            .size(40.dp)
-                            .background(
-                                color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
-                                shape = CircleShape
-                            )
-                            .clickable { onCloseClicked() }, contentAlignment = Alignment.Center
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Close,
-                            contentDescription = "Close",
-                            modifier = Modifier.size(20.dp)
-                        )
-                    }
-                }, actions = {
-                    Spacer(modifier = Modifier.size(56.dp))
-                }, colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.surface
+                Text(
+                    text = stringResource(id = R.string.log_in),
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.SemiBold,
+                    modifier = Modifier.fillMaxWidth(),
+                    textAlign = TextAlign.Center
                 )
+            }, navigationIcon = {
+                Box(
+                    modifier = Modifier
+                        .padding(start = 16.dp)
+                        .size(40.dp)
+                        .background(
+                            color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
+                            shape = CircleShape
+                        )
+                        .clickable { onCloseClicked() }, contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Close,
+                        contentDescription = "Close",
+                        modifier = Modifier.size(20.dp)
+                    )
+                }
+            }, actions = {
+                Spacer(modifier = Modifier.size(56.dp))
+            }, colors = TopAppBarDefaults.topAppBarColors(
+                containerColor = MaterialTheme.colorScheme.surface
+            )
             )
         }) { innerPadding ->
         Column(
@@ -242,6 +242,7 @@ fun LoginScreen(
     }
 }
 
+@SuppressLint("CoroutineCreationDuringComposition")
 @Composable
 fun GoogleSignin(
     context: Context,
@@ -284,7 +285,6 @@ fun GoogleSignin(
 @Composable
 fun FacebookSignin(
     context: Context,
-    webServerId: String,
     scope: CoroutineScope,
     onTokenReceived: (String) -> Unit,
     enabled: Boolean = true
@@ -301,9 +301,7 @@ fun FacebookSignin(
 
             override fun onError(error: FacebookException) {
                 Toast.makeText(
-                    context,
-                    "Facebook login failed: ${error.message}",
-                    Toast.LENGTH_LONG
+                    context, "Facebook login failed: ${error.message}", Toast.LENGTH_LONG
                 ).show()
             }
 
