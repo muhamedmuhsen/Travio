@@ -13,6 +13,7 @@
 .externalNativeBuild
 .cxx
 local.properties
+.idea
 /.idea/inspectionProfiles/Project_Default.xml
 /.idea/.gitignore
 /.idea/AndroidProjectSystem.xml
