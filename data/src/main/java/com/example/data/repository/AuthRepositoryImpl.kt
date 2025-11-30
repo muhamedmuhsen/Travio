@@ -10,7 +10,9 @@ import com.example.domain.repository.Auth.TokenManager
 import com.example.domain.repository.login.AuthRepository
 import com.example.network.api.AuthApi
 import com.example.network.dto.auth.LoginRequest
+import com.example.network.dto.auth.Provider
 import com.example.network.dto.auth.SignupRequest
+import com.example.network.dto.auth.SocialLoginRequest
 
 class AuthRepositoryImpl(
     private val api: AuthApi,
@@ -25,7 +27,8 @@ class AuthRepositoryImpl(
             if (!response.status) {
                 return@safeApiCall Result.Error(AppError.Authentication.InvalidCredentials)
             }
-            dataStoreManager.saveToken(response.user.token)
+
+            dataStoreManager.saveToken(response.user.accessToken, "")
             dataStoreManager.setLoggedIn(true)
 
             val user = response.user.toDomain(/* TODO: mapping to domain model */)
@@ -47,9 +50,9 @@ class AuthRepositoryImpl(
                 )
             )
             if (!response.status) {
-                return@safeApiCall Result.Error(AppError.Authentication.InvalidCredentials)
+                return@safeApiCall Result.Error(AppError.Authentication.RegistrationFailed)
             }
-            dataStoreManager.saveToken(response.user.token)
+            dataStoreManager.saveToken(response.user.accessToken, " ")
             dataStoreManager.setLoggedIn(true)
 
             val user = response.user.toDomain(
@@ -59,14 +62,45 @@ class AuthRepositoryImpl(
         }
     }
 
-    override suspend fun logout(): Result<Unit, AppError> {
+    override suspend fun signInWithGoogle(idToken: String): Result<String, AppError> {
         return safeApiCall {
-            val response = api.logout()
+            val request = SocialLoginRequest(provider = Provider.GOOGLE, token = idToken)
+
+            val response = api.socialSignin(request)
+
             if (!response.status) {
-                return@safeApiCall Result.Error(AppError.Unknown())
+                return@safeApiCall Result.Error(AppError.Authentication.SigninFaild)
             }
 
-            dataStoreManager.removeToken()
+            tokenManager.saveToken(accessToken = response.user.accessToken, refreshToken = "/////")
+            //val user = response.user.toDomain()
+
+            Result.Success(response.user.accessToken)
+        }
+    }
+
+    override suspend fun signInWithFacebook(accessToken: String): Result<String, AppError> {
+        return safeApiCall {
+            val request = SocialLoginRequest(provider = Provider.FACEBOOK, token = accessToken)
+
+            val response = api.socialSignin(request)
+
+            if (!response.status) {
+                return@safeApiCall Result.Error(AppError.Authentication.SigninFaild)
+            }
+
+            tokenManager.saveToken(accessToken = response.user.accessToken, refreshToken = "/////")
+            // val user = response.user.toDomain()
+
+            Result.Success(response.user.accessToken)
+        }
+    }
+
+    override suspend fun logout(): Result<Unit, AppError> {
+        return safeApiCall {
+            api.logout()
+
+            dataStoreManager.clearTokens()
             dataStoreManager.setLoggedIn(false)
             dataStoreManager.clearCredentials()
 
@@ -75,21 +109,52 @@ class AuthRepositoryImpl(
     }
 
     override suspend fun isAuthenticated(): Result<Boolean, AppError> {
-        val token = dataStoreManager.getToken()
+//        return safeApiCall {
+//            val token = tokenManager.getToken()
+//
+//            if (token.isNullOrEmpty()) {
+//                return@safeApiCall Result.Success(false)
+//            }
+//
+//            return@safeApiCall when (val result = tokenManager.isTokenExpired()) {
+//                is Result.Error -> Result.Error(AppError.TokenError.ExpiredToken)
+//                is Result.Success -> {
+//                    val isExpired = result.data
+//                    if (isExpired) {
+//                        val refreshResult = tokenManager.getRefreshToken()
+//                        return@safeApiCall when (refreshResult) {
+//                            is Result.Success -> Result.Success(true)
+//                            is Result.Error -> Result.Error(AppError.TokenError.InvalidToken)
+//
+//                        }
+//                    }
+//                    Result.Success(true)
+//                }
+//            }
+//        }
+        return Result.Success(true)
+    }
 
-        if (token.isNullOrEmpty()) {
-            return Result.Success(false)
-        }
+    override suspend fun refreshToken(): Result<Unit, AppError> {
         return safeApiCall {
-            val token = dataStoreManager.getToken()
-            if (token.isNullOrEmpty()) {
-                return@safeApiCall Result.Success(false)
+            val refreshToken = tokenManager.getRefreshToken() ?: return@safeApiCall Result.Error(
+                AppError.TokenError.TokenNotFound
+            )
+
+            val response = api.refreshToken(refreshToken).execute()
+
+            if (!response.isSuccessful || response.body() == null) {
+                tokenManager.clearTokens()
+                dataStoreManager.setLoggedIn(false)
+                dataStoreManager.clearCredentials()
             }
 
-            return@safeApiCall when (val result = tokenManager.isTokenExpired()) {
-                is Result.Error -> Result.Error(AppError.TokenError.ExpiredToken)
-                is Result.Success -> Result.Success(true)
-            }
+            val refreshResponse = response.body()!!
+
+            val newRefreshToken = refreshResponse.user.refreshToken
+            dataStoreManager.saveToken(refreshResponse.user.accessToken, newRefreshToken)
+            Result.Success(Unit)
+
         }
     }
 }

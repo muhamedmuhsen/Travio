@@ -1,6 +1,10 @@
 package com.example.feature.login
 
+import android.app.Activity
+import android.content.Context
 import android.content.res.Configuration
+import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -28,7 +32,9 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -39,6 +45,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.credentials.CredentialManager
+import androidx.credentials.GetCredentialRequest
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.designsystem.R
@@ -47,6 +55,14 @@ import com.example.designsystem.components.AppTextField
 import com.example.designsystem.components.SigninOptionsButton
 import com.example.designsystem.components.TextFieldType
 import com.example.designsystem.theme.TravioTheme
+import com.facebook.CallbackManager
+import com.facebook.FacebookCallback
+import com.facebook.FacebookException
+import com.facebook.login.LoginManager
+import com.facebook.login.LoginResult
+import com.google.android.libraries.identity.googleid.GetGoogleIdOption
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -57,6 +73,32 @@ fun LoginScreen(
 ) {
 
     val uiState = viewModel.state.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+
+    if (uiState.value.showGoogleSignIn) {
+        GoogleSignin(
+            context = context,
+            webServerId = "YOUR_WEB_SERVER_ID", // TODO: Replace with actual Web Server ID
+            scope = scope,
+            onTokenReceived = { token ->
+                viewModel.onGoogleSignin(token)
+                viewModel.onGoogleSigninResult()
+            }
+        )
+    }
+
+    if (uiState.value.showFacebookSignIn) {
+        FacebookSignin(
+            context = context,
+            webServerId = "", // Not used for Facebook
+            scope = scope,
+            onTokenReceived = { token ->
+                viewModel.onFacebookSignin(token)
+                viewModel.onFacebookSigninResult()
+            }
+        )
+    }
 
     LaunchedEffect(Unit) {
         viewModel.event.collect { event ->
@@ -73,35 +115,35 @@ fun LoginScreen(
         topBar = {
             TopAppBar(
                 title = {
-                Text(
-                    text = stringResource(id = R.string.log_in),
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.SemiBold,
-                    modifier = Modifier.fillMaxWidth(),
-                    textAlign = TextAlign.Center
-                )
-            }, navigationIcon = {
-                Box(
-                    modifier = Modifier
-                        .padding(start = 16.dp)
-                        .size(40.dp)
-                        .background(
-                            color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
-                            shape = CircleShape
-                        )
-                        .clickable { onCloseClicked() }, contentAlignment = Alignment.Center
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Close,
-                        contentDescription = "Close",
-                        modifier = Modifier.size(20.dp)
+                    Text(
+                        text = stringResource(id = R.string.log_in),
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.SemiBold,
+                        modifier = Modifier.fillMaxWidth(),
+                        textAlign = TextAlign.Center
                     )
-                }
-            }, actions = {
-                Spacer(modifier = Modifier.size(56.dp))
-            }, colors = TopAppBarDefaults.topAppBarColors(
-                containerColor = MaterialTheme.colorScheme.surface
-            )
+                }, navigationIcon = {
+                    Box(
+                        modifier = Modifier
+                            .padding(start = 16.dp)
+                            .size(40.dp)
+                            .background(
+                                color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
+                                shape = CircleShape
+                            )
+                            .clickable { onCloseClicked() }, contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Close,
+                            contentDescription = "Close",
+                            modifier = Modifier.size(20.dp)
+                        )
+                    }
+                }, actions = {
+                    Spacer(modifier = Modifier.size(56.dp))
+                }, colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.surface
+                )
             )
         }) { innerPadding ->
         Column(
@@ -159,7 +201,7 @@ fun LoginScreen(
             Spacer(modifier = Modifier.height(24.dp))
 
             SigninOptionsButton(
-                onClick = {},
+                onClick = { viewModel.onGoogleSigninClicked() },
                 text = stringResource(id = R.string.continue_with_google),
                 icon = R.drawable.google_icon,
                 modifier = Modifier.fillMaxWidth()
@@ -168,7 +210,7 @@ fun LoginScreen(
             Spacer(modifier = Modifier.height(12.dp))
 
             SigninOptionsButton(
-                onClick = {},
+                onClick = { viewModel.onFacebookSigninClicked() },
                 text = stringResource(id = R.string.continue_with_facebook),
                 icon = R.drawable.facebook_icon,
                 modifier = Modifier.fillMaxWidth()
@@ -197,6 +239,87 @@ fun LoginScreen(
 
             Spacer(modifier = Modifier.height(24.dp))
         }
+    }
+}
+
+@Composable
+fun GoogleSignin(
+    context: Context,
+    webServerId: String,
+    scope: CoroutineScope,
+    onTokenReceived: (String) -> Unit,
+    enabled: Boolean = true
+) {
+    scope.launch {
+        try {
+            val credentialManager = CredentialManager.create(context)
+
+            val googleIdOption = GetGoogleIdOption.Builder().setFilterByAuthorizedAccounts(false)
+                .setServerClientId(webServerId).build()
+
+            val request = GetCredentialRequest.Builder().addCredentialOption(googleIdOption).build()
+
+            val result = credentialManager.getCredential(
+                request = request, context = context as Activity
+            )
+
+            val googleIdTokenCredential = result.credential
+            val idToken =
+                (googleIdTokenCredential.data.getString("com.google.android.libraries.identity.googleid.BUNDLE_KEY_ID_TOKEN"))
+
+            if (!idToken.isNullOrBlank()) {
+                onTokenReceived(idToken)
+            } else {
+                Toast.makeText(context, "Failed to get ID token", Toast.LENGTH_SHORT).show()
+
+            }
+        } catch (e: Exception) {
+            Toast.makeText(
+                context, "Google Sign-In failed: ${e.message}", Toast.LENGTH_LONG
+            ).show()
+        }
+    }
+}
+
+@Composable
+fun FacebookSignin(
+    context: Context,
+    webServerId: String,
+    scope: CoroutineScope,
+    onTokenReceived: (String) -> Unit,
+    enabled: Boolean = true
+) {
+    val callbackManager = remember { CallbackManager.Factory.create() }
+
+    val loginManager = LoginManager.getInstance()
+
+    DisposableEffect(Unit) {
+        loginManager.registerCallback(callbackManager, object : FacebookCallback<LoginResult> {
+            override fun onCancel() {
+                Toast.makeText(context, "Facebook login cancelled", Toast.LENGTH_SHORT).show()
+            }
+
+            override fun onError(error: FacebookException) {
+                Toast.makeText(
+                    context,
+                    "Facebook login failed: ${error.message}",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+
+            override fun onSuccess(result: LoginResult) {
+                val accessToken = result.accessToken.token
+                onTokenReceived(accessToken)
+            }
+
+        })
+        onDispose { loginManager.unregisterCallback(callbackManager) }
+    }
+
+    rememberLauncherForActivityResult(
+        contract = loginManager.createLogInActivityResultContract(callbackManager)
+    ) {
+        // Result is handled by the callback above
     }
 }
 

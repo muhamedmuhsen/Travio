@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.common.errorhandler.Result
 import com.example.common.uistateholder.UiState
 import com.example.domain.usecase.auth.LoginUseCase
+import com.example.domain.usecase.auth.SocialSigninUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,7 +16,10 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class LoginViewModel @Inject constructor(private val loginUseCase: LoginUseCase) : ViewModel() {
+class LoginViewModel @Inject constructor(
+    private val loginUseCase: LoginUseCase,
+    private val socialSigninUseCase: SocialSigninUseCase
+) : ViewModel() {
     private val _state = MutableStateFlow(LoginUiState())
     val state = _state.asStateFlow()
 
@@ -39,6 +43,35 @@ class LoginViewModel @Inject constructor(private val loginUseCase: LoginUseCase)
         }
     }
 
+    fun onGoogleSignin(idToken: String) {
+        viewModelScope.launch {
+            _state.update { it.copy(loginState = UiState.Loading) }
+            when (val result = socialSigninUseCase.signInWithGoogle(idToken = idToken)) {
+                is Result.Error -> {
+                    _state.update { it.copy(loginState = UiState.Error(result.error.message)) }
+                }
+
+                is Result.Success -> {
+                    _state.update { it.copy(loginState = UiState.Success(/*user*/)) }
+                }
+            }
+        }
+    }
+
+    fun onFacebookSignin(accessToken: String) {
+        viewModelScope.launch {
+            _state.update { it.copy(loginState = UiState.Loading) }
+            when (val result = socialSigninUseCase.signInWithFacebook(accessToken = accessToken)) {
+                is Result.Error -> {
+                    _state.update { it.copy(loginState = UiState.Error(result.error.message)) }
+                }
+
+                is Result.Success -> {
+                    _state.update { it.copy(loginState = UiState.Success(/*user*/)) }
+                }
+            }
+        }
+    }
     fun onEmailChange(email: String) {
         _state.update { it.copy(email = email, emailError = null) }
     }
@@ -65,5 +98,21 @@ class LoginViewModel @Inject constructor(private val loginUseCase: LoginUseCase)
 
     fun onRememberMeChecked() {
         _state.update { it.copy(isRememberMeChecked = !_state.value.isRememberMeChecked) }
+    }
+
+    fun onGoogleSigninClicked() {
+        _state.update { it.copy(showGoogleSignIn = true) }
+    }
+
+    fun onFacebookSigninClicked() {
+        _state.update { it.copy(showFacebookSignIn = true) }
+    }
+
+    fun onGoogleSigninResult() {
+        _state.update { it.copy(showGoogleSignIn = false) }
+    }
+
+    fun onFacebookSigninResult() {
+        _state.update { it.copy(showFacebookSignIn = false) }
     }
 }

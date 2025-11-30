@@ -6,6 +6,7 @@ import com.example.common.errorhandler.AppError
 import com.example.common.errorhandler.Result
 import com.example.domain.model.DecodedToken
 import com.example.domain.repository.Auth.TokenManager
+import kotlinx.coroutines.flow.first
 import java.util.Date
 import javax.inject.Inject
 
@@ -13,18 +14,14 @@ class TokenManagerImpl @Inject constructor(private val dataStoreManager: DataSto
     TokenManager {
     override suspend fun decodeToken(): Result<DecodedToken, AppError> {
         return try {
-            val token =
-                dataStoreManager.getToken()
-                    ?: return Result.Error(AppError.TokenError.TokenNotFound)
+            val token = dataStoreManager.getToken()
+                ?: return Result.Error(AppError.TokenError.TokenNotFound)
             val jwt = JWT(token)
             Result.Success(
                 DecodedToken(
                     userId = (jwt.subject ?: jwt.getClaim("userId").asString()),
                     expiresAt = jwt.expiresAt,
-                    claims = mapOf(
-                        "userId" to jwt.subject, "expiresAt" to jwt.expiresAt
-                    )
-                )
+                    claims = jwt.claims.mapValues { it.value.asObject(Any::class.java) })
             )
         } catch (_: DecodeException) {
             Result.Error(AppError.TokenError.DecodedException)
@@ -53,5 +50,19 @@ class TokenManagerImpl @Inject constructor(private val dataStoreManager: DataSto
         }
     }
 
+    override suspend fun getToken(): String? {
+        return dataStoreManager.getTokenFlow().first()
+    }
 
+    override suspend fun getRefreshToken(): String? {
+        return dataStoreManager.getRefreshTokenFlow().first()
+    }
+
+    override suspend fun saveToken(accessToken: String, refreshToken: String) {
+        dataStoreManager.saveToken(accessToken, refreshToken)
+    }
+
+    override suspend fun clearTokens() {
+        dataStoreManager.clearTokens()
+    }
 }

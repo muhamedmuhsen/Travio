@@ -12,6 +12,8 @@ import com.google.crypto.tink.Aead
 import com.google.crypto.tink.aead.AeadConfig
 import com.google.crypto.tink.aead.AeadKeyTemplates
 import com.google.crypto.tink.integration.android.AndroidKeysetManager
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 
@@ -23,6 +25,8 @@ class DataStoreManager(private val context: Context) : TokenProvider {
 
     companion object {
         private var KEY_TOKEN = stringPreferencesKey("auth_token")
+        private var KEY_REFRESH_TOKEN = stringPreferencesKey("auth_refresh_token")
+
         private val IS_ONBOARDING_COMPLETE = booleanPreferencesKey("onboarding_complete")
         private val IS_LOGGED_IN = booleanPreferencesKey("is_logged_in")
         private val SAVED_EMAIL_KEY = stringPreferencesKey("saved_email")
@@ -55,6 +59,7 @@ class DataStoreManager(private val context: Context) : TokenProvider {
         return String(text)
     }
 
+
     suspend fun saveCredentials(email: String, password: String, rememberMe: Boolean) {
         dataStore.edit { preferences ->
             preferences[SAVED_EMAIL_KEY] = email
@@ -83,19 +88,37 @@ class DataStoreManager(private val context: Context) : TokenProvider {
         }
     }
 
-    suspend fun saveToken(token: String) {
+    suspend fun saveToken(accessToken: String, refreshToken: String) {
         dataStore.edit { preferences ->
-            preferences[KEY_TOKEN] = token
+            preferences[KEY_TOKEN] = encrypt(accessToken)
+            preferences[KEY_REFRESH_TOKEN] = encrypt(refreshToken)
         }
     }
 
-    override suspend fun getToken(): String? {
-        return dataStore.data.first()[KEY_TOKEN]
+
+    suspend fun getRefreshToken(): String? {
+        return dataStore.data.first()[KEY_REFRESH_TOKEN]?.let { decrypt(it) }
     }
 
-    suspend fun removeToken() {
+    override suspend fun getToken(): String? {
+        return dataStore.data.first()[KEY_TOKEN]?.let { decrypt(it) }
+    }
+
+    fun getTokenFlow(): Flow<String?> {
+        return dataStore.data.map { preferences ->
+            preferences[KEY_TOKEN]?.let { decrypt(it) }
+        }.catch { emit(null) }
+    }
+
+    fun getRefreshTokenFlow(): Flow<String?> {
+        return dataStore.data.map { preferences -> preferences[KEY_REFRESH_TOKEN]?.let { decrypt(it) } }
+            .catch { emit(null) }
+    }
+
+    suspend fun clearTokens() {
         dataStore.edit { preferences ->
             preferences.remove(KEY_TOKEN)
+            preferences.remove(KEY_REFRESH_TOKEN)
         }
     }
 
