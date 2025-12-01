@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.res.Configuration
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.background
@@ -266,6 +267,7 @@ fun GoogleSignin(
             val googleIdTokenCredential = result.credential
             val idToken =
                 (googleIdTokenCredential.data.getString("com.google.android.libraries.identity.googleid.BUNDLE_KEY_ID_TOKEN"))
+            Log.d("GoogleSignin", "ID Token: $idToken")
 
             if (!idToken.isNullOrBlank()) {
                 onTokenReceived(idToken)

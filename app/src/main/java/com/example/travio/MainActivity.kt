@@ -28,7 +28,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             TravioTheme {
-                StarterLogin()
+                LoginScreen() {}
             }
         }
     }
