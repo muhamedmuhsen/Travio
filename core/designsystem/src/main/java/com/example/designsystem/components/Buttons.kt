@@ -61,7 +61,7 @@ fun LanguageButton(
         onClick = onClick,
         shape = MaterialTheme.shapes.extraLarge,
         colors = ButtonDefaults.outlinedButtonColors(
-            contentColor = MaterialTheme.colorScheme.primary
+            contentColor = MaterialTheme.colorScheme.onBackground
         ),
         border = BorderStroke(width = 1.dp, color = MaterialTheme.colorScheme.primary)
     ) {

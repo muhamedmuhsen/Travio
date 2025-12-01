@@ -16,4 +16,6 @@
     <string name="dont_have_an_account_yet">ليس لديك حساب بعد؟ </string>
     <string name="create_an_account">أنشئ حساب</string>
     <string name="remember_me">تذكرنى</string>
+    <string name="your_journy_start_here">رحلتك تبدأ هنا</string>
+    <string name="already_have_an_account">لديك حساب بالفعل؟ </string>
 </resources>

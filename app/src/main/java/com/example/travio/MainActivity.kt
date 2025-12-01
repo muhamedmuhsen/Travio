@@ -8,7 +8,7 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.lifecycleScope
 import com.example.designsystem.theme.TravioTheme
 import com.example.feature.login.LoginScreen
-import com.example.feature.onboarding.OnboardingScreen
+import com.example.feature.starterlogin.StarterLogin
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -28,7 +28,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             TravioTheme {
-                LoginScreen() {}
+                StarterLogin()
             }
         }
     }
