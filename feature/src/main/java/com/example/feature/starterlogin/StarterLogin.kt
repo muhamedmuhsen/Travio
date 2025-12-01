@@ -16,6 +16,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -28,6 +29,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.designsystem.R
 import com.example.designsystem.components.AppButton
 import com.example.designsystem.components.SigninOptionsButton
@@ -35,7 +37,19 @@ import com.example.designsystem.theme.TravioTheme
 import com.example.feature.login.ByLoggingSection
 
 @Composable
-fun StarterLogin(modifier: Modifier = Modifier) {
+fun StarterLogin(
+    modifier: Modifier = Modifier, viewModel: StarterLoginViewModel = hiltViewModel()
+) {
+    LaunchedEffect(Unit) {
+        viewModel.event.collect { event ->
+            when (event) {
+                StarterLoginEvent.NavigateToLogin -> TODO()
+                StarterLoginEvent.NavigateToSignup -> TODO()
+                StarterLoginEvent.GoogleSignIn -> TODO()
+                StarterLoginEvent.FacebookSignIn -> TODO()
+            }
+        }
+    }
     Scaffold() { innerPadding ->
         Column(
             modifier = modifier
@@ -62,8 +76,7 @@ fun StarterLogin(modifier: Modifier = Modifier) {
                         .background(
                             brush = Brush.verticalGradient(
                                 colors = listOf(
-                                    Color.Transparent,
-                                    MaterialTheme.colorScheme.background
+                                    Color.Transparent, MaterialTheme.colorScheme.background
                                 ),
                                 startY = 400f // Adjust this value to control where the fade starts
                             )
@@ -80,7 +93,7 @@ fun StarterLogin(modifier: Modifier = Modifier) {
             Spacer(modifier = Modifier.height(12.dp))
 
             AppButton(
-                onClick = { },
+                onClick = { viewModel.onCreateAccountClicked() },
                 text = stringResource(id = R.string.create_an_account),
                 modifier = Modifier
                     .fillMaxWidth()
@@ -89,7 +102,7 @@ fun StarterLogin(modifier: Modifier = Modifier) {
             Spacer(modifier = Modifier.height(16.dp))
 
             SigninOptionsButton(
-                onClick = { },
+                onClick = { viewModel.onSocialLoginClicked(SocialType.GOOGLE) },
                 text = stringResource(id = R.string.continue_with_google),
                 icon = R.drawable.google_icon,
                 modifier = Modifier.fillMaxWidth()
@@ -98,7 +111,7 @@ fun StarterLogin(modifier: Modifier = Modifier) {
             Spacer(modifier = Modifier.height(16.dp))
 
             SigninOptionsButton(
-                onClick = { },
+                onClick = { viewModel.onSocialLoginClicked(SocialType.FACEBOOK) },
                 text = stringResource(id = R.string.continue_with_facebook),
                 icon = R.drawable.facebook_icon,
                 modifier = Modifier.fillMaxWidth()
@@ -117,7 +130,7 @@ fun StarterLogin(modifier: Modifier = Modifier) {
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.SemiBold,
                     color = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.clickable { })
+                    modifier = Modifier.clickable { viewModel.onLoginClicked() })
             }
             Spacer(modifier = Modifier.height(16.dp))
 
