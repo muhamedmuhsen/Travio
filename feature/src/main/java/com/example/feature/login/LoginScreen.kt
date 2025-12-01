@@ -93,7 +93,6 @@ fun LoginScreen(
     if (uiState.value.showFacebookSignIn) {
         FacebookSignin(
             context = context,
-            scope = scope,
             onTokenReceived = { token ->
                 viewModel.onFacebookSignin(token)
                 viewModel.onFacebookSigninResult()
@@ -285,7 +284,6 @@ fun GoogleSignin(
 @Composable
 fun FacebookSignin(
     context: Context,
-    scope: CoroutineScope,
     onTokenReceived: (String) -> Unit,
     enabled: Boolean = true
 ) {
