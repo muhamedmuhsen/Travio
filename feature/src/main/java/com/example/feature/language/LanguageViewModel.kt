@@ -22,11 +22,14 @@ class LanguageViewModel @Inject constructor(
     private val _event = Channel<LanguageEvent>()
     val event = _event.receiveAsFlow()
 
-    fun changeLanguage(context: Context, languageCode: String) {
+    fun onLanguageChange(language: AppLanguage) {
+        _languageState.update { it.copy(selectedLanguage = language) }
+    }
+
+    fun changeLanguage(languageCode: AppLanguage) {
         localeManager.changeLanguage(
-            languageCode = languageCode, context = context
+            languageCode = languageCode
         )
-        _languageState.update { it.copy(selectedLanguage = languageCode) }
         viewModelScope.launch {
             _event.send(LanguageEvent.NavigateToStarterLogin)
         }
@@ -34,5 +37,5 @@ class LanguageViewModel @Inject constructor(
 }
 
 data class LanguageState(
-    val selectedLanguage: String = "en"
+    val selectedLanguage: AppLanguage = AppLanguage.ENGLISH
 )

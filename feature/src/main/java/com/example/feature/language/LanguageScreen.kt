@@ -68,8 +68,9 @@ fun LanguageScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .align(Alignment.BottomCenter), onLanguageSelected = {
+                viewModel.onLanguageChange(it)
                 viewModel.changeLanguage(
-                    context = context, languageCode = languageState.value.selectedLanguage
+                    languageCode = it
                 )
             })
     }
@@ -78,7 +79,7 @@ fun LanguageScreen(
 @Composable
 private fun LanguageSelectionSheet(
     modifier: Modifier = Modifier,
-    onLanguageSelected: (String) -> Unit = {},
+    onLanguageSelected: (AppLanguage) -> Unit,
 ) {
     Box(
         modifier = modifier
@@ -116,14 +117,14 @@ private fun LanguageSelectionSheet(
             )
 
             AppButton(
-                onClick = { onLanguageSelected("en") },
+                onClick = { onLanguageSelected(AppLanguage.ENGLISH) },
                 text = "English",
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(MaterialTheme.spacing.xxxl)
             )
             LanguageButton(
-                onClick = { onLanguageSelected("ar") },
+                onClick = { onLanguageSelected(AppLanguage.ARABIC) },
                 language = "اللغة العربية",
                 modifier = Modifier
                     .fillMaxWidth()
