@@ -18,7 +18,7 @@ datastorePreferences = "1.1.7"
 # Compose
 composeBom = "2024.09.00"
 activityCompose = "1.11.0"
-navigationCompose = "2.8.5"
+navigationCompose = "2.9.5"
 
 # Lifecycle & Architecture
 lifecycleRuntimeKtx = "2.9.4"
@@ -48,6 +48,7 @@ material = "1.13.0"
 junit = "4.13.2"
 junitVersion = "1.3.0"
 espressoCore = "3.7.0"
+navigationRuntimeKtx = "2.9.6"
 
 
 [libraries]
@@ -69,7 +70,7 @@ androidx-compose-material-icons-extended = { group = "androidx.compose.material"
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
 androidx-credentials-play-services-auth = { module = "androidx.credentials:credentials-play-services-auth", version.ref = "credentialsPlayServicesAuth" }
 androidx-credentials = { module = "androidx.credentials:credentials", version.ref = "credentials" }
-androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
+androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
 
 # Lifecycle & Architecture Components
 androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
@@ -111,6 +112,7 @@ material = { group = "com.google.android.material", name = "material", version.r
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
+androidx-navigation-runtime-ktx = { group = "androidx.navigation", name = "navigation-runtime-ktx", version.ref = "navigationRuntimeKtx" }
 
 
 [plugins]

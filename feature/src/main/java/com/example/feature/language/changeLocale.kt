@@ -4,45 +4,30 @@ import android.app.LocaleManager
 import android.content.Context
 import android.os.Build
 import android.os.LocaleList
+import android.util.Log
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.os.LocaleListCompat
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
-data class Language(
-    val code: String, val displayLanguage: String
-)
 
-val appLanguages = listOf(
-    Language("en", "English"),
-    Language("ar", "Arabic")
-)
+enum class AppLanguage(val code: String) {
+    ARABIC("ar"), ENGLISH("en")
+}
 
 class AppLocaleManager @Inject constructor(
     @param:ApplicationContext private val context: Context
 ) {
-    fun changeLanguage(context: Context, languageCode: String) {
+    fun changeLanguage(languageCode: AppLanguage = AppLanguage.ENGLISH) {
+        Log.d("Language", "Language: ${languageCode.code}")
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             context.getSystemService(LocaleManager::class.java).applicationLocales =
-                LocaleList.forLanguageTags(languageCode)
+                LocaleList.forLanguageTags(languageCode.code)
         } else {
-            AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags(languageCode))
+            AppCompatDelegate.setApplicationLocales(
+                LocaleListCompat.forLanguageTags(languageCode.code)
+            )
         }
-    }
-
-    fun getLanguageCode(context: Context): String {
-        val locale = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            context.getSystemService(LocaleManager::class.java)
-                ?.applicationLocales
-                ?.get(0)
-        } else {
-            AppCompatDelegate.getApplicationLocales().get(0)
-        }
-        return locale?.language ?: getDefaultLanguageCode()
-    }
-
-    private fun getDefaultLanguageCode(): String {
-        return appLanguages.first().code
     }
 }
 
