@@ -44,6 +44,7 @@ android {
 dependencies {
     // Core modules
     implementation(project(":core:designsystem"))
+    implementation(project(":core:common"))
     implementation(project(":data"))
     implementation(project(":domain"))
     implementation(project(":feature"))
@@ -56,6 +57,7 @@ dependencies {
     implementation(libs.androidx.compose.ui.graphics)
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
+    implementation(libs.androidx.navigation.runtime.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -70,4 +72,7 @@ dependencies {
     // Hilt
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
+
+    // Compose Navigation
+    implementation(libs.androidx.navigation.compose)
 }

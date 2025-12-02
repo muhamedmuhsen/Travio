@@ -38,13 +38,22 @@ import com.example.feature.login.ByLoggingSection
 
 @Composable
 fun StarterLogin(
-    modifier: Modifier = Modifier, viewModel: StarterLoginViewModel = hiltViewModel()
+    modifier: Modifier = Modifier,
+    viewModel: StarterLoginViewModel = hiltViewModel(),
+    navigateToLogin: () -> Unit,
+    navigateToSignup: () -> Unit
 ) {
     LaunchedEffect(Unit) {
         viewModel.event.collect { event ->
             when (event) {
-                StarterLoginEvent.NavigateToLogin -> TODO()
-                StarterLoginEvent.NavigateToSignup -> TODO()
+                StarterLoginEvent.NavigateToLogin -> {
+                    navigateToLogin()
+                }
+
+                StarterLoginEvent.NavigateToSignup -> {
+                    navigateToSignup()
+                }
+
                 StarterLoginEvent.GoogleSignIn -> TODO()
                 StarterLoginEvent.FacebookSignIn -> TODO()
             }
@@ -145,5 +154,5 @@ fun StarterLogin(
 @Preview(showSystemUi = true, showBackground = true)
 @Composable
 private fun StarterLoginPreview() {
-    TravioTheme() { StarterLogin() }
+    TravioTheme() { StarterLogin(navigateToLogin = {}) {} }
 }

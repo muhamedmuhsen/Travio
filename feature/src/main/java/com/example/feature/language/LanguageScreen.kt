@@ -14,6 +14,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -36,10 +37,23 @@ import com.example.designsystem.theme.spacing
 @Composable
 fun LanguageScreen(
     modifier: Modifier = Modifier,
-    viewModel: LanguageViewModel = hiltViewModel()
+    viewModel: LanguageViewModel = hiltViewModel(),
+    navigateToStarterLogin: () -> Unit
 ) {
     val languageState = viewModel.languageState.collectAsStateWithLifecycle()
     val context = LocalContext.current
+
+    LaunchedEffect(Unit) {
+        viewModel.event.collect { event ->
+
+            when (event) {
+                LanguageEvent.NavigateToStarterLogin -> {
+                    navigateToStarterLogin()
+                }
+            }
+
+        }
+    }
     Box(
         modifier = modifier.fillMaxSize()
     ) {
@@ -53,14 +67,11 @@ fun LanguageScreen(
         LanguageSelectionSheet(
             modifier = Modifier
                 .fillMaxWidth()
-                .align(Alignment.BottomCenter),
-            onLanguageSelected = {
+                .align(Alignment.BottomCenter), onLanguageSelected = {
                 viewModel.changeLanguage(
-                    context = context,
-                    languageCode = languageState.value.selectedLanguage
+                    context = context, languageCode = languageState.value.selectedLanguage
                 )
-            }
-        )
+            })
     }
 }
 
@@ -126,11 +137,11 @@ private fun LanguageSelectionSheet(
 @Preview()
 @Composable
 private fun LanguageScreenPreview() {
-    TravioTheme { LanguageScreen() }
+    TravioTheme { LanguageScreen() {} }
 }
 
 @Preview(locale = "ar-rEG")
 @Composable
 private fun LanguageScreenPreviewArabic() {
-    TravioTheme { LanguageScreen() }
+    TravioTheme { LanguageScreen() {} }
 }

@@ -74,6 +74,7 @@ fun LoginScreen(
     modifier: Modifier = Modifier,
     viewModel: LoginViewModel = hiltViewModel(),
     onCloseClicked: () -> Unit,
+    navigateToSignUp: () -> Unit
 ) {
 
     val uiState = viewModel.state.collectAsStateWithLifecycle()
@@ -93,8 +94,7 @@ fun LoginScreen(
 
     if (uiState.value.showFacebookSignIn) {
         FacebookSignin(
-            context = context,
-            onTokenReceived = { token ->
+            context = context, onTokenReceived = { token ->
                 viewModel.onFacebookSignin(token)
                 viewModel.onFacebookSigninResult()
             })
@@ -105,7 +105,10 @@ fun LoginScreen(
             when (event) {
                 LoginEvent.NavigateToForgotPassword -> TODO()
                 LoginEvent.NavigateToHome -> TODO()
-                LoginEvent.NavigateToSignup -> TODO()
+                LoginEvent.NavigateToSignup -> {
+                    navigateToSignUp()
+                }
+
                 is LoginEvent.ShowAuthError -> TODO()
             }
         }
@@ -115,35 +118,35 @@ fun LoginScreen(
         topBar = {
             TopAppBar(
                 title = {
-                Text(
-                    text = stringResource(id = R.string.log_in),
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.SemiBold,
-                    modifier = Modifier.fillMaxWidth(),
-                    textAlign = TextAlign.Center
-                )
-            }, navigationIcon = {
-                Box(
-                    modifier = Modifier
-                        .padding(start = 16.dp)
-                        .size(40.dp)
-                        .background(
-                            color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
-                            shape = CircleShape
-                        )
-                        .clickable { onCloseClicked() }, contentAlignment = Alignment.Center
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Close,
-                        contentDescription = "Close",
-                        modifier = Modifier.size(20.dp)
+                    Text(
+                        text = stringResource(id = R.string.log_in),
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.SemiBold,
+                        modifier = Modifier.fillMaxWidth(),
+                        textAlign = TextAlign.Center
                     )
-                }
-            }, actions = {
-                Spacer(modifier = Modifier.size(56.dp))
-            }, colors = TopAppBarDefaults.topAppBarColors(
-                containerColor = MaterialTheme.colorScheme.surface
-            )
+                }, navigationIcon = {
+                    Box(
+                        modifier = Modifier
+                            .padding(start = 16.dp)
+                            .size(40.dp)
+                            .background(
+                                color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
+                                shape = CircleShape
+                            )
+                            .clickable { onCloseClicked() }, contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Close,
+                            contentDescription = "Close",
+                            modifier = Modifier.size(20.dp)
+                        )
+                    }
+                }, actions = {
+                    Spacer(modifier = Modifier.size(56.dp))
+                }, colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.surface
+                )
             )
         }) { innerPadding ->
         Column(
@@ -285,9 +288,7 @@ fun GoogleSignin(
 
 @Composable
 fun FacebookSignin(
-    context: Context,
-    onTokenReceived: (String) -> Unit,
-    enabled: Boolean = true
+    context: Context, onTokenReceived: (String) -> Unit, enabled: Boolean = true
 ) {
     val callbackManager = remember { CallbackManager.Factory.create() }
 
@@ -430,7 +431,7 @@ fun RememberMeAndForgetPasswordSection(
 private fun LoginScreenPreview() {
     TravioTheme {
         LoginScreen(
-            onCloseClicked = {})
+            onCloseClicked = {}) {}
     }
 }
 
@@ -453,7 +454,7 @@ private fun LoginScreenPreview() {
 private fun LoginScreenPreviewArabic() {
     TravioTheme {
         LoginScreen(
-            onCloseClicked = {})
+            onCloseClicked = {}) {}
     }
 }
 

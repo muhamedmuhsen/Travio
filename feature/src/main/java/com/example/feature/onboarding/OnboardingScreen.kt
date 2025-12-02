@@ -45,7 +45,7 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun OnboardingScreen(
-    viewModel: OnboardingViewModel = hiltViewModel(), onFinish: () -> Unit = {}
+    viewModel: OnboardingViewModel = hiltViewModel(), onFinish: () -> Unit
 ) {
     val pages = viewModel.pages
     val pagerState = rememberPagerState(pageCount = { pages.size })
@@ -193,6 +193,6 @@ fun OnboardingScreen(
 @Composable
 private fun OnboardingPreview() {
     TravioTheme {
-        OnboardingScreen()
+        OnboardingScreen() {}
     }
 }
