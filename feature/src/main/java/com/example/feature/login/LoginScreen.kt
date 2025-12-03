@@ -59,6 +59,7 @@ import com.example.designsystem.components.AppTextField
 import com.example.designsystem.components.SigninOptionsButton
 import com.example.designsystem.components.TextFieldType
 import com.example.designsystem.theme.TravioTheme
+import com.example.designsystem.theme.spacing
 import com.facebook.CallbackManager
 import com.facebook.FacebookCallback
 import com.facebook.FacebookException
@@ -82,7 +83,7 @@ fun LoginScreen(
     val scope = rememberCoroutineScope()
 
     if (uiState.value.showGoogleSignIn) {
-        GoogleSignin(
+        GoogleSignInHandler(
             context = context,
             webServerId = stringResource(R.string.web_server_id), // TODO: Replace with actual Web Server ID
             scope = scope,
@@ -93,7 +94,7 @@ fun LoginScreen(
     }
 
     if (uiState.value.showFacebookSignIn) {
-        FacebookSignin(
+        FacebookSignInHandler(
             context = context, onTokenReceived = { token ->
                 viewModel.onFacebookSignin(token)
                 viewModel.onFacebookSigninResult()
@@ -128,8 +129,8 @@ fun LoginScreen(
                 }, navigationIcon = {
                     Box(
                         modifier = Modifier
-                            .padding(start = 16.dp)
-                            .size(40.dp)
+                            .padding(start = MaterialTheme.spacing.md)
+                            .size(MaterialTheme.spacing.xxl)
                             .background(
                                 color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
                                 shape = CircleShape
@@ -138,7 +139,7 @@ fun LoginScreen(
                     ) {
                         Icon(
                             imageVector = Icons.Default.Close,
-                            contentDescription = "Close",
+                            contentDescription = stringResource(id = R.string.close),
                             modifier = Modifier.size(20.dp)
                         )
                     }
@@ -157,7 +158,7 @@ fun LoginScreen(
                 .padding(horizontal = 20.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(MaterialTheme.spacing.lg))
 
             Text(
                 text = stringResource(id = R.string.continue_using_your),
@@ -170,11 +171,11 @@ fun LoginScreen(
             AppTextField(
                 value = uiState.value.email,
                 onValueChange = { viewModel.onEmailChange(it) },
-                placeholder = stringResource(id = R.string.email_or_user_name),
+                placeholder = stringResource(id = R.string.email),
                 modifier = Modifier.fillMaxWidth()
             )
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(MaterialTheme.spacing.md))
 
             AppTextField(
                 value = uiState.value.password,
@@ -197,11 +198,11 @@ fun LoginScreen(
                 modifier = Modifier.fillMaxWidth()
             )
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(MaterialTheme.spacing.lg))
 
             OrSignInWithText()
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(MaterialTheme.spacing.lg))
 
             SigninOptionsButton(
                 onClick = { viewModel.onGoogleSigninClicked() },
@@ -210,7 +211,7 @@ fun LoginScreen(
                 modifier = Modifier.fillMaxWidth()
             )
 
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(MaterialTheme.spacing.sm))
 
             SigninOptionsButton(
                 onClick = { viewModel.onFacebookSigninClicked() },
@@ -219,10 +220,10 @@ fun LoginScreen(
                 modifier = Modifier.fillMaxWidth()
             )
 
-            Spacer(modifier = Modifier.height(32.dp))
+            Spacer(modifier = Modifier.height(MaterialTheme.spacing.xl))
 
             ByLoggingSection()
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(MaterialTheme.spacing.lg))
 
             Row(
                 horizontalArrangement = Arrangement.Center, modifier = Modifier.fillMaxWidth()
@@ -240,14 +241,14 @@ fun LoginScreen(
                     modifier = Modifier.clickable { viewModel.onCreateAccountClicked() })
             }
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(MaterialTheme.spacing.lg))
         }
     }
 }
 
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
-fun GoogleSignin(
+fun GoogleSignInHandler(
     context: Context,
     webServerId: String,
     scope: CoroutineScope,
@@ -260,12 +261,15 @@ fun GoogleSignin(
 
             val googleIdOption = GetGoogleIdOption.Builder().setFilterByAuthorizedAccounts(false)
                 .setServerClientId(webServerId).build()
-
+            Log.d("GoogleId", "GoogleID: $googleIdOption")
             val request = GetCredentialRequest.Builder().addCredentialOption(googleIdOption).build()
+            Log.d("GoogleId", "request: $request")
 
             val result = credentialManager.getCredential(
                 request = request, context = context as Activity
             )
+            Log.d("GoogleId", "result: $result")
+
 
             val googleIdTokenCredential = result.credential
             val idToken =
@@ -287,7 +291,7 @@ fun GoogleSignin(
 }
 
 @Composable
-fun FacebookSignin(
+fun FacebookSignInHandler(
     context: Context, onTokenReceived: (String) -> Unit, enabled: Boolean = true
 ) {
     val callbackManager = remember { CallbackManager.Factory.create() }
@@ -354,7 +358,7 @@ fun ByLoggingSection(modifier: Modifier = Modifier) {
         text = annotatedString,
         style = MaterialTheme.typography.bodySmall,
         textAlign = TextAlign.Center,
-        modifier = modifier.padding(horizontal = 8.dp)
+        modifier = modifier.padding(horizontal = MaterialTheme.spacing.xs)
     )
 }
 
@@ -362,7 +366,7 @@ fun ByLoggingSection(modifier: Modifier = Modifier) {
 @Composable
 fun OrSignInWithText(modifier: Modifier = Modifier) {
     Row(
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.sm),
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier.fillMaxWidth()
     ) {
@@ -457,4 +461,3 @@ private fun LoginScreenPreviewArabic() {
             onCloseClicked = {}) {}
     }
 }
-

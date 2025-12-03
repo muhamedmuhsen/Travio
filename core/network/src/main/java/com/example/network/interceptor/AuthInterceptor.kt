@@ -1,6 +1,6 @@
 package com.example.network.interceptor
 
-import com.example.domain.repository.Auth.TokenProvider
+import com.example.domain.repository.auth.TokenProvider
 import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
 import okhttp3.Response

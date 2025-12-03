@@ -28,12 +28,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.designsystem.R
 import com.example.designsystem.components.AppButton
 import com.example.designsystem.components.SigninOptionsButton
 import com.example.designsystem.theme.TravioTheme
+import com.example.designsystem.theme.spacing
 import com.example.feature.login.ByLoggingSection
 
 @Composable
@@ -64,7 +64,7 @@ fun StarterLogin(
             modifier = modifier
                 .fillMaxSize()
                 .padding(innerPadding)
-                .padding(horizontal = 24.dp)
+                .padding(horizontal = MaterialTheme.spacing.lg)
         ) {
             Box(
                 contentAlignment = Alignment.BottomCenter,
@@ -95,20 +95,20 @@ fun StarterLogin(
                     text = stringResource(id = R.string.your_journy_start_here),
                     style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold),
                     color = MaterialTheme.colorScheme.onBackground,
-                    modifier = Modifier.padding(bottom = 24.dp)
+                    modifier = Modifier.padding(bottom = MaterialTheme.spacing.lg)
                 )
             }
 
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(MaterialTheme.spacing.sm))
 
             AppButton(
                 onClick = { viewModel.onCreateAccountClicked() },
                 text = stringResource(id = R.string.create_an_account),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(48.dp)
+                    .height(MaterialTheme.spacing.xxxl)
             )
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(MaterialTheme.spacing.md))
 
             SigninOptionsButton(
                 onClick = { viewModel.onSocialLoginClicked(SocialType.GOOGLE) },
@@ -117,7 +117,7 @@ fun StarterLogin(
                 modifier = Modifier.fillMaxWidth()
             )
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(MaterialTheme.spacing.md))
 
             SigninOptionsButton(
                 onClick = { viewModel.onSocialLoginClicked(SocialType.FACEBOOK) },
@@ -125,7 +125,7 @@ fun StarterLogin(
                 icon = R.drawable.facebook_icon,
                 modifier = Modifier.fillMaxWidth()
             )
-            Spacer(modifier = Modifier.height(32.dp))
+            Spacer(modifier = Modifier.height(MaterialTheme.spacing.xl))
             Row(
                 horizontalArrangement = Arrangement.Center, modifier = Modifier.fillMaxWidth()
             ) {
@@ -141,11 +141,11 @@ fun StarterLogin(
                     color = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.clickable { viewModel.onLoginClicked() })
             }
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(MaterialTheme.spacing.md))
 
             ByLoggingSection()
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(MaterialTheme.spacing.lg))
 
         }
     }

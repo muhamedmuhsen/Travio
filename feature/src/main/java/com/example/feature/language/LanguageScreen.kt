@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -54,25 +55,29 @@ fun LanguageScreen(
 
         }
     }
-    Box(
-        modifier = modifier.fillMaxSize()
-    ) {
-        Image(
-            painter = painterResource(R.drawable.ishan_seefromthesky),
-            contentDescription = null, // Decorative background
-            contentScale = ContentScale.Crop,
-            modifier = Modifier.matchParentSize()
-        )
+    Scaffold() { innerPadding ->
+        Box(
+            modifier = modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+        ) {
+            Image(
+                painter = painterResource(R.drawable.ishan_seefromthesky),
+                contentDescription = null, // Decorative background
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.matchParentSize()
+            )
 
-        LanguageSelectionSheet(
-            modifier = Modifier
-                .fillMaxWidth()
-                .align(Alignment.BottomCenter), onLanguageSelected = {
-                viewModel.onLanguageChange(it)
-                viewModel.changeLanguage(
-                    languageCode = it
-                )
-            })
+            LanguageSelectionSheet(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.BottomCenter), onLanguageSelected = {
+                    viewModel.onLanguageChange(it)
+                    viewModel.changeLanguage(
+                        languageCode = it
+                    )
+                })
+        }
     }
 }
 
@@ -118,14 +123,14 @@ private fun LanguageSelectionSheet(
 
             AppButton(
                 onClick = { onLanguageSelected(AppLanguage.ENGLISH) },
-                text = "English",
+                text = stringResource(id = R.string.language_english),
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(MaterialTheme.spacing.xxxl)
             )
             LanguageButton(
                 onClick = { onLanguageSelected(AppLanguage.ARABIC) },
-                language = "اللغة العربية",
+                language = stringResource(id = R.string.language_arabic),
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(MaterialTheme.spacing.xxxl)

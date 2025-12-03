@@ -3,7 +3,7 @@
     <string name="choose_language">اختر اللغة</string>
     <string name="log_in">تسجيل الدخول</string>
     <string name="continue_using_your">أكمل باستخدام:</string>
-    <string name="email_or_user_name">بريدك الالكتروني أو اسم المستخدم</string>
+    <string name="email">بريدك الالكتروني</string>
     <string name="password">كلمة المرور</string>
     <string name="forgot_password">هل نسيت كلمة المرور؟</string>
     <string name="or_sign_in_with">أو سجل الدخول باستخدام</string>
@@ -18,4 +18,22 @@
     <string name="remember_me">تذكرنى</string>
     <string name="your_journy_start_here">رحلتك تبدأ هنا</string>
     <string name="already_have_an_account">لديك حساب بالفعل؟ </string>
+    <string name="by_creating_account">بإنشاء حساب ، أقر بأنني قرأت ووافقت على\n ترافلز</string>
+    <string name="first_name">الاسم الأول</string>
+    <string name="last_name">الاسم الاخير</string>
+    <string name="close">إغلاق</string>
+    <string name="your_password_must">يجب ان تكون كلمه المرور:</string>
+    <string name="at_least_9_characters">• 9 أحرف على الأقل</string>
+    <string name="include_letters_and_numbers">• تتضمن أحرفًا وأرقامًا</string>
+    <string name="include_special_character">• تتضمن حرفًا خاصًا واحدًا على الأقل (!@#\$%^&amp;*_)</string>
+    <string name="skip">تخطى</string>
+    <string name="next">التالى</string>
+    <string name="onboarding_title_1">استكشف وجهات\nمذهلة</string>
+    <string name="onboarding_description_1">اكتشف أماكن جميلة حول العالم وابدأ مغامرتك القادمة.</string>
+    <string name="onboarding_title_2">ابحث عن أفضل\nالفنادق</string>
+    <string name="onboarding_description_2">احجز فنادق ذات تقييم عالٍ تتناسب مع أسلوبك وراحتك وميزانيتك.</string>
+    <string name="onboarding_title_3">خطط لرحلتك\nالمثالية</string>
+    <string name="onboarding_description_3">خطط ونظم رحلتك بسهولة من البداية إلى النهاية.</string>
+    <string name="language_english">English</string>
+    <string name="language_arabic">اللغة العربية</string>
 </resources>

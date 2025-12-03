@@ -1,5 +1,10 @@
 package com.example.feature.onboarding
 
+import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
+
 data class PageModel(
-    val image: Int, val title: String, val description: String
+    @DrawableRes val image: Int,
+    @StringRes val title: Int,
+    @StringRes val description: Int
 )

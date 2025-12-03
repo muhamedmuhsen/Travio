@@ -1,4 +1,4 @@
-package com.example.domain.repository.Auth
+package com.example.domain.repository.auth
 
 import com.example.common.errorhandler.AppError
 import com.example.common.errorhandler.Result

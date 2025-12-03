@@ -5,7 +5,7 @@ import com.auth0.android.jwt.JWT
 import com.example.common.errorhandler.AppError
 import com.example.common.errorhandler.Result
 import com.example.domain.model.DecodedToken
-import com.example.domain.repository.Auth.TokenManager
+import com.example.domain.repository.auth.TokenManager
 import kotlinx.coroutines.flow.first
 import java.util.Date
 import javax.inject.Inject

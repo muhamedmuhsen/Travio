@@ -3,7 +3,7 @@
     <string name="choose_language">Choose Your Language</string>
     <string name="log_in">Login</string>
     <string name="continue_using_your">Continue using your:</string>
-    <string name="email_or_user_name">Email or User name</string>
+    <string name="email">Email</string>
     <string name="password">Password</string>
     <string name="forgot_password">Forgot Password?</string>
     <string name="or_sign_in_with">Or sign in with</string>
@@ -23,4 +23,22 @@
     <string name="facebook_app_id" translatable="false">YOUR_FACEBOOK_APP_ID</string>
     <string name="facebook_client_token" translatable="false">YOUR_FACEBOOK_CLIENT_TOKEN</string>
     <string name="fb_login_protocol_scheme" translatable="false">fbYOUR_FACEBOOK_APP_ID</string>
+    <string name="by_creating_account">By creating an account, i acknowledge that i have read and agree to\n              Travio’s</string>
+    <string name="first_name">First Name\n</string>
+    <string name="last_name">Last Name</string>
+    <string name="close">Close</string>
+    <string name="your_password_must">Your password must:</string>
+    <string name="at_least_9_characters">• Be at least 9 characters</string>
+    <string name="include_letters_and_numbers">• Include letters and numbers</string>
+    <string name="include_special_character">• Include at least one special character (!@#\$%^&amp;*_)</string>
+    <string name="skip">Skip</string>
+    <string name="next">Next</string>
+    <string name="onboarding_title_1">Explore Amazing\nDestinations</string>
+    <string name="onboarding_description_1">Discover beautiful places around the world and start your next adventure.</string>
+    <string name="onboarding_title_2">Find the Best\nHotels</string>
+    <string name="onboarding_description_2">Book top-rated hotels that match your style, comfort, and budget.</string>
+    <string name="onboarding_title_3">Plan Your Perfect\nTrip</string>
+    <string name="onboarding_description_3">Easily plan and organize your trip from start to finish.</string>
+    <string name="language_english">English</string>
+    <string name="language_arabic">اللغة العربية</string>
 </resources>

@@ -29,10 +29,13 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -41,15 +44,20 @@ import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.designsystem.R
 import com.example.designsystem.theme.TravioTheme
+import com.example.designsystem.theme.spacing
+import com.example.feature.language.AppLanguage
 import kotlinx.coroutines.launch
 
 @Composable
 fun OnboardingScreen(
-    viewModel: OnboardingViewModel = hiltViewModel(), onFinish: () -> Unit
+    viewModel: OnboardingViewModel = hiltViewModel(),
+    onFinish: () -> Unit
 ) {
     val pages = viewModel.pages
     val pagerState = rememberPagerState(pageCount = { pages.size })
     val scope = rememberCoroutineScope()
+    val locale = LocalConfiguration.current.locale
+    val language = if (locale.language == "ar") AppLanguage.ARABIC else AppLanguage.ENGLISH
 
     LaunchedEffect(Unit) {
         viewModel.event.collect { event ->
@@ -99,34 +107,32 @@ fun OnboardingScreen(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .align(Alignment.BottomStart)
-                                .padding(24.dp)
+                                .padding(MaterialTheme.spacing.lg)
                         ) {
                             Text(
-                                text = page.title,
+                                text = stringResource(id = page.title),
                                 style = MaterialTheme.typography.headlineLarge,
                                 color = Color.White // Use a static color for visibility
                             )
-                            Spacer(modifier = Modifier.height(12.dp))
+                            Spacer(modifier = Modifier.height(MaterialTheme.spacing.sm))
                             Text(
-                                text = page.description,
+                                text = stringResource(id = page.description),
                                 style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.SemiBold),
                                 color = Color.White.copy(alpha = 0.9f), // Use a static color
                             )
                             // Space to prevent overlap with the navigation row
-                            Spacer(modifier = Modifier.height(80.dp))
+                            Spacer(modifier = Modifier.height(MaterialTheme.spacing.xxxl))
                         }
                     }
                 }
             }
 
-            // LAYER 2: UI Controls (drawn on top of the pager)
-            // Skip button
             if (pagerState.currentPage < pages.size - 1) {
                 Text(
-                    text = "Skip",
+                    text = stringResource(id = R.string.skip),
                     modifier = Modifier
                         .align(Alignment.TopStart) // Better placement
-                        .padding(16.dp)
+                        .padding(MaterialTheme.spacing.md)
                         .padding(top = 36.dp)
                         .clickable { onFinish() },
                     style = MaterialTheme.typography.titleLarge,
@@ -139,14 +145,15 @@ fun OnboardingScreen(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
                     .fillMaxWidth() // Ensure it spans the width
-                    .padding(24.dp), verticalAlignment = Alignment.CenterVertically
+                    .padding(MaterialTheme.spacing.lg),
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 // Page Indicators
                 repeat(pages.size) { index ->
                     Box(
                         modifier = Modifier
-                            .width(if (pagerState.currentPage == index) 24.dp else 8.dp)
-                            .height(8.dp)
+                            .width(if (pagerState.currentPage == index) MaterialTheme.spacing.lg else MaterialTheme.spacing.xs)
+                            .height(MaterialTheme.spacing.xs)
                             .clip(CircleShape)
                             .background(
                                 if (pagerState.currentPage == index) MaterialTheme.colorScheme.secondaryContainer
@@ -154,7 +161,7 @@ fun OnboardingScreen(
                             )
                     )
                     if (index < pages.size - 1) {
-                        Spacer(modifier = Modifier.width(8.dp))
+                        Spacer(modifier = Modifier.width(MaterialTheme.spacing.xs))
                     }
                 }
 
@@ -171,7 +178,7 @@ fun OnboardingScreen(
                             }
                         }
                     }, modifier = Modifier
-                        .size(48.dp)
+                        .size(MaterialTheme.spacing.xxxl)
                         .background(
                             color = MaterialTheme.colorScheme.secondaryContainer,
                             shape = MaterialTheme.shapes.large
@@ -179,8 +186,15 @@ fun OnboardingScreen(
                 ) {
                     Icon(
                         painter = painterResource(R.drawable.arrow),
-                        contentDescription = "Next",
-                        modifier = Modifier.size(24.dp)
+                        contentDescription = stringResource(id = R.string.next),
+
+                        modifier = Modifier
+                            .size(MaterialTheme.spacing.lg)
+                            .scale(
+                                scaleX = if (language == AppLanguage.ARABIC) -1f else 1f,
+                                scaleY = 1f
+                            )
+
                     )
                 }
             }
