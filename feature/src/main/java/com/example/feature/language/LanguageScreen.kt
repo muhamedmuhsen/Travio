@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -54,25 +55,29 @@ fun LanguageScreen(
 
         }
     }
-    Box(
-        modifier = modifier.fillMaxSize()
-    ) {
-        Image(
-            painter = painterResource(R.drawable.ishan_seefromthesky),
-            contentDescription = null, // Decorative background
-            contentScale = ContentScale.Crop,
-            modifier = Modifier.matchParentSize()
-        )
+    Scaffold() { innerPadding ->
+        Box(
+            modifier = modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+        ) {
+            Image(
+                painter = painterResource(R.drawable.ishan_seefromthesky),
+                contentDescription = null, // Decorative background
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.matchParentSize()
+            )
 
-        LanguageSelectionSheet(
-            modifier = Modifier
-                .fillMaxWidth()
-                .align(Alignment.BottomCenter), onLanguageSelected = {
-                viewModel.onLanguageChange(it)
-                viewModel.changeLanguage(
-                    languageCode = it
-                )
-            })
+            LanguageSelectionSheet(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.BottomCenter), onLanguageSelected = {
+                    viewModel.onLanguageChange(it)
+                    viewModel.changeLanguage(
+                        languageCode = it
+                    )
+                })
+        }
     }
 }
 
