@@ -41,7 +41,8 @@ class AuthRepositoryImpl(
         email: String,
         password: String,
         username: String,
-
+        firstname: String,
+        lastname: String
         ): Result<User, AppError> {
         return safeApiCall {
             val response = api.signup(

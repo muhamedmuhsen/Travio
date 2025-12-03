@@ -7,7 +7,7 @@ import com.example.domain.model.User
 interface AuthRepository {
     suspend fun login(email: String, password: String): Result<User, AppError>
     suspend fun signup(
-        email: String, password: String, username: String
+        email: String, password: String, username: String, firstname: String, lastname: String
     ): Result<User, AppError>
 
     suspend fun signInWithGoogle(idToken: String): Result<String, AppError>

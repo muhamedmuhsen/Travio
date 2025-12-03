@@ -118,14 +118,14 @@ private fun LanguageSelectionSheet(
 
             AppButton(
                 onClick = { onLanguageSelected(AppLanguage.ENGLISH) },
-                text = "English",
+                text = stringResource(id = R.string.language_english),
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(MaterialTheme.spacing.xxxl)
             )
             LanguageButton(
                 onClick = { onLanguageSelected(AppLanguage.ARABIC) },
-                language = "اللغة العربية",
+                language = stringResource(id = R.string.language_arabic),
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(MaterialTheme.spacing.xxxl)

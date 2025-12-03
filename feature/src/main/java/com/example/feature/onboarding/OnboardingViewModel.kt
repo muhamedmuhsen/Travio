@@ -14,19 +14,19 @@ class OnboardingViewModel : ViewModel() {
     val event = _event.receiveAsFlow()
     val pages = listOf(
         PageModel(
-            R.drawable.onboarding_3,
-            "Explore Amazing\nDestinations",
-            "Discover beautiful places around the world and start your next adventure."
+            image = R.drawable.onboarding_3,
+            title = R.string.onboarding_title_1,
+            description = R.string.onboarding_description_1
         ),
         PageModel(
-            R.drawable.onboarding_1,
-            "Find the Best\nHotels",
-            "Book top-rated hotels that match your style, comfort, and budget."
+            image = R.drawable.onboarding_1,
+            title = R.string.onboarding_title_2,
+            description = R.string.onboarding_description_2
         ),
         PageModel(
-            R.drawable.onboarding_2,
-            "Plan Your Perfect\nTrip",
-            "Book top-rated hotels that match your style, comfort, and budget."
+            image = R.drawable.onboarding_2,
+            title = R.string.onboarding_title_3,
+            description = R.string.onboarding_description_3
         ),
     )
 
