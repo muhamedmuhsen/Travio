@@ -82,7 +82,7 @@ fun LoginScreen(
     val scope = rememberCoroutineScope()
 
     if (uiState.value.showGoogleSignIn) {
-        GoogleSignin(
+        GoogleSignInHandler(
             context = context,
             webServerId = stringResource(R.string.web_server_id), // TODO: Replace with actual Web Server ID
             scope = scope,
@@ -93,7 +93,7 @@ fun LoginScreen(
     }
 
     if (uiState.value.showFacebookSignIn) {
-        FacebookSignin(
+        FacebookSignInHandler(
             context = context, onTokenReceived = { token ->
                 viewModel.onFacebookSignin(token)
                 viewModel.onFacebookSigninResult()
@@ -247,7 +247,7 @@ fun LoginScreen(
 
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
-fun GoogleSignin(
+fun GoogleSignInHandler(
     context: Context,
     webServerId: String,
     scope: CoroutineScope,
@@ -260,12 +260,15 @@ fun GoogleSignin(
 
             val googleIdOption = GetGoogleIdOption.Builder().setFilterByAuthorizedAccounts(false)
                 .setServerClientId(webServerId).build()
-
+            Log.d("GoogleId", "GoogleID: $googleIdOption")
             val request = GetCredentialRequest.Builder().addCredentialOption(googleIdOption).build()
+            Log.d("GoogleId", "request: $request")
 
             val result = credentialManager.getCredential(
                 request = request, context = context as Activity
             )
+            Log.d("GoogleId", "result: $result")
+
 
             val googleIdTokenCredential = result.credential
             val idToken =
@@ -287,7 +290,7 @@ fun GoogleSignin(
 }
 
 @Composable
-fun FacebookSignin(
+fun FacebookSignInHandler(
     context: Context, onTokenReceived: (String) -> Unit, enabled: Boolean = true
 ) {
     val callbackManager = remember { CallbackManager.Factory.create() }

@@ -1,6 +1,6 @@
 package com.example.network.interceptor
 
-import com.example.domain.repository.Auth.TokenManager
+import com.example.domain.repository.auth.TokenManager
 import com.example.network.api.AuthApi
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex

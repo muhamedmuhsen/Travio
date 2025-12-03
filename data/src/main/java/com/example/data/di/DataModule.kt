@@ -2,7 +2,7 @@ package com.example.data.di
 
 import android.content.Context
 import com.example.data.local.datastore.DataStoreManager
-import com.example.domain.repository.Auth.TokenProvider
+import com.example.domain.repository.auth.TokenProvider
 import dagger.Binds
 import dagger.Module
 import dagger.Provides

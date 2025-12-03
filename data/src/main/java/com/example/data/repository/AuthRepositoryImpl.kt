@@ -6,7 +6,7 @@ import com.example.data.helpers.safeApiCall
 import com.example.data.local.datastore.DataStoreManager
 import com.example.data.mapper.toDomain
 import com.example.domain.model.User
-import com.example.domain.repository.Auth.TokenManager
+import com.example.domain.repository.auth.TokenManager
 import com.example.domain.repository.login.AuthRepository
 import com.example.network.api.AuthApi
 import com.example.network.dto.auth.LoginRequest
