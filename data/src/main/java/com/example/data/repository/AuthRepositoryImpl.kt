@@ -1,10 +1,16 @@
 package com.example.data.repository
 
+import androidx.activity.ComponentActivity
+import androidx.credentials.CredentialManager
 import com.example.common.errorhandler.AppError
 import com.example.common.errorhandler.Result
 import com.example.data.helpers.safeApiCall
 import com.example.data.local.datastore.DataStoreManager
 import com.example.data.mapper.toDomain
+import com.example.data.mapper.toUser
+import com.example.data.source.GoogleAuthDataSource
+import com.example.data.source.GoogleAuthDataSourceImpl
+import com.example.domain.model.GoogleUser
 import com.example.domain.model.User
 import com.example.domain.repository.auth.TokenManager
 import com.example.domain.repository.login.AuthRepository
@@ -17,6 +23,7 @@ import com.example.network.dto.auth.SocialLoginRequest
 class AuthRepositoryImpl(
     private val api: AuthApi,
     private val dataStoreManager: DataStoreManager,
+    private val googleAuthDataSource: GoogleAuthDataSource,
     private val tokenManager: TokenManager
 ) : AuthRepository {
 
@@ -38,12 +45,8 @@ class AuthRepositoryImpl(
     }
 
     override suspend fun signup(
-        email: String,
-        password: String,
-        username: String,
-        firstname: String,
-        lastname: String
-        ): Result<User, AppError> {
+        email: String, password: String, username: String, firstname: String, lastname: String
+    ): Result<User, AppError> {
         return safeApiCall {
             val response = api.signup(
                 SignupRequest(
@@ -63,21 +66,19 @@ class AuthRepositoryImpl(
         }
     }
 
-    override suspend fun signInWithGoogle(idToken: String): Result<String, AppError> {
-        return safeApiCall {
+    override suspend fun signInWithGoogle(idToken: String): Result<User, AppError> {
+        try {
             val request = SocialLoginRequest(provider = Provider.GOOGLE, token = idToken)
-
             val response = api.socialSignin(request)
-
-            if (!response.status) {
-                return@safeApiCall Result.Error(AppError.Authentication.SigninFaild)
-            }
-
-            tokenManager.saveToken(accessToken = response.user.accessToken, refreshToken = "/////")
-            //val user = response.user.toDomain()
-
-            Result.Success(response.user.accessToken)
+            //val googleUserDto = googleAuthDataSource.signIn(activity)
+            /*TODO: send the token to the backend*/
+            // val response = api.socialSignin(request)
+            /*TODO: save token to data store*/
+            return Result.Success(response.user.toDomain())
+        } catch (e: Exception) {
+            return Result.Error(AppError.Authentication.SigninFaild)
         }
+
     }
 
     override suspend fun signInWithFacebook(accessToken: String): Result<String, AppError> {

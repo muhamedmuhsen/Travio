@@ -1,9 +1,9 @@
 package com.example.data.di
 
 import com.example.domain.repository.login.AuthRepository
+import com.example.domain.usecase.auth.GoogleSignInUseCase
 import com.example.domain.usecase.auth.LoginUseCase
 import com.example.domain.usecase.auth.SignupUseCase
-import com.example.domain.usecase.auth.SocialSigninUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -22,7 +22,8 @@ object UseCaseModule {
         SignupUseCase(authRepository)
 
     @Provides
-    fun provideSocialSignin(
-        authRepository: AuthRepository
-    ): SocialSigninUseCase = SocialSigninUseCase(authRepository)
+    fun provideGoogleSignInUseCase(authRepository: AuthRepository): GoogleSignInUseCase =
+        GoogleSignInUseCase(authRepository)
+
+
 }

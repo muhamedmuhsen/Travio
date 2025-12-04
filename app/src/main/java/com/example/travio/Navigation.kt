@@ -28,7 +28,8 @@ fun TravioNavHost(
         composable(Screen.LoginScreen.route) {
             LoginScreen(
                 onCloseClicked = { navController.navigate(Screen.StarterLoginScreen.route) },
-                navigateToSignUp = { navController.navigate(Screen.SignupScreen.route) })
+                navigateToSignUp = { navController.navigate(Screen.SignupScreen.route) },
+            )
         }
         composable(Screen.StarterLoginScreen.route) {
             StarterLogin(

@@ -1,10 +1,9 @@
 package com.example.feature.login
 
-import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.Context
 import android.content.res.Configuration
 import android.util.Log
+import android.util.Log.e
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.background
@@ -50,6 +49,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.credentials.CredentialManager
+import androidx.credentials.CustomCredential
 import androidx.credentials.GetCredentialRequest
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -66,6 +66,7 @@ import com.facebook.FacebookException
 import com.facebook.login.LoginManager
 import com.facebook.login.LoginResult
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
+import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -81,24 +82,61 @@ fun LoginScreen(
     val uiState = viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
+    val webClientId = stringResource(id = R.string.web_server_id)
 
-    if (uiState.value.showGoogleSignIn) {
-        GoogleSignInHandler(
-            context = context,
-            webServerId = stringResource(R.string.web_server_id), // TODO: Replace with actual Web Server ID
-            scope = scope,
-            onTokenReceived = { token ->
-                viewModel.onGoogleSignin(token)
-                viewModel.onGoogleSigninResult()
-            })
-    }
+    fun handleGoogleSignIn() {
+        scope.launch {
+            try {
+                Log.d("GoogleSignIn", "Package Name: ${context.packageName}")
+                val credentialManager = CredentialManager.create(context)
 
-    if (uiState.value.showFacebookSignIn) {
-        FacebookSignInHandler(
-            context = context, onTokenReceived = { token ->
-                viewModel.onFacebookSignin(token)
-                viewModel.onFacebookSigninResult()
-            })
+                val googleIdOption =
+                    GetGoogleIdOption.Builder().setFilterByAuthorizedAccounts(false)
+                        .setAutoSelectEnabled(false).setServerClientId(webClientId).build()
+
+                val request =
+                    GetCredentialRequest.Builder().addCredentialOption(googleIdOption).build()
+
+                val result = credentialManager.getCredential(
+                    request = request, context = context
+                )
+                // Extract the token
+                when (val credential = result.credential) {
+                    is CustomCredential -> {
+                        if (credential.type == GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL) {
+                            val googleIdTokenCredential =
+                                GoogleIdTokenCredential.createFrom(credential.data)
+
+                            Log.d("GoogleSignIn", "✓ Successfully parsed credential")
+                            Log.d("GoogleSignIn", "User: ${googleIdTokenCredential.displayName}")
+                            Log.d("GoogleSignIn", "Email: ${googleIdTokenCredential.id}")
+
+                            viewModel.onGoogleSignIn(googleIdTokenCredential.idToken)
+                        } else {
+                            Log.e("GoogleSignIn", "✗ Invalid credential type")
+                            Toast.makeText(
+                                context,
+                                "Sign in failed: Invalid credential type",
+                                Toast.LENGTH_SHORT
+                            ).show()
+
+                        }
+                    }
+
+                    else -> {
+                        Log.e(
+                            "GoogleSignIn",
+                            "✗ Unknown credential class: ${credential::class.simpleName}"
+                        )
+                    }
+                }
+            } catch (e: Exception) {
+                Log.e("GoogleSignIn", "✗ Failed to parse credential", e)
+                Toast.makeText(
+                    context, "Sign in failed: ${e.message}", Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
     }
 
     LaunchedEffect(Unit) {
@@ -111,6 +149,10 @@ fun LoginScreen(
                 }
 
                 is LoginEvent.ShowAuthError -> TODO()
+                LoginEvent.ContinueWithFacebook -> TODO()
+                LoginEvent.ContinueWithGoogle -> {
+                    handleGoogleSignIn()
+                }
             }
         }
     }
@@ -193,9 +235,11 @@ fun LoginScreen(
                 onForgetPasswordClicked = { viewModel.onForgotPasswordClicked() })
 
             AppButton(
-                onClick = { viewModel.onLoginClicked(uiState.value.email, uiState.value.password) },
-                text = stringResource(id = R.string.log_in),
-                modifier = Modifier.fillMaxWidth()
+                onClick = {
+                    viewModel.onLoginClicked(
+                        uiState.value.email, uiState.value.password
+                    )
+                }, text = stringResource(id = R.string.log_in), modifier = Modifier.fillMaxWidth()
             )
 
             Spacer(modifier = Modifier.height(MaterialTheme.spacing.lg))
@@ -205,7 +249,7 @@ fun LoginScreen(
             Spacer(modifier = Modifier.height(MaterialTheme.spacing.lg))
 
             SigninOptionsButton(
-                onClick = { viewModel.onGoogleSigninClicked() },
+                onClick = { viewModel.onGoogleSignInClicked() },
                 text = stringResource(id = R.string.continue_with_google),
                 icon = R.drawable.google_icon,
                 modifier = Modifier.fillMaxWidth()
@@ -246,49 +290,6 @@ fun LoginScreen(
     }
 }
 
-@SuppressLint("CoroutineCreationDuringComposition")
-@Composable
-fun GoogleSignInHandler(
-    context: Context,
-    webServerId: String,
-    scope: CoroutineScope,
-    onTokenReceived: (String) -> Unit,
-    enabled: Boolean = true
-) {
-    scope.launch {
-        try {
-            val credentialManager = CredentialManager.create(context)
-
-            val googleIdOption = GetGoogleIdOption.Builder().setFilterByAuthorizedAccounts(false)
-                .setServerClientId(webServerId).build()
-            Log.d("GoogleId", "GoogleID: $googleIdOption")
-            val request = GetCredentialRequest.Builder().addCredentialOption(googleIdOption).build()
-            Log.d("GoogleId", "request: $request")
-
-            val result = credentialManager.getCredential(
-                request = request, context = context as Activity
-            )
-            Log.d("GoogleId", "result: $result")
-
-
-            val googleIdTokenCredential = result.credential
-            val idToken =
-                (googleIdTokenCredential.data.getString("com.google.android.libraries.identity.googleid.BUNDLE_KEY_ID_TOKEN"))
-            Log.d("GoogleSignin", "ID Token: $idToken")
-
-            if (!idToken.isNullOrBlank()) {
-                onTokenReceived(idToken)
-            } else {
-                Toast.makeText(context, "Failed to get ID token", Toast.LENGTH_SHORT).show()
-
-            }
-        } catch (e: Exception) {
-            Toast.makeText(
-                context, "Google Sign-In failed: ${e.message}", Toast.LENGTH_LONG
-            ).show()
-        }
-    }
-}
 
 @Composable
 fun FacebookSignInHandler(
@@ -299,23 +300,24 @@ fun FacebookSignInHandler(
     val loginManager = LoginManager.getInstance()
 
     DisposableEffect(Unit) {
-        loginManager.registerCallback(callbackManager, object : FacebookCallback<LoginResult> {
-            override fun onCancel() {
-                Toast.makeText(context, "Facebook login cancelled", Toast.LENGTH_SHORT).show()
-            }
+        loginManager.registerCallback(
+            callbackManager, object : FacebookCallback<LoginResult> {
+                override fun onCancel() {
+                    Toast.makeText(context, "Facebook login cancelled", Toast.LENGTH_SHORT).show()
+                }
 
-            override fun onError(error: FacebookException) {
-                Toast.makeText(
-                    context, "Facebook login failed: ${error.message}", Toast.LENGTH_LONG
-                ).show()
-            }
+                override fun onError(error: FacebookException) {
+                    Toast.makeText(
+                        context, "Facebook login failed: ${error.message}", Toast.LENGTH_LONG
+                    ).show()
+                }
 
-            override fun onSuccess(result: LoginResult) {
-                val accessToken = result.accessToken.token
-                onTokenReceived(accessToken)
-            }
+                override fun onSuccess(result: LoginResult) {
+                    val accessToken = result.accessToken.token
+                    onTokenReceived(accessToken)
+                }
 
-        })
+            })
         onDispose { loginManager.unregisterCallback(callbackManager) }
     }
 
