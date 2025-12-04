@@ -136,7 +136,7 @@ fun OnboardingScreen(
                         .padding(top = 36.dp)
                         .clickable { onFinish() },
                     style = MaterialTheme.typography.titleLarge,
-                    color = MaterialTheme.colorScheme.onSecondaryContainer
+                    color = Color.White,
                 )
             }
 

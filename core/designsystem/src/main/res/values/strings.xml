@@ -46,4 +46,11 @@
     <string name="continue_button">Continue</string>
     <string name="if_you_dont_remember_email_prefix">If you don’t remember your email address associated with your Travio account, please </string>
     <string name="contact_us">contact us.</string>
+    <string name="please_enter_code">Please enter the code we send to</string>
+    <string name="didnot_get_it">Didn\'t get it?</string>
+    <string name="send_new_code"> Send new code.</string>
+    <string name="reset_password">Reset Password</string>
+    <string name="new_password">New Password</string>
+    <string name="confirm_new_password">Confirm New Password</string>
+    <string name="reset_your_password_button">Reset Your Password</string>
 </resources>

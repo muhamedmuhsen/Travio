@@ -1,5 +1,6 @@
 package com.example.feature.forgetpassword
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -25,6 +26,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -50,13 +52,20 @@ fun ForgetPasswordScreen(
     navigateToCodeScreen: () -> Unit
 ) {
     val uiState = viewModel.state.collectAsStateWithLifecycle()
-
+    val context = LocalContext.current
     LaunchedEffect(Unit) {
         viewModel.event.collect { event ->
             when (event) {
                 ForgetPasswordEvent.ContactUs -> TODO()
                 ForgetPasswordEvent.NavigateToCodeScreen -> {
                     navigateToCodeScreen()
+                }
+                ForgetPasswordEvent.OnBackClicked -> {
+                    onCloseClicked()
+                }
+
+                is ForgetPasswordEvent.ShowError -> {
+                    Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
                 }
             }
         }
@@ -81,7 +90,8 @@ fun ForgetPasswordScreen(
                                 color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
                                 shape = CircleShape
                             )
-                            .clickable { onCloseClicked() }, contentAlignment = Alignment.Center
+                            .clickable { viewModel.onCloseClicked() },
+                        contentAlignment = Alignment.Center
                     ) {
                         Icon(
                             imageVector = Icons.Default.Close,
