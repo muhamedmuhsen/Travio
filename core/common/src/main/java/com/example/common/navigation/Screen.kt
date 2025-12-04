@@ -9,8 +9,9 @@ sealed class Screen(val route: String) {
     data object HomeScreen : Screen(Screens.HOME.name)
     data object ProfileScreen : Screen(Screens.PROFILE.name)
     data object StarterLoginScreen : Screen(Screens.STARTER_LOGIN.name)
+    data object ForgetPasswordScreen : Screen(Screens.FORGET_PASSWORD.name)
 }
 
 enum class Screens {
-    LOGIN, SIGNUP, ONBOARDING, HOME, PROFILE, STARTER_LOGIN, LANGUAGE
+    LOGIN, SIGNUP, ONBOARDING, HOME, PROFILE, STARTER_LOGIN, LANGUAGE, FORGET_PASSWORD
 }

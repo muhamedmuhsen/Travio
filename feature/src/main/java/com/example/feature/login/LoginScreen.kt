@@ -76,7 +76,8 @@ fun LoginScreen(
     modifier: Modifier = Modifier,
     viewModel: LoginViewModel = hiltViewModel(),
     onCloseClicked: () -> Unit,
-    navigateToSignUp: () -> Unit
+    navigateToSignUp: () -> Unit,
+    navigateToForgetPassword: () -> Unit
 ) {
 
     val uiState = viewModel.state.collectAsStateWithLifecycle()
@@ -113,7 +114,7 @@ fun LoginScreen(
 
                             viewModel.onGoogleSignIn(googleIdTokenCredential.idToken)
                         } else {
-                            Log.e("GoogleSignIn", "✗ Invalid credential type")
+                            e("GoogleSignIn", "✗ Invalid credential type")
                             Toast.makeText(
                                 context,
                                 "Sign in failed: Invalid credential type",
@@ -124,14 +125,14 @@ fun LoginScreen(
                     }
 
                     else -> {
-                        Log.e(
+                        e(
                             "GoogleSignIn",
                             "✗ Unknown credential class: ${credential::class.simpleName}"
                         )
                     }
                 }
             } catch (e: Exception) {
-                Log.e("GoogleSignIn", "✗ Failed to parse credential", e)
+                e("GoogleSignIn", "✗ Failed to parse credential", e)
                 Toast.makeText(
                     context, "Sign in failed: ${e.message}", Toast.LENGTH_SHORT
                 ).show()
@@ -142,7 +143,9 @@ fun LoginScreen(
     LaunchedEffect(Unit) {
         viewModel.event.collect { event ->
             when (event) {
-                LoginEvent.NavigateToForgotPassword -> TODO()
+                LoginEvent.NavigateToForgotPassword -> {
+                    navigateToForgetPassword()
+                }
                 LoginEvent.NavigateToHome -> TODO()
                 LoginEvent.NavigateToSignup -> {
                     navigateToSignUp()
@@ -437,7 +440,9 @@ fun RememberMeAndForgetPasswordSection(
 private fun LoginScreenPreview() {
     TravioTheme {
         LoginScreen(
-            onCloseClicked = {}) {}
+            onCloseClicked = {},
+            navigateToSignUp = { }
+        ) {}
     }
 }
 
@@ -460,6 +465,8 @@ private fun LoginScreenPreview() {
 private fun LoginScreenPreviewArabic() {
     TravioTheme {
         LoginScreen(
-            onCloseClicked = {}) {}
+            onCloseClicked = {},
+            navigateToSignUp = { }
+        ) {}
     }
 }

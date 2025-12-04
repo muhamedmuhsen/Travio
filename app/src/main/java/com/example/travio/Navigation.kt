@@ -7,6 +7,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.feature.onboarding.OnboardingScreen
 import com.example.common.navigation.Screen
+import com.example.feature.forgetpassword.ForgetPasswordScreen
 import com.example.feature.language.LanguageScreen
 import com.example.feature.login.LoginScreen
 import com.example.feature.signup.SignupScreen
@@ -29,6 +30,7 @@ fun TravioNavHost(
             LoginScreen(
                 onCloseClicked = { navController.navigate(Screen.StarterLoginScreen.route) },
                 navigateToSignUp = { navController.navigate(Screen.SignupScreen.route) },
+                navigateToForgetPassword = { navController.navigate(Screen.ForgetPasswordScreen.route) },
             )
         }
         composable(Screen.StarterLoginScreen.route) {
@@ -41,6 +43,12 @@ fun TravioNavHost(
         composable(Screen.LanguageScreen.route) {
             LanguageScreen(
                 navigateToStarterLogin = { navController.navigate(Screen.StarterLoginScreen.route) })
+        }
+        composable(Screen.ForgetPasswordScreen.route) {
+            ForgetPasswordScreen(
+                onCloseClicked = {},
+                navigateToCodeScreen = { }
+            )
         }
         composable(Screen.SignupScreen.route) {
             SignupScreen(

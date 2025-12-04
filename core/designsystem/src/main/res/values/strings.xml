@@ -41,4 +41,9 @@
     <string name="onboarding_description_3">Easily plan and organize your trip from start to finish.</string>
     <string name="language_english">English</string>
     <string name="language_arabic">اللغة العربية</string>
+    <string name="reset_your_password_using">Reset your password using:</string>
+    <string name="enter_the_email_you_used">Enter the Email you used to create your Travio account.</string>
+    <string name="continue_button">Continue</string>
+    <string name="if_you_dont_remember_email_prefix">If you don’t remember your email address associated with your Travio account, please </string>
+    <string name="contact_us">contact us.</string>
 </resources>

@@ -36,4 +36,9 @@
     <string name="onboarding_description_3">خطط ونظم رحلتك بسهولة من البداية إلى النهاية.</string>
     <string name="language_english">English</string>
     <string name="language_arabic">اللغة العربية</string>
+    <string name="reset_your_password_using">إعادة تعيين كلمة المرور باستخدام:</string>
+    <string name="enter_the_email_you_used">أدخل البريد الإلكتروني الذي استخدمته لإنشاء حساب Travio الخاص بك.</string>
+    <string name="continue_button">أكمل</string>
+    <string name="if_you_dont_remember_email_prefix">إذا كنت لا تتذكر عنوان بريدك الإلكتروني المرتبط بحساب Travio الخاص بك ، فيرجى</string>
+    <string name="contact_us">الاتصال بنا.</string>
 </resources>
