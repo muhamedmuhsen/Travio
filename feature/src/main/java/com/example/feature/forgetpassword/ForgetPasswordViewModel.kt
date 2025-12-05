@@ -3,14 +3,21 @@ package com.example.feature.forgetpassword
 import android.util.Patterns
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.common.errorhandler.Result
+import com.example.domain.usecase.auth.ForgetPasswordUseCase
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class ForgetPasswordViewModel : ViewModel() {
+@HiltViewModel
+class ForgetPasswordViewModel @Inject constructor(
+    private val forgetPasswordUseCase: ForgetPasswordUseCase
+) : ViewModel() {
 
     private val _state = MutableStateFlow(ForgetPasswordState())
     val state = _state.asStateFlow()
@@ -43,6 +50,7 @@ class ForgetPasswordViewModel : ViewModel() {
     fun validateEmail(email: String): Boolean {
         return Patterns.EMAIL_ADDRESS.matcher(email).matches()
     }
+
     fun onContinueClicked() {
         if (!validateEmail(_state.value.email)) {
             _state.update {
@@ -51,7 +59,17 @@ class ForgetPasswordViewModel : ViewModel() {
             sendEvent(ForgetPasswordEvent.ShowError("Invalid email"))
 
         } else {
-            sendEvent(ForgetPasswordEvent.NavigateToCodeScreen)
+            viewModelScope.launch {
+                when (val result = forgetPasswordUseCase(_state.value.email)) {
+                    is Result.Error -> {
+                        sendEvent(ForgetPasswordEvent.ShowError(result.error.message))
+                    }
+
+                    is Result.Success<*, *> -> {
+                        sendEvent(ForgetPasswordEvent.NavigateToCodeScreen)
+                    }
+                }
+            }
         }
     }
 }

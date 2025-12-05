@@ -2,6 +2,8 @@ package com.example.feature.code
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.common.errorhandler.Result
+import com.example.domain.usecase.auth.SendVerificationCodeUseCase
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -10,7 +12,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class CodeViewModel @Inject constructor(
-    //private val codeUseCase:CodeUseCase
+    private val verificationCodeUseCase: SendVerificationCodeUseCase
 ) : ViewModel() {
     private val _state = MutableStateFlow(CodeState())
     val state = _state.asStateFlow()
@@ -34,6 +36,19 @@ class CodeViewModel @Inject constructor(
         /*TODO: if the 6 digits is n't empty and correct, -> navigate to to reset password screen*/
         if (_state.value.code.all { it != "0" }) {
             /*TODO: check if it is equal the code i got from the backend*/
+            viewModelScope.launch {
+                val result = verificationCodeUseCase(_state.value.code.toString())
+                when (result) {
+                    is Result.Error -> {
+                        sendEvent(CodeEvent.ShowError(result.error.message))
+                    }
+
+                    is Result.Success -> {
+                        sendEvent(CodeEvent.NavigateToResetPassword)
+                    }
+                }
+
+            }
 
         } else {
             _state.value = _state.value.copy(isCodeError = true)
@@ -42,5 +57,7 @@ class CodeViewModel @Inject constructor(
 
     }
 
-
+    fun onSendAgainClicked() {
+        sendEvent(CodeEvent.OnSendAgain)
+    }
 }

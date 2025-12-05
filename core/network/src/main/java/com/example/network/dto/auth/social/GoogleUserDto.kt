@@ -1,4 +1,4 @@
-package com.example.network.dto.auth
+package com.example.network.dto.auth.social
 
 data class GoogleUserDto(
     val idToken: String,

@@ -2,7 +2,7 @@ package com.example.data.mapper
 
 import com.example.domain.model.GoogleUser
 import com.example.domain.model.User
-import com.example.network.dto.auth.GoogleUserDto
+import com.example.network.dto.auth.social.GoogleUserDto
 import com.example.network.dto.auth.UserDto
 
 fun UserDto.toDomain(): User {

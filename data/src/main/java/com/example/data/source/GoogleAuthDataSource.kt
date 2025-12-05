@@ -1,6 +1,5 @@
 package com.example.data.source
 
-import android.content.Context
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.credentials.CredentialManager
@@ -8,8 +7,7 @@ import androidx.credentials.CustomCredential
 import androidx.credentials.GetCredentialRequest
 import androidx.credentials.GetCredentialResponse
 import com.example.data.di.WebClientId
-import com.example.domain.model.GoogleUser
-import com.example.network.dto.auth.GoogleUserDto
+import com.example.network.dto.auth.social.GoogleUserDto
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import javax.inject.Inject

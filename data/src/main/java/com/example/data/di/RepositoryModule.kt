@@ -4,7 +4,7 @@ import com.example.data.local.datastore.DataStoreManager
 import com.example.data.local.datastore.TokenManagerImpl
 import com.example.data.repository.AuthRepositoryImpl
 import com.example.data.source.GoogleAuthDataSource
-import com.example.domain.repository.login.AuthRepository
+import com.example.domain.repository.auth.AuthRepository
 import com.example.network.api.AuthApi
 import dagger.Module
 import dagger.Provides

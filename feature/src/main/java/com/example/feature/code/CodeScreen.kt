@@ -1,5 +1,6 @@
 package com.example.feature.code
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -12,7 +13,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
@@ -27,6 +27,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -34,6 +35,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -43,6 +45,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.designsystem.R
 import com.example.designsystem.components.AppButton
 import com.example.designsystem.theme.TravioTheme
@@ -52,10 +55,10 @@ import com.example.designsystem.theme.spacing
 @Composable
 fun CodeScreen(
     modifier: Modifier = Modifier,
+    viewModel: CodeViewModel = hiltViewModel(),
+    navigateToResetPassword: () -> Unit,
     onBackClicked: () -> Unit,
-    onContinueClicked: () -> Unit,
-    onSendAgainClicked: () -> Unit,
-    email: String = "mail@gmail.com"
+    email: String = "mail@gmail.com",
 ) {
     Scaffold(
         topBar = {
@@ -67,7 +70,8 @@ fun CodeScreen(
                             .size(MaterialTheme.spacing.xxl)
                             .clip(CircleShape)
                             .background(color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f))
-                            .clickable { onBackClicked() }, contentAlignment = Alignment.Center
+                            .clickable { viewModel.onBackClicked() },
+                        contentAlignment = Alignment.Center
                     ) {
                         Icon(
                             imageVector = Icons.Default.Close,
@@ -82,6 +86,29 @@ fun CodeScreen(
                 )
             )
         }) { innerPadding ->
+        val context = LocalContext.current
+        LaunchedEffect(Unit) {
+            viewModel.event.collect { event ->
+                when (event) {
+                    CodeEvent.NavigateToResetPassword -> {
+                        navigateToResetPassword()
+                    }
+
+                    CodeEvent.OnBackClicked -> {
+                        onBackClicked()
+                    }
+
+                    CodeEvent.OnSendAgain -> {
+                        viewModel.onSendAgainClicked()
+                    }
+
+                    is CodeEvent.ShowError -> {
+                        Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
+                    }
+                }
+
+            }
+        }
         Column(
             modifier = modifier
                 .padding(innerPadding)
@@ -111,7 +138,7 @@ fun CodeScreen(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                SendAgain(onSendAgainClicked = onSendAgainClicked)
+                SendAgain(onSendAgainClicked = { viewModel.onSendAgainClicked() })
                 // TODO: Implement and display the Timer composable here
                 // For example: Text(text = "00:30")
             }
@@ -119,7 +146,7 @@ fun CodeScreen(
             Spacer(modifier = Modifier.height(MaterialTheme.spacing.lg))
 
             AppButton(
-                onClick = onContinueClicked,
+                onClick = { viewModel.onContinueClicked() },
                 text = stringResource(id = R.string.continue_button),
                 modifier = Modifier
                     .fillMaxWidth()
@@ -196,7 +223,7 @@ fun OtpInputField(
 
 @Composable
 fun OtpCell(
-    char: String = "", isFilled: Boolean, modifier: Modifier = Modifier
+    modifier: Modifier = Modifier, char: String = "", isFilled: Boolean,
 ) {
     val borderColor = if (isFilled) {
         MaterialTheme.colorScheme.primary
@@ -231,10 +258,8 @@ fun OtpCell(
 private fun CodeScreenPreview() {
     TravioTheme {
         CodeScreen(
-            onBackClicked = {},
-            onContinueClicked = {},
-            onSendAgainClicked = {},
-            email = "mail@gmail.com"
-        )
+            email = "mail@gmail.com",
+            navigateToResetPassword = {},
+            onBackClicked = {})
     }
 }

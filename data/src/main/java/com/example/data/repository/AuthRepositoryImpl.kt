@@ -1,24 +1,21 @@
 package com.example.data.repository
 
-import androidx.activity.ComponentActivity
-import androidx.credentials.CredentialManager
 import com.example.common.errorhandler.AppError
 import com.example.common.errorhandler.Result
 import com.example.data.helpers.safeApiCall
 import com.example.data.local.datastore.DataStoreManager
 import com.example.data.mapper.toDomain
-import com.example.data.mapper.toUser
 import com.example.data.source.GoogleAuthDataSource
-import com.example.data.source.GoogleAuthDataSourceImpl
-import com.example.domain.model.GoogleUser
 import com.example.domain.model.User
 import com.example.domain.repository.auth.TokenManager
-import com.example.domain.repository.login.AuthRepository
+import com.example.domain.repository.auth.AuthRepository
 import com.example.network.api.AuthApi
-import com.example.network.dto.auth.LoginRequest
-import com.example.network.dto.auth.Provider
-import com.example.network.dto.auth.SignupRequest
-import com.example.network.dto.auth.SocialLoginRequest
+import com.example.network.dto.auth.forgetpassword.ForgetPasswordRequest
+import com.example.network.dto.auth.forgetpassword.VerificationCodeRequest
+import com.example.network.dto.auth.login.LoginRequest
+import com.example.network.dto.auth.social.Provider
+import com.example.network.dto.auth.signup.SignupRequest
+import com.example.network.dto.auth.social.SocialLoginRequest
 
 class AuthRepositoryImpl(
     private val api: AuthApi,
@@ -69,14 +66,14 @@ class AuthRepositoryImpl(
     override suspend fun signInWithGoogle(idToken: String): Result<User, AppError> {
         try {
             val request = SocialLoginRequest(provider = Provider.GOOGLE, token = idToken)
-            val response = api.socialSignin(request)
+            val response = api.socialLogin(request)
             //val googleUserDto = googleAuthDataSource.signIn(activity)
             /*TODO: send the token to the backend*/
             // val response = api.socialSignin(request)
             /*TODO: save token to data store*/
             return Result.Success(response.user.toDomain())
         } catch (e: Exception) {
-            return Result.Error(AppError.Authentication.SigninFaild)
+            return Result.Error(AppError.Authentication.SignInFailed)
         }
 
     }
@@ -85,10 +82,10 @@ class AuthRepositoryImpl(
         return safeApiCall {
             val request = SocialLoginRequest(provider = Provider.FACEBOOK, token = accessToken)
 
-            val response = api.socialSignin(request)
+            val response = api.socialLogin(request)
 
             if (!response.status) {
-                return@safeApiCall Result.Error(AppError.Authentication.SigninFaild)
+                return@safeApiCall Result.Error(AppError.Authentication.SignInFailed)
             }
 
             tokenManager.saveToken(accessToken = response.user.accessToken, refreshToken = "/////")
@@ -157,6 +154,46 @@ class AuthRepositoryImpl(
             dataStoreManager.saveToken(refreshResponse.user.accessToken, newRefreshToken)
             Result.Success(Unit)
 
+        }
+    }
+
+    override suspend fun forgetPassword(email: String): Result<Unit, AppError> {
+        return safeApiCall {
+            val response = api.forgetPassword(ForgetPasswordRequest(email))
+            if (!response.status) {
+                return@safeApiCall Result.Error(AppError.Authentication.InvalidCredentials)
+            }
+            Result.Success(Unit)
+        }
+    }
+
+    override suspend fun sendVerificationCode(code: String): Result<Unit, AppError> {
+        if (code.isBlank()) {
+            return Result.Error(AppError.Verification.InvalidCode)
+        }
+        return safeApiCall {
+            val response = api.sendVerificationCode(VerificationCodeRequest(code))
+
+            if (!response.status || !response.isVerified) {
+                val error = when {
+                    response.message?.contains("expired", ignoreCase = true) == true ->
+                        AppError.Verification.CodeExpired
+
+                    response.message?.contains("invalid", ignoreCase = true) == true ->
+                        AppError.Verification.InvalidCode
+
+                    response.message?.contains("attempts", ignoreCase = true) == true ->
+                        AppError.Verification.TooManyAttempts
+
+                    else ->
+                        AppError.Verification.VerificationFailed(
+                            response.message ?: "Verification failed"
+                        )
+                }
+                return@safeApiCall Result.Error(error)
+            }
+
+            Result.Success(Unit)
         }
     }
 }

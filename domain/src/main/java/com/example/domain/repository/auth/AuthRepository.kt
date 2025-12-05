@@ -1,8 +1,7 @@
-package com.example.domain.repository.login
+package com.example.domain.repository.auth
 
 import com.example.common.errorhandler.AppError
 import com.example.common.errorhandler.Result
-import com.example.domain.model.GoogleUser
 import com.example.domain.model.User
 
 interface AuthRepository {
@@ -17,5 +16,8 @@ interface AuthRepository {
     suspend fun isAuthenticated(): Result<Boolean, AppError>
 
     suspend fun refreshToken(): Result<Unit, AppError>
+
+    suspend fun forgetPassword(email: String): Result<Unit, AppError>
+    suspend fun sendVerificationCode(code: String): Result<Unit, AppError>
 
 }

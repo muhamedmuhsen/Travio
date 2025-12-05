@@ -1,6 +1,6 @@
 package com.example.data.di
 
-import com.example.domain.repository.login.AuthRepository
+import com.example.domain.repository.auth.AuthRepository
 import com.example.domain.usecase.auth.GoogleSignInUseCase
 import com.example.domain.usecase.auth.LoginUseCase
 import com.example.domain.usecase.auth.SignupUseCase
