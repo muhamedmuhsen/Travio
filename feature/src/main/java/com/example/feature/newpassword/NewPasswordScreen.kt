@@ -91,6 +91,7 @@ fun NewPasswordScreen(
                 onValueChange = { viewModel.onPasswordChange(it) },
                 placeholder = stringResource(R.string.new_password),
                 fieldType = TextFieldType.PASSWORD,
+                isError = uiState.value.isPasswordsDoesnotMatch,
                 isPasswordVisible = uiState.value.isPasswordVisible,
                 onPasswordVisibilityChecked = { viewModel.onPasswordVisibilityCheck() },
                 modifier = Modifier.fillMaxWidth()
@@ -108,6 +109,7 @@ fun NewPasswordScreen(
                 placeholder = stringResource(R.string.confirm_new_password),
                 fieldType = TextFieldType.PASSWORD,
                 isPasswordVisible = uiState.value.isConfirmPasswordVisible,
+                isError = uiState.value.isPasswordsDoesnotMatch,
                 onPasswordVisibilityChecked = { viewModel.onConfirmPasswordVisibilityChanged() },
                 modifier = Modifier.fillMaxWidth()
             )

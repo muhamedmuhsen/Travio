@@ -59,8 +59,8 @@ class LoginViewModel @Inject constructor(
 
                 is Result.Success -> {
                     Log.d("TAG", "entered success state")
-
                     _state.update { it.copy(loginState = UiState.Success(result.data)) }
+
                 }
             }
         }

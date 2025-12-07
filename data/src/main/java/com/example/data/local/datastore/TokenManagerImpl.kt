@@ -24,7 +24,7 @@ class TokenManagerImpl @Inject constructor(private val dataStoreManager: DataSto
                     claims = jwt.claims.mapValues { it.value.asObject(Any::class.java) })
             )
         } catch (_: DecodeException) {
-            Result.Error(AppError.TokenError.DecodedException)
+            Result.Error(AppError.TokenError.DecodingFailed)
         } catch (e: Exception) {
             val message = e.localizedMessage ?: "Unknown error occurred"
             Result.Error(AppError.Unknown(message))

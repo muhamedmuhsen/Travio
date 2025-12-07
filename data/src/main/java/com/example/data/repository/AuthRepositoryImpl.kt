@@ -11,6 +11,7 @@ import com.example.domain.repository.auth.TokenManager
 import com.example.domain.repository.auth.AuthRepository
 import com.example.network.api.AuthApi
 import com.example.network.dto.auth.forgetpassword.ForgetPasswordRequest
+import com.example.network.dto.auth.forgetpassword.ResetPasswordRequest
 import com.example.network.dto.auth.forgetpassword.VerificationCodeRequest
 import com.example.network.dto.auth.login.LoginRequest
 import com.example.network.dto.auth.social.Provider
@@ -193,6 +194,17 @@ class AuthRepositoryImpl(
                 return@safeApiCall Result.Error(error)
             }
 
+            Result.Success(Unit)
+        }
+    }
+
+    override suspend fun resetPassword(newPassword: String): Result<Unit, AppError> {
+        return safeApiCall {
+            val response = api.resetPassword(ResetPasswordRequest(newPassword))
+
+            if (!response.status) {
+                return@safeApiCall Result.Error(AppError.Network.BadRequest(response.message))
+            }
             Result.Success(Unit)
         }
     }

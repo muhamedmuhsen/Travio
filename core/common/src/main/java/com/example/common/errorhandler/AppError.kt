@@ -7,6 +7,11 @@ sealed interface AppError : Error {
     data class Unknown(override val message: String = "Unknown error occurred") : AppError
 
     sealed interface Network : AppError {
+        data class BadRequest(val details: String? = null) : Network {
+            override val message: String
+                get() = details ?: "Bad request"
+        }
+
         data object NoInternetConnection : Network {
             override val message: String
                 get() = "No internet connection."

@@ -8,7 +8,7 @@ class SendVerificationCodeUseCase(
     private val authRepository: AuthRepository
 ) {
     suspend operator fun invoke(code: String): Result<Unit, AppError> {
-        if (code.isEmpty()) return Result.Error(AppError.Data.NoData)
+        if (code.isEmpty()) return Result.Error(AppError.Data.NotFound)
         if (code.length != 6) return Result.Error(AppError.Validation.MissingFields)
         return authRepository.sendVerificationCode(code)
     }

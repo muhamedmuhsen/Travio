@@ -2,6 +2,8 @@ package com.example.network.api
 
 import com.example.network.dto.auth.forgetpassword.ForgetPasswordRequest
 import com.example.network.dto.auth.forgetpassword.ForgetPasswordResponse
+import com.example.network.dto.auth.forgetpassword.ResetPasswordRequest
+import com.example.network.dto.auth.forgetpassword.ResetPasswordResponse
 import com.example.network.dto.auth.forgetpassword.VerificationCodeRequest
 import com.example.network.dto.auth.forgetpassword.VerificationCodeResponse
 import com.example.network.dto.auth.login.LoginRequest
@@ -35,4 +37,7 @@ interface AuthApi {
 
     @POST("auth/verify-code")
     suspend fun sendVerificationCode(@Body request: VerificationCodeRequest): VerificationCodeResponse
+
+    @POST("auth/reset-password")
+    suspend fun resetPassword(@Body request: ResetPasswordRequest): ResetPasswordResponse
 }

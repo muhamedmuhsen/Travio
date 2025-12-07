@@ -56,8 +56,7 @@ fun TravioNavHost(
                 onBackClicked = {
                     navController.popBackStack()
                 },
-                onContinueClicked = { navController.navigate(Screen.ResetPasswordScreen.route) },
-                onSendAgainClicked = {},
+                navigateToResetPassword = {},
             )
         }
 

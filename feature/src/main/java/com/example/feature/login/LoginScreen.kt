@@ -111,6 +111,7 @@ fun LoginScreen(
                             Log.d("GoogleSignIn", "✓ Successfully parsed credential")
                             Log.d("GoogleSignIn", "User: ${googleIdTokenCredential.displayName}")
                             Log.d("GoogleSignIn", "Email: ${googleIdTokenCredential.id}")
+                            Log.d("GoogleSignIn", "Token : ${googleIdTokenCredential.idToken}")
 
                             viewModel.onGoogleSignIn(googleIdTokenCredential.idToken)
                         } else {

@@ -31,14 +31,10 @@ class CodeViewModel @Inject constructor(
         sendEvent(CodeEvent.OnBackClicked)
     }
 
-    fun onContinueClicked() {
-        /*TODO: validate the codes*/
-        /*TODO: if the 6 digits is n't empty and correct, -> navigate to to reset password screen*/
-        if (_state.value.code.all { it != "0" }) {
-            /*TODO: check if it is equal the code i got from the backend*/
+    fun onContinueClicked() {/*TODO: validate the codes*//*TODO: if the 6 digits is n't empty and correct, -> navigate to to reset password screen*/
+        if (_state.value.code.all { it != "0" }) {/*TODO: check if it is equal the code i got from the backend*/
             viewModelScope.launch {
-                val result = verificationCodeUseCase(_state.value.code.toString())
-                when (result) {
+                when (val result = verificationCodeUseCase(_state.value.code.toString())) {
                     is Result.Error -> {
                         sendEvent(CodeEvent.ShowError(result.error.message))
                     }
