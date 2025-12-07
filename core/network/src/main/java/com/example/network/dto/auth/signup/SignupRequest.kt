@@ -1,4 +1,4 @@
-package com.example.network.dto.auth
+package com.example.network.dto.auth.signup
 
 data class SignupRequest(
     val username: String,

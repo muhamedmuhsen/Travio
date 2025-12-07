@@ -7,6 +7,11 @@ sealed interface AppError : Error {
     data class Unknown(override val message: String = "Unknown error occurred") : AppError
 
     sealed interface Network : AppError {
+        data class BadRequest(val details: String? = null) : Network {
+            override val message: String
+                get() = details ?: "Bad request"
+        }
+
         data object NoInternetConnection : Network {
             override val message: String
                 get() = "No internet connection."
@@ -17,9 +22,19 @@ sealed interface AppError : Error {
                 get() = "The request timed out."
         }
 
-        data object Server : Network {
+        data class ServerError(val details: String? = null) : Network {
             override val message: String
-                get() = "Server error occurred."
+                get() = details ?: "Server error occurred."
+        }
+
+        data class UnexpectedResponse(val code: Int) : Network {
+            override val message: String
+                get() = "Unexpected server response (code: $code)."
+        }
+
+        data object TooManyRequests : Network {
+            override val message: String
+                get() = "Too many requests. Please try again later."
         }
     }
 
@@ -31,7 +46,7 @@ sealed interface AppError : Error {
 
         data object MissingFields : Validation {
             override val message: String
-                get() = "Please fill out all the fields"
+                get() = "Please fill out all the fields."
         }
 
         data object InvalidEmailFormat : Validation {
@@ -46,12 +61,12 @@ sealed interface AppError : Error {
 
         data object PasswordMismatch : Validation {
             override val message: String
-                get() = "Passwords don’t match."
+                get() = "Passwords don't match."
         }
 
         data object ShortName : Validation {
             override val message: String
-                get() = "The name is too short"
+                get() = "The name is too short."
         }
     }
 
@@ -73,12 +88,51 @@ sealed interface AppError : Error {
 
         data object RegistrationFailed : Authentication {
             override val message: String
-                get() = "Couldn't create an account"
+                get() = "Couldn't create an account."
         }
 
-        data object SigninFaild : Authentication {
+        data object SignInFailed : Authentication {
             override val message: String
-                get() = "Couldn't login an account"
+                get() = "Couldn't sign in to your account."
+        }
+    }
+
+    sealed interface Verification : AppError {
+        data object InvalidCode : Verification {
+            override val message: String
+                get() = "Invalid verification code."
+        }
+
+        data object CodeExpired : Verification {
+            override val message: String
+                get() = "Verification code has expired."
+        }
+
+        data object TooManyAttempts : Verification {
+            override val message: String
+                get() = "Too many attempts. Please try again later."
+        }
+
+        data class VerificationFailed(val reason: String) : Verification {
+            override val message: String
+                get() = reason
+        }
+    }
+
+    sealed interface Authorization : AppError {
+        data object AccessDenied : Authorization {
+            override val message: String
+                get() = "You don't have permission to access this resource."
+        }
+
+        data object AccountDisabled : Authorization {
+            override val message: String
+                get() = "Your account has been disabled."
+        }
+
+        data object AccountLocked : Authorization {
+            override val message: String
+                get() = "Your account has been locked. Please contact support."
         }
     }
 
@@ -98,21 +152,31 @@ sealed interface AppError : Error {
                 get() = "Session expired. Please log in again."
         }
 
-        data object CouldNotGetClaims : TokenError {  // Fixed typo
+        data object CouldNotGetClaims : TokenError {
             override val message: String
                 get() = "Failed to extract token information."
         }
 
-        data object DecodedException : TokenError {
+        data object DecodingFailed : TokenError {
             override val message: String
-                get() = "Couldn't decode the token"
+                get() = "Couldn't decode the token."
         }
     }
 
     sealed interface Data : AppError {
-        data object NoData : Data {
+        data object InvalidData : Data {
             override val message: String
-                get() = "No Data found"
+                get() = "The data received is invalid or corrupted."
+        }
+
+        data object NotFound : Data {
+            override val message: String
+                get() = "The requested data was not found."
+        }
+
+        data object ParsingError : Data {
+            override val message: String
+                get() = "Failed to parse the data."
         }
     }
 }

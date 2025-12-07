@@ -1,4 +1,6 @@
-package com.example.network.dto.auth
+package com.example.network.dto.auth.signup
+
+import com.example.network.dto.auth.UserDto
 
 data class SignupResponse(
     val message: String,

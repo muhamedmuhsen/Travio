@@ -1,9 +1,11 @@
 package com.example.data.di
 
-import com.example.domain.repository.login.AuthRepository
+import com.example.domain.repository.auth.AuthRepository
+import com.example.domain.usecase.auth.ForgetPasswordUseCase
+import com.example.domain.usecase.auth.GoogleSignInUseCase
 import com.example.domain.usecase.auth.LoginUseCase
 import com.example.domain.usecase.auth.SignupUseCase
-import com.example.domain.usecase.auth.SocialSigninUseCase
+import com.example.domain.validators.ValidateEmailUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -22,7 +24,16 @@ object UseCaseModule {
         SignupUseCase(authRepository)
 
     @Provides
-    fun provideSocialSignin(
+    fun provideGoogleSignInUseCase(authRepository: AuthRepository): GoogleSignInUseCase =
+        GoogleSignInUseCase(authRepository)
+
+    @Provides
+    fun provideValidateEmailUseCase(): ValidateEmailUseCase = ValidateEmailUseCase()
+
+    @Provides
+    fun provideForgetPasswordUseCase(
+        validateEmailUseCase: ValidateEmailUseCase,
         authRepository: AuthRepository
-    ): SocialSigninUseCase = SocialSigninUseCase(authRepository)
+    ): ForgetPasswordUseCase =
+        ForgetPasswordUseCase(validateEmailUseCase, authRepository)
 }

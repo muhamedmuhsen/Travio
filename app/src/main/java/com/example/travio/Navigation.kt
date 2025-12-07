@@ -7,8 +7,11 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.feature.onboarding.OnboardingScreen
 import com.example.common.navigation.Screen
+import com.example.feature.code.CodeScreen
+import com.example.feature.forgetpassword.ForgetPasswordScreen
 import com.example.feature.language.LanguageScreen
 import com.example.feature.login.LoginScreen
+import com.example.feature.newpassword.NewPasswordScreen
 import com.example.feature.signup.SignupScreen
 import com.example.feature.starterlogin.StarterLogin
 
@@ -28,7 +31,9 @@ fun TravioNavHost(
         composable(Screen.LoginScreen.route) {
             LoginScreen(
                 onCloseClicked = { navController.navigate(Screen.StarterLoginScreen.route) },
-                navigateToSignUp = { navController.navigate(Screen.SignupScreen.route) })
+                navigateToSignUp = { navController.navigate(Screen.SignupScreen.route) },
+                navigateToForgetPassword = { navController.navigate(Screen.ForgetPasswordScreen.route) },
+            )
         }
         composable(Screen.StarterLoginScreen.route) {
             StarterLogin(
@@ -40,6 +45,30 @@ fun TravioNavHost(
         composable(Screen.LanguageScreen.route) {
             LanguageScreen(
                 navigateToStarterLogin = { navController.navigate(Screen.StarterLoginScreen.route) })
+        }
+        composable(Screen.ForgetPasswordScreen.route) {
+            ForgetPasswordScreen(
+                onCloseClicked = { navController.popBackStack() },
+                navigateToCodeScreen = { navController.navigate(Screen.CodeScreen.route) })
+        }
+        composable(Screen.CodeScreen.route) {
+            CodeScreen(
+                onBackClicked = {
+                    navController.popBackStack()
+                },
+                navigateToResetPassword = {},
+            )
+        }
+
+        composable(Screen.ResetPasswordScreen.route) {
+            NewPasswordScreen(
+                onCloseClicked = {
+                    navController.navigate(Screen.LoginScreen.route) {
+                        popUpTo(Screen.LoginScreen.route) {
+                            inclusive = true
+                        }
+                    }
+                })
         }
         composable(Screen.SignupScreen.route) {
             SignupScreen(

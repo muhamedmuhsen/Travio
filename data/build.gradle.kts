@@ -38,6 +38,7 @@ android {
 dependencies {
     // Layer dependencies
     implementation(project(":domain"))
+    implementation(project(":core:designsystem"))
     implementation(project(":core:common"))
     implementation(project(":core:network"))
 
@@ -58,6 +59,12 @@ dependencies {
     // Security & Auth
     implementation(libs.jwtdecode)
     implementation(libs.tink.android)
+
+    // Credential Manager
+    implementation(libs.androidx.credentials)
+    implementation(libs.androidx.credentials.play.services.auth)
+    implementation(libs.googleid)
+    implementation(libs.facebook.login)
 
     // Testing
     testImplementation(libs.junit)

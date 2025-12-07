@@ -27,14 +27,13 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         splashScreen.setKeepOnScreenCondition { viewModel.isLoading.value }
         lifecycleScope.launch {
-            // TODO: Replace with actual initialization/data loading logic
+            /*TODO: Replace with actual initialization/data loading logic*/
             delay(3000)
         }
         enableEdgeToEdge()
         setContent {
             val startDestination by viewModel.startDestination.collectAsState()
             TravioTheme {
-
                 TravioNavHost(
                     navController = rememberNavController(), startDestination = startDestination!!
                 )

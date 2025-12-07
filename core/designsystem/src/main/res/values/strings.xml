@@ -19,7 +19,7 @@
     <string name="your_journy_start_here">Your journey starts here</string>
     <string name="already_have_an_account">Already have an account? </string>
 
-    <string name="web_server_id" translatable="false">179031549404-re2l4li5heutfg608oj4i69cqdb067jp.apps.googleusercontent.com</string>
+    <string name="web_server_id" translatable="false">179031549404-50oqdgp4q1spl73me5ae9b5dqm4e8ae0.apps.googleusercontent.com</string>
     <string name="facebook_app_id" translatable="false">YOUR_FACEBOOK_APP_ID</string>
     <string name="facebook_client_token" translatable="false">YOUR_FACEBOOK_CLIENT_TOKEN</string>
     <string name="fb_login_protocol_scheme" translatable="false">fbYOUR_FACEBOOK_APP_ID</string>
@@ -41,4 +41,16 @@
     <string name="onboarding_description_3">Easily plan and organize your trip from start to finish.</string>
     <string name="language_english">English</string>
     <string name="language_arabic">اللغة العربية</string>
+    <string name="reset_your_password_using">Reset your password using:</string>
+    <string name="enter_the_email_you_used">Enter the Email you used to create your Travio account.</string>
+    <string name="continue_button">Continue</string>
+    <string name="if_you_dont_remember_email_prefix">If you don’t remember your email address associated with your Travio account, please </string>
+    <string name="contact_us">contact us.</string>
+    <string name="please_enter_code">Please enter the code we send to</string>
+    <string name="didnot_get_it">Didn\'t get it?</string>
+    <string name="send_new_code"> Send new code.</string>
+    <string name="reset_password">Reset Password</string>
+    <string name="new_password">New Password</string>
+    <string name="confirm_new_password">Confirm New Password</string>
+    <string name="reset_your_password_button">Reset Your Password</string>
 </resources>
