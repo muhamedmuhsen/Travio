@@ -7,11 +7,16 @@ import com.example.common.errorhandler.Result
 import com.example.domain.model.DecodedToken
 import com.example.domain.repository.auth.TokenManager
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.runBlocking
 import java.util.Date
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class TokenManagerImpl @Inject constructor(private val dataStoreManager: DataStoreManager) :
     TokenManager {
+
+    private var token: String? = null
     override suspend fun decodeToken(): Result<DecodedToken, AppError> {
         return try {
             val token = dataStoreManager.getToken()
@@ -51,7 +56,19 @@ class TokenManagerImpl @Inject constructor(private val dataStoreManager: DataSto
     }
 
     override suspend fun getToken(): String? {
-        return dataStoreManager.getTokenFlow().first()
+        if (token == null) {
+            token = dataStoreManager.getTokenFlow().first()
+        }
+        return token
+    }
+
+    override fun getSyncToken(): String? {
+        if (token == null) {
+            runBlocking {
+                token = dataStoreManager.getTokenFlow().first()
+            }
+        }
+        return token
     }
 
     override suspend fun getRefreshToken(): String? {
@@ -59,10 +76,12 @@ class TokenManagerImpl @Inject constructor(private val dataStoreManager: DataSto
     }
 
     override suspend fun saveToken(accessToken: String, refreshToken: String) {
+        this.token = accessToken
         dataStoreManager.saveToken(accessToken, refreshToken)
     }
 
     override suspend fun clearTokens() {
+        this.token = null
         dataStoreManager.clearTokens()
     }
 }

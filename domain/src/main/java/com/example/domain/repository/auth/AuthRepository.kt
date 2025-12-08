@@ -3,6 +3,7 @@ package com.example.domain.repository.auth
 import com.example.common.errorhandler.AppError
 import com.example.common.errorhandler.Result
 import com.example.domain.model.User
+import javax.inject.Inject
 
 interface AuthRepository {
     suspend fun login(email: String, password: String): Result<User, AppError>

@@ -1,4 +1,4 @@
-package com.example.network.di
+package com.example.di
 
 import com.example.network.api.AuthApi
 import com.example.network.interceptor.AuthInterceptor
@@ -15,8 +15,7 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object ApiModule {
-
+object NetworkModule {
     @Provides
     @Singleton
     fun provideOkHttpClient(authInterceptor: AuthInterceptor): OkHttpClient {
@@ -33,7 +32,7 @@ object ApiModule {
     fun provideRetrofit(baseUrl: String, client: OkHttpClient): Retrofit {
         return Retrofit
             .Builder()
-            .baseUrl("https://localhost:3000/").client(client)
+            .baseUrl(baseUrl).client(client)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }

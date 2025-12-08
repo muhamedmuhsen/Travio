@@ -43,11 +43,13 @@ android {
 
 dependencies {
     // Core modules
-    implementation(project(":core:designsystem"))
-    implementation(project(":core:common"))
+    implementation(project(":di"))
     implementation(project(":data"))
     implementation(project(":domain"))
     implementation(project(":feature"))
+    implementation(project(":core:common"))
+    implementation(project(":core:network"))
+    implementation(project(":core:designsystem"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
