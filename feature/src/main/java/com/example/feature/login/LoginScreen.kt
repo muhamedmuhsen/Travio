@@ -1,6 +1,8 @@
 package com.example.feature.login
 
+import android.app.Activity
 import android.content.Context
+import android.content.ContextWrapper
 import android.content.res.Configuration
 import android.util.Log
 import android.util.Log.e
@@ -69,6 +71,13 @@ import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import kotlin.math.log
+
+fun Context.findActivity(): Activity? = when (this) {
+    is Activity -> this
+    is ContextWrapper -> baseContext.findActivity()
+    else -> null
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -84,7 +93,7 @@ fun LoginScreen(
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val webClientId = stringResource(id = R.string.web_server_id)
-
+    val callbackManager = CallbackManager.Factory.create()
     fun handleGoogleSignIn() {
         scope.launch {
             try {
@@ -141,19 +150,33 @@ fun LoginScreen(
         }
     }
 
+    val performLogin = rememberFacebookLogin(
+        callbackManager = callbackManager,
+        onSuccess = { token ->
+            Log.d("FacebookSignIn", "Token: $token")
+        },
+        onError = { error ->
+
+        }
+    )
+
     LaunchedEffect(Unit) {
         viewModel.event.collect { event ->
             when (event) {
                 LoginEvent.NavigateToForgotPassword -> {
                     navigateToForgetPassword()
                 }
+
                 LoginEvent.NavigateToHome -> TODO()
                 LoginEvent.NavigateToSignup -> {
                     navigateToSignUp()
                 }
 
                 is LoginEvent.ShowAuthError -> TODO()
-                LoginEvent.ContinueWithFacebook -> TODO()
+                LoginEvent.ContinueWithFacebook -> {
+                    performLogin()
+                }
+
                 LoginEvent.ContinueWithGoogle -> {
                     handleGoogleSignIn()
                 }
@@ -294,10 +317,63 @@ fun LoginScreen(
     }
 }
 
+@Composable
+fun rememberFacebookLogin(
+    callbackManager: CallbackManager,
+    onSuccess: (String) -> Unit,
+    onError: (String) -> Unit = {},
+    onCancel: () -> Unit = {}
+): () -> Unit {
+    val context = LocalContext.current
+    val loginManager = LoginManager.getInstance()
+
+    DisposableEffect(Unit) {
+        loginManager.registerCallback(callbackManager, object : FacebookCallback<LoginResult> {
+            override fun onCancel() {
+                Log.d("FacebookSignIn", "Entered Cancel")
+
+                onCancel()
+                Toast.makeText(context, "Login Cancelled", Toast.LENGTH_SHORT).show()
+            }
+
+            override fun onError(error: FacebookException) {
+                Log.d("FacebookSignIn", "Entered Error")
+
+                val msg = error.message ?: "Unknown Error"
+                onError(msg)
+                Toast.makeText(context, "Error: $msg", Toast.LENGTH_LONG).show()
+            }
+
+            override fun onSuccess(result: LoginResult) {
+                Log.d("FacebookSignIn", "Entered Success")
+
+                onSuccess(result.accessToken.token)
+            }
+        })
+        onDispose {
+            loginManager.unregisterCallback(callbackManager)
+        }
+    }
+
+    return {
+        val activity = context.findActivity()
+        if (activity != null) {
+            // Log to verify the button actually works
+            Log.d("FacebookSignIn", "Activity found! Starting Login...")
+
+            loginManager.logInWithReadPermissions(
+                activity,
+                listOf("public_profile", "email")
+            )
+        } else {
+            Log.d("FacebookSignIn", "Context is not an Activity! Login failed.")
+        }
+    }
+}
 
 @Composable
 fun FacebookSignInHandler(
-    context: Context, onTokenReceived: (String) -> Unit, enabled: Boolean = true
+    context: Context, enabled: Boolean = true, onTokenReceived: (String) -> Unit
 ) {
     val callbackManager = remember { CallbackManager.Factory.create() }
 
