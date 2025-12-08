@@ -1,6 +1,8 @@
 package com.example.domain.validators
 
-class ValidatePasswordUseCase {
+import javax.inject.Inject
+
+class ValidatePasswordUseCase @Inject constructor() {
     private val PASSWORD_REGEX =
         "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{9,}$".toRegex()
 

@@ -5,7 +5,6 @@ import com.example.common.errorhandler.Result
 import com.example.data.helpers.safeApiCall
 import com.example.data.local.datastore.DataStoreManager
 import com.example.data.mapper.toDomain
-import com.example.data.source.GoogleAuthDataSource
 import com.example.domain.model.User
 import com.example.domain.repository.auth.TokenManager
 import com.example.domain.repository.auth.AuthRepository
@@ -17,11 +16,11 @@ import com.example.network.dto.auth.login.LoginRequest
 import com.example.network.dto.auth.social.Provider
 import com.example.network.dto.auth.signup.SignupRequest
 import com.example.network.dto.auth.social.SocialLoginRequest
+import javax.inject.Inject
 
-class AuthRepositoryImpl(
+class AuthRepositoryImpl @Inject constructor(
     private val api: AuthApi,
     private val dataStoreManager: DataStoreManager,
-    private val googleAuthDataSource: GoogleAuthDataSource,
     private val tokenManager: TokenManager
 ) : AuthRepository {
 

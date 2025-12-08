@@ -1,18 +1,19 @@
-package com.example.data.di
+package com.example.di
 
 import com.example.domain.repository.auth.AuthRepository
 import com.example.domain.usecase.auth.ForgetPasswordUseCase
 import com.example.domain.usecase.auth.GoogleSignInUseCase
 import com.example.domain.usecase.auth.LoginUseCase
+import com.example.domain.usecase.auth.ResetPasswordUseCase
 import com.example.domain.usecase.auth.SignupUseCase
 import com.example.domain.validators.ValidateEmailUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.components.ViewModelComponent
+import dagger.hilt.components.SingletonComponent
 
 @Module
-@InstallIn(ViewModelComponent::class)
+@InstallIn(SingletonComponent::class)
 object UseCaseModule {
 
     @Provides
@@ -36,4 +37,10 @@ object UseCaseModule {
         authRepository: AuthRepository
     ): ForgetPasswordUseCase =
         ForgetPasswordUseCase(validateEmailUseCase, authRepository)
+
+    @Provides
+    fun provideResetPasswordUseCase(authRepository: AuthRepository): ResetPasswordUseCase =
+        ResetPasswordUseCase(authRepository)
 }
+
+

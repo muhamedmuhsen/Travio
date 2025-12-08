@@ -11,6 +11,8 @@ interface TokenManager {
 
     suspend fun getToken(): String?
 
+    fun getSyncToken(): String?
+
     suspend fun getRefreshToken(): String?
 
     suspend fun saveToken(accessToken: String, refreshToken: String)

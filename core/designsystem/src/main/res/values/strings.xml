@@ -20,10 +20,10 @@
     <string name="already_have_an_account">Already have an account? </string>
 
     <string name="web_server_id" translatable="false">179031549404-50oqdgp4q1spl73me5ae9b5dqm4e8ae0.apps.googleusercontent.com</string>
-    <string name="facebook_app_id" translatable="false">YOUR_FACEBOOK_APP_ID</string>
-    <string name="facebook_client_token" translatable="false">YOUR_FACEBOOK_CLIENT_TOKEN</string>
-    <string name="fb_login_protocol_scheme" translatable="false">fbYOUR_FACEBOOK_APP_ID</string>
-    <string name="by_creating_account">By creating an account, i acknowledge that i have read and agree to\n              Travio’s</string>
+    <string name="facebook_app_id" translatable="false">931434809448243</string>
+    <string name="facebook_client_token" translatable="false">4a33e6f41805fe6b07ae5e346e91f574</string>
+    <string name="fb_login_protocol_scheme" translatable="false">fb931434809448243</string>
+    <string name="by_creating_account">By creating an account, i acknowledge that i have read and agree to\nTravio’s</string>
     <string name="first_name">First Name\n</string>
     <string name="last_name">Last Name</string>
     <string name="close">Close</string>

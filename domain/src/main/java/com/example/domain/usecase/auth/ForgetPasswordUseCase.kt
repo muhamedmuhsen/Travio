@@ -4,8 +4,9 @@ import com.example.common.errorhandler.AppError
 import com.example.common.errorhandler.Result
 import com.example.domain.repository.auth.AuthRepository
 import com.example.domain.validators.ValidateEmailUseCase
+import javax.inject.Inject
 
-class ForgetPasswordUseCase constructor(
+class ForgetPasswordUseCase @Inject constructor(
     private val validateEmailUseCase: ValidateEmailUseCase,
     private val authRepository: AuthRepository
 ) {
