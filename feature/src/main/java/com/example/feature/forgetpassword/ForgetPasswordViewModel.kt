@@ -22,7 +22,7 @@ class ForgetPasswordViewModel @Inject constructor(
     private val _state = MutableStateFlow(ForgetPasswordState())
     val state = _state.asStateFlow()
 
-    private val _event = Channel<ForgetPasswordEvent>()
+    private val _event = Channel<ForgetPasswordEvent>(Channel.BUFFERED)
     val event = _event.receiveAsFlow()
 
     fun sendEvent(event: ForgetPasswordEvent) {

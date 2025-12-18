@@ -22,7 +22,7 @@ class SignupViewModel @Inject constructor(
     private val _state = MutableStateFlow(SignupUiState())
     val state = _state.asStateFlow()
 
-    private val _event = Channel<SignupEvent>()
+    private val _event = Channel<SignupEvent>(Channel.BUFFERED)
     val event = _event.receiveAsFlow()
     fun onCreateAccountClicked() {
         viewModelScope.launch {

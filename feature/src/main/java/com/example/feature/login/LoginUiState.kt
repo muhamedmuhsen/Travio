@@ -11,6 +11,4 @@ data class LoginUiState(
     val isPasswordVisible: Boolean = false,
     val isRememberMeChecked: Boolean = false,
     val loginState: UiState<User> = UiState.Idle,
-    val showFacebookSignIn: Boolean = false,
-    val showGoogleSignIn: Boolean = false,
 )

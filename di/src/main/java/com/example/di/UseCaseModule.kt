@@ -7,6 +7,7 @@ import com.example.domain.usecase.auth.LoginUseCase
 import com.example.domain.usecase.auth.ResetPasswordUseCase
 import com.example.domain.usecase.auth.SignupUseCase
 import com.example.domain.validators.ValidateEmailUseCase
+import com.example.domain.validators.ValidatePasswordUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -39,8 +40,11 @@ object UseCaseModule {
         ForgetPasswordUseCase(validateEmailUseCase, authRepository)
 
     @Provides
-    fun provideResetPasswordUseCase(authRepository: AuthRepository): ResetPasswordUseCase =
-        ResetPasswordUseCase(authRepository)
+    fun provideResetPasswordUseCase(
+        validatePasswordUseCase: ValidatePasswordUseCase,
+        authRepository: AuthRepository
+    ): ResetPasswordUseCase =
+        ResetPasswordUseCase(validatePasswordUseCase, authRepository)
 }
 
 

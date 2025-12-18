@@ -25,7 +25,7 @@ class LoginViewModel @Inject constructor(
     private val _state = MutableStateFlow(LoginUiState())
     val state = _state.asStateFlow()
 
-    private val _eventChannel = Channel<LoginEvent>()
+    private val _eventChannel = Channel<LoginEvent>(Channel.BUFFERED)
     val event = _eventChannel.receiveAsFlow()
 
     fun onLoginClicked(email: String, password: String) {/* TODO: validate email and password */
@@ -116,15 +116,5 @@ class LoginViewModel @Inject constructor(
         }
     }
 
-    fun onFacebookSigninClicked() {
-        _state.update { it.copy(showFacebookSignIn = true) }
-    }
 
-    fun onGoogleSigninResult() {
-        _state.update { it.copy(showGoogleSignIn = false) }
-    }
-
-    fun onFacebookSigninResult() {
-        _state.update { it.copy(showFacebookSignIn = false) }
-    }
 }

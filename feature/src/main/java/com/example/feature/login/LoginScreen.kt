@@ -285,7 +285,7 @@ fun LoginScreen(
             Spacer(modifier = Modifier.height(MaterialTheme.spacing.sm))
 
             SigninOptionsButton(
-                onClick = { viewModel.onFacebookSigninClicked() },
+                onClick = { /*viewModel.onFacebookSigninClicked() */ },
                 text = stringResource(id = R.string.continue_with_facebook),
                 icon = R.drawable.facebook_icon,
                 modifier = Modifier.fillMaxWidth()

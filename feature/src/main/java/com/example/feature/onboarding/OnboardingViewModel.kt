@@ -10,7 +10,7 @@ import kotlinx.coroutines.launch
 
 class OnboardingViewModel : ViewModel() {
 
-    private val _event = Channel<OnboardingEvent>()
+    private val _event = Channel<OnboardingEvent>(Channel.BUFFERED)
     val event = _event.receiveAsFlow()
     val pages = listOf(
         PageModel(
