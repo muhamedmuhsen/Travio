@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.common.errorhandler.Result
 import com.example.common.uistateholder.UiState
+import com.example.data.local.datastore.PreferencesManager
 import com.example.domain.usecase.auth.GoogleSignInUseCase
 import com.example.domain.usecase.auth.LoginUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -20,7 +21,8 @@ import javax.inject.Inject
 @HiltViewModel
 class LoginViewModel @Inject constructor(
     private val loginUseCase: LoginUseCase,
-    private val googleSignInUseCase: GoogleSignInUseCase
+    private val googleSignInUseCase: GoogleSignInUseCase,
+    private val preferencesManager: PreferencesManager
 ) : ViewModel() {
     private val _state = MutableStateFlow(LoginUiState())
     val state = _state.asStateFlow()
@@ -38,6 +40,7 @@ class LoginViewModel @Inject constructor(
                 }
 
                 is Result.Success -> {
+                    preferencesManager.setLoggedIn(true)
                     _state.update { it.copy(loginState = UiState.Success(result.data)) }
                     _eventChannel.send(LoginEvent.NavigateToHome)
                 }
@@ -66,21 +69,6 @@ class LoginViewModel @Inject constructor(
             }
         }
     }
-
-//    fun onFacebookSignin(accessToken: String) {
-//        viewModelScope.launch {
-//            _state.update { it.copy(loginState = UiState.Loading) }
-//            when (val result = socialSignInUseCase.signInWithFacebook(accessToken = accessToken)) {
-//                is Result.Error -> {
-//                    _state.update { it.copy(loginState = UiState.Error(result.error.message)) }
-//                }
-//
-//                is Result.Success -> {
-//                    _state.update { it.copy(loginState = UiState.Success(/*user*/)) }
-//                }
-//            }
-//        }
-//    }
 
     fun onEmailChange(email: String) {
         _state.update { it.copy(email = email, emailError = null) }

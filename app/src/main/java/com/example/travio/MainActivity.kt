@@ -1,6 +1,7 @@
 package com.example.travio
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -27,24 +28,25 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
-        splashScreen.setKeepOnScreenCondition { false }
-        lifecycleScope.launch {
-            /*TODO: Replace with actual initialization/data loading logic*/
-            delay(3000)
-        }
+        // Keep splash screen visible until we know the start destination
+        splashScreen.setKeepOnScreenCondition { viewModel.startDestination.value == null }
         enableEdgeToEdge()
         setContent {
             val startDestination by viewModel.startDestination.collectAsStateWithLifecycle()
-            val destination = when (startDestination) {
-                MainViewModel.StartDestination.Home -> Screen.HomeScreen.route
-                MainViewModel.StartDestination.Login -> Screen.LoginScreen.route
-                MainViewModel.StartDestination.Onboarding -> Screen.OnboardingScreen.route
-                else -> Screen.StarterLoginScreen.route
-            }
+
             TravioTheme {
-                TravioNavHost(
-                    navController = rememberNavController(), startDestination = destination
-                )
+                if (startDestination != null) {
+                    val destination = when (startDestination) {
+                        MainViewModel.StartDestination.Home -> Screen.HomeScreen.route
+                        MainViewModel.StartDestination.Login -> Screen.StarterLoginScreen.route
+                        MainViewModel.StartDestination.Onboarding -> Screen.OnboardingScreen.route
+                        else -> Screen.StarterLoginScreen.route
+                    }
+                    Log.d("StartDestination", "StartDestination: $destination")
+                    TravioNavHost(
+                        navController = rememberNavController(), startDestination = destination
+                    )
+                }
             }
         }
     }

@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+<layer-list xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    tools:ignore="MissingDefaultResource">
     <item android:drawable="@color/splash_background" />
     <item
-        android:width="160dp"
-        android:height="160dp"
+        android:width="@dimen/splash_icon_size"
+        android:height="@dimen/splash_icon_size"
         android:drawable="@drawable/splash_icon_night"
         android:gravity="center" />
 

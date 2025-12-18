@@ -3,12 +3,17 @@ package com.example.feature.onboarding
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.data.local.datastore.PreferencesManager
 import com.example.designsystem.R
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class OnboardingViewModel : ViewModel() {
+@HiltViewModel
+class OnboardingViewModel @Inject constructor(private val preferencesManager: PreferencesManager) :
+    ViewModel() {
 
     private val _event = Channel<OnboardingEvent>(Channel.BUFFERED)
     val event = _event.receiveAsFlow()
@@ -33,6 +38,9 @@ class OnboardingViewModel : ViewModel() {
     var currentPage = mutableStateOf(0)
 
     fun onFinishClicked() {
-        viewModelScope.launch { _event.send(OnboardingEvent.NavigateToLogin) }
+        viewModelScope.launch {
+            preferencesManager.setOnboardingComplete(complete = true)
+            _event.send(OnboardingEvent.NavigateToLogin)
+        }
     }
 }
