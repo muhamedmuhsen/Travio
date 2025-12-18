@@ -8,9 +8,11 @@ import androidx.activity.viewModels
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
+import com.example.common.navigation.Screen
 import com.example.designsystem.theme.TravioTheme
 import com.example.feature.login.LoginScreen
 import com.example.feature.starterlogin.StarterLogin
@@ -25,17 +27,23 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
-        splashScreen.setKeepOnScreenCondition { viewModel.isLoading.value }
+        splashScreen.setKeepOnScreenCondition { false }
         lifecycleScope.launch {
             /*TODO: Replace with actual initialization/data loading logic*/
             delay(3000)
         }
         enableEdgeToEdge()
         setContent {
-            val startDestination by viewModel.startDestination.collectAsState()
+            val startDestination by viewModel.startDestination.collectAsStateWithLifecycle()
+            val destination = when (startDestination) {
+                MainViewModel.StartDestination.Home -> Screen.HomeScreen.route
+                MainViewModel.StartDestination.Login -> Screen.LoginScreen.route
+                MainViewModel.StartDestination.Onboarding -> Screen.OnboardingScreen.route
+                else -> Screen.StarterLoginScreen.route
+            }
             TravioTheme {
                 TravioNavHost(
-                    navController = rememberNavController(), startDestination = startDestination!!
+                    navController = rememberNavController(), startDestination = destination
                 )
             }
         }

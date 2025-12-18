@@ -1,9 +1,11 @@
 package com.example.common.auth
 
-interface TokenManager {
+interface TokenProvider {
     suspend fun getAccessToken(): String?
     suspend fun getRefreshToken(): String?
     suspend fun saveTokens(accessToken: String, refreshToken: String)
     suspend fun clearTokens()
-    fun getSyncToken(): String?
+
+    // Blocking version for OkHttp Interceptors (they run on IO thread)
+    fun getAccessTokenSync(): String?
 }
