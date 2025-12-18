@@ -1,25 +1,23 @@
-package com.example.data.local.datastore
+package com.example.data.repository
 
 import com.auth0.android.jwt.DecodeException
 import com.auth0.android.jwt.JWT
 import com.example.common.errorhandler.AppError
 import com.example.common.errorhandler.Result
+import com.example.data.local.datastore.SecureTokenStorage
 import com.example.domain.model.DecodedToken
 import com.example.domain.repository.auth.TokenManager
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.runBlocking
 import java.util.Date
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class TokenManagerImpl @Inject constructor(private val dataStoreManager: DataStoreManager) :
+class TokenManagerImpl @Inject constructor(private val secureTokenStorage: SecureTokenStorage) :
     TokenManager {
 
-    private var token: String? = null
     override suspend fun decodeToken(): Result<DecodedToken, AppError> {
         return try {
-            val token = dataStoreManager.getToken()
+            val token = secureTokenStorage.getAccessToken()
                 ?: return Result.Error(AppError.TokenError.TokenNotFound)
             val jwt = JWT(token)
             Result.Success(
@@ -55,33 +53,23 @@ class TokenManagerImpl @Inject constructor(private val dataStoreManager: DataSto
         }
     }
 
-    override suspend fun getToken(): String? {
-        if (token == null) {
-            token = dataStoreManager.getTokenFlow().first()
-        }
-        return token
-    }
-
-    override fun getSyncToken(): String? {
-        if (token == null) {
-            runBlocking {
-                token = dataStoreManager.getTokenFlow().first()
-            }
-        }
-        return token
+    override suspend fun getAccessToken(): String? {
+        return secureTokenStorage.getAccessToken()
     }
 
     override suspend fun getRefreshToken(): String? {
-        return dataStoreManager.getRefreshTokenFlow().first()
+        return secureTokenStorage.getRefreshToken()
     }
 
-    override suspend fun saveToken(accessToken: String, refreshToken: String) {
-        this.token = accessToken
-        dataStoreManager.saveToken(accessToken, refreshToken)
+    override suspend fun saveTokens(accessToken: String, refreshToken: String) {
+        secureTokenStorage.saveTokens(accessToken, refreshToken)
     }
 
     override suspend fun clearTokens() {
-        this.token = null
-        dataStoreManager.clearTokens()
+        secureTokenStorage.clearTokens()
+    }
+
+    override fun getAccessTokenSync(): String? {
+        return secureTokenStorage.getAccessTokenSync()
     }
 }

@@ -17,7 +17,7 @@ class CodeViewModel @Inject constructor(
     private val _state = MutableStateFlow(CodeState())
     val state = _state.asStateFlow()
 
-    private val _event = Channel<CodeEvent>()
+    private val _event = Channel<CodeEvent>(Channel.BUFFERED)
     val event = _event.receiveAsFlow()
 
 

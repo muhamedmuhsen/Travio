@@ -11,7 +11,7 @@ import javax.inject.Inject
 @HiltViewModel
 class StarterLoginViewModel
 @Inject constructor() : ViewModel() {
-    private val _event = Channel<StarterLoginEvent>()
+    private val _event = Channel<StarterLoginEvent>(Channel.BUFFERED)
     val event = _event.receiveAsFlow()
 
     fun sendEvent(event: StarterLoginEvent) {

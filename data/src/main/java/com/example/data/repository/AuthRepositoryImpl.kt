@@ -3,7 +3,9 @@ package com.example.data.repository
 import com.example.common.errorhandler.AppError
 import com.example.common.errorhandler.Result
 import com.example.data.helpers.safeApiCall
-import com.example.data.local.datastore.DataStoreManager
+import com.example.data.local.datastore.CredentialsManager
+import com.example.data.local.datastore.PreferencesManager
+import com.example.data.local.datastore.SecureTokenStorage
 import com.example.data.mapper.toDomain
 import com.example.domain.model.User
 import com.example.domain.repository.auth.TokenManager
@@ -20,7 +22,9 @@ import javax.inject.Inject
 
 class AuthRepositoryImpl @Inject constructor(
     private val api: AuthApi,
-    private val dataStoreManager: DataStoreManager,
+    private val secureTokenStorage: SecureTokenStorage,
+    private val credentialsManager: CredentialsManager,
+    private val preferencesManager: PreferencesManager,
     private val tokenManager: TokenManager
 ) : AuthRepository {
 
@@ -32,8 +36,8 @@ class AuthRepositoryImpl @Inject constructor(
                 return@safeApiCall Result.Error(AppError.Authentication.InvalidCredentials)
             }
 
-            dataStoreManager.saveToken(response.user.accessToken, "")
-            dataStoreManager.setLoggedIn(true)
+            secureTokenStorage.saveTokens(response.user.accessToken, response.user.refreshToken)
+            preferencesManager.setLoggedIn(true)
 
             val user = response.user.toDomain(/* TODO: mapping to domain model */)
 
@@ -45,16 +49,13 @@ class AuthRepositoryImpl @Inject constructor(
         email: String, password: String, username: String, firstname: String, lastname: String
     ): Result<User, AppError> {
         return safeApiCall {
-            val response = api.signup(
-                SignupRequest(
-                    email = email, username = username, password = password
-                )
-            )
+            val response =
+                api.signup(SignupRequest(email = email, username = username, password = password))
             if (!response.status) {
                 return@safeApiCall Result.Error(AppError.Authentication.RegistrationFailed)
             }
-            dataStoreManager.saveToken(response.user.accessToken, " ")
-            dataStoreManager.setLoggedIn(true)
+            secureTokenStorage.saveTokens(response.user.accessToken, response.user.refreshToken)
+            preferencesManager.setLoggedIn(true)
 
             val user = response.user.toDomain(
                 //email, phone
@@ -64,32 +65,37 @@ class AuthRepositoryImpl @Inject constructor(
     }
 
     override suspend fun signInWithGoogle(idToken: String): Result<User, AppError> {
-        try {
+
+        return safeApiCall {
             val request = SocialLoginRequest(provider = Provider.GOOGLE, token = idToken)
             val response = api.socialLogin(request)
-            //val googleUserDto = googleAuthDataSource.signIn(activity)
-            /*TODO: send the token to the backend*/
-            // val response = api.socialSignin(request)
-            /*TODO: save token to data store*/
-            return Result.Success(response.user.toDomain())
-        } catch (e: Exception) {
-            return Result.Error(AppError.Authentication.SignInFailed)
-        }
 
+            if (!response.status) {
+                return@safeApiCall Result.Error(AppError.Authentication.SignInFailed)
+            }
+            /*TODO: send the token to the backend*/
+            secureTokenStorage.saveTokens(response.user.accessToken, response.user.refreshToken)
+            preferencesManager.setLoggedIn(true)
+
+            Result.Success(response.user.toDomain())
+        }
     }
 
     override suspend fun signInWithFacebook(accessToken: String): Result<String, AppError> {
         return safeApiCall {
             val request = SocialLoginRequest(provider = Provider.FACEBOOK, token = accessToken)
-
             val response = api.socialLogin(request)
 
             if (!response.status) {
                 return@safeApiCall Result.Error(AppError.Authentication.SignInFailed)
             }
 
-            tokenManager.saveToken(accessToken = response.user.accessToken, refreshToken = "/////")
-            // val user = response.user.toDomain()
+            /*TODO: send the token to the backend*/
+            secureTokenStorage.saveTokens(
+                response.user.accessToken,
+                response.user.refreshToken ?: ""
+            )
+            preferencesManager.setLoggedIn(true)
 
             Result.Success(response.user.accessToken)
         }
@@ -99,41 +105,17 @@ class AuthRepositoryImpl @Inject constructor(
         return safeApiCall {
             api.logout()
 
-            dataStoreManager.clearTokens()
-            dataStoreManager.setLoggedIn(false)
-            dataStoreManager.clearCredentials()
+            secureTokenStorage.clearTokens()
+            preferencesManager.setLoggedIn(false)
+            credentialsManager.clearCredentials()
 
             Result.Success(Unit)
         }
     }
 
     override suspend fun isAuthenticated(): Result<Boolean, AppError> {
-//        return safeApiCall {
-//            val token = tokenManager.getToken()
-//
-//            if (token.isNullOrEmpty()) {
-//                return@safeApiCall Result.Success(false)
-//            }
-//
-//            return@safeApiCall when (val result = tokenManager.isTokenExpired()) {
-//                is Result.Error -> Result.Error(AppError.TokenError.ExpiredToken)
-//                is Result.Success -> {
-//                    val isExpired = result.data
-//                    if (isExpired) {
-//                        val refreshResult = tokenManager.getRefreshToken()
-//                        return@safeApiCall when (refreshResult) {
-//                            is Result.Success -> Result.Success(true)
-//                            is Result.Error -> Result.Error(AppError.TokenError.InvalidToken)
-//
-//                        }
-//                    }
-//                    Result.Success(true)
-//                }
-//            }
-//        }
-        return Result.Success(true)
+        return Result.Success(preferencesManager.isLoggedIn())
     }
-
     override suspend fun refreshToken(): Result<Unit, AppError> {
         return safeApiCall {
             val refreshToken = tokenManager.getRefreshToken() ?: return@safeApiCall Result.Error(
@@ -143,17 +125,17 @@ class AuthRepositoryImpl @Inject constructor(
             val response = api.refreshToken(refreshToken).execute()
 
             if (!response.isSuccessful || response.body() == null) {
-                tokenManager.clearTokens()
-                dataStoreManager.setLoggedIn(false)
-                dataStoreManager.clearCredentials()
+                secureTokenStorage.clearTokens()
+                preferencesManager.setLoggedIn(false)
+                credentialsManager.clearCredentials()
+                return@safeApiCall Result.Error(AppError.TokenError.InvalidToken)
             }
 
             val refreshResponse = response.body()!!
-
             val newRefreshToken = refreshResponse.user.refreshToken
-            dataStoreManager.saveToken(refreshResponse.user.accessToken, newRefreshToken)
-            Result.Success(Unit)
+            secureTokenStorage.saveTokens(refreshResponse.user.accessToken, newRefreshToken)
 
+            Result.Success(Unit)
         }
     }
 
@@ -200,7 +182,6 @@ class AuthRepositoryImpl @Inject constructor(
     override suspend fun resetPassword(newPassword: String): Result<Unit, AppError> {
         return safeApiCall {
             val response = api.resetPassword(ResetPasswordRequest(newPassword))
-
             if (!response.status) {
                 return@safeApiCall Result.Error(AppError.Network.BadRequest(response.message))
             }

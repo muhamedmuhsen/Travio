@@ -1,6 +1,7 @@
 package com.example.travio
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -8,9 +9,11 @@ import androidx.activity.viewModels
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
+import com.example.common.navigation.Screen
 import com.example.designsystem.theme.TravioTheme
 import com.example.feature.login.LoginScreen
 import com.example.feature.starterlogin.StarterLogin
@@ -25,18 +28,25 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
-        splashScreen.setKeepOnScreenCondition { viewModel.isLoading.value }
-        lifecycleScope.launch {
-            /*TODO: Replace with actual initialization/data loading logic*/
-            delay(3000)
-        }
+        // Keep splash screen visible until we know the start destination
+        splashScreen.setKeepOnScreenCondition { viewModel.startDestination.value == null }
         enableEdgeToEdge()
         setContent {
-            val startDestination by viewModel.startDestination.collectAsState()
+            val startDestination by viewModel.startDestination.collectAsStateWithLifecycle()
+
             TravioTheme {
-                TravioNavHost(
-                    navController = rememberNavController(), startDestination = startDestination!!
-                )
+                if (startDestination != null) {
+                    val destination = when (startDestination) {
+                        MainViewModel.StartDestination.Home -> Screen.HomeScreen.route
+                        MainViewModel.StartDestination.Login -> Screen.StarterLoginScreen.route
+                        MainViewModel.StartDestination.Onboarding -> Screen.OnboardingScreen.route
+                        else -> Screen.StarterLoginScreen.route
+                    }
+                    Log.d("StartDestination", "StartDestination: $destination")
+                    TravioNavHost(
+                        navController = rememberNavController(), startDestination = destination
+                    )
+                }
             }
         }
     }

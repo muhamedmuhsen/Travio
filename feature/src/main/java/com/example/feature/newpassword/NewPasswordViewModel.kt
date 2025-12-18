@@ -19,7 +19,7 @@ class NewPasswordViewModel @Inject constructor(private val resetPasswordUseCase:
     private val _state = MutableStateFlow(NewPasswordState())
     val state = _state.asStateFlow()
 
-    private val _event = Channel<NewPasswordEvent>()
+    private val _event = Channel<NewPasswordEvent>(Channel.BUFFERED)
     val event = _event.receiveAsFlow()
 
     fun sendEvent(event: NewPasswordEvent) {

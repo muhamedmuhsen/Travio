@@ -19,7 +19,7 @@ import com.example.feature.starterlogin.StarterLogin
 fun TravioNavHost(
     modifier: Modifier = Modifier,
     navController: NavHostController,
-    startDestination: String = Screen.OnboardingScreen.route
+    startDestination: String
 ) {/* TODO: review every what should be in the back stack and what should not */
     NavHost(
         modifier = modifier, navController = navController, startDestination = startDestination

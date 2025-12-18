@@ -19,7 +19,7 @@ class LanguageViewModel @Inject constructor(
     private val _languageState = MutableStateFlow(LanguageState())
     val languageState: StateFlow<LanguageState> = _languageState
 
-    private val _event = Channel<LanguageEvent>()
+    private val _event = Channel<LanguageEvent>(Channel.BUFFERED)
     val event = _event.receiveAsFlow()
 
     fun onLanguageChange(language: AppLanguage) {

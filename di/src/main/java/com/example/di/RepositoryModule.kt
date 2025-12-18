@@ -1,6 +1,6 @@
 package com.example.di
 
-import com.example.data.local.datastore.TokenManagerImpl
+import com.example.data.repository.TokenManagerImpl
 import com.example.data.repository.AuthRepositoryImpl
 import com.example.domain.repository.auth.AuthRepository
 import com.example.domain.repository.auth.TokenManager

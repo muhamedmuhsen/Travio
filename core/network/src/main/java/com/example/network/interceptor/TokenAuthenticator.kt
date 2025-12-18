@@ -1,6 +1,6 @@
 package com.example.network.interceptor
 
-import com.example.domain.repository.auth.TokenManager
+import com.example.common.auth.TokenProvider
 import com.example.network.api.AuthApi
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
@@ -13,7 +13,7 @@ import javax.inject.Singleton
 
 @Singleton
 class TokenAuthenticator(
-    private val tokenManager: TokenManager, private val authApi: AuthApi
+    private val tokenProvider: TokenProvider, private val authApi: AuthApi
 ) : Authenticator {
     override fun authenticate(route: Route?, response: Response): Request? {
         val mutex = Mutex()
@@ -22,28 +22,28 @@ class TokenAuthenticator(
         }
 
         return runBlocking {
-            val currentToken = tokenManager.getToken()
+            val currentToken = tokenProvider.getAccessTokenSync()
 
             mutex.withLock {
-                val newToken = tokenManager.getToken()
+                val newToken = tokenProvider.getAccessTokenSync()
 
                 if (newToken != currentToken) {
                     return@runBlocking newRequestWithToken(response.request, newToken)
                 }
 
-                val refreshToken = tokenManager.getRefreshToken() ?: return@runBlocking null
+                val refreshToken = tokenProvider.getRefreshToken() ?: return@runBlocking null
 
                 val refreshResponse = try {
                     authApi.refreshToken(refreshToken).execute()
                 } catch (_: Exception) {
-                    runBlocking { tokenManager.clearTokens() }
+                    runBlocking { tokenProvider.clearTokens() }
                     return@runBlocking null
                 }
 
                 if (refreshResponse.isSuccessful && refreshResponse.body() != null) {
                     val newSession = refreshResponse.body()!!
 
-                    tokenManager.saveToken(
+                    tokenProvider.saveTokens(
                         newSession.user.accessToken,
                         "newSession.user.refreshToken"
                     )
@@ -52,7 +52,7 @@ class TokenAuthenticator(
                         newSession.user.accessToken
                     )
                 } else {
-                    runBlocking { tokenManager.clearTokens() }
+                    runBlocking { tokenProvider.clearTokens() }
                     return@runBlocking null
                 }
             }
