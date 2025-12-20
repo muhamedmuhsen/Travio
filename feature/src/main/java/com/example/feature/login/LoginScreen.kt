@@ -53,6 +53,8 @@ import androidx.compose.ui.unit.dp
 import androidx.credentials.CredentialManager
 import androidx.credentials.CustomCredential
 import androidx.credentials.GetCredentialRequest
+import androidx.credentials.exceptions.GetCredentialCancellationException
+import androidx.credentials.exceptions.NoCredentialException
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.designsystem.R
@@ -62,6 +64,9 @@ import com.example.designsystem.components.SigninOptionsButton
 import com.example.designsystem.components.TextFieldType
 import com.example.designsystem.theme.TravioTheme
 import com.example.designsystem.theme.spacing
+import com.example.feature.login.components.ByLoggingSection
+import com.example.feature.login.components.OrSignInWithText
+import com.example.feature.login.components.RememberMeAndForgetPasswordSection
 import com.facebook.CallbackManager
 import com.facebook.FacebookCallback
 import com.facebook.FacebookException
@@ -90,65 +95,15 @@ fun LoginScreen(
 ) {
 
     val uiState = viewModel.state.collectAsStateWithLifecycle()
-    val context = LocalContext.current
-    val scope = rememberCoroutineScope()
     val webClientId = stringResource(id = R.string.web_server_id)
     val callbackManager = CallbackManager.Factory.create()
-    fun handleGoogleSignIn() {
-        scope.launch {
-            try {
-                Log.d("GoogleSignIn", "Package Name: ${context.packageName}")
-                val credentialManager = CredentialManager.create(context)
+    val context = LocalContext.current
 
-                val googleIdOption =
-                    GetGoogleIdOption.Builder().setFilterByAuthorizedAccounts(false)
-                        .setAutoSelectEnabled(false).setServerClientId(webClientId).build()
-
-                val request =
-                    GetCredentialRequest.Builder().addCredentialOption(googleIdOption).build()
-
-                val result = credentialManager.getCredential(
-                    request = request, context = context
-                )
-                // Extract the token
-                when (val credential = result.credential) {
-                    is CustomCredential -> {
-                        if (credential.type == GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL) {
-                            val googleIdTokenCredential =
-                                GoogleIdTokenCredential.createFrom(credential.data)
-
-                            Log.d("GoogleSignIn", "✓ Successfully parsed credential")
-                            Log.d("GoogleSignIn", "User: ${googleIdTokenCredential.displayName}")
-                            Log.d("GoogleSignIn", "Email: ${googleIdTokenCredential.id}")
-                            Log.d("GoogleSignIn", "Token : ${googleIdTokenCredential.idToken}")
-
-                            viewModel.onGoogleSignIn(googleIdTokenCredential.idToken)
-                        } else {
-                            e("GoogleSignIn", "✗ Invalid credential type")
-                            Toast.makeText(
-                                context,
-                                "Sign in failed: Invalid credential type",
-                                Toast.LENGTH_SHORT
-                            ).show()
-
-                        }
-                    }
-
-                    else -> {
-                        e(
-                            "GoogleSignIn",
-                            "✗ Unknown credential class: ${credential::class.simpleName}"
-                        )
-                    }
-                }
-            } catch (e: Exception) {
-                e("GoogleSignIn", "✗ Failed to parse credential", e)
-                Toast.makeText(
-                    context, "Sign in failed: ${e.message}", Toast.LENGTH_SHORT
-                ).show()
-            }
-        }
-    }
+    val googleSignIn = rememberGoogleSignInLauncher(
+        onSuccess = { viewModel.onGoogleSignInResult(it) },
+        onError = { viewModel.onGoogleSignInError(it) },
+        onCancelled = { }
+    )
 
     val performLogin = rememberFacebookLogin(
         callbackManager = callbackManager,
@@ -172,13 +127,16 @@ fun LoginScreen(
                     navigateToSignUp()
                 }
 
-                is LoginEvent.ShowAuthError -> TODO()
+                is LoginEvent.ShowAuthError -> {
+                    Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
+                }
+
                 LoginEvent.ContinueWithFacebook -> {
                     performLogin()
                 }
 
                 LoginEvent.ContinueWithGoogle -> {
-                    handleGoogleSignIn()
+                    googleSignIn(webClientId)
                 }
             }
         }
@@ -292,7 +250,6 @@ fun LoginScreen(
             )
 
             Spacer(modifier = Modifier.height(MaterialTheme.spacing.xl))
-
             ByLoggingSection()
             Spacer(modifier = Modifier.height(MaterialTheme.spacing.lg))
 
@@ -316,6 +273,7 @@ fun LoginScreen(
         }
     }
 }
+
 
 @Composable
 fun rememberFacebookLogin(
@@ -408,100 +366,77 @@ fun FacebookSignInHandler(
     }
 }
 
-
 @Composable
-fun ByLoggingSection(modifier: Modifier = Modifier) {
-    val annotatedString = buildAnnotatedString {
-        val regularStyle = SpanStyle(
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            fontSize = MaterialTheme.typography.bodySmall.fontSize
-        )
-        val highlightedStyle = SpanStyle(
-            color = MaterialTheme.colorScheme.onSurface,
-            fontWeight = FontWeight.Medium,
-            fontSize = MaterialTheme.typography.bodySmall.fontSize
-        )
+fun rememberGoogleSignInLauncher(
+    onSuccess: (String) -> Unit,
+    onError: (String) -> Unit,
+    onCancelled: () -> Unit
+): (String) -> Unit {
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+    val credentialManager = remember { CredentialManager.create(context) }
 
-        withStyle(regularStyle) {
-            append(stringResource(id = R.string.by_logging_you_agree_to_our) + " ")
-        }
-        withStyle(highlightedStyle) {
-            append(stringResource(id = R.string.terms_and_conditions))
-        }
-        withStyle(regularStyle) {
-            append(" " + stringResource(id = R.string.and) + " ")
-        }
-        withStyle(highlightedStyle) {
-            append(stringResource(id = R.string.privacy_policy))
+    return remember {
+        { webClientId: String ->
+            scope.launch {
+                try {
+                    Log.d("GoogleSignIn", "Starting credential request...")
+
+                    val googleIdOption = GetGoogleIdOption.Builder()
+                        .setFilterByAuthorizedAccounts(false)
+                        .setAutoSelectEnabled(false)
+                        .setServerClientId(webClientId)
+                        .build()
+
+                    val request = GetCredentialRequest.Builder()
+                        .addCredentialOption(googleIdOption)
+                        .build()
+
+                    val activity = context.findActivity()
+                    if (activity == null) {
+                        onError("Unable to find activity")
+                        return@launch
+                    }
+
+                    val result = credentialManager.getCredential(
+                        request = request,
+                        context = activity
+                    )
+
+                    Log.d("GoogleSignIn", "Credential received successfully")
+
+                    when (val credential = result.credential) {
+                        is CustomCredential -> {
+                            if (credential.type == GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL) {
+                                val googleIdTokenCredential =
+                                    GoogleIdTokenCredential.createFrom(credential.data)
+                                Log.d(
+                                    "GoogleSignIn",
+                                    "ID Token obtained, calling onSuccess with IdToken:${googleIdTokenCredential.idToken}"
+                                )
+                                onSuccess(googleIdTokenCredential.idToken)
+                            } else {
+                                onError("Invalid credential type")
+                            }
+                        }
+
+                        else -> onError("Unexpected credential type")
+                    }
+                } catch (e: GetCredentialCancellationException) {
+                    Log.d("GoogleSignIn", "User cancelled")
+                    onCancelled()
+                } catch (e: NoCredentialException) {
+                    Log.e("GoogleSignIn", "No credential available", e)
+                    onError("No Google accounts available")
+                } catch (e: Exception) {
+                    Log.e("GoogleSignIn", "Exception: ${e.javaClass.simpleName}", e)
+                    onError(e.localizedMessage ?: "Google sign-in failed")
+                }
+            }
         }
     }
-
-    Text(
-        text = annotatedString,
-        style = MaterialTheme.typography.bodySmall,
-        textAlign = TextAlign.Center,
-        modifier = modifier.padding(horizontal = MaterialTheme.spacing.xs)
-    )
 }
 
-
-@Composable
-fun OrSignInWithText(modifier: Modifier = Modifier) {
-    Row(
-        horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.sm),
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = modifier.fillMaxWidth()
-    ) {
-        HorizontalDivider(
-            modifier = Modifier.weight(1f),
-            thickness = 1.dp,
-            color = MaterialTheme.colorScheme.outline.copy(alpha = 0.3f)
-        )
-        Text(
-            text = stringResource(id = R.string.or_sign_in_with),
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            style = MaterialTheme.typography.bodySmall,
-        )
-        HorizontalDivider(
-            modifier = Modifier.weight(1f),
-            thickness = 1.dp,
-            color = MaterialTheme.colorScheme.outline.copy(alpha = 0.3f)
-        )
-    }
-}
-
-@Composable
-fun RememberMeAndForgetPasswordSection(
-    checked: Boolean,
-    onRememberMeCheckedChange: (Boolean) -> Unit,
-    onForgetPasswordClicked: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween,
-        modifier = modifier.fillMaxWidth()
-    ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Checkbox(
-                checked = checked,
-                onCheckedChange = onRememberMeCheckedChange,
-            )
-            Text(
-                text = stringResource(R.string.remember_me),
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                style = MaterialTheme.typography.bodySmall
-            )
-        }
-        Text(
-            text = stringResource(R.string.forgot_password),
-            color = MaterialTheme.colorScheme.primary,
-            style = MaterialTheme.typography.bodySmall,
-            modifier = Modifier.clickable { onForgetPasswordClicked() })
-    }
-}
 
 @Preview(
     name = "Light Mode", group = "Login Screen", device = "id:pixel_9", showSystemUi = true

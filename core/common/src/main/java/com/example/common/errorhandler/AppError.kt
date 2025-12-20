@@ -71,6 +71,10 @@ sealed interface AppError : Error {
     }
 
     sealed interface Authentication : AppError {
+        data object UserCancelled : Authentication {
+            override val message: String
+                get() = "Sign-in was cancelled."
+        }
         data object InvalidCredentials : Authentication {
             override val message: String
                 get() = "Invalid email or password."

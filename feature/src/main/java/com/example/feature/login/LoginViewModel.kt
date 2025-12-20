@@ -1,11 +1,12 @@
 package com.example.feature.login
 
-import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.common.errorhandler.Result
+import com.example.common.errorhandler.toUserMessage
 import com.example.common.uistateholder.UiState
+import com.example.data.local.datastore.CredentialsManager
 import com.example.data.local.datastore.PreferencesManager
 import com.example.domain.usecase.auth.GoogleSignInUseCase
 import com.example.domain.usecase.auth.LoginUseCase
@@ -22,7 +23,8 @@ import javax.inject.Inject
 class LoginViewModel @Inject constructor(
     private val loginUseCase: LoginUseCase,
     private val googleSignInUseCase: GoogleSignInUseCase,
-    private val preferencesManager: PreferencesManager
+    private val preferencesManager: PreferencesManager,
+    private val credentialsManager: CredentialsManager
 ) : ViewModel() {
     private val _state = MutableStateFlow(LoginUiState())
     val state = _state.asStateFlow()
@@ -30,44 +32,59 @@ class LoginViewModel @Inject constructor(
     private val _eventChannel = Channel<LoginEvent>(Channel.BUFFERED)
     val event = _eventChannel.receiveAsFlow()
 
-    fun onLoginClicked(email: String, password: String) {/* TODO: validate email and password */
+    fun sendEvent(event: LoginEvent) {
+        viewModelScope.launch {
+            _eventChannel.send(event)
+        }
+    }
+
+    fun onLoginClicked(email: String, password: String) {
         _state.update { it.copy(loginState = UiState.Loading) }
         viewModelScope.launch {
             when (val result = loginUseCase(email, password)) {
                 is Result.Error -> {
-                    _state.update { it.copy(loginState = UiState.Error(result.error.message)) }
-                    _eventChannel.send(LoginEvent.ShowAuthError(result.error.message))
+                    val message = result.error.toUserMessage()
+                    _state.update { it.copy(loginState = UiState.Error(message)) }
+                    sendEvent(LoginEvent.ShowAuthError(message))
                 }
 
                 is Result.Success -> {
                     preferencesManager.setLoggedIn(true)
                     _state.update { it.copy(loginState = UiState.Success(result.data)) }
-                    _eventChannel.send(LoginEvent.NavigateToHome)
+                    sendEvent(LoginEvent.NavigateToHome)
                 }
             }
         }
     }
 
-    fun onGoogleSignIn(idToken: String) {
-        Log.d("TAG", "in the view model ")
+    fun onGoogleSignInClicked() {
+        sendEvent(LoginEvent.ContinueWithGoogle)
+    }
 
+    fun onGoogleSignInResult(idToken: String) {
         _state.update { it.copy(loginState = UiState.Loading) }
-
         viewModelScope.launch {
             when (val result = googleSignInUseCase(idToken)) {
                 is Result.Error -> {
-                    Log.d("TAG", "entered error state")
-
-                    _state.update { it.copy(loginState = UiState.Error(result.error.message)) }
+                    val message = result.error.toUserMessage()
+                    onGoogleSignInError(message)
                 }
 
                 is Result.Success -> {
-                    Log.d("TAG", "entered success state")
+                    preferencesManager.setLoggedIn(true)
                     _state.update { it.copy(loginState = UiState.Success(result.data)) }
-
+                    /*TODO: send the id token to the backend */
+                    Log.d("GoogleIdToken", idToken)
+                    googleSignInUseCase(idToken)
+                    sendEvent(LoginEvent.NavigateToHome)
                 }
             }
         }
+    }
+
+    fun onGoogleSignInError(message: String) {
+        _state.update { it.copy(loginState = UiState.Error(message)) }
+        sendEvent(LoginEvent.ShowAuthError(message))
     }
 
     fun onEmailChange(email: String) {
@@ -79,9 +96,7 @@ class LoginViewModel @Inject constructor(
     }
 
     fun onCreateAccountClicked() {
-        viewModelScope.launch {
-            _eventChannel.send(LoginEvent.NavigateToSignup)
-        }
+        sendEvent(LoginEvent.NavigateToSignup)
     }
 
     fun onForgotPasswordClicked() {
@@ -96,13 +111,8 @@ class LoginViewModel @Inject constructor(
 
     fun onRememberMeChecked() {
         _state.update { it.copy(isRememberMeChecked = !_state.value.isRememberMeChecked) }
-    }
-
-    fun onGoogleSignInClicked() {
         viewModelScope.launch {
-            _eventChannel.send(LoginEvent.ContinueWithGoogle)
+            credentialsManager.setRememberMe(_state.value.isRememberMeChecked)
         }
     }
-
-
 }

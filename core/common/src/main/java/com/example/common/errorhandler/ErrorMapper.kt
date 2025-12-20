@@ -1,10 +1,6 @@
 package com.example.common.errorhandler
 
 
-/**
- * Maps AppError to user-friendly messages.
- * For production, use string resources with Context.
- */
 
 fun AppError.toUserMessage(): String = when (this) {
     // Network errors
@@ -105,4 +101,6 @@ fun AppError.toUserMessage(): String = when (this) {
     // Unknown
     is AppError.Unknown ->
         message.ifBlank { "An unexpected error occurred." }
+
+    AppError.Authentication.UserCancelled -> "Use Cancelled the login operation"
 }

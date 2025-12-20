@@ -1,5 +1,6 @@
 package com.example.data.repository
 
+import android.util.Log
 import com.example.common.errorhandler.AppError
 import com.example.common.errorhandler.Result
 import com.example.data.helpers.safeApiCall
@@ -65,15 +66,17 @@ class AuthRepositoryImpl @Inject constructor(
     }
 
     override suspend fun signInWithGoogle(idToken: String): Result<User, AppError> {
-
         return safeApiCall {
             val request = SocialLoginRequest(provider = Provider.GOOGLE, token = idToken)
-            val response = api.socialLogin(request)
+            Log.d("GoogleSignIn", "Requesting social login with token: $idToken")
 
+            val response = api.socialLogin(request) // error occurred here
+            Log.d("GoogleSignIn", "trying sending the token to the backend")
             if (!response.status) {
+                Log.d("GoogleSignIn", "error occurred while sending the token to the backend")
                 return@safeApiCall Result.Error(AppError.Authentication.SignInFailed)
             }
-            /*TODO: send the token to the backend*/
+            Log.d("GoogleSignIn", "sending it")
             secureTokenStorage.saveTokens(response.user.accessToken, response.user.refreshToken)
             preferencesManager.setLoggedIn(true)
 

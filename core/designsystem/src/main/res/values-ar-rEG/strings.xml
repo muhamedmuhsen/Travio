@@ -48,4 +48,35 @@
     <string name="new_password">كلمة المرور الجديدة</string>
     <string name="confirm_new_password">تأكيد كلمة المرور الجديدة</string>
     <string name="reset_your_password_button">إعادة تعيين كلمة المرور الخاصة بك</string>
+
+    <!-- Error Messages -->
+    <string name="error_no_internet">لا يوجد اتصال بالإنترنت. يرجى التحقق من الشبكة.</string>
+    <string name="error_timeout">انتهت مهلة الطلب. حاول مرة أخرى.</string>
+    <string name="error_server">خطأ في الخادم. يرجى المحاولة لاحقاً.</string>
+    <string name="error_too_many_requests">محاولات كثيرة جداً. يرجى الانتظار قليلاً.</string>
+    <string name="error_invalid_request">طلب غير صالح.</string>
+    <string name="error_unexpected">خطأ غير متوقع (الرمز: %d).</string>
+    <string name="error_invalid_credentials">البريد الإلكتروني أو كلمة المرور غير صحيحة.</string>
+    <string name="error_user_not_found">الحساب غير موجود.</string>
+    <string name="error_user_already_exists">يوجد حساب مسجل بهذا البريد الإلكتروني بالفعل.</string>
+    <string name="error_sign_in_failed">فشل تسجيل الدخول. حاول مرة أخرى.</string>
+    <string name="error_registration_failed">فشل التسجيل. حاول مرة أخرى.</string>
+    <string name="error_invalid_email">يرجى إدخال عنوان بريد إلكتروني صالح.</string>
+    <string name="error_weak_password">يجب أن تكون كلمة المرور 8 أحرف على الأقل.</string>
+    <string name="error_missing_fields">يرجى ملء جميع الحقول المطلوبة.</string>
+    <string name="error_password_mismatch">كلمات المرور غير متطابقة.</string>
+    <string name="error_invalid_inputs">يرجى التحقق من المدخلات.</string>
+    <string name="error_short_name">الاسم قصير جداً.</string>
+    <string name="error_invalid_code">رمز التحقق غير صالح.</string>
+    <string name="error_code_expired">انتهت صلاحية رمز التحقق. اطلب رمزاً جديداً.</string>
+    <string name="error_too_many_attempts">محاولات كثيرة جداً. يرجى المحاولة لاحقاً.</string>
+    <string name="error_verification_failed">فشل التحقق.</string>
+    <string name="error_access_denied">تم رفض الوصول.</string>
+    <string name="error_account_disabled">تم تعطيل حسابك.</string>
+    <string name="error_account_locked">حسابك مقفل.</string>
+    <string name="error_session_expired">انتهت الجلسة. يرجى تسجيل الدخول مرة أخرى.</string>
+    <string name="error_authentication_error">خطأ في المصادقة. يرجى تسجيل الدخول مرة أخرى.</string>
+    <string name="error_data_not_found">البيانات غير موجودة.</string>
+    <string name="error_data_error">خطأ في البيانات. حاول مرة أخرى.</string>
+    <string name="error_unknown">حدث خطأ غير متوقع.</string>
 </resources>
