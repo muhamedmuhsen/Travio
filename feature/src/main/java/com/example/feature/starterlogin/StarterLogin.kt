@@ -34,7 +34,7 @@ import com.example.designsystem.components.AppButton
 import com.example.designsystem.components.SigninOptionsButton
 import com.example.designsystem.theme.TravioTheme
 import com.example.designsystem.theme.spacing
-import com.example.feature.login.ByLoggingSection
+import com.example.feature.login.components.ByLoggingSection
 
 @Composable
 fun StarterLogin(

@@ -49,7 +49,7 @@ import com.example.designsystem.components.SigninOptionsButton
 import com.example.designsystem.components.TextFieldType
 import com.example.designsystem.theme.TravioTheme
 import com.example.designsystem.theme.spacing
-import com.example.feature.login.OrSignInWithText
+import com.example.feature.login.components.OrSignInWithText
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
