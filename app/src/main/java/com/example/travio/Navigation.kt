@@ -5,15 +5,16 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.example.feature.onboarding.OnboardingScreen
 import com.example.common.navigation.Screen
 import com.example.feature.code.CodeScreen
 import com.example.feature.forgetpassword.ForgetPasswordScreen
 import com.example.feature.language.LanguageScreen
 import com.example.feature.login.LoginScreen
 import com.example.feature.newpassword.NewPasswordScreen
+import com.example.feature.onboarding.OnboardingScreen
 import com.example.feature.signup.SignupScreen
 import com.example.feature.starterlogin.StarterLogin
+
 
 @Composable
 fun TravioNavHost(

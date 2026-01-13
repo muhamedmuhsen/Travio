@@ -22,17 +22,12 @@ class GoogleSignInImpl @Inject constructor(@ActivityContext private val context:
     override suspend fun signIn(
         webClientId: String
     ): Result<String, AppError> {
-
         try {
             val googleIdOption = GetGoogleIdOption.Builder().setFilterByAuthorizedAccounts(false)
                 .setAutoSelectEnabled(false).setServerClientId(webClientId).build()
 
             val request = GetCredentialRequest.Builder().addCredentialOption(googleIdOption).build()
-
-
             val result = credentialManager.getCredential(request = request, context = context)
-
-
             when (val credential = result.credential) {
                 is CustomCredential -> {
                     if (credential.type == GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL) {
@@ -48,13 +43,12 @@ class GoogleSignInImpl @Inject constructor(@ActivityContext private val context:
                     return Result.Error(AppError.Authentication.SignInFailed)
                 }
             }
-        } catch (e: GetCredentialCancellationException) {
+        } catch (_: GetCredentialCancellationException) {
             return Result.Error(AppError.Authentication.UserCancelled)
         } catch (_: NoCredentialException) {
             return Result.Error(AppError.Authentication.SignInFailed)
         } catch (e: Exception) {
             return Result.Error(AppError.Unknown(e.localizedMessage ?: "Unknown Error"))
         }
-
     }
 }

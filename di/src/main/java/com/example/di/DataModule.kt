@@ -12,7 +12,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
-
+import com.example.feature.auth.R
 @Module
 @InstallIn(SingletonComponent::class)
 object DataStoreModule {
@@ -58,6 +58,6 @@ object DataStoreModule {
     @Provides
     @Singleton
     fun provideWebClientId(@ApplicationContext context: Context): String {
-        return context.getString(com.example.designsystem.R.string.web_server_id)
+        return context.getString(R.string.web_server_id)
     }
 }

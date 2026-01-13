@@ -1,19 +1,18 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.hilt)
     alias(libs.plugins.ksp)
 }
 
 android {
-    namespace = "com.example.di"
-    compileSdk {
-        version = release(36)
-    }
+    namespace = "com.example.feature.onboarding"
+    compileSdk = 36
+
 
     defaultConfig {
-        minSdk = 24
-
+        minSdk = 29
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
     }
@@ -34,30 +33,33 @@ android {
     kotlinOptions {
         jvmTarget = "11"
     }
+
+    buildFeatures {
+        compose = true
+    }
 }
 
 dependencies {
-    implementation(project(":data"))
-    implementation(project(":domain"))
-    implementation(project(":core:common"))
-    implementation(project(":core:network"))
+    // Modules
     implementation(project(":core:designsystem"))
-    implementation(project(":feature:auth"))
+    implementation(project(":core:common"))
+    implementation(project(":domain"))
+    implementation(project(":data"))
+    // Core Android
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
-    // Networking
-    implementation(libs.retrofit)
-    implementation(libs.retrofit.converter.gson)
-    implementation(libs.okhttp)
-    implementation(libs.okhttp.logging.interceptor)
+    // Compose
+    implementation(libs.androidx.activity.compose)
+    implementation(platform(libs.androidx.compose.bom))
+    implementation(libs.androidx.compose.ui)
+    implementation(libs.androidx.compose.ui.graphics)
+    implementation(libs.androidx.compose.ui.tooling.preview)
+    implementation(libs.androidx.compose.material3)
+    implementation(libs.androidx.compose.material.icons.extended)
+    debugImplementation(libs.androidx.compose.ui.tooling)
     // Hilt
     implementation(libs.hilt.android)
+    implementation(libs.androidx.hilt.navigation.compose)
     ksp(libs.hilt.compiler)
-
-    api(project(":data"))
-    api(project(":domain"))
 }
