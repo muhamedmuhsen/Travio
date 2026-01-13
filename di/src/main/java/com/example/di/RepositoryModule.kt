@@ -31,5 +31,8 @@ abstract class RepositoryModule {
     @Singleton
     abstract fun bindTokenManager(tokenManagerImpl: TokenManagerImpl): TokenManager
 
+    @Binds
+    @Singleton
+    abstract fun bindGoogleSignIn(impl: GoogleSignInImpl): GoogleSignIn
 }
 

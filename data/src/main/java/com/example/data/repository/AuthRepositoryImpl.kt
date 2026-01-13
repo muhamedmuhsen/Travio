@@ -96,7 +96,7 @@ class AuthRepositoryImpl @Inject constructor(
             /*TODO: send the token to the backend*/
             secureTokenStorage.saveTokens(
                 response.user.accessToken,
-                response.user.refreshToken ?: ""
+                response.user.refreshToken
             )
             preferencesManager.setLoggedIn(true)
 

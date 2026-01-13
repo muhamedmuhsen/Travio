@@ -15,7 +15,7 @@ import dagger.hilt.android.qualifiers.ActivityContext
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
-class GoogleSignInImpl @Inject constructor(@ActivityContext private val context: Context) :
+class GoogleSignInImpl @Inject constructor(private val context: Context) :
     GoogleSignIn {
     private val credentialManager = CredentialManager.create(context)
 

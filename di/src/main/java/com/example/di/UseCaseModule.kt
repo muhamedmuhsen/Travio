@@ -1,7 +1,9 @@
 package com.example.di
 
 import com.example.domain.repository.auth.AuthRepository
+import com.example.domain.repository.auth.GoogleSignIn
 import com.example.domain.usecase.auth.ForgetPasswordUseCase
+import com.example.domain.usecase.auth.GoogleLoginUseCase
 import com.example.domain.usecase.auth.GoogleSignInUseCase
 import com.example.domain.usecase.auth.LoginUseCase
 import com.example.domain.usecase.auth.ResetPasswordUseCase
@@ -45,6 +47,11 @@ object UseCaseModule {
         authRepository: AuthRepository
     ): ResetPasswordUseCase =
         ResetPasswordUseCase(validatePasswordUseCase, authRepository)
+
+    @Provides
+    fun provideGoogleLoginUseCase(googleSignIn: GoogleSignIn): GoogleLoginUseCase=
+        GoogleLoginUseCase(googleSignIn)
+
 }
 
 

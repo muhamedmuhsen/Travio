@@ -1,0 +1,14 @@
+com.example.feature.onboarding
+string already_have_an_account
+string and
+string by_logging_you_agree_to_our
+string choose_language
+string continue_with_facebook
+string continue_with_google
+string create_an_account
+string language_arabic
+string language_english
+string log_in
+string privacy_policy
+string terms_and_conditions
+string your_journy_start_here
