@@ -47,6 +47,6 @@ object NetworkModule {
     @Provides
     @Singleton
     fun provideBaseUrl(): String {
-        return "https://localhost:3000/"
+        return "https://localhost:7219/api/"
     }
 }

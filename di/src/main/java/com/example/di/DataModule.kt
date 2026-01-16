@@ -6,6 +6,8 @@ import com.example.data.local.datastore.CredentialsManager
 import com.example.data.local.datastore.EncryptionManager
 import com.example.data.local.datastore.PreferencesManager
 import com.example.data.local.datastore.SecureTokenStorage
+import com.example.data.repository.GoogleCredentialDataSource
+import com.example.data.repository.GoogleCredentialDataSourceImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -16,6 +18,11 @@ import com.example.feature.auth.R
 @Module
 @InstallIn(SingletonComponent::class)
 object DataStoreModule {
+
+    @Provides
+    @Singleton
+    fun provideGoogleCredentialDataSource(): GoogleCredentialDataSource =
+        GoogleCredentialDataSourceImpl()
 
     @Provides
     @Singleton

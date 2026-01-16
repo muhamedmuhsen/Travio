@@ -139,7 +139,7 @@ fun SignupScreen(
 
             AppTextField(
                 value = uiState.value.firstname,
-                onValueChange = { viewModel.noFirstNameChange(it) },
+                onValueChange = { viewModel.onFirstNameChange(it) },
                 placeholder = stringResource(id = R.string.first_name),
                 modifier = Modifier.fillMaxWidth()
             )

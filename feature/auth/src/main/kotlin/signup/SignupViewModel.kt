@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import com.example.common.errorhandler.Result
 import com.example.common.uistateholder.UiState
 import com.example.domain.usecase.auth.SignupUseCase
-import com.example.feature.login.LoginEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -41,8 +40,6 @@ class SignupViewModel @Inject constructor(
     fun onSignupClicked(firstname: String, lastname: String, email: String, password: String) {
         _state.update { it.copy(signupState = UiState.Loading) }
         viewModelScope.launch {
-
-
             when (val result = signupUseCase(
                 email,
                 password,
@@ -79,7 +76,7 @@ class SignupViewModel @Inject constructor(
         _state.update { it.copy(lastname = lastname) }
     }
 
-    fun noFirstNameChange(firstname: String) {
+    fun onFirstNameChange(firstname: String) {
         _state.update { it.copy(firstname = firstname) }
     }
 

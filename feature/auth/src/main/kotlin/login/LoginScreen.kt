@@ -89,24 +89,8 @@ fun LoginScreen(
 
     val uiState = viewModel.state.collectAsStateWithLifecycle()
     val webClientId = stringResource(id = R.string.web_server_id)
-    val callbackManager = CallbackManager.Factory.create()
     val context = LocalContext.current
 
-    val googleSignIn = rememberGoogleSignInLauncher(
-        onSuccess = { viewModel.onGoogleSignInResult(it) },
-        onError = { viewModel.onGoogleSignInError(it) },
-        onCancelled = { }
-    )
-
-    val performLogin = rememberFacebookLogin(
-        callbackManager = callbackManager,
-        onSuccess = { token ->
-            Log.d("FacebookSignIn", "Token: $token")
-        },
-        onError = { error ->
-
-        }
-    )
 
     LaunchedEffect(Unit) {
         viewModel.event.collect { event ->
@@ -125,11 +109,11 @@ fun LoginScreen(
                 }
 
                 LoginEvent.ContinueWithFacebook -> {
-                    performLogin()
+                    //performLogin()
                 }
 
                 LoginEvent.ContinueWithGoogle -> {
-                    googleSignIn(webClientId)
+                    //viewModel.onGoogleSignInClicked(webClientId)
                 }
             }
         }
@@ -227,7 +211,10 @@ fun LoginScreen(
             Spacer(modifier = Modifier.height(MaterialTheme.spacing.lg))
 
             SigninOptionsButton(
-                onClick = { viewModel.onGoogleSignInClicked(webClientId) },
+                onClick = {
+                    Log.d("GoogleSignIn", "Google sign-in button clicked")
+                    viewModel.onGoogleSignInClicked(context, webClientId)
+                },
                 text = stringResource(id = R.string.continue_with_google),
                 icon = DesignSystemR.drawable.google_icon,
                 modifier = Modifier.fillMaxWidth()
@@ -264,98 +251,6 @@ fun LoginScreen(
 
             Spacer(modifier = Modifier.height(MaterialTheme.spacing.lg))
         }
-    }
-}
-
-
-@Composable
-fun rememberFacebookLogin(
-    callbackManager: CallbackManager,
-    onSuccess: (String) -> Unit,
-    onError: (String) -> Unit = {},
-    onCancel: () -> Unit = {}
-): () -> Unit {
-    val context = LocalContext.current
-    val loginManager = LoginManager.getInstance()
-
-    DisposableEffect(Unit) {
-        loginManager.registerCallback(callbackManager, object : FacebookCallback<LoginResult> {
-            override fun onCancel() {
-                Log.d("FacebookSignIn", "Entered Cancel")
-
-                onCancel()
-                Toast.makeText(context, "Login Cancelled", Toast.LENGTH_SHORT).show()
-            }
-
-            override fun onError(error: FacebookException) {
-                Log.d("FacebookSignIn", "Entered Error")
-
-                val msg = error.message ?: "Unknown Error"
-                onError(msg)
-                Toast.makeText(context, "Error: $msg", Toast.LENGTH_LONG).show()
-            }
-
-            override fun onSuccess(result: LoginResult) {
-                Log.d("FacebookSignIn", "Entered Success")
-
-                onSuccess(result.accessToken.token)
-            }
-        })
-        onDispose {
-            loginManager.unregisterCallback(callbackManager)
-        }
-    }
-
-    return {
-        val activity = context.findActivity()
-        if (activity != null) {
-            // Log to verify the button actually works
-            Log.d("FacebookSignIn", "Activity found! Starting Login...")
-
-            loginManager.logInWithReadPermissions(
-                activity,
-                listOf("public_profile", "email")
-            )
-        } else {
-            Log.d("FacebookSignIn", "Context is not an Activity! Login failed.")
-        }
-    }
-}
-
-@Composable
-fun FacebookSignInHandler(
-    context: Context, enabled: Boolean = true, onTokenReceived: (String) -> Unit
-) {
-    val callbackManager = remember { CallbackManager.Factory.create() }
-
-    val loginManager = LoginManager.getInstance()
-
-    DisposableEffect(Unit) {
-        loginManager.registerCallback(
-            callbackManager, object : FacebookCallback<LoginResult> {
-                override fun onCancel() {
-                    Toast.makeText(context, "Facebook login cancelled", Toast.LENGTH_SHORT).show()
-                }
-
-                override fun onError(error: FacebookException) {
-                    Toast.makeText(
-                        context, "Facebook login failed: ${error.message}", Toast.LENGTH_LONG
-                    ).show()
-                }
-
-                override fun onSuccess(result: LoginResult) {
-                    val accessToken = result.accessToken.token
-                    onTokenReceived(accessToken)
-                }
-
-            })
-        onDispose { loginManager.unregisterCallback(callbackManager) }
-    }
-
-    rememberLauncherForActivityResult(
-        contract = loginManager.createLogInActivityResultContract(callbackManager)
-    ) {
-        // Result is handled by the callback above
     }
 }
 
@@ -432,7 +327,9 @@ fun rememberGoogleSignInLauncher(
 
 
 @Preview(
-    name = "Light Mode", group = "Login Screen", device = "id:pixel_9", showSystemUi = true
+    name = "Light Mode",
+    group = "Login Screen",
+    device = "id:pixel_9", showSystemUi = true
 )
 @Preview(
     name = "Dark Mode",

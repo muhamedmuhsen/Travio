@@ -22,9 +22,6 @@ suspend fun <T> safeApiCall(
     } catch (e: SocketTimeoutException) {
         Log.e(TAG, "Request timeout", e)
         Result.Error(AppError.Network.Timeout)
-    } catch (e: UnknownHostException) {
-        Log.e(TAG, "Unknown host - no internet connection", e)
-        Result.Error(AppError.Network.NoInternetConnection)
     } catch (e: IOException) {
         Log.e(TAG, "Network error", e)
         Result.Error(AppError.Network.NoInternetConnection)
@@ -32,6 +29,9 @@ suspend fun <T> safeApiCall(
         Log.e(TAG, "HTTP error: ${e.code()}", e)
         val error = handleHttpException(e)
         Result.Error(error)
+    } catch (e: UnknownHostException) {
+        Log.e(TAG, "Unknown host - no internet connection", e)
+        Result.Error(AppError.Network.NoInternetConnection)
     } catch (e: Exception) {
         Log.e(TAG, "Unexpected error", e)
         val message = e.localizedMessage ?: "Unknown error occurred"

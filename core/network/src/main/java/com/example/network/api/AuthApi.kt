@@ -17,27 +17,27 @@ import retrofit2.http.Body
 import retrofit2.http.POST
 
 interface AuthApi {
-    @POST("auth/login")
+    @POST("Auth/login")
     suspend fun login(@Body request: LoginRequest): LoginResponse
 
-    @POST("auth/register")
+    @POST("Auth/register")
     suspend fun signup(@Body request: SignupRequest): SignupResponse
 
-    @POST("auth/social-login")
-    suspend fun socialLogin(@Body request: SocialLoginRequest): LoginResponse
+    @POST("Auth/google-login")
+    suspend fun socialLogin(@Body request: String): LoginResponse
 
-    @POST("auth/logout")
+    @POST("Auth/logout")
     suspend fun logout(): LogoutResponse
 
-    @POST("auth/refresh")
+    @POST("Auth/refresh")
     fun refreshToken(@Body refreshToken: String): Call<LoginResponse>
 
-    @POST("auth/forget-password")
+    @POST("Auth/forgot-password")
     suspend fun forgetPassword(@Body request: ForgetPasswordRequest): ForgetPasswordResponse
 
-    @POST("auth/verify-code")
+    @POST("Auth/verify-code")
     suspend fun sendVerificationCode(@Body request: VerificationCodeRequest): VerificationCodeResponse
 
-    @POST("auth/reset-password")
+    @POST("Auth/reset-password")
     suspend fun resetPassword(@Body request: ResetPasswordRequest): ResetPasswordResponse
 }

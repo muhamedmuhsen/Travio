@@ -27,21 +27,21 @@ fun TravioNavHost(
     ) {
         composable(Screen.OnboardingScreen.route) {
             OnboardingScreen(
-                onFinish = { navController.navigate(Screen.LanguageScreen.route) })
+                onFinish = { navController.navigate(Screen.LanguageScreen.route) }
+            )
         }
         composable(Screen.LoginScreen.route) {
             LoginScreen(
                 onCloseClicked = { navController.navigate(Screen.StarterLoginScreen.route) },
                 navigateToSignUp = { navController.navigate(Screen.SignupScreen.route) },
-                navigateToForgetPassword = { navController.navigate(Screen.ForgetPasswordScreen.route) },
+                navigateToForgetPassword = { navController.navigate(Screen.ForgetPasswordScreen.route) }
             )
         }
         composable(Screen.StarterLoginScreen.route) {
             StarterLogin(
                 navigateToLogin = { navController.navigate(Screen.LoginScreen.route) },
-                navigateToSignup = {
-                    navController.navigate(Screen.SignupScreen.route) {}
-                })
+                navigateToSignup = { navController.navigate(Screen.SignupScreen.route) }
+            )
         }
         composable(Screen.LanguageScreen.route) {
             LanguageScreen(

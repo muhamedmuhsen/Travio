@@ -70,8 +70,9 @@ class AuthRepositoryImpl @Inject constructor(
             val request = SocialLoginRequest(provider = Provider.GOOGLE, token = idToken)
             Log.d("GoogleSignIn", "Requesting social login with token: $idToken")
 
-            val response = api.socialLogin(request) // error occurred here
             Log.d("GoogleSignIn", "trying sending the token to the backend")
+            val response = api.socialLogin(request.token) // error occurred here
+            Log.d("GoogleSignIn", "response received from the backend: $response")
             if (!response.status) {
                 Log.d("GoogleSignIn", "error occurred while sending the token to the backend")
                 return@safeApiCall Result.Error(AppError.Authentication.SignInFailed)
@@ -87,7 +88,7 @@ class AuthRepositoryImpl @Inject constructor(
     override suspend fun signInWithFacebook(accessToken: String): Result<String, AppError> {
         return safeApiCall {
             val request = SocialLoginRequest(provider = Provider.FACEBOOK, token = accessToken)
-            val response = api.socialLogin(request)
+            val response = api.socialLogin(request.provider.name)
 
             if (!response.status) {
                 return@safeApiCall Result.Error(AppError.Authentication.SignInFailed)

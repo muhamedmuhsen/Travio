@@ -8,20 +8,18 @@ import androidx.credentials.exceptions.GetCredentialCancellationException
 import androidx.credentials.exceptions.NoCredentialException
 import com.example.common.errorhandler.AppError
 import com.example.common.errorhandler.Result
-import com.example.domain.repository.auth.GoogleSignIn
+//import com.example.domain.repository.auth.GoogleSignIn
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
-import dagger.hilt.android.qualifiers.ActivityContext
-import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
-class GoogleSignInImpl @Inject constructor(private val context: Context) :
-    GoogleSignIn {
-    private val credentialManager = CredentialManager.create(context)
+class GoogleCredentialDataSourceImpl @Inject constructor() : GoogleCredentialDataSource {
 
-    override suspend fun signIn(
-        webClientId: String
+    override suspend fun getGoogleIdToken(
+        context: Context, webClientId: String
     ): Result<String, AppError> {
+        val credentialManager = CredentialManager.create(context)
+
         try {
             val googleIdOption = GetGoogleIdOption.Builder().setFilterByAuthorizedAccounts(false)
                 .setAutoSelectEnabled(false).setServerClientId(webClientId).build()
