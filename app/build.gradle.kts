@@ -2,13 +2,13 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.hilt)
+    alias(libs.plugins.ksp)
 }
 
 android {
     namespace = "com.example.travio"
-    compileSdk {
-        version = release(36)
-    }
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.example.travio"
@@ -42,8 +42,20 @@ android {
 }
 
 dependencies {
+    // Core modules
+    implementation(project(":di"))
+    implementation(project(":data"))
+    implementation(project(":domain"))
+    implementation(project(":core:common"))
+    implementation(project(":core:network"))
     implementation(project(":core:designsystem"))
-
+    implementation(project(":feature:auth"))
+    implementation(project(":feature:home"))
+    implementation(project(":feature:onboarding"))
+    implementation(project(":feature:ai"))
+    implementation(project(":feature:favorite"))
+    implementation(project(":feature:profile"))
+    implementation(project(":feature:community"))
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -52,6 +64,7 @@ dependencies {
     implementation(libs.androidx.compose.ui.graphics)
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
+    implementation(libs.androidx.navigation.runtime.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -62,4 +75,11 @@ dependencies {
 
     // Splash
     implementation(libs.androidx.core.splashscreen)
+
+    // Hilt
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.compiler)
+
+    // Compose Navigation
+    implementation(libs.androidx.navigation.compose)
 }

@@ -1,5 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="choose_language">اختر اللغة</string>
+    <string name="close">إغلاق</string>
+    <string name="skip">تخطى</string>
+    <string name="next">التالى</string>
+    <string name="onboarding_title_1">استكشف وجهات\nمذهلة</string>
+    <string name="onboarding_description_1">اكتشف أماكن جميلة حول العالم وابدأ مغامرتك القادمة.</string>
+    <string name="onboarding_title_2">ابحث عن أفضل\nالفنادق</string>
+    <string name="onboarding_description_2">احجز فنادق ذات تقييم عالٍ تتناسب مع أسلوبك وراحتك وميزانيتك.</string>
+    <string name="onboarding_title_3">خطط لرحلتك\nالمثالية</string>
+    <string name="onboarding_description_3">خطط ونظم رحلتك بسهولة من البداية إلى النهاية.</string>
+    <string name="language_english">English</string>
+    <string name="language_arabic">اللغة العربية</string>
 
+    <!-- Error Messages -->
+    <string name="error_no_internet">لا يوجد اتصال بالإنترنت. يرجى التحقق من الشبكة.</string>
+    <string name="error_timeout">انتهت مهلة الطلب. حاول مرة أخرى.</string>
+    <string name="error_server">خطأ في الخادم. يرجى المحاولة لاحقاً.</string>
+    <string name="error_too_many_requests">محاولات كثيرة جداً. يرجى الانتظار قليلاً.</string>
+    <string name="error_invalid_request">طلب غير صالح.</string>
+    <string name="error_unexpected">خطأ غير متوقع (الرمز: %d).</string>
+    <string name="error_access_denied">تم رفض الوصول.</string>
+    <string name="error_account_disabled">تم تعطيل حسابك.</string>
+    <string name="error_account_locked">حسابك مقفل.</string>
+    <string name="error_session_expired">انتهت الجلسة. يرجى تسجيل الدخول مرة أخرى.</string>
+    <string name="error_data_not_found">البيانات غير موجودة.</string>
+    <string name="error_data_error">خطأ في البيانات. حاول مرة أخرى.</string>
+    <string name="error_unknown">حدث خطأ غير متوقع.</string>
 </resources>

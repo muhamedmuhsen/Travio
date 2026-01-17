@@ -1,4 +1,30 @@
 <resources>
-    <string name="app_name">Travio</string>
+    <string name="app_name" translatable="false">Travio</string>
     <string name="choose_language">Choose Your Language</string>
+    <string name="close">Close</string>
+    <string name="skip">Skip</string>
+    <string name="next">Next</string>
+    <string name="onboarding_title_1">Explore Amazing\nDestinations</string>
+    <string name="onboarding_description_1">Discover beautiful places around the world and start your next adventure.</string>
+    <string name="onboarding_title_2">Find the Best\nHotels</string>
+    <string name="onboarding_description_2">Book top-rated hotels that match your style, comfort, and budget.</string>
+    <string name="onboarding_title_3">Plan Your Perfect\nTrip</string>
+    <string name="onboarding_description_3">Easily plan and organize your trip from start to finish.</string>
+    <string name="language_english">English</string>
+    <string name="language_arabic">اللغة العربية</string>
+
+    <!-- Error Messages -->
+    <string name="error_no_internet">No internet connection. Please check your network.</string>
+    <string name="error_timeout">Request timed out. Please try again.</string>
+    <string name="error_server">Server error. Please try again later.</string>
+    <string name="error_too_many_requests">Too many attempts. Please wait a moment.</string>
+    <string name="error_invalid_request">Invalid request.</string>
+    <string name="error_unexpected">Unexpected error (code: %d).</string>
+    <string name="error_access_denied">Access denied.</string>
+    <string name="error_account_disabled">Your account has been disabled.</string>
+    <string name="error_account_locked">Your account is locked.</string>
+    <string name="error_session_expired">Session expired. Please sign in again.</string>
+    <string name="error_data_not_found">Data not found.</string>
+    <string name="error_data_error">Data error. Please try again.</string>
+    <string name="error_unknown">An unexpected error occurred.</string>
 </resources>

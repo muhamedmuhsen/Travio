@@ -1,40 +1,44 @@
 package com.example.travio
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.activity.viewModels
+import androidx.compose.runtime.getValue
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.compose.rememberNavController
+import com.example.common.navigation.Screen
 import com.example.designsystem.theme.TravioTheme
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import dagger.hilt.android.AndroidEntryPoint
 
+
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+    private val viewModel: MainViewModel by viewModels()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         val splashScreen = installSplashScreen()
-        var keepSplashScreen = true
         super.onCreate(savedInstanceState)
-        splashScreen.setKeepOnScreenCondition { keepSplashScreen }
-        lifecycleScope.launch {
-            // TODO: Replace with actual initialization/data loading logic
-            delay(3000)
-            keepSplashScreen = false
-        }
+        // Keep splash screen visible until we know the start destination
+        splashScreen.setKeepOnScreenCondition { viewModel.startDestination.value == null }
         enableEdgeToEdge()
         setContent {
+            val startDestination by viewModel.startDestination.collectAsStateWithLifecycle()
+
             TravioTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
+                if (startDestination != null) {
+                    val destination = when (startDestination) {
+                        MainViewModel.StartDestination.Home -> Screen.HomeScreen.route
+                        MainViewModel.StartDestination.Login -> Screen.StarterLoginScreen.route
+                        MainViewModel.StartDestination.Onboarding -> Screen.OnboardingScreen.route
+                        else -> Screen.StarterLoginScreen.route
+                    }
+                    Log.d("StartDestination", "StartDestination: $destination")
+                    TravioNavHost(
+                        navController = rememberNavController(), startDestination = destination
                     )
                 }
             }
@@ -42,18 +46,3 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    TravioTheme {
-        Greeting("Android")
-    }
-}

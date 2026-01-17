@@ -1,7 +1,6 @@
 package com.example.designsystem.components
 
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -17,7 +16,6 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import com.example.designsystem.R
 import com.example.designsystem.theme.TravioTheme
 import com.example.designsystem.theme.spacing
@@ -37,16 +35,13 @@ fun AppTextField(
     onPasswordVisibilityChecked: () -> Unit = {},
 ) {
     OutlinedTextField(
+        modifier = modifier,
         value = value,
         onValueChange = onValueChange,
-        placeholder = { Text(text = placeholder) },
+        placeholder = { Text(text = placeholder, style = MaterialTheme.typography.labelMedium) },
         isError = isError,
         enabled = isEnabled,
-        shape = if (fieldType == TextFieldType.PASSWORD) {
-            TextFieldShape(true)
-        } else {
-            TextFieldShape(false)
-        },
+        shape = MaterialTheme.shapes.large,
         visualTransformation = if (fieldType == TextFieldType.PASSWORD && !isPasswordVisible) {
             PasswordVisualTransformation()
         } else {
@@ -89,24 +84,6 @@ fun AppTextField(
     )
 }
 
-@Composable
-fun TextFieldShape(isPassword: Boolean): RoundedCornerShape {
-    if (!isPassword) {
-        return RoundedCornerShape(
-            topStart = MaterialTheme.spacing.md,
-            topEnd = MaterialTheme.spacing.md,
-            bottomEnd = 0.dp,
-            bottomStart = 0.dp
-        )
-    } else {
-        return RoundedCornerShape(
-            topStart = 0.dp,
-            topEnd = 0.dp,
-            bottomEnd = MaterialTheme.spacing.md,
-            bottomStart = MaterialTheme.spacing.md
-        )
-    }
-}
 
 @Composable
 private fun PasswordTrailingIcon(

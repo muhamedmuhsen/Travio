@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="log_in">Login</string>
+    <string name="web_server_id" translatable="false">179031549404-50oqdgp4q1spl73me5ae9b5dqm4e8ae0.apps.googleusercontent.com</string>
+
+    <string name="continue_using_your">Continue using your:</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="forgot_password">Forgot Password?</string>
+    <string name="or_sign_in_with">Or sign in with</string>
+    <string name="continue_with_google">Continue with Google</string>
+    <string name="continue_with_facebook">Continue with Facebook</string>
+    <string name="by_logging_you_agree_to_our">By logging, you agree to our </string>
+    <string name="terms_and_conditions">Terms &amp; Conditions</string>
+    <string name="and"> and </string>
+    <string name="privacy_policy">Privacy Policy.</string>
+    <string name="dont_have_an_account_yet">Don\'t have an account yet? </string>
+    <string name="create_an_account">Create an account</string>
+    <string name="remember_me">Remember me</string>
+    <string name="your_journy_start_here">Your journey starts here</string>
+    <string name="already_have_an_account">Already have an account? </string>
+
+    <string name="facebook_app_id" translatable="false">931434809448243</string>
+    <string name="facebook_client_token" translatable="false">4a33e6f41805fe6b07ae5e346e91f574</string>
+    <string name="fb_login_protocol_scheme" translatable="false">fb931434809448243</string>
+    <string name="by_creating_account">By creating an account, i acknowledge that i have read and agree to\nTravio’s</string>
+    <string name="first_name">First Name\n</string>
+    <string name="last_name">Last Name</string>
+    <string name="your_password_must">Your password must:</string>
+    <string name="at_least_9_characters">• Be at least 9 characters</string>
+    <string name="include_letters_and_numbers">• Include letters and numbers</string>
+    <string name="include_special_character">• Include at least one special character (!@#\$%^&amp;*_)</string>
+    <string name="reset_your_password_using">Reset your password using:</string>
+    <string name="enter_the_email_you_used">Enter the Email you used to create your Travio account.</string>
+    <string name="continue_button">Continue</string>
+    <string name="if_you_dont_remember_email_prefix">If you don’t remember your email address associated with your Travio account, please </string>
+    <string name="contact_us">contact us.</string>
+    <string name="please_enter_code">Please enter the code we send to</string>
+    <string name="didnot_get_it">Didn\'t get it?</string>
+    <string name="send_new_code"> Send new code.</string>
+    <string name="reset_password">Reset Password</string>
+    <string name="new_password">New Password</string>
+    <string name="confirm_new_password">Confirm New Password</string>
+    <string name="reset_your_password_button">Reset Your Password</string>
+    <string name="close">Close</string>
+
+    <!-- Error Messages -->
+    <string name="error_invalid_credentials">Invalid email or password.</string>
+    <string name="error_user_not_found">Account not found.</string>
+    <string name="error_user_already_exists">An account with this email already exists.</string>
+    <string name="error_sign_in_failed">Sign in failed. Please try again.</string>
+    <string name="error_registration_failed">Registration failed. Please try again.</string>
+    <string name="error_invalid_email">Please enter a valid email address.</string>
+    <string name="error_weak_password">Password must be at least 8 characters.</string>
+    <string name="error_missing_fields">Please fill in all required fields.</string>
+    <string name="error_password_mismatch">Passwords do not match.</string>
+    <string name="error_invalid_inputs">Please check your input.</string>
+    <string name="error_short_name">Name is too short.</string>
+    <string name="error_invalid_code">Invalid verification code.</string>
+    <string name="error_code_expired">Verification code expired. Request a new one.</string>
+    <string name="error_too_many_attempts">Too many attempts. Please try again later.</string>
+    <string name="error_verification_failed">Verification failed.</string>
+    <string name="error_authentication_error">Authentication error. Please sign in again.</string>
+</resources>
