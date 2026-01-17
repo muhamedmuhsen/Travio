@@ -1,11 +1,15 @@
 package com.example.network.dto.auth.login
 
-import com.example.network.dto.auth.UserDto
-
+import com.example.network.dto.auth.TokenDto
 
 data class LoginResponse(
-    val user: UserDto,
-    val message: String,
-    val status: Boolean,
-    val code: Int
+    val message: String?,
+    val status: Boolean = false,
+    val username: String,
+    val email: String,
+    val tokenDto: TokenDto
 )
+
+
+
+

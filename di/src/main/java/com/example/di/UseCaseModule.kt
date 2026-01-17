@@ -20,12 +20,19 @@ import dagger.hilt.components.SingletonComponent
 object UseCaseModule {
 
     @Provides
-    fun provideLoginUseCase(authRepository: AuthRepository): LoginUseCase =
-        LoginUseCase(authRepository)
+    fun provideLoginUseCase(
+        authRepository: AuthRepository,
+        validateEmailUseCase: ValidateEmailUseCase
+    ): LoginUseCase =
+        LoginUseCase(authRepository, validateEmailUseCase)
 
     @Provides
-    fun provideSignupUseCase(authRepository: AuthRepository): SignupUseCase =
-        SignupUseCase(authRepository)
+    fun provideSignupUseCase(
+        authRepository: AuthRepository,
+        validateEmailUseCase: ValidateEmailUseCase,
+        validatePasswordUseCase: ValidatePasswordUseCase
+    ): SignupUseCase =
+        SignupUseCase(authRepository, validateEmailUseCase, validatePasswordUseCase)
 
     @Provides
     fun provideGoogleSignInUseCase(authRepository: AuthRepository): GoogleSignInUseCase =

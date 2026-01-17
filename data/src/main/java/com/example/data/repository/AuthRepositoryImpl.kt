@@ -31,17 +31,25 @@ class AuthRepositoryImpl @Inject constructor(
 
     override suspend fun login(email: String, password: String): Result<User, AppError> {
         return safeApiCall {
+            Log.d("Login", "Trying to login with email: $email and password: $password")
             val response = api.login(LoginRequest(email, password))
+            Log.d("Login", "Response received: $response")
+//            if (!response.status) {
+//                return@safeApiCall Result.Error(AppError.Authentication.InvalidCredentials)
+//            }
+            val domainResponse = response.toDomain()
+            Log.d("Login", "Domain response received: $domainResponse")
 
-            if (!response.status) {
-                return@safeApiCall Result.Error(AppError.Authentication.InvalidCredentials)
-            }
-
-            secureTokenStorage.saveTokens(response.user.accessToken, response.user.refreshToken)
+            Log.d("Login", "Saving tokens")
+            Log.d("Login", "Token: ${response.token}")
+            Log.d("Login", "Refresh Token: ${response.refreshTokenExpiration}")
+            secureTokenStorage.saveTokens(
+                response.token, response.refreshTokenExpiration.toString()
+            )
             preferencesManager.setLoggedIn(true)
-
-            val user = response.user.toDomain(/* TODO: mapping to domain model */)
-
+            Log.d("Login", "Mapping user")
+            val user = User("")
+            Log.d("Login", "Returning success with user: $user")
             Result.Success(user)
         }
     }
@@ -78,10 +86,12 @@ class AuthRepositoryImpl @Inject constructor(
                 return@safeApiCall Result.Error(AppError.Authentication.SignInFailed)
             }
             Log.d("GoogleSignIn", "sending it")
-            secureTokenStorage.saveTokens(response.user.accessToken, response.user.refreshToken)
+            secureTokenStorage.saveTokens(
+                response.tokenDto.token, response.tokenDto.refreshTokenExpiration.toString()
+            )
             preferencesManager.setLoggedIn(true)
 
-            Result.Success(response.user.toDomain())
+            Result.Success(User(""))
         }
     }
 
@@ -96,12 +106,11 @@ class AuthRepositoryImpl @Inject constructor(
 
             /*TODO: send the token to the backend*/
             secureTokenStorage.saveTokens(
-                response.user.accessToken,
-                response.user.refreshToken
+                response.tokenDto.token, response.tokenDto.refreshTokenExpiration.toString()
             )
             preferencesManager.setLoggedIn(true)
 
-            Result.Success(response.user.accessToken)
+            Result.Success(response.tokenDto.token)
         }
     }
 
@@ -120,6 +129,7 @@ class AuthRepositoryImpl @Inject constructor(
     override suspend fun isAuthenticated(): Result<Boolean, AppError> {
         return Result.Success(preferencesManager.isLoggedIn())
     }
+
     override suspend fun refreshToken(): Result<Unit, AppError> {
         return safeApiCall {
             val refreshToken = tokenManager.getRefreshToken() ?: return@safeApiCall Result.Error(
@@ -136,8 +146,11 @@ class AuthRepositoryImpl @Inject constructor(
             }
 
             val refreshResponse = response.body()!!
-            val newRefreshToken = refreshResponse.user.refreshToken
-            secureTokenStorage.saveTokens(refreshResponse.user.accessToken, newRefreshToken)
+            val newRefreshToken = refreshResponse.tokenDto.refreshTokenExpiration
+            secureTokenStorage.saveTokens(
+                refreshResponse.tokenDto.token,
+                newRefreshToken.toString()
+            )
 
             Result.Success(Unit)
         }
@@ -162,19 +175,24 @@ class AuthRepositoryImpl @Inject constructor(
 
             if (!response.status || !response.isVerified) {
                 val error = when {
-                    response.message?.contains("expired", ignoreCase = true) == true ->
-                        AppError.Verification.CodeExpired
+                    response.message?.contains(
+                        "expired",
+                        ignoreCase = true
+                    ) == true -> AppError.Verification.CodeExpired
 
-                    response.message?.contains("invalid", ignoreCase = true) == true ->
-                        AppError.Verification.InvalidCode
+                    response.message?.contains(
+                        "invalid",
+                        ignoreCase = true
+                    ) == true -> AppError.Verification.InvalidCode
 
-                    response.message?.contains("attempts", ignoreCase = true) == true ->
-                        AppError.Verification.TooManyAttempts
+                    response.message?.contains(
+                        "attempts",
+                        ignoreCase = true
+                    ) == true -> AppError.Verification.TooManyAttempts
 
-                    else ->
-                        AppError.Verification.VerificationFailed(
-                            response.message ?: "Verification failed"
-                        )
+                    else -> AppError.Verification.VerificationFailed(
+                        response.message ?: "Verification failed"
+                    )
                 }
                 return@safeApiCall Result.Error(error)
             }

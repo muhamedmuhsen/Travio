@@ -44,12 +44,12 @@ class TokenAuthenticator(
                     val newSession = refreshResponse.body()!!
 
                     tokenProvider.saveTokens(
-                        newSession.user.accessToken,
+                        newSession.tokenDto.token,
                         "newSession.user.refreshToken"
                     )
                     return@runBlocking newRequestWithToken(
                         response.request,
-                        newSession.user.accessToken
+                        newSession.tokenDto.token
                     )
                 } else {
                     runBlocking { tokenProvider.clearTokens() }

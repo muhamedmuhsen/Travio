@@ -1,5 +1,7 @@
 package com.example.network.api
 
+import com.example.domain.model.AuthResponse
+import com.example.network.dto.auth.AuthApiResponseDto
 import com.example.network.dto.auth.forgetpassword.ForgetPasswordRequest
 import com.example.network.dto.auth.forgetpassword.ForgetPasswordResponse
 import com.example.network.dto.auth.forgetpassword.ResetPasswordRequest
@@ -18,7 +20,7 @@ import retrofit2.http.POST
 
 interface AuthApi {
     @POST("Auth/login")
-    suspend fun login(@Body request: LoginRequest): LoginResponse
+    suspend fun login(@Body request: LoginRequest): AuthApiResponseDto
 
     @POST("Auth/register")
     suspend fun signup(@Body request: SignupRequest): SignupResponse

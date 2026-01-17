@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.common.errorhandler.AppError
 import com.example.common.errorhandler.Result
 import com.example.common.errorhandler.toUserMessage
 import com.example.common.uistateholder.UiState
@@ -47,18 +48,34 @@ class LoginViewModel @Inject constructor(
     }
 
     fun onLoginClicked(email: String, password: String) {
+        Log.d("Login", "onLoginClicked called")
         _state.update { it.copy(loginState = UiState.Loading) }
+        Log.d("Login", "email: $email, password: $password")
         viewModelScope.launch {
             when (val result = loginUseCase(email, password)) {
                 is Result.Error -> {
+                    Log.e("Login", "Error logging in: ${result.error}")
                     val message = result.error.toUserMessage()
+                    if (result.error is AppError.Validation.WeakPassword) {
+                        _state.update { it.copy(isPasswordError = true) }
+                    }
+                    if (result.error is AppError.Validation.InvalidEmailFormat) {
+                        _state.update { it.copy(isEmailError = true) }
+                    }
                     _state.update { it.copy(loginState = UiState.Error(message)) }
                     sendEvent(LoginEvent.ShowAuthError(message))
                 }
 
                 is Result.Success -> {
+                    Log.d("Login", "Successfully logged in")
                     preferencesManager.setLoggedIn(true)
-                    _state.update { it.copy(loginState = UiState.Success(result.data)) }
+                    _state.update {
+                        it.copy(
+                            loginState = UiState.Success(result.data),
+                            isPasswordError = false,
+                            isEmailError = false
+                        )
+                    }
                     sendEvent(LoginEvent.NavigateToHome)
                 }
             }
@@ -98,6 +115,7 @@ class LoginViewModel @Inject constructor(
                     val message = shouldNavigateToHome.error.message
                     onGoogleSignInError(message)
                 }
+
                 is Result.Success -> {
                     Log.d("GoogleSignIn", "Successfully signed in with Google")
                     preferencesManager.setLoggedIn(true)

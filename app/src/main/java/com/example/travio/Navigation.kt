@@ -1,5 +1,8 @@
 package com.example.travio
 
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
@@ -15,13 +18,13 @@ import com.example.feature.onboarding.OnboardingScreen
 import com.example.feature.signup.SignupScreen
 import com.example.feature.starterlogin.StarterLogin
 
-
 @Composable
 fun TravioNavHost(
     modifier: Modifier = Modifier,
     navController: NavHostController,
     startDestination: String
-) {/* TODO: review every what should be in the back stack and what should not */
+) {
+    /* TODO: review every what should be in the back stack and what should not */
     NavHost(
         modifier = modifier, navController = navController, startDestination = startDestination
     ) {
@@ -78,6 +81,10 @@ fun TravioNavHost(
                     navController.navigate(Screen.LoginScreen.route)
                 },
                 navigateToHome = { navController.navigate(Screen.HomeScreen.route) })
+        }
+
+        composable(Screen.HomeScreen.route) {
+            Column(Modifier.fillMaxSize()) { Text("Home") }
         }
     }
 }

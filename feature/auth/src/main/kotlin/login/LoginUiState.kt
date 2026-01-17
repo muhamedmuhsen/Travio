@@ -10,5 +10,7 @@ data class LoginUiState(
     val passwordError: String? = null,
     val isPasswordVisible: Boolean = false,
     val isRememberMeChecked: Boolean = false,
+    val isEmailError: Boolean = false,
+    val isPasswordError: Boolean = false,
     val loginState: UiState<User> = UiState.Idle,
 )

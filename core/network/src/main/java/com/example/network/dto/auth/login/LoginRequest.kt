@@ -1,5 +1,6 @@
 package com.example.network.dto.auth.login
 
 data class LoginRequest(
-    val email: String, val password: String
+    val Email_or_username: String,
+    val password: String
 )

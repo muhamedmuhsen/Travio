@@ -175,6 +175,7 @@ fun LoginScreen(
             AppTextField(
                 value = uiState.value.email,
                 onValueChange = { viewModel.onEmailChange(it) },
+                isError = uiState.value.isEmailError,
                 placeholder = stringResource(id = R.string.email),
                 modifier = Modifier.fillMaxWidth()
             )
@@ -187,6 +188,7 @@ fun LoginScreen(
                 placeholder = stringResource(id = R.string.password),
                 fieldType = TextFieldType.PASSWORD,
                 isPasswordVisible = uiState.value.isPasswordVisible,
+                isError = uiState.value.isPasswordError,
                 onPasswordVisibilityChecked = { viewModel.onPasswordVisibilityCheck() },
                 modifier = Modifier.fillMaxWidth()
             )
@@ -250,77 +252,6 @@ fun LoginScreen(
             }
 
             Spacer(modifier = Modifier.height(MaterialTheme.spacing.lg))
-        }
-    }
-}
-
-@Composable
-fun rememberGoogleSignInLauncher(
-    onSuccess: (String) -> Unit,
-    onError: (String) -> Unit,
-    onCancelled: () -> Unit
-): (String) -> Unit {
-    val context = LocalContext.current
-    val scope = rememberCoroutineScope()
-    val credentialManager = remember { CredentialManager.create(context) }
-
-    return remember {
-        { webClientId: String ->
-            scope.launch {
-                try {
-                    Log.d("GoogleSignIn", "Starting credential request...")
-
-                    val googleIdOption = GetGoogleIdOption.Builder()
-                        .setFilterByAuthorizedAccounts(false)
-                        .setAutoSelectEnabled(false)
-                        .setServerClientId(webClientId)
-                        .build()
-
-                    val request = GetCredentialRequest.Builder()
-                        .addCredentialOption(googleIdOption)
-                        .build()
-
-                    val activity = context.findActivity()
-                    if (activity == null) {
-                        onError("Unable to find activity")
-                        return@launch
-                    }
-
-                    val result = credentialManager.getCredential(
-                        request = request,
-                        context = activity
-                    )
-
-                    Log.d("GoogleSignIn", "Credential received successfully")
-
-                    when (val credential = result.credential) {
-                        is CustomCredential -> {
-                            if (credential.type == GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL) {
-                                val googleIdTokenCredential =
-                                    GoogleIdTokenCredential.createFrom(credential.data)
-                                Log.d(
-                                    "GoogleSignIn",
-                                    "ID Token obtained, calling onSuccess with IdToken:${googleIdTokenCredential.idToken}"
-                                )
-                                onSuccess(googleIdTokenCredential.idToken)
-                            } else {
-                                onError("Invalid credential type")
-                            }
-                        }
-
-                        else -> onError("Unexpected credential type")
-                    }
-                } catch (_: GetCredentialCancellationException) {
-                    Log.d("GoogleSignIn", "User cancelled")
-                    onCancelled()
-                } catch (e: NoCredentialException) {
-                    Log.e("GoogleSignIn", "No credential available", e)
-                    onError("No Google accounts available")
-                } catch (e: Exception) {
-                    Log.e("GoogleSignIn", "Exception: ${e.javaClass.simpleName}", e)
-                    onError(e.localizedMessage ?: "Google sign-in failed")
-                }
-            }
         }
     }
 }

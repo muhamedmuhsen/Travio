@@ -9,6 +9,7 @@ import retrofit2.HttpException
 import java.io.IOException
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
+import javax.net.ssl.SSLException
 
 private const val TAG = "SafeApiCall"
 
@@ -22,6 +23,8 @@ suspend fun <T> safeApiCall(
     } catch (e: SocketTimeoutException) {
         Log.e(TAG, "Request timeout", e)
         Result.Error(AppError.Network.Timeout)
+    } catch (_: SSLException) {
+        Result.Error(AppError.Unknown("Security/SSL Configuration Error"))
     } catch (e: IOException) {
         Log.e(TAG, "Network error", e)
         Result.Error(AppError.Network.NoInternetConnection)

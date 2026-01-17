@@ -25,9 +25,6 @@ local.properties
 *.iml
 .idea/
 
-# macOS
-.DS_Store
-
 # Build folders - All modules
 build/
 */build/
@@ -50,3 +47,4 @@ captures/
 # Custom files
 template.txt
 .github/
+authWithGoogle.md
