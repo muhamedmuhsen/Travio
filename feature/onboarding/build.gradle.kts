@@ -43,6 +43,7 @@ dependencies {
     // Modules
     implementation(project(":core:designsystem"))
     implementation(project(":core:common"))
+    implementation(project(":feature:utils"))
     implementation(project(":domain"))
     implementation(project(":data"))
     // Core Android

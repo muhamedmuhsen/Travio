@@ -2,8 +2,8 @@ package com.example.feature.signup
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.common.errorhandler.Result
-import com.example.common.uistateholder.UiState
+import asUiText
+import com.example.domain.utils.Result
 import com.example.domain.usecase.auth.SignupUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
@@ -48,12 +48,12 @@ class SignupViewModel @Inject constructor(
                 username = ""
             )) {
                 is Result.Error -> {
-                    _state.update { it.copy(signupState = UiState.Error(result.error.message)) }
-                    _event.send(SignupEvent.ShowAuthError(result.error.message))
+                    // _state.update { it.copy(signupState = UiState.Error(result.error.message)) }
+                    _event.send(SignupEvent.ShowAuthError(result.error.asUiText()))
                 }
 
                 is Result.Success -> {
-                    _state.update { it.copy(signupState = UiState.Success(result.data)) }
+                    _state.update { it.copy(signupState = UiState.Success()) }
                     _event.send(SignupEvent.NavigateToHome)
                 }
             }

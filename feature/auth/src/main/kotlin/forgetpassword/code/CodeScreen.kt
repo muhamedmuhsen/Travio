@@ -50,6 +50,7 @@ import com.example.feature.auth.R
 import com.example.designsystem.components.AppButton
 import com.example.designsystem.theme.TravioTheme
 import com.example.designsystem.theme.spacing
+import com.example.feature.forgetpassword.code.CodeViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -103,7 +104,8 @@ fun CodeScreen(
                     }
 
                     is CodeEvent.ShowError -> {
-                        Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, event.message.asString(context), Toast.LENGTH_SHORT)
+                            .show()
                     }
                 }
 

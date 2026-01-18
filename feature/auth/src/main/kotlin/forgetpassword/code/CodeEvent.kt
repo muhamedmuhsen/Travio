@@ -1,8 +1,10 @@
 package com.example.feature.code
 
+import UiText
+
 sealed interface CodeEvent {
     data object OnBackClicked : CodeEvent
-    data class ShowError(val message: String) : CodeEvent
+    data class ShowError(val message: UiText) : CodeEvent
     data object OnSendAgain : CodeEvent
     data object NavigateToResetPassword : CodeEvent
 }

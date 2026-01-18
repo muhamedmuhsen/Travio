@@ -3,7 +3,8 @@ package com.example.feature.forgetpassword
 import android.util.Patterns
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.common.errorhandler.Result
+import asUiText
+import com.example.domain.utils.Result
 import com.example.domain.usecase.auth.ForgetPasswordUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
@@ -36,38 +37,18 @@ class ForgetPasswordViewModel @Inject constructor(
             it.copy(email = email)
         }
     }
-
-    fun onContactUsClicked() {
-        viewModelScope.launch {
-            _event.send(ForgetPasswordEvent.ContactUs)
-        }
-    }
-
     fun onCloseClicked() {
         sendEvent(ForgetPasswordEvent.OnBackClicked)
     }
-
-    fun validateEmail(email: String): Boolean {
-        return Patterns.EMAIL_ADDRESS.matcher(email).matches()
-    }
-
     fun onContinueClicked() {
-        if (!validateEmail(_state.value.email)) {
-            _state.update {
-                it.copy(isEmailError = true)
-            }
-            sendEvent(ForgetPasswordEvent.ShowError("Invalid email"))
+        viewModelScope.launch {
+            when (val result = forgetPasswordUseCase(_state.value.email)) {
+                is Result.Error -> {
+                    sendEvent(ForgetPasswordEvent.ShowError(result.error.asUiText()))
+                }
 
-        } else {
-            viewModelScope.launch {
-                when (val result = forgetPasswordUseCase(_state.value.email)) {
-                    is Result.Error -> {
-                        sendEvent(ForgetPasswordEvent.ShowError(result.error.message))
-                    }
-
-                    is Result.Success<*, *> -> {
-                        sendEvent(ForgetPasswordEvent.NavigateToCodeScreen)
-                    }
+                is Result.Success<*, *> -> {
+                    sendEvent(ForgetPasswordEvent.NavigateToCodeScreen)
                 }
             }
         }

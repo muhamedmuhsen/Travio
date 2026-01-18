@@ -4,27 +4,21 @@ import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.common.errorhandler.AppError
-import com.example.common.errorhandler.Result
-import com.example.common.errorhandler.toUserMessage
-import com.example.common.uistateholder.UiState
+import asUiText
+import com.example.domain.utils.Result
+import com.example.domain.utils.DataError
 import com.example.data.local.datastore.CredentialsManager
 import com.example.data.local.datastore.PreferencesManager
 import com.example.data.repository.GoogleCredentialDataSource
-import com.example.data.repository.GoogleCredentialDataSourceImpl
-//import com.example.domain.repository.auth.GoogleSignIn
-//import com.example.domain.usecase.auth.GoogleLoginUseCase
 import com.example.domain.usecase.auth.GoogleSignInUseCase
 import com.example.domain.usecase.auth.LoginUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -55,15 +49,14 @@ class LoginViewModel @Inject constructor(
             when (val result = loginUseCase(email, password)) {
                 is Result.Error -> {
                     Log.e("Login", "Error logging in: ${result.error}")
-                    val message = result.error.toUserMessage()
-                    if (result.error is AppError.Validation.WeakPassword) {
+                    if (result.error == DataError.Validation.WeakPassword) {
                         _state.update { it.copy(isPasswordError = true) }
                     }
-                    if (result.error is AppError.Validation.InvalidEmailFormat) {
+                    if (result.error == DataError.Validation.InvalidEmailFormat) {
                         _state.update { it.copy(isEmailError = true) }
                     }
-                    _state.update { it.copy(loginState = UiState.Error(message)) }
-                    sendEvent(LoginEvent.ShowAuthError(message))
+                    _state.update { it.copy(loginState = UiState.Error(result.error.asUiText())) }
+                    sendEvent(LoginEvent.ShowAuthError(result.error.asUiText()))
                 }
 
                 is Result.Success -> {
@@ -71,7 +64,7 @@ class LoginViewModel @Inject constructor(
                     preferencesManager.setLoggedIn(true)
                     _state.update {
                         it.copy(
-                            loginState = UiState.Success(result.data),
+                            loginState = UiState.Success(),
                             isPasswordError = false,
                             isEmailError = false
                         )
@@ -90,8 +83,9 @@ class LoginViewModel @Inject constructor(
             when (val result = googleCredentialDataSource.getGoogleIdToken(context, webClientId)) {
                 is Result.Error -> {
                     Log.e("GoogleSignIn", "Error getting Google ID token: ${result.error}")
-                    val message = result.error.toUserMessage()
-                    onGoogleSignInError(message)
+                    val message = result.error.asUiText()
+                    _state.update { it.copy(loginState = UiState.Error(message)) }
+                    sendEvent(LoginEvent.ShowAuthError(message))
                 }
 
                 is Result.Success -> {
@@ -112,8 +106,9 @@ class LoginViewModel @Inject constructor(
                         "GoogleSignIn",
                         "Error signing in with Google: ${shouldNavigateToHome.error}"
                     )
-                    val message = shouldNavigateToHome.error.message
-                    onGoogleSignInError(message)
+                    val message = shouldNavigateToHome.error.asUiText()
+                    _state.update { it.copy(loginState = UiState.Error(message)) }
+                    sendEvent(LoginEvent.ShowAuthError(message))
                 }
 
                 is Result.Success -> {
@@ -124,12 +119,6 @@ class LoginViewModel @Inject constructor(
             }
         }
     }
-
-    fun onGoogleSignInError(message: String) {
-        _state.update { it.copy(loginState = UiState.Error(message)) }
-        sendEvent(LoginEvent.ShowAuthError(message))
-    }
-
     fun onEmailChange(email: String) {
         _state.update { it.copy(email = email, emailError = null) }
     }

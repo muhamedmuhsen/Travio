@@ -1,5 +1,6 @@
 package com.example.feature.language
 
+import AppLanguage
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -29,12 +30,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.example.common.applanguage.AppLanguage
 import com.example.feature.onboarding.R
 import com.example.designsystem.components.AppButton
 import com.example.designsystem.components.LanguageButton
 import com.example.designsystem.theme.TravioTheme
 import com.example.designsystem.theme.spacing
+
 
 @Composable
 fun LanguageScreen(
@@ -64,7 +65,7 @@ fun LanguageScreen(
         ) {
             Image(
                 painter = painterResource(com.example.designsystem.R.drawable.ishan_seefromthesky),
-                contentDescription = null, // Decorative background
+                contentDescription = null,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier.matchParentSize()
             )
@@ -72,12 +73,12 @@ fun LanguageScreen(
             LanguageSelectionSheet(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .align(Alignment.BottomCenter), onLanguageSelected = {
+                    .align(Alignment.BottomCenter),
+                onLanguageSelected = {
                     viewModel.onLanguageChange(it)
-                    viewModel.changeLanguage(
-                        languageCode = it
-                    )
-                })
+                    viewModel.changeLanguage(languageCode = it)
+                }
+            )
         }
     }
 }
