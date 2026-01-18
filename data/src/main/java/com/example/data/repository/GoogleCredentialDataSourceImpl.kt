@@ -6,9 +6,8 @@ import androidx.credentials.CustomCredential
 import androidx.credentials.GetCredentialRequest
 import androidx.credentials.exceptions.GetCredentialCancellationException
 import androidx.credentials.exceptions.NoCredentialException
-import com.example.common.errorhandler.AppError
-import com.example.common.errorhandler.Result
-//import com.example.domain.repository.auth.GoogleSignIn
+import com.example.domain.utils.Result
+import com.example.domain.utils.DataError
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import javax.inject.Inject
@@ -17,9 +16,8 @@ class GoogleCredentialDataSourceImpl @Inject constructor() : GoogleCredentialDat
 
     override suspend fun getGoogleIdToken(
         context: Context, webClientId: String
-    ): Result<String, AppError> {
+    ): Result<String, DataError> {
         val credentialManager = CredentialManager.create(context)
-
         try {
             val googleIdOption = GetGoogleIdOption.Builder().setFilterByAuthorizedAccounts(false)
                 .setAutoSelectEnabled(false).setServerClientId(webClientId).build()
@@ -33,20 +31,20 @@ class GoogleCredentialDataSourceImpl @Inject constructor() : GoogleCredentialDat
                             GoogleIdTokenCredential.createFrom(credential.data)
                         return Result.Success(googleIdTokenCredential.idToken)
                     } else {
-                        return Result.Error(AppError.Authentication.SignInFailed)
+                        return Result.Error(DataError.Authentication.SignInFailed)
                     }
                 }
 
                 else -> {
-                    return Result.Error(AppError.Authentication.SignInFailed)
+                    return Result.Error(DataError.Authentication.SignInFailed)
                 }
             }
         } catch (_: GetCredentialCancellationException) {
-            return Result.Error(AppError.Authentication.UserCancelled)
+            return Result.Error(DataError.Authentication.UserCancelled)
         } catch (_: NoCredentialException) {
-            return Result.Error(AppError.Authentication.SignInFailed)
+            return Result.Error(DataError.Authentication.SignInFailed)
         } catch (e: Exception) {
-            return Result.Error(AppError.Unknown(e.localizedMessage ?: "Unknown Error"))
+            return Result.Error(DataError.Data.UnknownError)
         }
     }
 }

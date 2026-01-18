@@ -1,5 +1,6 @@
 package com.example.feature.language
 
+import AppLanguage
 import android.app.LocaleManager
 import android.content.Context
 import android.os.Build
@@ -7,7 +8,6 @@ import android.os.LocaleList
 import android.util.Log
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.os.LocaleListCompat
-import com.example.common.applanguage.AppLanguage
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 

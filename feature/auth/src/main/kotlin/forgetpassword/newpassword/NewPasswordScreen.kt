@@ -33,6 +33,7 @@ import com.example.designsystem.components.AppButton
 import com.example.designsystem.components.AppTextField
 import com.example.designsystem.components.TextFieldType
 import com.example.designsystem.theme.spacing
+import com.example.feature.forgetpassword.newpassword.NewPasswordViewModel
 import com.example.feature.signup.PasswordRulesText
 
 @OptIn(ExperimentalMaterial3Api::class)

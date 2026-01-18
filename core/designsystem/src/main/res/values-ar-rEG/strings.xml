@@ -14,17 +14,57 @@
     <string name="language_arabic">اللغة العربية</string>
 
     <!-- Error Messages -->
+    <!-- Network -->
     <string name="error_no_internet">لا يوجد اتصال بالإنترنت. يرجى التحقق من الشبكة.</string>
     <string name="error_timeout">انتهت مهلة الطلب. حاول مرة أخرى.</string>
     <string name="error_server">خطأ في الخادم. يرجى المحاولة لاحقاً.</string>
     <string name="error_too_many_requests">محاولات كثيرة جداً. يرجى الانتظار قليلاً.</string>
     <string name="error_invalid_request">طلب غير صالح.</string>
     <string name="error_unexpected">خطأ غير متوقع (الرمز: %d).</string>
+
+    <!-- Authentication -->
+    <string name="error_user_cancelled">تم إلغاء العملية.</string>
+    <string name="error_invalid_credentials">البريد الإلكتروني أو كلمة المرور غير صحيحة.</string>
+    <string name="error_user_not_found">الحساب غير موجود.</string>
+    <string name="error_user_already_exists">يوجد حساب مسجل بهذا البريد الإلكتروني بالفعل.</string>
+    <string name="error_sign_in_failed">فشل تسجيل الدخول. حاول مرة أخرى.</string>
+    <string name="error_registration_failed">فشل التسجيل. حاول مرة أخرى.</string>
+    <string name="error_authentication_error">خطأ في المصادقة. يرجى تسجيل الدخول مرة أخرى.</string>
+
+    <!-- Authorization -->
     <string name="error_access_denied">تم رفض الوصول.</string>
     <string name="error_account_disabled">تم تعطيل حسابك.</string>
     <string name="error_account_locked">حسابك مقفل.</string>
     <string name="error_session_expired">انتهت الجلسة. يرجى تسجيل الدخول مرة أخرى.</string>
+
+    <!-- Validation -->
+    <string name="error_invalid_inputs">يرجى التحقق من المدخلات.</string>
+    <string name="error_missing_fields">يرجى ملء جميع الحقول المطلوبة.</string>
+    <string name="error_invalid_email">يرجى إدخال عنوان بريد إلكتروني صالح.</string>
+    <string name="error_weak_password">يجب أن تكون كلمة المرور 8 أحرف على الأقل.</string>
+    <string name="error_password_mismatch">كلمات المرور غير متطابقة.</string>
+    <string name="error_short_name">الاسم قصير جداً.</string>
+
+    <!-- Verification -->
+    <string name="error_invalid_code">رمز التحقق غير صالح.</string>
+    <string name="error_code_expired">انتهت صلاحية رمز التحقق. اطلب رمزاً جديداً.</string>
+    <string name="error_too_many_attempts">محاولات كثيرة جداً. يرجى المحاولة لاحقاً.</string>
+    <string name="error_verification_failed">فشل التحقق.</string>
+
+    <!-- Token Errors -->
+    <string name="error_token_not_found">فشل المصادقة. يرجى تسجيل الدخول مرة أخرى.</string>
+    <string name="error_invalid_token">جلسة غير صالحة. يرجى تسجيل الدخول مرة أخرى.</string>
+    <string name="error_could_not_get_claims">تعذر التحقق من أذونات المستخدم.</string>
+    <string name="error_decoding_failed">خطأ أمني. حاول مرة أخرى.</string>
+
+    <!-- Data -->
     <string name="error_data_not_found">البيانات غير موجودة.</string>
     <string name="error_data_error">خطأ في البيانات. حاول مرة أخرى.</string>
+    <string name="error_parsing_error">خطأ في معالجة البيانات.</string>
+
+    <!-- Local -->
+    <string name="error_disk_full">المساحة ممتلئة. يرجى توفير مساحة كافية.</string>
+
+    <!-- Unknown -->
     <string name="error_unknown">حدث خطأ غير متوقع.</string>
 </resources>

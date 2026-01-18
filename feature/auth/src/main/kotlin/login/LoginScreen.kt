@@ -105,7 +105,8 @@ fun LoginScreen(
                 }
 
                 is LoginEvent.ShowAuthError -> {
-                    Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, event.message.asString(context), Toast.LENGTH_SHORT)
+                        .show()
                 }
 
                 LoginEvent.ContinueWithFacebook -> {

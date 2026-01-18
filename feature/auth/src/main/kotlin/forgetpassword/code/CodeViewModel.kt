@@ -1,9 +1,12 @@
-package com.example.feature.code
+package com.example.feature.forgetpassword.code
 
+import com.example.domain.utils.Result
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.common.errorhandler.Result
+import asUiText
 import com.example.domain.usecase.auth.SendVerificationCodeUseCase
+import com.example.feature.code.CodeEvent
+import com.example.feature.code.CodeState
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -31,26 +34,18 @@ class CodeViewModel @Inject constructor(
         sendEvent(CodeEvent.OnBackClicked)
     }
 
-    fun onContinueClicked() {/*TODO: validate the codes*//*TODO: if the 6 digits is n't empty and correct, -> navigate to to reset password screen*/
-        if (_state.value.code.all { it != "0" }) {/*TODO: check if it is equal the code i got from the backend*/
-            viewModelScope.launch {
-                when (val result = verificationCodeUseCase(_state.value.code.toString())) {
-                    is Result.Error -> {
-                        sendEvent(CodeEvent.ShowError(result.error.message))
-                    }
-
-                    is Result.Success -> {
-                        sendEvent(CodeEvent.NavigateToResetPassword)
-                    }
+    fun onContinueClicked() {
+        viewModelScope.launch {
+            when (val result = verificationCodeUseCase(_state.value.code.toString())) {
+                is Result.Error -> {
+                    sendEvent(CodeEvent.ShowError(result.error.asUiText()))
                 }
 
+                is Result.Success -> {
+                    sendEvent(CodeEvent.NavigateToResetPassword)
+                }
             }
-
-        } else {
-            _state.value = _state.value.copy(isCodeError = true)
-            sendEvent(CodeEvent.ShowError("Please fill all the filled"))
         }
-
     }
 
     fun onSendAgainClicked() {

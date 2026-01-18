@@ -1,9 +1,9 @@
 package com.example.data.repository
 
 import android.content.Context
-import com.example.common.errorhandler.AppError
-import com.example.common.errorhandler.Result
+import com.example.domain.utils.Result
+import com.example.domain.utils.DataError
 
 interface GoogleCredentialDataSource {
-    suspend fun getGoogleIdToken(context: Context, webClientId: String): Result<String, AppError>
+    suspend fun getGoogleIdToken(context: Context, webClientId: String): Result<String, DataError>
 }

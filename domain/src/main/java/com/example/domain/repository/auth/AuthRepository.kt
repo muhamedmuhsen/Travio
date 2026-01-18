@@ -1,25 +1,27 @@
 package com.example.domain.repository.auth
 
-import com.example.common.errorhandler.AppError
-import com.example.common.errorhandler.Result
-import com.example.domain.model.User
-import javax.inject.Inject
+import com.example.domain.utils.Result
+import com.example.domain.utils.DataError
 
 interface AuthRepository {
-    suspend fun login(email: String, password: String): Result<User, AppError>
+    suspend fun login(email: String, password: String): Result<Unit, DataError>
     suspend fun signup(
-        email: String, password: String, username: String, firstname: String, lastname: String
-    ): Result<User, AppError>
+        email: String,
+        password: String,
+        username: String,
+        firstname: String,
+        lastname: String
+    ): Result<Unit, DataError>
 
-    suspend fun signInWithGoogle(idToken: String): Result<User, AppError>
-    suspend fun signInWithFacebook(accessToken: String): Result<String, AppError>
-    suspend fun logout(): Result<Unit, AppError>
-    suspend fun isAuthenticated(): Result<Boolean, AppError>
+    suspend fun signInWithGoogle(idToken: String): Result<Unit, DataError>
+    suspend fun signInWithFacebook(accessToken: String): Result<Unit, DataError>
+    suspend fun logout(): Result<Unit, DataError>
+    suspend fun isAuthenticated(): Result<Boolean, DataError>
 
-    suspend fun refreshToken(): Result<Unit, AppError>
+    suspend fun refreshToken(): Result<Unit, DataError>
 
-    suspend fun forgetPassword(email: String): Result<Unit, AppError>
-    suspend fun sendVerificationCode(code: String): Result<Unit, AppError>
-    suspend fun resetPassword(newPassword: String): Result<Unit, AppError>
+    suspend fun forgetPassword(email: String): Result<Unit, DataError>
+    suspend fun sendVerificationCode(code: String): Result<Unit, DataError>
+    suspend fun resetPassword(newPassword: String): Result<Unit, DataError>
 
 }

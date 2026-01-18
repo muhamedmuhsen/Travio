@@ -1,8 +1,10 @@
-package com.example.feature.newpassword
+package com.example.feature.forgetpassword.newpassword
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.domain.usecase.auth.ResetPasswordUseCase
+import com.example.feature.newpassword.NewPasswordEvent
+import com.example.feature.newpassword.NewPasswordState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
