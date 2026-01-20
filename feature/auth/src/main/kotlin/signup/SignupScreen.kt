@@ -135,8 +135,6 @@ fun SignupScreen(
         ) {
             Spacer(modifier = Modifier.height(MaterialTheme.spacing.lg))
 
-
-
             AppTextField(
                 value = uiState.value.firstname,
                 onValueChange = { viewModel.onFirstNameChange(it) },
@@ -145,10 +143,20 @@ fun SignupScreen(
             )
 
             Spacer(modifier = Modifier.height(MaterialTheme.spacing.md))
+
             AppTextField(
                 value = uiState.value.lastname,
                 onValueChange = { viewModel.onLastNameChange(it) },
                 placeholder = stringResource(id = R.string.last_name),
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            Spacer(modifier = Modifier.height(MaterialTheme.spacing.md))
+
+            AppTextField(
+                value = uiState.value.username,
+                onValueChange = { viewModel.onUsernameChange(it) },
+                placeholder = stringResource(id = R.string.username),
                 modifier = Modifier.fillMaxWidth()
             )
 
@@ -181,7 +189,12 @@ fun SignupScreen(
 
             AppButton(
                 onClick = {
-                    viewModel.onCreateAccountClicked(
+                    viewModel.onSignupClicked(
+                        firstname = uiState.value.firstname,
+                        lastname = uiState.value.lastname,
+                        username = uiState.value.username,
+                        email = uiState.value.email,
+                        password = uiState.value.password
                     )
                 },
                 text = stringResource(id = R.string.create_an_account),

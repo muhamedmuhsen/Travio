@@ -57,11 +57,10 @@ fun OnboardingScreen(
     LaunchedEffect(Unit) {
         viewModel.event.collect { event ->
             when (event) {
-                OnboardingEvent.NavigateToLogin -> onFinish()
+                OnboardingEvent.NavigateToStarterLogin -> onFinish()
             }
         }
     }
-
     Scaffold { innerPadding ->
         // Main container that holds all layers
         Box(
@@ -121,7 +120,6 @@ fun OnboardingScreen(
                     }
                 }
             }
-
             if (pagerState.currentPage < pages.size - 1) {
                 Text(
                     text = stringResource(id = R.string.skip),
@@ -129,7 +127,7 @@ fun OnboardingScreen(
                         .align(Alignment.TopStart) // Better placement
                         .padding(MaterialTheme.spacing.md)
                         .padding(top = 36.dp)
-                        .clickable { onFinish() },
+                        .clickable { viewModel.onFinishClicked() },
                     style = MaterialTheme.typography.titleLarge,
                     color = Color.White,
                 )
@@ -182,14 +180,12 @@ fun OnboardingScreen(
                     Icon(
                         painter = painterResource(R.drawable.arrow),
                         contentDescription = stringResource(id = R.string.next),
-
                         modifier = Modifier
                             .size(MaterialTheme.spacing.lg)
                             .scale(
                                 scaleX = if (language == AppLanguage.ARABIC) -1f else 1f,
                                 scaleY = 1f
                             )
-
                     )
                 }
             }

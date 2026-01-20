@@ -26,7 +26,9 @@ fun TravioNavHost(
 ) {
     /* TODO: review every what should be in the back stack and what should not */
     NavHost(
-        modifier = modifier, navController = navController, startDestination = startDestination
+        modifier = modifier,
+        navController = navController,
+        startDestination = startDestination
     ) {
         composable(Screen.OnboardingScreen.route) {
             OnboardingScreen(

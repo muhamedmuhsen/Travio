@@ -3,6 +3,7 @@ package com.example.feature.language
 import AppLanguage
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.data.local.datastore.PreferencesManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,7 +15,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class LanguageViewModel @Inject constructor(
-    private val localeManager: AppLocaleManager
+    private val localeManager: AppLocaleManager,
+    private val preferencesManager: PreferencesManager
 ) : ViewModel() {
     private val _languageState = MutableStateFlow(LanguageState())
     val languageState: StateFlow<LanguageState> = _languageState
@@ -31,6 +33,7 @@ class LanguageViewModel @Inject constructor(
             languageCode = languageCode
         )
         viewModelScope.launch {
+            preferencesManager.setChooseLanguage(true)
             _event.send(LanguageEvent.NavigateToStarterLogin)
         }
     }

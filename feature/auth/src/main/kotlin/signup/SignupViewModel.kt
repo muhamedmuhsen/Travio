@@ -37,21 +37,26 @@ class SignupViewModel @Inject constructor(
         TODO("Not yet implemented")
     }
 
-    fun onSignupClicked(firstname: String, lastname: String, email: String, password: String) {
+    fun onSignupClicked(
+        firstname: String,
+        lastname: String,
+        username: String,
+        email: String,
+        password: String
+    ) {
         _state.update { it.copy(signupState = UiState.Loading) }
         viewModelScope.launch {
             when (val result = signupUseCase(
-                email,
-                password,
+                email = email,
+                password = password,
                 firstname = firstname,
                 lastname = lastname,
-                username = ""
+                username = username
             )) {
                 is Result.Error -> {
                     // _state.update { it.copy(signupState = UiState.Error(result.error.message)) }
                     _event.send(SignupEvent.ShowAuthError(result.error.asUiText()))
                 }
-
                 is Result.Success -> {
                     _state.update { it.copy(signupState = UiState.Success()) }
                     _event.send(SignupEvent.NavigateToHome)
@@ -74,6 +79,10 @@ class SignupViewModel @Inject constructor(
 
     fun onLastNameChange(lastname: String) {
         _state.update { it.copy(lastname = lastname) }
+    }
+
+    fun onUsernameChange(username: String) {
+        _state.update { it.copy(username = username) }
     }
 
     fun onFirstNameChange(firstname: String) {

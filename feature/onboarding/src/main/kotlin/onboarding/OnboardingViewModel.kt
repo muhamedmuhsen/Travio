@@ -40,7 +40,7 @@ class OnboardingViewModel @Inject constructor(private val preferencesManager: Pr
     fun onFinishClicked() {
         viewModelScope.launch {
             preferencesManager.setOnboardingComplete(complete = true)
-            _event.send(OnboardingEvent.NavigateToLogin)
+            _event.send(OnboardingEvent.NavigateToStarterLogin)
         }
     }
 }

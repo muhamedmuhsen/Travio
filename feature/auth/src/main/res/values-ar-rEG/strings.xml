@@ -20,6 +20,7 @@
     <string name="by_creating_account">بإنشاء حساب ، أقر بأنني قرأت ووافقت على\n ترافلز</string>
     <string name="first_name">الاسم الأول</string>
     <string name="last_name">الاسم الاخير</string>
+    <string name="username">اسم المتسخدم</string>
     <string name="your_password_must">يجب ان تكون كلمه المرور:</string>
     <string name="at_least_9_characters">• 9 أحرف على الأقل</string>
     <string name="include_letters_and_numbers">• تتضمن أحرفًا وأرقامًا</string>

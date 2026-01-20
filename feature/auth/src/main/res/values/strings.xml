@@ -26,6 +26,7 @@
     <string name="by_creating_account">By creating an account, i acknowledge that i have read and agree to\nTravio’s</string>
     <string name="first_name">First Name\n</string>
     <string name="last_name">Last Name</string>
+    <string name="username">Username</string>
     <string name="your_password_must">Your password must:</string>
     <string name="at_least_9_characters">• Be at least 9 characters</string>
     <string name="include_letters_and_numbers">• Include letters and numbers</string>

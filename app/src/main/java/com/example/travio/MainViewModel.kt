@@ -20,15 +20,19 @@ class MainViewModel @Inject constructor(private val preferencesManager: Preferen
 
     sealed interface StartDestination {
         data object Onboarding : StartDestination
+        data object Language : StartDestination
         data object Login : StartDestination
         data object Home : StartDestination
     }
 
     val startDestination: StateFlow<StartDestination?> = combine(
-        preferencesManager.observeOnboardingComplete(), preferencesManager.observeLoggedIn()
-    ) { isOnboardingComplete, isLoggedIn ->
+        preferencesManager.observeOnboardingComplete(),
+        preferencesManager.observeChooseLanguage(),
+        preferencesManager.observeLoggedIn()
+    ) { isOnboardingComplete, doesChooseLanguage, isLoggedIn ->
         when {
             !isOnboardingComplete -> StartDestination.Onboarding
+            !doesChooseLanguage -> StartDestination.Language
             !isLoggedIn -> StartDestination.Login
             else -> StartDestination.Home
         }

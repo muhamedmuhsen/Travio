@@ -17,6 +17,7 @@ class PreferencesManager @Inject constructor(context: Context) {
     companion object {
         private val KEY_ONBOARDING_COMPLETE = booleanPreferencesKey("onboarding_complete")
         private val KEY_LOGGED_IN = booleanPreferencesKey("is_logged_in")
+        private val KEY_CHOOSE_LANGUAGE = booleanPreferencesKey("choose_language")
     }
 
     // Onboarding
@@ -30,6 +31,15 @@ class PreferencesManager @Inject constructor(context: Context) {
 
     fun observeOnboardingComplete(): Flow<Boolean> {
         return dataStore.data.map { it[KEY_ONBOARDING_COMPLETE] ?: false }
+    }
+
+    // Language
+    suspend fun setChooseLanguage(complete: Boolean = true) {
+        dataStore.edit { it[KEY_CHOOSE_LANGUAGE] = complete }
+    }
+
+    fun observeChooseLanguage(): Flow<Boolean> {
+        return dataStore.data.map { it[KEY_CHOOSE_LANGUAGE] ?: false }
     }
 
     // Login state

@@ -34,11 +34,13 @@ class MainActivity : ComponentActivity() {
                         MainViewModel.StartDestination.Home -> Screen.HomeScreen.route
                         MainViewModel.StartDestination.Login -> Screen.StarterLoginScreen.route
                         MainViewModel.StartDestination.Onboarding -> Screen.OnboardingScreen.route
+                        MainViewModel.StartDestination.Language -> Screen.LanguageScreen.route
                         else -> Screen.StarterLoginScreen.route
                     }
                     Log.d("StartDestination", "StartDestination: $destination")
                     TravioNavHost(
-                        navController = rememberNavController(), startDestination = destination
+                        navController = rememberNavController(),
+                        startDestination = destination
                     )
                 }
             }
