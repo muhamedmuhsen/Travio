@@ -1,5 +1,6 @@
 package com.example.data.repository
 
+import android.util.Log
 import com.example.data.local.datastore.CredentialsManager
 import com.example.data.local.datastore.PreferencesManager
 import com.example.data.local.datastore.SecureTokenStorage
@@ -94,11 +95,14 @@ class AuthRepositoryImpl @Inject constructor(
 
     override suspend fun signInWithGoogle(idToken: String): Result<Unit, DataError> {
         try {
+            Log.d("GoogleSignIn", "idToken: $idToken")
             val request = SocialLoginRequest(provider = Provider.GOOGLE, token = idToken)
-            val response = api.socialLogin(request.token) // error occurred here
+            val response = api.googleLogin(idToken) // error occurred here
+            Log.d("GoogleSignIn", "response: $response")
 
             secureTokenStorage.saveTokens(
-                response.tokenDto.token, response.tokenDto.refreshTokenExpiration
+                response.tokenDto.token,
+                response.tokenDto.refreshTokenExpiration
             )
             preferencesManager.setLoggedIn(true)
 
@@ -129,7 +133,7 @@ class AuthRepositoryImpl @Inject constructor(
 
         try {
             val request = SocialLoginRequest(provider = Provider.FACEBOOK, token = accessToken)
-            val response = api.socialLogin(request.token)
+            val response = api.googleLogin(request.token)
 
             secureTokenStorage.saveTokens(
                 response.tokenDto.token, response.tokenDto.refreshTokenExpiration.toString()

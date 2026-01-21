@@ -21,9 +21,9 @@ dependencyResolutionManagement {
 
 rootProject.name = "Travio"
 include(":app")
-include(":core")
 include(":domain")
 include(":data")
+include(":core")
 include(":core:network")
 include(":core:designsystem")
 include(":core:common")

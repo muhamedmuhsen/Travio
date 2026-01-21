@@ -1,6 +1,5 @@
 package com.example.network.api
 
-import com.example.domain.model.AuthResponse
 import com.example.network.dto.auth.AuthApiResponseDto
 import com.example.network.dto.auth.forgetpassword.ForgetPasswordRequest
 import com.example.network.dto.auth.forgetpassword.ForgetPasswordResponse
@@ -13,7 +12,6 @@ import com.example.network.dto.auth.login.LoginResponse
 import com.example.network.dto.auth.logout.LogoutResponse
 import com.example.network.dto.auth.signup.SignupRequest
 import com.example.network.dto.auth.signup.SignupResponse
-import com.example.network.dto.auth.social.SocialLoginRequest
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.POST
@@ -26,7 +24,7 @@ interface AuthApi {
     suspend fun signup(@Body request: SignupRequest): SignupResponse
 
     @POST("Auth/google-login")
-    suspend fun socialLogin(@Body request: String): LoginResponse
+    suspend fun googleLogin(@Body request: String): LoginResponse
 
     @POST("Auth/logout")
     suspend fun logout(): LogoutResponse
