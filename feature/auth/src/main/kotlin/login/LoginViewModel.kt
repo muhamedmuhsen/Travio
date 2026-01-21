@@ -58,7 +58,6 @@ class LoginViewModel @Inject constructor(
                     _state.update { it.copy(loginState = UiState.Error(result.error.asUiText())) }
                     sendEvent(LoginEvent.ShowAuthError(result.error.asUiText()))
                 }
-
                 is Result.Success -> {
                     Log.d("Login", "Successfully logged in")
                     preferencesManager.setLoggedIn(true)
