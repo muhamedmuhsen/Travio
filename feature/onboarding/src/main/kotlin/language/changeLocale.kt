@@ -1,6 +1,6 @@
 package com.example.feature.language
 
-import AppLanguage
+import ui.localization.AppLanguage
 import android.app.LocaleManager
 import android.content.Context
 import android.os.Build

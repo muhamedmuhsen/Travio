@@ -2,7 +2,6 @@ package com.example.feature.signup
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import asUiText
 import com.example.domain.utils.Result
 import com.example.domain.usecase.auth.SignupUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -12,6 +11,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import ui.state.UiState
+import ui.text.asUiText
 import javax.inject.Inject
 
 @HiltViewModel

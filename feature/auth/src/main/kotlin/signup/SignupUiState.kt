@@ -1,6 +1,6 @@
 package com.example.feature.signup
 
-import UiState
+import ui.state.UiState
 import com.example.domain.model.User
 
 data class SignupUiState(

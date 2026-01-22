@@ -1,3 +1,5 @@
+package ui.text
+
 import com.example.designsystem.R
 import com.example.domain.utils.DataError
 import com.example.domain.utils.Result

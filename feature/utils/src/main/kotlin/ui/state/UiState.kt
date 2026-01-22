@@ -1,3 +1,5 @@
+package ui.state
+
 sealed interface UiState<out T> {
     data object Idle : UiState<Nothing>
     data object Loading : UiState<Nothing>

@@ -4,7 +4,6 @@ import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import asUiText
 import com.example.domain.utils.Result
 import com.example.domain.utils.DataError
 import com.example.data.local.datastore.CredentialsManager
@@ -19,6 +18,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import ui.state.UiState
+import ui.text.asUiText
 import javax.inject.Inject
 
 @HiltViewModel
