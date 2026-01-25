@@ -21,7 +21,7 @@ sealed interface DataError : Error {
 
     enum class Authentication : DataError {
         UserCancelled,
-        InvalidCredentials,
+        UnauthorizedAccess,
         UserNotFound,
         UserAlreadyExists,
         RegistrationFailed,

@@ -7,7 +7,7 @@ import com.example.domain.utils.Result
 fun DataError.asUiText(): UiText {
     return when (this) {
         DataError.Authentication.UserCancelled -> UiText.StringResource(R.string.error_user_cancelled)
-        DataError.Authentication.InvalidCredentials -> UiText.StringResource(R.string.error_invalid_credentials)
+        DataError.Authentication.UnauthorizedAccess -> UiText.StringResource(R.string.error_invalid_credentials)
         DataError.Authentication.UserNotFound -> UiText.StringResource(R.string.error_user_not_found)
         DataError.Authentication.UserAlreadyExists -> UiText.StringResource(R.string.error_user_already_exists)
         DataError.Authentication.RegistrationFailed -> UiText.StringResource(R.string.error_registration_failed)

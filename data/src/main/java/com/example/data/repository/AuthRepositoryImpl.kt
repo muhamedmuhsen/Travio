@@ -4,7 +4,6 @@ import android.util.Log
 import com.example.data.local.datastore.CredentialsManager
 import com.example.data.local.datastore.PreferencesManager
 import com.example.data.local.datastore.SecureTokenStorage
-import com.example.domain.repository.auth.TokenManager
 import com.example.domain.repository.auth.AuthRepository
 import com.example.domain.utils.DataError
 import com.example.network.api.AuthApi
@@ -12,30 +11,34 @@ import com.example.network.dto.auth.forgetpassword.ForgetPasswordRequest
 import com.example.network.dto.auth.forgetpassword.ResetPasswordRequest
 import com.example.network.dto.auth.forgetpassword.VerificationCodeRequest
 import com.example.network.dto.auth.login.LoginRequest
-import com.example.network.dto.auth.social.Provider
 import com.example.network.dto.auth.signup.SignupRequest
-import com.example.network.dto.auth.social.SocialLoginRequest
 import retrofit2.HttpException
 import java.io.IOException
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 import javax.inject.Inject
 import com.example.domain.utils.Result
+import com.example.network.dto.auth.GoogleLoginRequest
+
 class AuthRepositoryImpl @Inject constructor(
     private val api: AuthApi,
     private val secureTokenStorage: SecureTokenStorage,
     private val credentialsManager: CredentialsManager,
-    private val preferencesManager: PreferencesManager,
-    private val tokenManager: TokenManager
+    private val preferencesManager: PreferencesManager
 ) : AuthRepository {
 
     override suspend fun login(
         email: String, password: String
     ): Result<Unit, DataError> {
         try {
-            val response = api.login(LoginRequest(email, password))
 
-            secureTokenStorage.saveTokens(response.token, response.refreshTokenExpiration)
+            val response = api.login(LoginRequest(email, password))
+            Log.d("Login", "Token: ${response.token}")
+
+            secureTokenStorage.saveTokens(
+                response.token,
+                "response.refreshToken"
+            )
             preferencesManager.setLoggedIn(true)
 
             return Result.Success(Unit)
@@ -46,7 +49,7 @@ class AuthRepositoryImpl @Inject constructor(
         } catch (e: HttpException) {
             val error = when (e.code()) {
                 400 -> DataError.Network.BadRequest
-                401 -> DataError.Authentication.InvalidCredentials
+                401 -> DataError.Authentication.UnauthorizedAccess
                 404 -> DataError.Authentication.UserNotFound
                 408 -> DataError.Network.Timeout
                 429 -> DataError.Network.TooManyRequests
@@ -68,7 +71,10 @@ class AuthRepositoryImpl @Inject constructor(
             val response =
                 api.signup(SignupRequest(email = email, username = username, password = password))
 
-            secureTokenStorage.saveTokens(response.user.accessToken, response.user.refreshToken)
+            secureTokenStorage.saveTokens(
+                response.user.accessToken,
+                response.user.refreshToken
+            )
             preferencesManager.setLoggedIn(true)
             return Result.Success(Unit)
         } catch (_: UnknownHostException) {
@@ -78,7 +84,7 @@ class AuthRepositoryImpl @Inject constructor(
         } catch (e: HttpException) {
             val error = when (e.code()) {
                 400 -> DataError.Network.BadRequest
-                401 -> DataError.Authentication.InvalidCredentials
+                401 -> DataError.Authentication.UnauthorizedAccess
                 404 -> DataError.Authentication.UserNotFound
                 408 -> DataError.Network.Timeout
                 429 -> DataError.Network.TooManyRequests
@@ -96,13 +102,13 @@ class AuthRepositoryImpl @Inject constructor(
     override suspend fun signInWithGoogle(idToken: String): Result<Unit, DataError> {
         try {
             Log.d("GoogleSignIn", "idToken: $idToken")
-            val request = SocialLoginRequest(provider = Provider.GOOGLE, token = idToken)
-            val response = api.googleLogin(idToken) // error occurred here
+            val request = GoogleLoginRequest(idToken)
+            val response = api.googleLogin(request)
             Log.d("GoogleSignIn", "response: $response")
 
             secureTokenStorage.saveTokens(
-                response.tokenDto.token,
-                response.tokenDto.refreshTokenExpiration
+                response.token,
+                "response.refreshToken"
             )
             preferencesManager.setLoggedIn(true)
 
@@ -114,7 +120,7 @@ class AuthRepositoryImpl @Inject constructor(
         } catch (e: HttpException) {
             val error = when (e.code()) {
                 400 -> DataError.Network.BadRequest
-                401 -> DataError.Authentication.InvalidCredentials
+                401 -> DataError.Authentication.UnauthorizedAccess
                 404 -> DataError.Authentication.UserNotFound
                 408 -> DataError.Network.Timeout
                 429 -> DataError.Network.TooManyRequests
@@ -130,15 +136,14 @@ class AuthRepositoryImpl @Inject constructor(
     }
 
     override suspend fun signInWithFacebook(accessToken: String): Result<Unit, DataError> {
-
         try {
-            val request = SocialLoginRequest(provider = Provider.FACEBOOK, token = accessToken)
-            val response = api.googleLogin(request.token)
 
-            secureTokenStorage.saveTokens(
-                response.tokenDto.token, response.tokenDto.refreshTokenExpiration.toString()
-            )
-            preferencesManager.setLoggedIn(true)
+
+//            secureTokenStorage.saveTokens(
+//                response.tokenDto.token,
+//                response.tokenDto.refreshTokenExpiration
+//            )
+//            preferencesManager.setLoggedIn(true)
 
             return Result.Success(Unit)
         } catch (_: UnknownHostException) {
@@ -148,7 +153,7 @@ class AuthRepositoryImpl @Inject constructor(
         } catch (e: HttpException) {
             val error = when (e.code()) {
                 400 -> DataError.Network.BadRequest
-                401 -> DataError.Authentication.InvalidCredentials
+                401 -> DataError.Authentication.UnauthorizedAccess
                 404 -> DataError.Authentication.UserNotFound
                 408 -> DataError.Network.Timeout
                 429 -> DataError.Network.TooManyRequests
@@ -165,7 +170,10 @@ class AuthRepositoryImpl @Inject constructor(
 
     override suspend fun logout(): Result<Unit, DataError> {
         try {
-            api.logout()
+            /*TODO: should attach the access token in the request and send the refresh token in the body*/
+            val refreshToken = secureTokenStorage.getRefreshToken()
+            val response = api.logout(refreshToken)
+            Log.d("Logout", "Logout response: $response")
 
             secureTokenStorage.clearTokens()
             preferencesManager.setLoggedIn(false)
@@ -173,13 +181,16 @@ class AuthRepositoryImpl @Inject constructor(
 
             return Result.Success(Unit)
         } catch (_: UnknownHostException) {
+            Log.d("Logout", "UnknownHostException")
             return Result.Error(DataError.Network.NoInternetConnection)
         } catch (_: SocketTimeoutException) {
+            Log.d("Logout", "SocketTimeoutException")
             return Result.Error(DataError.Network.Timeout)
         } catch (e: HttpException) {
+            Log.d("Logout", "HttpException: ${e.code()}")
             val error = when (e.code()) {
                 400 -> DataError.Network.BadRequest
-                401 -> DataError.Authentication.InvalidCredentials
+                401 -> DataError.Authentication.UnauthorizedAccess
                 404 -> DataError.Authentication.UserNotFound
                 408 -> DataError.Network.Timeout
                 429 -> DataError.Network.TooManyRequests
@@ -188,8 +199,10 @@ class AuthRepositoryImpl @Inject constructor(
             }
             return Result.Error(error)
         } catch (_: IOException) {
+            Log.d("Logout", "IOException")
             return Result.Error(DataError.Network.NoInternetConnection)
         } catch (_: Exception) {
+            Log.d("Logout", "Exception")
             return Result.Error(DataError.Network.UnexpectedResponse)
         } finally {
             secureTokenStorage.clearTokens()
@@ -239,7 +252,7 @@ class AuthRepositoryImpl @Inject constructor(
         } catch (e: HttpException) {
             val error = when (e.code()) {
                 400 -> DataError.Network.BadRequest
-                401 -> DataError.Authentication.InvalidCredentials
+                401 -> DataError.Authentication.UnauthorizedAccess
                 404 -> DataError.Authentication.UserNotFound
                 408 -> DataError.Network.Timeout
                 429 -> DataError.Network.TooManyRequests
@@ -273,7 +286,7 @@ class AuthRepositoryImpl @Inject constructor(
         } catch (e: HttpException) {
             val error = when (e.code()) {
                 400 -> DataError.Network.BadRequest
-                401 -> DataError.Authentication.InvalidCredentials
+                401 -> DataError.Authentication.UnauthorizedAccess
                 404 -> DataError.Authentication.UserNotFound
                 408 -> DataError.Network.Timeout
                 429 -> DataError.Network.TooManyRequests
@@ -299,7 +312,7 @@ class AuthRepositoryImpl @Inject constructor(
         } catch (e: HttpException) {
             val error = when (e.code()) {
                 400 -> DataError.Network.BadRequest
-                401 -> DataError.Authentication.InvalidCredentials
+                401 -> DataError.Authentication.UnauthorizedAccess
                 404 -> DataError.Authentication.UserNotFound
                 408 -> DataError.Network.Timeout
                 429 -> DataError.Network.TooManyRequests

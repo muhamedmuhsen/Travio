@@ -6,6 +6,7 @@ import com.example.domain.usecase.auth.ForgetPasswordUseCase
 //import com.example.domain.usecase.auth.GoogleLoginUseCase
 import com.example.domain.usecase.auth.GoogleSignInUseCase
 import com.example.domain.usecase.auth.LoginUseCase
+import com.example.domain.usecase.auth.LogoutUseCase
 import com.example.domain.usecase.auth.ResetPasswordUseCase
 import com.example.domain.usecase.auth.SignupUseCase
 import com.example.domain.validators.ValidateEmailUseCase

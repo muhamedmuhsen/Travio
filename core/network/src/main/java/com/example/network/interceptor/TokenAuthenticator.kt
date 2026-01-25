@@ -1,6 +1,7 @@
 package com.example.network.interceptor
 
 import com.example.common.auth.TokenProvider
+import com.example.common.extensions.isNotNull
 import com.example.network.api.AuthApi
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
@@ -13,22 +14,21 @@ import javax.inject.Singleton
 
 @Singleton
 class TokenAuthenticator(
-    private val tokenProvider: TokenProvider, private val authApi: AuthApi
+    private val tokenProvider: TokenProvider,
+    private val authApi: AuthApi
 ) : Authenticator {
+    private val mutex = Mutex()
+    private val MAX_RETRY_COUNT = 2
+
     override fun authenticate(route: Route?, response: Response): Request? {
-        val mutex = Mutex()
-        if (response.request.header("Authorization") != null && responseCount(response) >= 3) {
-            return null
-        }
+        if (responseCount(response) >= MAX_RETRY_COUNT) return null
 
         return runBlocking {
-            val currentToken = tokenProvider.getAccessTokenSync()
-
             mutex.withLock {
-                val newToken = tokenProvider.getAccessTokenSync()
+                val currentToken = tokenProvider.getAccessTokenSync()
 
-                if (newToken != currentToken) {
-                    return@runBlocking newRequestWithToken(response.request, newToken)
+                if (currentToken.isNotNull() && response.request.header("Authorization") != "Bearer $currentToken") {
+                    return@runBlocking newRequestWithToken(response.request, currentToken)
                 }
 
                 val refreshToken = tokenProvider.getRefreshToken() ?: return@runBlocking null
@@ -36,25 +36,25 @@ class TokenAuthenticator(
                 val refreshResponse = try {
                     authApi.refreshToken(refreshToken).execute()
                 } catch (_: Exception) {
-                    runBlocking { tokenProvider.clearTokens() }
+                    tokenProvider.clearTokens()
                     return@runBlocking null
                 }
 
-                if (refreshResponse.isSuccessful && refreshResponse.body() != null) {
-                    val newSession = refreshResponse.body()!!
-
-                    tokenProvider.saveTokens(
-                        newSession.tokenDto.token,
-                        "newSession.user.refreshToken"
-                    )
-                    return@runBlocking newRequestWithToken(
-                        response.request,
-                        newSession.tokenDto.token
-                    )
-                } else {
-                    runBlocking { tokenProvider.clearTokens() }
+                if (!refreshResponse.isSuccessful || refreshResponse.body() == null) {
+                    tokenProvider.clearTokens()
                     return@runBlocking null
                 }
+
+                val session = refreshResponse.body()!!
+
+                tokenProvider.saveTokens(
+                    accessToken = session.tokenDto.token,
+                    refreshToken = session.tokenDto.refreshToken
+                )
+                newRequestWithToken(
+                    response.request,
+                    session.tokenDto.token
+                )
             }
         }
     }

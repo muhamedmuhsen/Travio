@@ -1,5 +1,7 @@
 package ui.state
 
+import ui.text.UiText
+
 sealed interface UiState<out T> {
     data object Idle : UiState<Nothing>
     data object Loading : UiState<Nothing>
