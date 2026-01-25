@@ -19,25 +19,47 @@ import javax.net.ssl.X509TrustManager
 @Module
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
-    @Provides
-    @Singleton
-    fun provideOkHttpClient(authInterceptor: AuthInterceptor): OkHttpClient {
+    private fun addUnsafeTrustManager(builder: OkHttpClient.Builder) {
+        try {
+            val trustAllCerts = arrayOf<TrustManager>(
+                object : X509TrustManager {
+                    override fun checkClientTrusted(
+                        chain: Array<X509Certificate>,
+                        authType: String
+                    ) {
+                    }
 
-        val trustAllCerts = arrayOf<TrustManager>(
-            object : X509TrustManager {
-                override fun checkClientTrusted(chain: Array<X509Certificate>, authType: String) {}
-                override fun checkServerTrusted(chain: Array<X509Certificate>, authType: String) {}
-                override fun getAcceptedIssuers(): Array<X509Certificate> = arrayOf()
-            }
-        )
+                    override fun checkServerTrusted(
+                        chain: Array<X509Certificate>,
+                        authType: String
+                    ) {
+                    }
 
-        val sslContext = SSLContext.getInstance("SSL")
-        sslContext.init(null, trustAllCerts, SecureRandom())
+                    override fun getAcceptedIssuers(): Array<X509Certificate> = arrayOf()
+                }
+            )
+
+            val sslContext = SSLContext.getInstance("TLS")
+            sslContext.init(null, trustAllCerts, SecureRandom())
+
+            builder.sslSocketFactory(
+                sslContext.socketFactory,
+                trustAllCerts[0] as X509TrustManager
+            )
+            builder.hostnameVerifier { _, _ -> true }
+        } catch (e: Exception) {
+            throw RuntimeException(e)
+        }
+    }
+}
+
+@Provides
+@Singleton
+fun provideOkHttpClient(authInterceptor: AuthInterceptor): OkHttpClient {
 
         return OkHttpClient.Builder()
-            .sslSocketFactory(sslContext.socketFactory, trustAllCerts[0] as X509TrustManager)
-            .hostnameVerifier { _, _ -> true }
             .addInterceptor(authInterceptor)
+            .apply { if (BuildConfig.DEBUG) addUnsafeTrustManager(this) }
             .build()
 
     }

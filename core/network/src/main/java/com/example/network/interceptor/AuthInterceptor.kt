@@ -11,10 +11,8 @@ import javax.inject.Inject
 class AuthInterceptor @Inject constructor(private val tokenProvider: TokenProvider) : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
         val token = tokenProvider.getAccessTokenSync()
-        val isLogout = chain.request().url.encodedPath.contains("Auth/Logout", ignoreCase = true)
 
-
-        val request = if (token.isNotNull() && !isLogout) {
+        val request = if (token.isNotNull()) {
             chain.request().newBuilder().addHeader("Authorization", "Bearer $token").build()
         } else {
             chain.request()
