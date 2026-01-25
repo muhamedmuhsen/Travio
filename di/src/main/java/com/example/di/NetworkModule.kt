@@ -40,6 +40,7 @@ object NetworkModule {
         return OkHttpClient.Builder()
             .sslSocketFactory(sslContext.socketFactory, trustAllCerts[0] as X509TrustManager)
             .hostnameVerifier { _, _ -> true }
+            .addInterceptor(authInterceptor)
             .build()
 
     }

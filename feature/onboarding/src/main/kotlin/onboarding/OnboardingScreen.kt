@@ -42,6 +42,7 @@ import com.example.designsystem.R
 import com.example.designsystem.theme.TravioTheme
 import com.example.designsystem.theme.spacing
 import kotlinx.coroutines.launch
+import ui.localization.AppLanguage
 
 @Composable
 fun OnboardingScreen(

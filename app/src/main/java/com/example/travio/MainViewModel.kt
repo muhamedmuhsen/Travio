@@ -1,5 +1,6 @@
 package com.example.travio
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.common.navigation.Screen
@@ -30,6 +31,8 @@ class MainViewModel @Inject constructor(private val preferencesManager: Preferen
         preferencesManager.observeChooseLanguage(),
         preferencesManager.observeLoggedIn()
     ) { isOnboardingComplete, doesChooseLanguage, isLoggedIn ->
+        Log.d("MainViewModel", "observed")
+
         when {
             !isOnboardingComplete -> StartDestination.Onboarding
             !doesChooseLanguage -> StartDestination.Language

@@ -1,5 +1,6 @@
 package com.example.travio
 
+import com.example.feature.home.HomeScreen
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Text
@@ -39,7 +40,8 @@ fun TravioNavHost(
             LoginScreen(
                 onCloseClicked = { navController.navigate(Screen.StarterLoginScreen.route) },
                 navigateToSignUp = { navController.navigate(Screen.SignupScreen.route) },
-                navigateToForgetPassword = { navController.navigate(Screen.ForgetPasswordScreen.route) }
+                navigateToForgetPassword = { navController.navigate(Screen.ForgetPasswordScreen.route) },
+                navigateToHome = { navController.navigate(Screen.HomeScreen.route) }
             )
         }
         composable(Screen.StarterLoginScreen.route) {
@@ -86,7 +88,7 @@ fun TravioNavHost(
         }
 
         composable(Screen.HomeScreen.route) {
-            Column(Modifier.fillMaxSize()) { Text("Home") }
+            HomeScreen()
         }
     }
 }

@@ -1,6 +1,6 @@
 package com.example.feature.forgetpassword
 
-import UiText
+import ui.text.UiText
 
 sealed interface ForgetPasswordEvent {
     data object NavigateToCodeScreen : ForgetPasswordEvent

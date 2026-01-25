@@ -3,7 +3,6 @@ package com.example.feature.forgetpassword.code
 import com.example.domain.utils.Result
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import asUiText
 import com.example.domain.usecase.auth.SendVerificationCodeUseCase
 import com.example.feature.code.CodeEvent
 import com.example.feature.code.CodeState
@@ -12,6 +11,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
+import ui.text.asUiText
 import javax.inject.Inject
 
 class CodeViewModel @Inject constructor(

@@ -1,6 +1,7 @@
 package com.example.network.api
 
 import com.example.network.dto.auth.AuthApiResponseDto
+import com.example.network.dto.auth.GoogleLoginRequest
 import com.example.network.dto.auth.forgetpassword.ForgetPasswordRequest
 import com.example.network.dto.auth.forgetpassword.ForgetPasswordResponse
 import com.example.network.dto.auth.forgetpassword.ResetPasswordRequest
@@ -14,6 +15,7 @@ import com.example.network.dto.auth.signup.SignupRequest
 import com.example.network.dto.auth.signup.SignupResponse
 import retrofit2.Call
 import retrofit2.http.Body
+import retrofit2.http.GET
 import retrofit2.http.POST
 
 interface AuthApi {
@@ -24,12 +26,12 @@ interface AuthApi {
     suspend fun signup(@Body request: SignupRequest): SignupResponse
 
     @POST("Auth/google-login")
-    suspend fun googleLogin(@Body request: String): LoginResponse
+    suspend fun googleLogin(@Body request: GoogleLoginRequest): AuthApiResponseDto
 
-    @POST("Auth/logout")
-    suspend fun logout(): LogoutResponse
+    @POST("Auth/Logout")
+    suspend fun logout(@Body token: String?): LogoutResponse
 
-    @POST("Auth/refresh")
+    @GET("Auth/refreshToken")
     fun refreshToken(@Body refreshToken: String): Call<LoginResponse>
 
     @POST("Auth/forgot-password")

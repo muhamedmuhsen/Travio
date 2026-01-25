@@ -6,6 +6,7 @@ data class AuthApiResponseDto(
     val email: String,
     val token: String,
     val expiresOn: String,
+    //val refreshToken: String,
     val refreshTokenExpiration: String
 )
 

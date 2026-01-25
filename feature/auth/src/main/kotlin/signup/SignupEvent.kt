@@ -1,6 +1,6 @@
 package com.example.feature.signup
 
-import UiText
+import ui.text.UiText
 
 sealed interface SignupEvent {
     data object ContinueWithGoogle : SignupEvent

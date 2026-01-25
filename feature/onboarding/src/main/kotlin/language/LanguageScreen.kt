@@ -1,6 +1,6 @@
 package com.example.feature.language
 
-import AppLanguage
+import ui.localization.AppLanguage
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement

@@ -84,6 +84,7 @@ fun LoginScreen(
     viewModel: LoginViewModel = hiltViewModel(),
     onCloseClicked: () -> Unit,
     navigateToSignUp: () -> Unit,
+    navigateToHome: () -> Unit,
     navigateToForgetPassword: () -> Unit
 ) {
 
@@ -95,15 +96,9 @@ fun LoginScreen(
     LaunchedEffect(Unit) {
         viewModel.event.collect { event ->
             when (event) {
-                LoginEvent.NavigateToForgotPassword -> {
-                    navigateToForgetPassword()
-                }
-
-                LoginEvent.NavigateToHome -> TODO()
-                LoginEvent.NavigateToSignup -> {
-                    navigateToSignUp()
-                }
-
+                LoginEvent.NavigateToForgotPassword -> navigateToForgetPassword()
+                LoginEvent.NavigateToHome -> navigateToHome()
+                LoginEvent.NavigateToSignup -> navigateToSignUp()
                 is LoginEvent.ShowAuthError -> {
                     Toast.makeText(context, event.message.asString(context), Toast.LENGTH_SHORT)
                         .show()
@@ -275,7 +270,8 @@ private fun LoginScreenPreview() {
     TravioTheme {
         LoginScreen(
             onCloseClicked = {},
-            navigateToSignUp = { }
+            navigateToSignUp = { },
+            navigateToHome = {}
         ) {}
     }
 }
@@ -300,7 +296,8 @@ private fun LoginScreenPreviewArabic() {
     TravioTheme {
         LoginScreen(
             onCloseClicked = {},
-            navigateToSignUp = { }
+            navigateToSignUp = { },
+            navigateToHome = {}
         ) {}
     }
 }

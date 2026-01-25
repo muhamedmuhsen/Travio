@@ -1,6 +1,6 @@
 package com.example.feature.language
 
-import AppLanguage
+import ui.localization.AppLanguage
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.data.local.datastore.PreferencesManager
