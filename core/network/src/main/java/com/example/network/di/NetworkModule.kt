@@ -1,6 +1,5 @@
-package com.example.di
+package com.example.network.di
 
-import android.annotation.SuppressLint
 import com.example.network.api.AuthApi
 import com.example.network.interceptor.AuthInterceptor
 import dagger.Module
@@ -8,12 +7,10 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.security.SecureRandom
 import java.security.cert.X509Certificate
-import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 import javax.net.ssl.SSLContext
 import javax.net.ssl.TrustManager

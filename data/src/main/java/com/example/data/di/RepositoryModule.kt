@@ -1,8 +1,7 @@
-package com.example.di
+package com.example.data.di
 
 import com.example.data.repository.TokenManagerImpl
 import com.example.data.repository.AuthRepositoryImpl
-import com.example.data.repository.GoogleCredentialDataSourceImpl
 import com.example.domain.repository.auth.AuthRepository
 //import com.example.domain.repository.auth.GoogleSignIn
 import com.example.domain.repository.auth.TokenManager
