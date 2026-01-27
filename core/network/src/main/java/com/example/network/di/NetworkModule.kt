@@ -1,12 +1,16 @@
 package com.example.network.di
 
+import com.example.common.auth.TokenProvider
+import com.example.network.BuildConfig
 import com.example.network.api.AuthApi
-import com.example.network.interceptor.AuthInterceptor
+import com.example.network.clients.AuthInterceptor
+import com.example.network.clients.TokenAuthenticator
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.security.SecureRandom
@@ -21,57 +25,74 @@ import javax.net.ssl.X509TrustManager
 object NetworkModule {
     private fun addUnsafeTrustManager(builder: OkHttpClient.Builder) {
         try {
-            val trustAllCerts = arrayOf<TrustManager>(
-                object : X509TrustManager {
-                    override fun checkClientTrusted(
-                        chain: Array<X509Certificate>,
-                        authType: String
-                    ) {
-                    }
-
-                    override fun checkServerTrusted(
-                        chain: Array<X509Certificate>,
-                        authType: String
-                    ) {
-                    }
-
-                    override fun getAcceptedIssuers(): Array<X509Certificate> = arrayOf()
+            val trustAllCerts = arrayOf<TrustManager>(object : X509TrustManager {
+                override fun checkClientTrusted(
+                    chain: Array<X509Certificate>, authType: String
+                ) {
                 }
-            )
+
+                override fun checkServerTrusted(
+                    chain: Array<X509Certificate>, authType: String
+                ) {
+                }
+
+                override fun getAcceptedIssuers(): Array<X509Certificate> = arrayOf()
+            })
 
             val sslContext = SSLContext.getInstance("TLS")
             sslContext.init(null, trustAllCerts, SecureRandom())
 
             builder.sslSocketFactory(
-                sslContext.socketFactory,
-                trustAllCerts[0] as X509TrustManager
+                sslContext.socketFactory, trustAllCerts[0] as X509TrustManager
             )
             builder.hostnameVerifier { _, _ -> true }
         } catch (e: Exception) {
             throw RuntimeException(e)
         }
     }
-}
 
-@Provides
-@Singleton
-fun provideOkHttpClient(authInterceptor: AuthInterceptor): OkHttpClient {
+    @Provides
+    @Singleton
+    fun provideLoggingInterceptor(): HttpLoggingInterceptor =
+        HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)
 
-        return OkHttpClient.Builder()
+
+    @Provides
+    @Singleton
+    fun provideTokenAuthenticator(
+        tokenProvider: TokenProvider,
+        authApi: javax.inject.Provider<AuthApi>
+    ): TokenAuthenticator {
+        return TokenAuthenticator(
+            tokenProvider = tokenProvider,
+            authApi = authApi
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun provideOkHttpClient(
+        authInterceptor: AuthInterceptor,
+        loggingInterceptor: HttpLoggingInterceptor,
+        authenticator: TokenAuthenticator
+    ): OkHttpClient {
+        return OkHttpClient
+            .Builder()
             .addInterceptor(authInterceptor)
-            .apply { if (BuildConfig.DEBUG) addUnsafeTrustManager(this) }
-            .build()
-
+            .addInterceptor(loggingInterceptor)
+            .authenticator(authenticator)
+            .apply {
+                if (BuildConfig.DEBUG) {
+                    addUnsafeTrustManager(this)
+                }
+            }.build()
     }
 
     @Provides
     @Singleton
     fun provideRetrofit(baseUrl: String, client: OkHttpClient): Retrofit {
-        return Retrofit
-            .Builder()
-            .baseUrl(baseUrl).client(client)
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
+        return Retrofit.Builder().baseUrl(baseUrl).client(client)
+            .addConverterFactory(GsonConverterFactory.create()).build()
     }
 
     @Provides

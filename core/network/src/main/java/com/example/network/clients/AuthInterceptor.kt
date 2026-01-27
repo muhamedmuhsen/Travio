@@ -1,9 +1,7 @@
-package com.example.network.interceptor
+package com.example.network.clients
 
-import android.util.Log
 import com.example.common.auth.TokenProvider
 import com.example.common.extensions.isNotNull
-import com.example.common.extensions.isNull
 import okhttp3.Interceptor
 import okhttp3.Response
 import javax.inject.Inject

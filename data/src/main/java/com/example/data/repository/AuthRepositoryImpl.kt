@@ -5,6 +5,7 @@ import com.example.data.local.datastore.CredentialsManager
 import com.example.data.local.datastore.PreferencesManager
 import com.example.data.local.datastore.SecureTokenStorage
 import com.example.domain.repository.auth.AuthRepository
+import com.example.domain.repository.auth.TokenManager
 import com.example.domain.utils.DataError
 import com.example.network.api.AuthApi
 import com.example.network.dto.auth.forgetpassword.ForgetPasswordRequest
@@ -19,12 +20,15 @@ import java.net.UnknownHostException
 import javax.inject.Inject
 import com.example.domain.utils.Result
 import com.example.network.dto.auth.GoogleLoginRequest
+import com.example.network.dto.auth.logout.LogoutRequest
+import java.util.Date
 
 class AuthRepositoryImpl @Inject constructor(
     private val api: AuthApi,
     private val secureTokenStorage: SecureTokenStorage,
     private val credentialsManager: CredentialsManager,
-    private val preferencesManager: PreferencesManager
+    private val preferencesManager: PreferencesManager,
+    private val tokenManager: TokenManager
 ) : AuthRepository {
 
     override suspend fun login(
@@ -37,7 +41,7 @@ class AuthRepositoryImpl @Inject constructor(
 
             secureTokenStorage.saveTokens(
                 response.token,
-                "response.refreshToken"
+                response.refreshToken
             )
             preferencesManager.setLoggedIn(true)
 
@@ -108,7 +112,7 @@ class AuthRepositoryImpl @Inject constructor(
 
             secureTokenStorage.saveTokens(
                 response.token,
-                "response.refreshToken"
+                response.refreshToken
             )
             preferencesManager.setLoggedIn(true)
 
@@ -172,7 +176,10 @@ class AuthRepositoryImpl @Inject constructor(
         try {
             /*TODO: should attach the access token in the request and send the refresh token in the body*/
             val refreshToken = secureTokenStorage.getRefreshToken()
-            val response = api.logout(refreshToken)
+            val isAccessTokenExpired = tokenManager.isTokenExpired()
+            Log.d("Logout", "isTokenExpired: $isAccessTokenExpired")
+            Log.d("Logout", "refreshToken: $refreshToken")
+            val response = api.logout(LogoutRequest(refreshToken))
             Log.d("Logout", "Logout response: $response")
 
             secureTokenStorage.clearTokens()

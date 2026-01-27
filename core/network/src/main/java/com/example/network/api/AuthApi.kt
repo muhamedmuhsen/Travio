@@ -10,7 +10,7 @@ import com.example.network.dto.auth.forgetpassword.VerificationCodeRequest
 import com.example.network.dto.auth.forgetpassword.VerificationCodeResponse
 import com.example.network.dto.auth.login.LoginRequest
 import com.example.network.dto.auth.login.LoginResponse
-import com.example.network.dto.auth.logout.LogoutResponse
+import com.example.network.dto.auth.logout.LogoutRequest
 import com.example.network.dto.auth.signup.SignupRequest
 import com.example.network.dto.auth.signup.SignupResponse
 import retrofit2.Call
@@ -29,10 +29,10 @@ interface AuthApi {
     suspend fun googleLogin(@Body request: GoogleLoginRequest): AuthApiResponseDto
 
     @POST("Auth/Logout")
-    suspend fun logout(@Body token: String?): LogoutResponse
+    suspend fun logout(@Body request: LogoutRequest)
 
-    @GET("Auth/refreshToken")
-    fun refreshToken(@Body refreshToken: String): Call<LoginResponse>
+    @POST("Auth/refreshToken")
+    fun refreshToken(@Body refreshToken: String): Call<AuthApiResponseDto>
 
     @POST("Auth/forgot-password")
     suspend fun forgetPassword(@Body request: ForgetPasswordRequest): ForgetPasswordResponse

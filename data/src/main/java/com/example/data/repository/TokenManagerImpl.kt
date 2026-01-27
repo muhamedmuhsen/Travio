@@ -1,5 +1,6 @@
 package com.example.data.repository
 
+import android.util.Log
 import com.auth0.android.jwt.DecodeException
 import com.auth0.android.jwt.JWT
 import com.example.domain.utils.Result
@@ -20,12 +21,12 @@ class TokenManagerImpl @Inject constructor(private val secureTokenStorage: Secur
             val token = secureTokenStorage.getAccessToken()
                 ?: return Result.Error(DataError.TokenError.TokenNotFound)
             val jwt = JWT(token)
-            return Result.Success(
-                DecodedToken(
-                    userId = (jwt.subject ?: jwt.getClaim("userId").asString()),
-                    expiresAt = jwt.expiresAt,
-                    claims = jwt.claims.mapValues { it.value.asObject(Any::class.java) })
-            )
+            val result = DecodedToken(
+                userId = (jwt.subject ?: jwt.getClaim("userId").asString()),
+                expiresAt = jwt.expiresAt,
+                claims = jwt.claims.mapValues { it.value.asObject(Any::class.java) })
+            Log.d("Logout", "Decoded token: $result")
+            return Result.Success(result)
         } catch (_: DecodeException) {
             return Result.Error(DataError.TokenError.DecodingFailed)
         } catch (_: Exception) {
@@ -59,6 +60,7 @@ class TokenManagerImpl @Inject constructor(private val secureTokenStorage: Secur
     override suspend fun getRefreshToken(): String? {
         return secureTokenStorage.getRefreshToken()
     }
+
 
     override suspend fun saveTokens(accessToken: String, refreshToken: String) {
         secureTokenStorage.saveTokens(accessToken, refreshToken)
