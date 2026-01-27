@@ -1,4 +1,4 @@
-package com.example.di
+package com.example.data.di
 
 import android.content.Context
 import com.example.common.auth.TokenProvider
@@ -8,13 +8,13 @@ import com.example.data.local.datastore.PreferencesManager
 import com.example.data.local.datastore.SecureTokenStorage
 import com.example.data.repository.GoogleCredentialDataSource
 import com.example.data.repository.GoogleCredentialDataSourceImpl
+import com.example.data.BuildConfig
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
-import com.example.feature.auth.R
 @Module
 @InstallIn(SingletonComponent::class)
 object DataStoreModule {
@@ -65,6 +65,6 @@ object DataStoreModule {
     @Provides
     @Singleton
     fun provideWebClientId(@ApplicationContext context: Context): String {
-        return context.getString(R.string.web_server_id)
+        return BuildConfig.GOOGLE_WEB_CLIENT_ID
     }
 }

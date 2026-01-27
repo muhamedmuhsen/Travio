@@ -1,5 +1,6 @@
-package com.example.network.interceptor
+package com.example.network.clients
 
+import android.util.Log
 import com.example.common.auth.TokenProvider
 import com.example.common.extensions.isNotNull
 import com.example.network.api.AuthApi
@@ -10,37 +11,58 @@ import okhttp3.Authenticator
 import okhttp3.Request
 import okhttp3.Response
 import okhttp3.Route
+import javax.inject.Provider
 import javax.inject.Singleton
 
 @Singleton
 class TokenAuthenticator(
     private val tokenProvider: TokenProvider,
-    private val authApi: AuthApi
+    private val authApi: Provider<AuthApi>
 ) : Authenticator {
     private val mutex = Mutex()
-    private val MAX_RETRY_COUNT = 2
+
+    companion object {
+        private const val TAG = "TokenAuthenticator"
+        private const val MAX_RETRY_COUNT = 3
+    }
 
     override fun authenticate(route: Route?, response: Response): Request? {
-        if (responseCount(response) >= MAX_RETRY_COUNT) return null
+        Log.d(TAG, "authenticate() called | code=${response.code}")
+
+        if (responseCount(response) >= MAX_RETRY_COUNT) {
+            Log.d(TAG, "authenticate() called | code=${response.code}")
+            return null
+        }
 
         return runBlocking {
             mutex.withLock {
                 val currentToken = tokenProvider.getAccessTokenSync()
 
-                if (currentToken.isNotNull() && response.request.header("Authorization") != "Bearer $currentToken") {
+                if (
+                    currentToken.isNotNull() &&
+                    response.request.header("Authorization") != "Bearer $currentToken"
+                ) {
+                    Log.d(TAG, "Using already refreshed token")
                     return@runBlocking newRequestWithToken(response.request, currentToken)
                 }
 
                 val refreshToken = tokenProvider.getRefreshToken() ?: return@runBlocking null
 
                 val refreshResponse = try {
-                    authApi.refreshToken(refreshToken).execute()
-                } catch (_: Exception) {
+                    authApi.get().refreshToken(refreshToken).execute()
+                } catch (e: Exception) {
+                    Log.e(TAG, "Refresh request failed", e)
+
                     tokenProvider.clearTokens()
                     return@runBlocking null
                 }
 
                 if (!refreshResponse.isSuccessful || refreshResponse.body() == null) {
+                    Log.e(
+                        TAG,
+                        "Refresh failed | code=${refreshResponse.code()}"
+                    )
+
                     tokenProvider.clearTokens()
                     return@runBlocking null
                 }
@@ -48,12 +70,14 @@ class TokenAuthenticator(
                 val session = refreshResponse.body()!!
 
                 tokenProvider.saveTokens(
-                    accessToken = session.tokenDto.token,
-                    refreshToken = session.tokenDto.refreshToken
+                    accessToken = session.token,
+                    refreshToken = session.refreshToken
                 )
+                Log.d(TAG, "Token refreshed successfully")
+
                 newRequestWithToken(
                     response.request,
-                    session.tokenDto.token
+                    session.token
                 )
             }
         }

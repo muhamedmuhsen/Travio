@@ -1,12 +1,9 @@
 package com.example.feature.login
 
-import android.app.Activity
-import android.content.Context
-import android.content.ContextWrapper
+
 import android.content.res.Configuration
 import android.util.Log
 import android.widget.Toast
-import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -32,10 +29,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -44,14 +38,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.credentials.CredentialManager
-import androidx.credentials.CustomCredential
-import androidx.credentials.GetCredentialRequest
-import androidx.credentials.exceptions.GetCredentialCancellationException
-import androidx.credentials.exceptions.NoCredentialException
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.feature.auth.R
+import com.example.feature.auth.BuildConfig
 import com.example.designsystem.components.AppButton
 import com.example.designsystem.components.AppTextField
 import com.example.designsystem.components.SigninOptionsButton
@@ -61,21 +51,9 @@ import com.example.designsystem.theme.spacing
 import com.example.feature.login.components.ByLoggingSection
 import com.example.feature.login.components.OrSignInWithText
 import com.example.feature.login.components.RememberMeAndForgetPasswordSection
-import com.facebook.CallbackManager
-import com.facebook.FacebookCallback
-import com.facebook.FacebookException
-import com.facebook.login.LoginManager
-import com.facebook.login.LoginResult
-import com.google.android.libraries.identity.googleid.GetGoogleIdOption
-import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
-import kotlinx.coroutines.launch
 import com.example.designsystem.R as DesignSystemR
 
-fun Context.findActivity(): Activity? = when (this) {
-    is Activity -> this
-    is ContextWrapper -> baseContext.findActivity()
-    else -> null
-}
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -87,10 +65,11 @@ fun LoginScreen(
     navigateToHome: () -> Unit,
     navigateToForgetPassword: () -> Unit
 ) {
-
     val uiState = viewModel.state.collectAsStateWithLifecycle()
-    val webClientId = stringResource(id = R.string.web_server_id)
+    val webClientId = BuildConfig.GOOGLE_WEB_CLIENT_ID
     val context = LocalContext.current
+
+
 
 
     LaunchedEffect(Unit) {
@@ -109,7 +88,7 @@ fun LoginScreen(
                 }
 
                 LoginEvent.ContinueWithGoogle -> {
-                    //viewModel.onGoogleSignInClicked(webClientId)
+                    viewModel.onGoogleSignInClicked(context, webClientId)
                 }
             }
         }

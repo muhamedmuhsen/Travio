@@ -9,6 +9,10 @@ android {
     namespace = "com.example.network"
     compileSdk = 36
 
+    buildFeatures {
+        buildConfig = true
+    }
+
     defaultConfig {
         minSdk = 29
 
