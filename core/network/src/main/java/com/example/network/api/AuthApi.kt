@@ -35,9 +35,9 @@ interface AuthApi {
     fun refreshToken(@Body refreshToken: String): Call<AuthApiResponseDto>
 
     @POST("Auth/forgot-password")
-    suspend fun forgetPassword(@Body request: ForgetPasswordRequest): ForgetPasswordResponse
+    suspend fun forgetPassword(@Body request: ForgetPasswordRequest)
 
-    @POST("Auth/verify-code")
+    @POST("Auth/verify-reset-password-otp")
     suspend fun sendVerificationCode(@Body request: VerificationCodeRequest): VerificationCodeResponse
 
     @POST("Auth/reset-password")

@@ -1,16 +1,13 @@
 package com.example.travio
 
 import com.example.feature.home.HomeScreen
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.common.navigation.Screen
-import com.example.feature.code.CodeScreen
+import com.example.feature.forgetpassword.code.CodeScreen
 import com.example.feature.forgetpassword.ForgetPasswordScreen
 import com.example.feature.language.LanguageScreen
 import com.example.feature.login.LoginScreen
@@ -57,14 +54,19 @@ fun TravioNavHost(
         composable(Screen.ForgetPasswordScreen.route) {
             ForgetPasswordScreen(
                 onCloseClicked = { navController.popBackStack() },
-                navigateToCodeScreen = { navController.navigate(Screen.CodeScreen.route) })
+                navigateToCodeScreen = {
+                    val email = it
+                    navController.navigate(Screen.CodeScreen.route + "/$email")
+                })
         }
-        composable(Screen.CodeScreen.route) {
+        composable(Screen.CodeScreen.route + "/{email}") {
+            val email = it.arguments?.getString("email") ?: ""
             CodeScreen(
                 onBackClicked = {
                     navController.popBackStack()
                 },
                 navigateToResetPassword = {},
+                email = email
             )
         }
 

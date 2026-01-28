@@ -274,17 +274,19 @@ class AuthRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun sendVerificationCode(code: String): Result<Unit, DataError> {
+    override suspend fun sendVerificationCode(
+        email: String,
+        code: String
+    ): Result<Unit, DataError> {
         try {
-            val response = api.sendVerificationCode(VerificationCodeRequest(code))
-            val message = response.message
+            api.sendVerificationCode(VerificationCodeRequest(email = email, Otp = code))
 
-            if (message.contains("expired", ignoreCase = true)) {
-                return Result.Error(DataError.Verification.CodeExpired)
-            }
-            if (message.contains("invalid", ignoreCase = true)) {
-                return Result.Error(DataError.Verification.InvalidCode)
-            }
+//            if (message.contains("expired", ignoreCase = true)) {
+//                return Result.Error(DataError.Verification.CodeExpired)
+//            }
+//            if (message.contains("invalid", ignoreCase = true)) {
+//                return Result.Error(DataError.Verification.InvalidCode)
+//            }
             return Result.Success(Unit)
         } catch (_: UnknownHostException) {
             return Result.Error(DataError.Network.NoInternetConnection)

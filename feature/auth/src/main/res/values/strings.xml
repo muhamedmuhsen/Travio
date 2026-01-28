@@ -41,6 +41,8 @@
     <string name="close">Close</string>
 
     <!-- Error Messages -->
+    <string name="invalid_email">Invalid email</string>
+    <string name="invalid_code">Invalid code</string>
     <string name="error_invalid_credentials">Invalid email or password.</string>
     <string name="error_user_not_found">Account not found.</string>
     <string name="error_user_already_exists">An account with this email already exists.</string>

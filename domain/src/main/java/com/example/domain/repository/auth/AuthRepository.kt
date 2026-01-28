@@ -21,7 +21,7 @@ interface AuthRepository {
     suspend fun refreshToken(): Result<Unit, DataError>
 
     suspend fun forgetPassword(email: String): Result<Unit, DataError>
-    suspend fun sendVerificationCode(code: String): Result<Unit, DataError>
+    suspend fun sendVerificationCode(email: String, code: String): Result<Unit, DataError>
     suspend fun resetPassword(newPassword: String): Result<Unit, DataError>
 
 }

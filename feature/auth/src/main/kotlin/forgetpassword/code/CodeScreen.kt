@@ -1,4 +1,4 @@
-package com.example.feature.code
+package com.example.feature.forgetpassword.code
 
 import android.widget.Toast
 import androidx.compose.foundation.background
@@ -50,7 +50,7 @@ import com.example.feature.auth.R
 import com.example.designsystem.components.AppButton
 import com.example.designsystem.theme.TravioTheme
 import com.example.designsystem.theme.spacing
-import com.example.feature.forgetpassword.code.CodeViewModel
+import com.example.feature.code.CodeEvent
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -64,7 +64,8 @@ fun CodeScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = {}, navigationIcon = {
+                title = {},
+                navigationIcon = {
                     Box(
                         modifier = Modifier
                             .padding(start = MaterialTheme.spacing.md)
@@ -99,10 +100,6 @@ fun CodeScreen(
                         onBackClicked()
                     }
 
-                    CodeEvent.OnSendAgain -> {
-                        viewModel.onSendAgainClicked()
-                    }
-
                     is CodeEvent.ShowError -> {
                         Toast.makeText(context, event.message.asString(context), Toast.LENGTH_SHORT)
                             .show()
@@ -131,7 +128,8 @@ fun CodeScreen(
             Spacer(modifier = Modifier.height(MaterialTheme.spacing.lg))
 
             OtpInputField(
-                onOtpFilled = { /* Handle OTP completion, e.g., pass to ViewModel */ })
+                onOtpFilled = { viewModel.onCodeChange(it) }
+            )
 
             Spacer(modifier = Modifier.height(MaterialTheme.spacing.lg))
 
@@ -140,7 +138,7 @@ fun CodeScreen(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                SendAgain(onSendAgainClicked = { viewModel.onSendAgainClicked() })
+                SendAgain(onSendAgainClicked = { viewModel.onSendAgainClicked(email) })
                 // TODO: Implement and display the Timer composable here
                 // For example: Text(text = "00:30")
             }
@@ -148,7 +146,7 @@ fun CodeScreen(
             Spacer(modifier = Modifier.height(MaterialTheme.spacing.lg))
 
             AppButton(
-                onClick = { viewModel.onContinueClicked() },
+                onClick = { viewModel.onContinueClicked(email) },
                 text = stringResource(id = R.string.continue_button),
                 modifier = Modifier
                     .fillMaxWidth()
