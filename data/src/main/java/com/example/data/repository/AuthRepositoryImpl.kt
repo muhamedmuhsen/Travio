@@ -172,19 +172,19 @@ class AuthRepositoryImpl @Inject constructor(
         }
     }
 
+    private suspend fun handlePostLogoutPersistence() {
+        secureTokenStorage.clearTokens()
+        preferencesManager.setLoggedIn(false)
+        val wasRememberMeEnabled = credentialsManager.isRememberMeEnabled()
+        Log.d("Logout", "wasRememberMeEnabledRepo: $wasRememberMeEnabled")
+        if (!wasRememberMeEnabled)
+            credentialsManager.clearCredentials()
+    }
     override suspend fun logout(): Result<Unit, DataError> {
         try {
             /*TODO: should attach the access token in the request and send the refresh token in the body*/
             val refreshToken = secureTokenStorage.getRefreshToken()
-            val isAccessTokenExpired = tokenManager.isTokenExpired()
-            Log.d("Logout", "isTokenExpired: $isAccessTokenExpired")
-            Log.d("Logout", "refreshToken: $refreshToken")
-            val response = api.logout(LogoutRequest(refreshToken))
-            Log.d("Logout", "Logout response: $response")
-
-            secureTokenStorage.clearTokens()
-            preferencesManager.setLoggedIn(false)
-            credentialsManager.clearCredentials()
+            api.logout(LogoutRequest(refreshToken))
 
             return Result.Success(Unit)
         } catch (_: UnknownHostException) {
@@ -212,9 +212,7 @@ class AuthRepositoryImpl @Inject constructor(
             Log.d("Logout", "Exception")
             return Result.Error(DataError.Network.UnexpectedResponse)
         } finally {
-            secureTokenStorage.clearTokens()
-            preferencesManager.setLoggedIn(false)
-            credentialsManager.clearCredentials()
+            handlePostLogoutPersistence()
         }
     }
 
