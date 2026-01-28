@@ -90,7 +90,7 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideRetrofit(baseUrl: String, client: OkHttpClient): Retrofit {
+    fun provideRetrofit(@BaseUrl baseUrl: String, client: OkHttpClient): Retrofit {
         return Retrofit.Builder().baseUrl(baseUrl).client(client)
             .addConverterFactory(GsonConverterFactory.create()).build()
     }
@@ -104,7 +104,8 @@ object NetworkModule {
 
     @Provides
     @Singleton
+    @BaseUrl
     fun provideBaseUrl(): String {
-        return "https://10.0.2.2:7219/api/"
+        return BuildConfig.BASE_URL
     }
 }
