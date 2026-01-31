@@ -59,8 +59,27 @@ fun CodeScreen(
     viewModel: CodeViewModel = hiltViewModel(),
     navigateToResetPassword: () -> Unit,
     onBackClicked: () -> Unit,
-    email: String = "mail@gmail.com",
+    email: String,
 ) {
+
+    val context = LocalContext.current
+
+    LaunchedEffect(Unit) {
+        viewModel.event.collect { event ->
+            when (event) {
+                CodeEvent.NavigateToResetPassword -> navigateToResetPassword()
+                CodeEvent.OnBackClicked -> onBackClicked()
+                is CodeEvent.ShowError -> {
+                    Toast.makeText(
+                        context,
+                        event.message.asString(context),
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+        }
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(
