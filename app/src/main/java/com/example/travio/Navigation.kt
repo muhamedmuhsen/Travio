@@ -11,7 +11,7 @@ import com.example.feature.forgetpassword.code.CodeScreen
 import com.example.feature.forgetpassword.ForgetPasswordScreen
 import com.example.feature.language.LanguageScreen
 import com.example.feature.login.LoginScreen
-import com.example.feature.newpassword.NewPasswordScreen
+import com.example.feature.forgetpassword.newpassword.NewPasswordScreen
 import com.example.feature.onboarding.OnboardingScreen
 import com.example.feature.signup.SignupScreen
 import com.example.feature.starterlogin.StarterLogin
@@ -65,7 +65,7 @@ fun TravioNavHost(
                 onBackClicked = {
                     navController.popBackStack()
                 },
-                navigateToResetPassword = {},
+                navigateToResetPassword = { navController.navigate(Screen.ResetPasswordScreen.route) },
                 email = email
             )
         }
@@ -73,12 +73,15 @@ fun TravioNavHost(
         composable(Screen.ResetPasswordScreen.route) {
             NewPasswordScreen(
                 onCloseClicked = {
+                    navController.popBackStack()
+                    navController.popBackStack()
+                },
+                navigateToLogin = {
                     navController.navigate(Screen.LoginScreen.route) {
-                        popUpTo(Screen.LoginScreen.route) {
-                            inclusive = true
-                        }
+                        popUpTo(Screen.LoginScreen.route) { inclusive = true }
                     }
-                })
+                }
+            )
         }
         composable(Screen.SignupScreen.route) {
             SignupScreen(

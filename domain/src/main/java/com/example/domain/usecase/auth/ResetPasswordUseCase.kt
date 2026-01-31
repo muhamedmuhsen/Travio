@@ -13,12 +13,9 @@ class ResetPasswordUseCase @Inject constructor(
         password: String,
         confirmPassword: String
     ): Result<Unit, DataError> {
-        if (password != confirmPassword) {
-            return Result.Error(DataError.Validation.PasswordMismatch)
-        }
-        if (!validatePasswordUseCase(password)) {
-            return Result.Error(DataError.Validation.WeakPassword)
-        }
+        if (password != confirmPassword) return Result.Error(DataError.Validation.PasswordMismatch)
+        if (!validatePasswordUseCase(password)) return Result.Error(DataError.Validation.WeakPassword)
+
         return authRepository.resetPassword(password)
     }
 }

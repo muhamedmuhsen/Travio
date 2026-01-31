@@ -312,7 +312,9 @@ class AuthRepositoryImpl @Inject constructor(
 
     override suspend fun resetPassword(newPassword: String): Result<Unit, DataError> {
         try {
-            api.resetPassword(ResetPasswordRequest(newPassword))
+            val response = api.resetPassword(ResetPasswordRequest(newPassword))
+            secureTokenStorage.saveTokens(response.token, response.refreshToken)
+            preferencesManager.setLoggedIn(true)
             return Result.Success(Unit)
         } catch (_: UnknownHostException) {
             return Result.Error(DataError.Network.NoInternetConnection)

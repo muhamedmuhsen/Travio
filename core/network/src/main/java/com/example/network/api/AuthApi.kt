@@ -41,5 +41,5 @@ interface AuthApi {
     suspend fun sendVerificationCode(@Body request: VerificationCodeRequest): VerificationCodeResponse
 
     @POST("Auth/reset-password")
-    suspend fun resetPassword(@Body request: ResetPasswordRequest): ResetPasswordResponse
+    suspend fun resetPassword(@Body request: ResetPasswordRequest): AuthApiResponseDto
 }
