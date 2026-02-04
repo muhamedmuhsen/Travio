@@ -6,36 +6,29 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.runtime.getValue
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.rememberNavController
 import com.example.common.navigation.Screen
-import com.example.data.repository.ActivityProvider
 import com.example.designsystem.theme.TravioTheme
 import com.example.domain.repository.prefernces.PreferencesManager
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     private val viewModel: MainViewModel by viewModels()
-    @Inject
-    lateinit var preferencesManager: PreferencesManager
     override fun onCreate(savedInstanceState: Bundle?) {
         val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
-
-        // Keep splash screen visible until we know the start destination
         splashScreen.setKeepOnScreenCondition { viewModel.startDestination.value == null }
         enableEdgeToEdge()
         setContent {
             val startDestination by viewModel.startDestination.collectAsStateWithLifecycle()
-            val isDarkMode by preferencesManager.observeDarkMode()
-                .collectAsStateWithLifecycle(initialValue = false)
-            Log.d("DarkMode", "DarkMode: $isDarkMode")
+            val isDarkMode by viewModel.isDarkMode.collectAsStateWithLifecycle()
             TravioTheme(darkTheme = isDarkMode) {
                 if (startDestination != null) {
                     val destination = when (startDestination) {
@@ -45,7 +38,6 @@ class MainActivity : ComponentActivity() {
                         MainViewModel.StartDestination.Language -> Screen.LanguageScreen.route
                         else -> Screen.StarterLoginScreen.route
                     }
-                    Log.d("StartDestination", "StartDestination: $destination")
                     TravioNavHost(
                         navController = rememberNavController(),
                         startDestination = destination
@@ -55,4 +47,5 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
+
 

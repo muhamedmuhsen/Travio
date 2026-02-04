@@ -35,13 +35,17 @@ class ProfileViewModel @Inject constructor(
     val event = _event.receiveAsFlow()
 
     init {
-        loadTheme()
+        observeTheme()
         loadProfileData()
     }
 
-    private fun loadTheme() {
+    private fun observeTheme() {
         viewModelScope.launch {
-            _uiState.update { state -> state.copy(isDarkMode = preferencesManager.isDarkModeEnabled()) }
+            preferencesManager.observeDarkMode().collect { isDarkMode ->
+                _uiState.update { state ->
+                    state.copy(isDarkMode = isDarkMode)
+                }
+            }
         }
     }
 
@@ -88,7 +92,6 @@ class ProfileViewModel @Inject constructor(
     }
 
     fun toggleDarkMode() {
-        _uiState.update { state -> state.copy(isDarkMode = !state.isDarkMode) }
-        viewModelScope.launch { toggleDarkModeUseCase(_uiState.value.isDarkMode) }
+        viewModelScope.launch { toggleDarkModeUseCase(!_uiState.value.isDarkMode) }
     }
 }

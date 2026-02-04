@@ -15,6 +15,10 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor(private val preferencesManager: PreferencesManager) :
     ViewModel() {
 
+    val isDarkMode: StateFlow<Boolean> = preferencesManager.observeDarkMode().stateIn(
+        scope = viewModelScope, started = SharingStarted.WhileSubscribed(5000), initialValue = false
+    )
+
     sealed interface StartDestination {
         data object Onboarding : StartDestination
         data object Language : StartDestination
@@ -27,8 +31,6 @@ class MainViewModel @Inject constructor(private val preferencesManager: Preferen
         preferencesManager.observeChooseLanguage(),
         preferencesManager.observeLoggedIn()
     ) { isOnboardingComplete, doesChooseLanguage, isLoggedIn ->
-        Log.d("MainViewModel", "observed")
-
         when {
             !isOnboardingComplete -> StartDestination.Onboarding
             !doesChooseLanguage -> StartDestination.Language
@@ -36,6 +38,8 @@ class MainViewModel @Inject constructor(private val preferencesManager: Preferen
             else -> StartDestination.Home
         }
     }.stateIn(
-        scope = viewModelScope, started = SharingStarted.WhileSubscribed(5000), initialValue = null
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = null
     )
 }
