@@ -4,7 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.domain.usecase.auth.LogoutUseCase
-import com.example.data.local.datastore.CredentialsManager
+import com.example.data.local.datastore.CredentialsManagerImpl
 import com.example.domain.utils.Result
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -13,13 +13,13 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val logoutUseCase: LogoutUseCase,
-    private val credentialsManager: CredentialsManager
+    private val credentialsManagerImpl: CredentialsManagerImpl
 ) : ViewModel() {
     fun logout() {
         viewModelScope.launch {
             Log.d(
                 "Logout",
-                "wasRememberMeEnabledViewModel: ${credentialsManager.isRememberMeEnabled()}"
+                "wasRememberMeEnabledViewModel: ${credentialsManagerImpl.isRememberMeEnabled()}"
             )
             val result = logoutUseCase()
             Log.d("Logout", "Logout result: $result")

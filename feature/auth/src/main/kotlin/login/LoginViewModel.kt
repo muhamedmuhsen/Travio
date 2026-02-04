@@ -4,11 +4,11 @@ import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.data.repository.GoogleCredentialDataSourceImpl
 import com.example.domain.utils.Result
 import com.example.domain.utils.DataError
-import com.example.data.local.datastore.CredentialsManager
-import com.example.data.local.datastore.PreferencesManager
-import com.example.data.repository.GoogleCredentialDataSource
+import com.example.domain.repository.prefernces.CredentialsManager
+import com.example.domain.repository.prefernces.PreferencesManager
 import com.example.domain.usecase.auth.GoogleSignInUseCase
 import com.example.domain.usecase.auth.LoginUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -26,7 +26,7 @@ import javax.inject.Inject
 class LoginViewModel @Inject constructor(
     private val loginUseCase: LoginUseCase,
     private val googleSignInUseCase: GoogleSignInUseCase,
-    private val googleCredentialDataSource: GoogleCredentialDataSource,
+    private val googleCredentialDataSource: GoogleCredentialDataSourceImpl,
     private val preferencesManager: PreferencesManager,
     private val credentialsManager: CredentialsManager
 ) : ViewModel() {
@@ -130,7 +130,6 @@ class LoginViewModel @Inject constructor(
 
     private fun onGoogleSignInResult(idToken: String) {
         viewModelScope.launch {
-            /*TODO: send the id token to the backend */
             when (val shouldNavigateToHome = googleSignInUseCase(idToken)) {
                 is Result.Error -> {
                     Log.e(

@@ -3,7 +3,7 @@ package com.example.feature.language
 import ui.localization.AppLanguage
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.data.local.datastore.PreferencesManager
+import com.example.domain.repository.prefernces.PreferencesManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow

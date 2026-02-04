@@ -2,13 +2,15 @@ package com.example.data.di
 
 import android.content.Context
 import com.example.common.auth.TokenProvider
-import com.example.data.local.datastore.CredentialsManager
+import com.example.data.local.datastore.CredentialsManagerImpl
 import com.example.data.local.datastore.EncryptionManager
-import com.example.data.local.datastore.PreferencesManager
+import com.example.data.local.datastore.PreferencesManagerImpl
 import com.example.data.local.datastore.SecureTokenStorage
-import com.example.data.repository.GoogleCredentialDataSource
 import com.example.data.repository.GoogleCredentialDataSourceImpl
 import com.example.data.BuildConfig
+import com.example.data.repository.ActivityProvider
+import com.example.domain.repository.prefernces.CredentialsManager
+import com.example.domain.repository.prefernces.PreferencesManager
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -21,7 +23,7 @@ object DataStoreModule {
 
     @Provides
     @Singleton
-    fun provideGoogleCredentialDataSource(): GoogleCredentialDataSource =
+    fun provideGoogleCredentialDataSource(activityProvider: ActivityProvider): GoogleCredentialDataSourceImpl =
         GoogleCredentialDataSourceImpl()
 
     @Provides
@@ -49,7 +51,7 @@ object DataStoreModule {
     fun provideCredentialsManager(
         @ApplicationContext context: Context, encryptionManager: EncryptionManager
     ): CredentialsManager {
-        return CredentialsManager(context, encryptionManager)
+        return CredentialsManagerImpl(context, encryptionManager)
     }
 
     @Provides
@@ -57,14 +59,12 @@ object DataStoreModule {
     fun providePreferencesManager(
         @ApplicationContext context: Context
     ): PreferencesManager {
-        return PreferencesManager(context)
+        return PreferencesManagerImpl(context)
     }
-
-
     @WebClientId
     @Provides
     @Singleton
-    fun provideWebClientId(@ApplicationContext context: Context): String {
+    fun provideWebClientId(): String {
         return BuildConfig.GOOGLE_WEB_CLIENT_ID
     }
 }
