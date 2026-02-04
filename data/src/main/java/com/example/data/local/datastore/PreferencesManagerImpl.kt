@@ -21,6 +21,7 @@ class PreferencesManagerImpl @Inject constructor(@ApplicationContext private val
         private val KEY_ONBOARDING_COMPLETE = booleanPreferencesKey("onboarding_complete")
         private val KEY_LOGGED_IN = booleanPreferencesKey("is_logged_in")
         private val KEY_CHOOSE_LANGUAGE = booleanPreferencesKey("choose_language")
+        private val KEY_DARK_MODE = booleanPreferencesKey("dark_mode")
     }
 
     override suspend fun setOnboardingComplete(complete: Boolean) {
@@ -42,6 +43,18 @@ class PreferencesManagerImpl @Inject constructor(@ApplicationContext private val
 
     override fun observeChooseLanguage(): Flow<Boolean> {
         return dataStore.data.map { it[KEY_CHOOSE_LANGUAGE] ?: false }
+    }
+
+    override suspend fun saveDarkModePreference(isDarkMode: Boolean) {
+        dataStore.edit { it[KEY_DARK_MODE] = isDarkMode }
+    }
+
+    override suspend fun isDarkModeEnabled(): Boolean {
+        return dataStore.data.first()[KEY_DARK_MODE] ?: false
+    }
+
+    override fun observeDarkMode(): Flow<Boolean> {
+        return dataStore.data.map { it[KEY_DARK_MODE] ?: false }
     }
 
     // Login state

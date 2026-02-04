@@ -61,8 +61,7 @@ private fun ProfileContent(
     modifier: Modifier = Modifier
 ) {
     Column(
-        modifier = modifier
-            .fillMaxSize()
+        modifier = modifier.fillMaxSize()
 
     ) {
         // Header Section
@@ -82,15 +81,12 @@ private fun ProfileContent(
         ) {
             // Account Settings Section
             ProfileCategory(
-                title = "ACCOUNT SETTINGS",
-                options = listOf(
+                title = "ACCOUNT SETTINGS", options = listOf(
                     ProfileOption(
                         "My profile", R.drawable.person
-                    ) { onNavigateToDetail("profile") },
-                    ProfileOption(
+                    ) { onNavigateToDetail("profile") }, ProfileOption(
                         "Addresses", R.drawable.location
-                    ) { onNavigateToDetail("address") }
-                )
+                    ) { onNavigateToDetail("address") })
             )
 
             // Preferences Section
@@ -99,30 +95,23 @@ private fun ProfileContent(
                 clickableOptions = listOf(
                     ProfileOption(
                         "Language", R.drawable.language
-                    ) { onNavigateToDetail("language") }
-                ),
-                switchOptions = listOf(
+                    ) { onNavigateToDetail("language") }), switchOptions = listOf(
                     ProfileOptionWithSwitch(
-                        "Dark Mode", R.drawable.light_mode,
-                        isChecked = uiState.isDarkMode
-                    ) { toggleDarkMode() }
-                )
+                        "Dark Mode", R.drawable.light_mode, isChecked = uiState.isDarkMode
+                    ) { toggleDarkMode() })
             )
 
             // Support Section
             ProfileCategory(
-                title = "SUPPORT & HELP",
-                options = listOf(
+                title = "SUPPORT & HELP", options = listOf(
                     ProfileOption(
                         "Help Center", R.drawable.help_centeer
-                    ) { onNavigateToDetail("help") }
-                )
+                    ) { onNavigateToDetail("help") })
             )
 
             // Logout Button
             LogoutButton(
-                modifier = Modifier.fillMaxWidth(),
-                onClick = logout
+                modifier = Modifier.fillMaxWidth(), onClick = logout
             )
         }
     }
@@ -130,13 +119,10 @@ private fun ProfileContent(
 
 @Composable
 fun ProfileCategory(
-    title: String,
-    options: List<ProfileOption>,
-    modifier: Modifier = Modifier
+    title: String, options: List<ProfileOption>, modifier: Modifier = Modifier
 ) {
     Column(
-        modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(12.dp)
+        modifier = modifier, verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         Text(
             text = title,
@@ -157,8 +143,7 @@ fun ProfileCategoryWithSwitch(
     modifier: Modifier = Modifier
 ) {
     Column(
-        modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(12.dp)
+        modifier = modifier, verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         Text(
             text = title,
@@ -167,18 +152,14 @@ fun ProfileCategoryWithSwitch(
             color = MaterialTheme.colorScheme.outline,
         )
         TopSectionWithSwitch(
-            clickableOptions = clickableOptions,
-            switchOptions = switchOptions
+            clickableOptions = clickableOptions, switchOptions = switchOptions
         )
     }
 }
 
 @Composable
 fun SectionHeader(
-    userName: String,
-    userEmail: String,
-    profileImageUrl: String?,
-    modifier: Modifier = Modifier
+    userName: String, userEmail: String, profileImageUrl: String?, modifier: Modifier = Modifier
 ) {
     Row(
         modifier = modifier
@@ -197,8 +178,7 @@ fun SectionHeader(
             AsyncImage(
                 model = ImageRequest.Builder(LocalContext.current)
                     .data(profileImageUrl ?: R.drawable.ic_default_profile) // Use Coil for both!
-                    .crossfade(true)
-                    .build(),
+                    .crossfade(true).build(),
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier.fillMaxSize()
@@ -232,10 +212,6 @@ private fun ProfileScreenPreview() {
                 lastName = "Mahmoud",
                 email = "osama.mahmoud00@gmail.com",
                 isDarkMode = false
-            ),
-            onNavigateToDetail = {},
-            logout = {},
-            toggleDarkMode = {}
-        )
+            ), onNavigateToDetail = {}, logout = {}, toggleDarkMode = {})
     }
 }

@@ -1,8 +1,11 @@
 package com.dev.profile.profile_
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
+import com.example.domain.repository.prefernces.PreferencesManager
 import com.example.domain.usecase.auth.LogoutUseCase
+import com.example.domain.usecase.preferences.ToggleDarkModeUseCase
 import com.example.domain.usecase.user_management.GetUserUseCase
 import com.example.domain.utils.Result
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -21,6 +24,8 @@ import javax.inject.Inject
 class ProfileViewModel @Inject constructor(
     private val logoutUseCase: LogoutUseCase,
     private val getUserUseCase: GetUserUseCase,
+    private val toggleDarkModeUseCase: ToggleDarkModeUseCase,
+    private val preferencesManager: PreferencesManager
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(ProfileUiState())
@@ -30,7 +35,14 @@ class ProfileViewModel @Inject constructor(
     val event = _event.receiveAsFlow()
 
     init {
+        loadTheme()
         loadProfileData()
+    }
+
+    private fun loadTheme() {
+        viewModelScope.launch {
+            _uiState.update { state -> state.copy(isDarkMode = preferencesManager.isDarkModeEnabled()) }
+        }
     }
 
     fun logout() {
@@ -67,7 +79,7 @@ class ProfileViewModel @Inject constructor(
                             email = result.data.email,
                             firstName = result.data.firstName,
                             lastName = result.data.lastName,
-                            profilePictureUrl = result.data.profilePictureUrl
+                            profilePictureUrl = result.data.profilePictureUrl,
                         )
                     }
                 }
@@ -76,6 +88,7 @@ class ProfileViewModel @Inject constructor(
     }
 
     fun toggleDarkMode() {
-
+        _uiState.update { state -> state.copy(isDarkMode = !state.isDarkMode) }
+        viewModelScope.launch { toggleDarkModeUseCase(_uiState.value.isDarkMode) }
     }
 }

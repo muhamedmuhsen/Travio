@@ -96,7 +96,6 @@ fun TravioNavHost(
         composable(Screen.ProfileScreen.route) {
             ProfileScreen(
                 onNavigateToDetail = { },
-
                 )
         }
     }

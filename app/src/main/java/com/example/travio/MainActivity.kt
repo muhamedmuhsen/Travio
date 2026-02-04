@@ -13,7 +13,9 @@ import androidx.navigation.compose.rememberNavController
 import com.example.common.navigation.Screen
 import com.example.data.repository.ActivityProvider
 import com.example.designsystem.theme.TravioTheme
+import com.example.domain.repository.prefernces.PreferencesManager
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 
@@ -21,19 +23,20 @@ import javax.inject.Inject
 class MainActivity : ComponentActivity() {
     private val viewModel: MainViewModel by viewModels()
     @Inject
-    lateinit var activityProvider: ActivityProvider
-
+    lateinit var preferencesManager: PreferencesManager
     override fun onCreate(savedInstanceState: Bundle?) {
         val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
-        activityProvider.setCurrentActivity(this)
+
         // Keep splash screen visible until we know the start destination
         splashScreen.setKeepOnScreenCondition { viewModel.startDestination.value == null }
         enableEdgeToEdge()
         setContent {
             val startDestination by viewModel.startDestination.collectAsStateWithLifecycle()
-
-            TravioTheme {
+            val isDarkMode by preferencesManager.observeDarkMode()
+                .collectAsStateWithLifecycle(initialValue = false)
+            Log.d("DarkMode", "DarkMode: $isDarkMode")
+            TravioTheme(darkTheme = isDarkMode) {
                 if (startDestination != null) {
                     val destination = when (startDestination) {
                         MainViewModel.StartDestination.Home -> Screen.HomeScreen.route
