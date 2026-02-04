@@ -1,8 +1,8 @@
 package com.example.data.repository.user_management
 
-import com.example.data.local.datastore.PreferencesManager
 import com.example.data.local.datastore.SecureTokenStorage
 import com.example.domain.model.User
+import com.example.domain.repository.prefernces.PreferencesManager
 import com.example.domain.repository.user_management.UserManagementRepository
 import com.example.domain.utils.DataError
 import com.example.domain.utils.Result

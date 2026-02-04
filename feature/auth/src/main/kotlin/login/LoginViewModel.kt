@@ -4,12 +4,11 @@ import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.data.repository.GoogleCredentialDataSourceImpl
 import com.example.domain.utils.Result
 import com.example.domain.utils.DataError
-import com.example.data.local.datastore.CredentialsManager
-import com.example.data.local.datastore.PreferencesManager
-import com.example.data.repository.auth.GoogleCredentialDataSource
+import com.example.data.repository.auth.GoogleCredentialDataSourceImpl
+import com.example.domain.repository.prefernces.CredentialsManager
+import com.example.domain.repository.prefernces.PreferencesManager
 import com.example.domain.usecase.auth.GoogleSignInUseCase
 import com.example.domain.usecase.auth.LoginUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel

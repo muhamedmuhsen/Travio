@@ -1,7 +1,8 @@
 package com.example.data.di
 
-import com.example.data.repository.AuthRepositoryImpl
-import com.example.data.repository.TokenManagerImpl
+
+import com.example.data.repository.auth.AuthRepositoryImpl
+import com.example.data.repository.auth.TokenManagerImpl
 import com.example.domain.repository.auth.AuthRepository
 import com.example.domain.repository.auth.TokenManager
 import dagger.Binds

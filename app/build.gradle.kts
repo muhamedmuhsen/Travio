@@ -32,7 +32,7 @@ android {
             applicationIdSuffix = ".physical"  // Optional
         }
     }
-    
+
     defaultConfig {
         applicationId = "com.example.travio"
         minSdk = 29
