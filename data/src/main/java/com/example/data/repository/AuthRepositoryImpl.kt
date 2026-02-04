@@ -34,9 +34,7 @@ class AuthRepositoryImpl @Inject constructor(
         email: String, password: String
     ): Result<Unit, DataError> {
         try {
-
             val response = api.login(LoginRequest(email, password))
-            Log.d("Login", "Token: ${response.token}")
 
             secureTokenStorage.saveTokens(
                 response.token,

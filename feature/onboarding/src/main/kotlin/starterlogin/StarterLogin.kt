@@ -22,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -32,7 +33,7 @@ import com.example.designsystem.components.AppButton
 import com.example.designsystem.components.SigninOptionsButton
 import com.example.designsystem.theme.TravioTheme
 import com.example.designsystem.theme.spacing
-
+import com.example.feature.onboarding.BuildConfig
 @Composable
 fun StarterLogin(
     modifier: Modifier = Modifier,
@@ -40,6 +41,9 @@ fun StarterLogin(
     navigateToLogin: () -> Unit,
     navigateToSignup: () -> Unit
 ) {
+    val webClientId = BuildConfig.GOOGLE_WEB_CLIENT_ID
+    val context = LocalContext.current
+
     LaunchedEffect(Unit) {
         viewModel.event.collect { event ->
             when (event) {
@@ -108,7 +112,7 @@ fun StarterLogin(
             Spacer(modifier = Modifier.height(MaterialTheme.spacing.md))
 
             SigninOptionsButton(
-                onClick = { viewModel.onSocialLoginClicked(SocialType.GOOGLE) },
+                onClick = { viewModel.onGoogleSignInClicked(context, webClientId) },
                 text = stringResource(id = R.string.continue_with_google),
                 icon = com.example.designsystem.R.drawable.google_icon,
                 modifier = Modifier.fillMaxWidth()
@@ -117,7 +121,7 @@ fun StarterLogin(
             Spacer(modifier = Modifier.height(MaterialTheme.spacing.md))
 
             SigninOptionsButton(
-                onClick = { viewModel.onSocialLoginClicked(SocialType.FACEBOOK) },
+                onClick = { /*TODO: facebook login*/ },
                 text = stringResource(id = R.string.continue_with_facebook),
                 icon = com.example.designsystem.R.drawable.facebook_icon,
                 modifier = Modifier.fillMaxWidth()
