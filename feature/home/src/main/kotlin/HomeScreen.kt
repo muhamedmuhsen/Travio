@@ -13,6 +13,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
+    navigateToProfile: () -> Unit,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     Scaffold() { innerPadding ->
@@ -23,9 +24,9 @@ fun HomeScreen(
         ) {
             Text("Hi")
             Button(onClick = {
-                viewModel.logout()
+                navigateToProfile()
             }) {
-                Text("Logout")
+                Text("Profile")
             }
         }
     }

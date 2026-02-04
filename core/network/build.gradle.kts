@@ -15,23 +15,28 @@ android {
         buildConfig = true
     }
 
+    flavorDimensions += "device"
+    productFlavors {
+        create("emulator") {
+            dimension = "device"
+            buildConfigField("String", "BASE_URL", "\"http://10.0.2.2:5116/api/\"")
+        }
+        create("physical") {
+            dimension = "device"
+            buildConfigField(
+                "String",
+                "BASE_URL",
+                "\"http://192.168.1.13:5116/api/\""
+            )  // Replace with your actual IP
+        }
+    }
+
     defaultConfig {
         minSdk = 29
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
 
-        val properties = Properties()
-        val propertiesFile = rootProject.file("local.properties")
-        if (propertiesFile.exists()) {
-            properties.load(propertiesFile.inputStream())
-        }
-        val baseUrl = properties.getProperty("BASE_URL", "")
-        buildConfigField(
-            "String",
-            "BASE_URL",
-            "\"$baseUrl\""
-        )
     }
 
     buildTypes {

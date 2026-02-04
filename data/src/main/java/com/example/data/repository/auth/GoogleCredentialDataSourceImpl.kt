@@ -1,4 +1,4 @@
-package com.example.data.repository
+package com.example.data.repository.auth
 
 import android.content.Context
 import androidx.credentials.CredentialManager

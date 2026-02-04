@@ -69,9 +69,6 @@ fun LoginScreen(
     val webClientId = BuildConfig.GOOGLE_WEB_CLIENT_ID
     val context = LocalContext.current
 
-
-
-
     LaunchedEffect(Unit) {
         viewModel.event.collect { event ->
             when (event) {
@@ -105,7 +102,8 @@ fun LoginScreen(
                         modifier = Modifier.fillMaxWidth(),
                         textAlign = TextAlign.Center
                     )
-                }, navigationIcon = {
+                },
+                navigationIcon = {
                     Box(
                         modifier = Modifier
                             .padding(start = MaterialTheme.spacing.md)
@@ -122,9 +120,11 @@ fun LoginScreen(
                             modifier = Modifier.size(20.dp)
                         )
                     }
-                }, actions = {
+                },
+                actions = {
                     Spacer(modifier = Modifier.size(56.dp))
-                }, colors = TopAppBarDefaults.topAppBarColors(
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.surface
                 )
             )

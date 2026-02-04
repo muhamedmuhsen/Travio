@@ -5,6 +5,7 @@ data class AuthResponse(
     val username: String,
     val email: String,
     val token: String,
-    val refreshTokenExpiration: String,
-    val expiresOn: String
+    val refreshToken: String,
+    val refreshTokenExpiration: Long,
+    val expiresOn: Long
 )

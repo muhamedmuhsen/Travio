@@ -7,7 +7,11 @@ import com.example.network.dto.auth.UserDto
 
 fun UserDto.toDomain(): User {
     return User(
-        username = ""
+        username = userName,
+        firstName = "firstName",
+        lastName = "lastName",
+        email = email,
+        profilePictureUrl = "profilePictureUrl"
     )
 }
 
@@ -23,6 +27,11 @@ fun GoogleUserDto.toDomain(): GoogleUser {
 
 fun GoogleUserDto.toUser(): User {
     return User(
-        username = displayName!!
+        username = displayName ?: "",
+        firstName = "givenName",
+        lastName = "familyName",
+        email = email,
+        profilePictureUrl = profilePicUrl
     )
+
 }

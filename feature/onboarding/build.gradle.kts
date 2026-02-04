@@ -1,6 +1,3 @@
-import java.io.FileInputStream
-import java.util.Properties
-
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
@@ -30,7 +27,15 @@ android {
             "\"$googleWebClientId\""
         )
     }
-
+    flavorDimensions += "device"
+    productFlavors {
+        create("emulator") {
+            dimension = "device"
+        }
+        create("physical") {
+            dimension = "device"
+        }
+    }
     buildTypes {
         release {
             isMinifyEnabled = false
@@ -50,7 +55,6 @@ android {
 
     buildFeatures {
         compose = true
-        buildConfig = true
     }
 }
 
@@ -61,7 +65,6 @@ dependencies {
     implementation(project(":feature:utils"))
     implementation(project(":domain"))
     implementation(project(":data"))
-
     // Core Android
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)

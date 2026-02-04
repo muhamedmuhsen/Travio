@@ -22,6 +22,8 @@ android {
         localProperties.load(FileInputStream(localPropertiesFile))
     }
 
+
+
     defaultConfig {
         minSdk = 29
 
@@ -35,7 +37,15 @@ android {
             "\"$googleWebClientId\""
         )
     }
-
+    flavorDimensions += "device"
+    productFlavors {
+        create("emulator") {
+            dimension = "device"
+        }
+        create("physical") {
+            dimension = "device"
+        }
+    }
     buildTypes {
         release {
             isMinifyEnabled = false

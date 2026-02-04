@@ -6,17 +6,19 @@ import com.example.data.local.datastore.CredentialsManagerImpl
 import com.example.data.local.datastore.EncryptionManager
 import com.example.data.local.datastore.PreferencesManagerImpl
 import com.example.data.local.datastore.SecureTokenStorage
-import com.example.data.repository.GoogleCredentialDataSourceImpl
+import com.example.data.repository.auth.GoogleCredentialDataSource
+import com.example.data.repository.auth.GoogleCredentialDataSourceImpl
 import com.example.data.BuildConfig
-import com.example.data.repository.ActivityProvider
-import com.example.domain.repository.prefernces.CredentialsManager
-import com.example.domain.repository.prefernces.PreferencesManager
+import com.example.data.repository.user_management.UserManagementRepositoryImpl
+import com.example.domain.repository.user_management.UserManagementRepository
+import com.example.network.api.UserManagementApi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
+
 @Module
 @InstallIn(SingletonComponent::class)
 object DataStoreModule {
@@ -30,6 +32,20 @@ object DataStoreModule {
     @Singleton
     fun provideEncryptionManager(@ApplicationContext context: Context): EncryptionManager {
         return EncryptionManager(context)
+    }
+
+    @Provides
+    @Singleton
+    fun provideUserManagementRepository(
+        secureTokenStorage: SecureTokenStorage,
+        preferencesManager: PreferencesManager,
+        api: UserManagementApi
+    ): UserManagementRepository {
+        return UserManagementRepositoryImpl(
+            api = api,
+            secureTokenStorage = secureTokenStorage,
+            preferencesManager = preferencesManager
+        )
     }
 
     @Provides
@@ -61,6 +77,8 @@ object DataStoreModule {
     ): PreferencesManager {
         return PreferencesManagerImpl(context)
     }
+
+
     @WebClientId
     @Provides
     @Singleton

@@ -284,7 +284,5 @@ fun TravioTheme(
             content = content
         )
     }
-
-
 }
 

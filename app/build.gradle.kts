@@ -19,6 +19,19 @@ android {
     if (localPropertiesFile.exists()) {
         localProperties.load(FileInputStream(localPropertiesFile))
     }
+
+    flavorDimensions += "device"
+    productFlavors {
+        create("emulator") {
+            dimension = "device"
+            applicationIdSuffix =
+                ".emulator"  // Optional: different app ID for parallel installation
+        }
+        create("physical") {
+            dimension = "device"
+            applicationIdSuffix = ".physical"  // Optional
+        }
+    }
     
     defaultConfig {
         applicationId = "com.example.travio"
