@@ -45,6 +45,7 @@
     <string name="error_password_mismatch">كلمات المرور غير متطابقة.</string>
     <string name="error_short_name">الاسم قصير جداً.</string>
     <string name="error_must_have_at_least_one_field_to_update">يجب تقديم حقل واحد على الأقل للتحديث.</string>
+    <string name="error_invalid_uri">صورة غير صالحة. يرجى اختيار صورة صالحة.</string>
 
     <!-- Verification -->
     <string name="error_invalid_code">رمز التحقق غير صالح.</string>

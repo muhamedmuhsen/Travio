@@ -1,14 +1,12 @@
 package com.example.travio
 
 import com.example.feature.home.HomeScreen
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.dev.profile.editProfile.EditProfileScreen
 import com.dev.profile.profile_.ProfileScreen
 import com.example.common.navigation.Screen
 import com.example.feature.code.CodeScreen
@@ -95,8 +93,13 @@ fun TravioNavHost(
         }
         composable(Screen.ProfileScreen.route) {
             ProfileScreen(
-                onNavigateToDetail = { },
-                )
+                onNavigateToDetail = { navController.navigate(Screen.EditProfileScreen.route) },
+            )
+        }
+        composable(Screen.EditProfileScreen.route) {
+            EditProfileScreen(
+                onCloseClicked = { navController.popBackStack() }
+            )
         }
     }
 }

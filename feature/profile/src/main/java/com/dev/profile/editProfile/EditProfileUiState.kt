@@ -1,0 +1,18 @@
+package com.dev.profile.editProfile
+
+import ui.state.UiState
+import ui.text.UiText
+
+data class EditProfileUiState(
+    val firstName: String = "",
+    val isFirstNameError: Boolean = false,
+    val firstNameErrorMessage: UiText? = null,
+    val lastName: String = "",
+    val isLastNameError: Boolean = false,
+    val lastNameErrorMessage: UiText? = null,
+    val email: String = "",
+    val isEmailError: Boolean = false,
+    val emailErrorMessage: UiText? = null,
+    val profileImageUri: String? = null,
+    val profileUiState: UiState<Unit> = UiState.Idle
+)

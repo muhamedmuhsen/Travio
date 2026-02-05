@@ -1,5 +1,8 @@
 package com.example.data.repository.user_management
 
+import android.annotation.SuppressLint
+import android.content.Context
+import android.net.Uri
 import com.example.data.local.datastore.SecureTokenStorage
 import com.example.domain.model.User
 import com.example.domain.repository.prefernces.PreferencesManager
@@ -10,11 +13,17 @@ import com.example.network.api.UserManagementApi
 import com.example.network.dto.user_managment.UpdateProfileRequest
 import com.example.network.dto.user_managment.UpdateProfileResponse
 import javax.inject.Inject
+import androidx.core.net.toUri
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.asRequestBody
+import retrofit2.http.Multipart
+import java.io.File
 
 class UserManagementRepositoryImpl @Inject constructor(
     private val api: UserManagementApi,
     private val secureTokenStorage: SecureTokenStorage,
-    private val preferencesManager: PreferencesManager
+    private val preferencesManager: PreferencesManager,
 ) : UserManagementRepository {
     override suspend fun getUser(): Result<User, DataError> {
         return Result.Success(
@@ -36,8 +45,9 @@ class UserManagementRepositoryImpl @Inject constructor(
         profilePictureUrl: String?
     ): Result<Unit, DataError> {
         try {
-            if (hasAtLeastOneField(firstName, lastName, email, profilePictureUrl))
-                return Result.Error(DataError.Validation.MustHaveAtLeastOneFieldToUpdate)
+
+//            val uri = profilePictureUrl?.toUri()
+//            val profileImagePart = toMultipartBodyPart(uri)
 
             val request = UpdateProfileRequest(
                 firstName = firstName,
@@ -55,6 +65,19 @@ class UserManagementRepositoryImpl @Inject constructor(
             return Result.Error(DataError.Data.UnknownError)
         }
     }
+
+//    private fun toMultipartBodyPart(uri: Uri): MultipartBody.Part {
+//        val contentResolver = context.contentResolver
+//        val mimeType = contentResolver.getType(uri) ?: "image/*"
+//        val inputStream = contentResolver.openInputStream(uri)
+//            ?: throw IllegalStateException("Cannot open input stream")
+//        val file = File(context.cacheDir, "profile_${System.currentTimeMillis()}.jpg")
+//        file.outputStream().use { outputStream ->
+//            inputStream.copyTo(outputStream)
+//        }
+//        val requestBody = file.asRequestBody(mimeType.toMediaTypeOrNull())
+//        return MultipartBody.Part.createFormData("profilePicture", file.name, requestBody)
+//    }
 
     private fun hasAtLeastOneField(
         firstName: String?,

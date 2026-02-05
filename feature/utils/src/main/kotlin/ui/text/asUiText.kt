@@ -45,6 +45,8 @@ fun DataError.asUiText(): UiText {
         DataError.Validation.PasswordMismatch -> StringResource(R.string.error_password_mismatch)
         DataError.Validation.ShortName -> StringResource(R.string.error_short_name)
         DataError.Validation.MustHaveAtLeastOneFieldToUpdate -> StringResource(R.string.error_must_have_at_least_one_field_to_update)
+        DataError.Validation.InvalidUri -> StringResource(R.string.error_invalid_uri)
+
 
         DataError.Verification.InvalidCode -> StringResource(R.string.error_invalid_code)
         DataError.Verification.CodeExpired -> StringResource(R.string.error_code_expired)

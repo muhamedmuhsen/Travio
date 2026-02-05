@@ -15,8 +15,11 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor(private val preferencesManager: PreferencesManager) :
     ViewModel() {
 
-    val isDarkMode: StateFlow<Boolean> = preferencesManager.observeDarkMode().stateIn(
-        scope = viewModelScope, started = SharingStarted.WhileSubscribed(5000), initialValue = false
+    val isDarkMode: StateFlow<Boolean> =
+        preferencesManager.observeDarkMode().stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = false
     )
 
     sealed interface StartDestination {

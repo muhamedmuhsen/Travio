@@ -45,6 +45,7 @@
     <string name="error_password_mismatch">Passwords do not match.</string>
     <string name="error_short_name">Name is too short.</string>
     <string name="error_must_have_at_least_one_field_to_update">Must provide at least one field to update.</string>
+    <string name="error_invalid_uri">Invalid image. Please select a valid image.</string>
 
     <!-- Verification -->
     <string name="error_invalid_code">Invalid verification code.</string>

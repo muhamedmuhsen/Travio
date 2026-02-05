@@ -19,6 +19,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -29,12 +30,15 @@ import com.example.designsystem.theme.spacing
 
 @Composable
 fun AppButton(
-    modifier: Modifier = Modifier, onClick: () -> Unit, isEnabled: Boolean = true, text: String
+    modifier: Modifier = Modifier, onClick: () -> Unit,
+    isEnabled: Boolean = true,
+    shape: Shape = MaterialTheme.shapes.extraLarge,
+    text: String
 ) {
     Button(
         modifier = modifier.height(48.dp),
         onClick = onClick,
-        shape = MaterialTheme.shapes.extraLarge,
+        shape = shape,
         enabled = isEnabled,
         colors = ButtonDefaults.buttonColors(
             containerColor = MaterialTheme.colorScheme.primary,

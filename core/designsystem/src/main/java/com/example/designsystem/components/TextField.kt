@@ -30,7 +30,6 @@ fun AppTextField(
     isPasswordVisible: Boolean = false,
     errorMessage: String? = null,
     fieldType: TextFieldType = TextFieldType.TEXT,
-    keyboardType: KeyboardType = KeyboardType.Text,
     isEnabled: Boolean = true,
     onPasswordVisibilityChecked: () -> Unit = {},
 ) {

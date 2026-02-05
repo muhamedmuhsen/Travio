@@ -17,7 +17,8 @@ sealed interface DataError : Error {
         WeakPassword,
         PasswordMismatch,
         ShortName,
-        MustHaveAtLeastOneFieldToUpdate
+        MustHaveAtLeastOneFieldToUpdate,
+        InvalidUri
     }
 
     enum class Authentication : DataError {

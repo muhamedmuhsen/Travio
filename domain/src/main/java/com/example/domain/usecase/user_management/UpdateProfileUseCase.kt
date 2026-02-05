@@ -15,10 +15,15 @@ class UpdateProfileUseCase @Inject constructor(
         firstName: String?,
         lastName: String?,
         email: String?,
-        profilePictureUrl: String?
+        profilePictureUri: String?
     ): Result<Unit, DataError> {
         val validationResult =
-            validateUpdateProfileUseCase(firstName, lastName, email, profilePictureUrl)
+            validateUpdateProfileUseCase(
+                firstName = firstName,
+                lastName = lastName,
+                email = email,
+                profilePictureUri = profilePictureUri
+            )
 
         if (validationResult.isError) {
             val errorResult = validationResult as Result.Error
@@ -29,7 +34,7 @@ class UpdateProfileUseCase @Inject constructor(
             firstName = firstName,
             lastName = lastName,
             email = email,
-            profilePictureUrl = profilePictureUrl
+            profilePictureUrl = profilePictureUri
         )
     }
 }
