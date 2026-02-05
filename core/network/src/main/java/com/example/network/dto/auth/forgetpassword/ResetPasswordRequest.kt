@@ -1,5 +1,8 @@
 package com.example.network.dto.auth.forgetpassword
 
 data class ResetPasswordRequest(
-    val newPassword: String
+    val token: String,
+    val email: String,
+    val newPassword: String,
+    val confirmNewPassword: String
 )

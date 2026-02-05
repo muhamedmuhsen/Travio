@@ -25,7 +25,6 @@ class TokenManagerImpl @Inject constructor(private val secureTokenStorage: Secur
                 userId = (jwt.subject ?: jwt.getClaim("userId").asString()),
                 expiresAt = jwt.expiresAt,
                 claims = jwt.claims.mapValues { it.value.asObject(Any::class.java) })
-            Log.d("Logout", "Decoded token: $result")
             return Result.Success(result)
         } catch (_: DecodeException) {
             return Result.Error(DataError.TokenError.DecodingFailed)
@@ -51,26 +50,5 @@ class TokenManagerImpl @Inject constructor(private val secureTokenStorage: Secur
             is Result.Error -> Result.Error(DataError.TokenError.CouldNotGetClaims)
             is Result.Success -> Result.Success(result.data.claims)
         }
-    }
-
-    override suspend fun getAccessToken(): String? {
-        return secureTokenStorage.getAccessToken()
-    }
-
-    override suspend fun getRefreshToken(): String? {
-        return secureTokenStorage.getRefreshToken()
-    }
-
-
-    override suspend fun saveTokens(accessToken: String, refreshToken: String) {
-        secureTokenStorage.saveTokens(accessToken, refreshToken)
-    }
-
-    override suspend fun clearTokens() {
-        secureTokenStorage.clearTokens()
-    }
-
-    override fun getAccessTokenSync(): String? {
-        return secureTokenStorage.getAccessTokenSync()
     }
 }

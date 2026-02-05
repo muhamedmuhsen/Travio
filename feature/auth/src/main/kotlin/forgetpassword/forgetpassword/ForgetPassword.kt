@@ -43,27 +43,26 @@ import com.example.designsystem.components.AppButton
 import com.example.designsystem.components.AppTextField
 import com.example.designsystem.theme.TravioTheme
 import com.example.designsystem.theme.spacing
+import com.example.feature.forgetpassword.forgetpassword.ForgetPasswordEvent
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ForgetPasswordScreen(
     modifier: Modifier = Modifier, onCloseClicked: () -> Unit,
     viewModel: ForgetPasswordViewModel = hiltViewModel(),
-    navigateToCodeScreen: () -> Unit
+    navigateToCodeScreen: (email: String) -> Unit
 ) {
     val uiState = viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
     LaunchedEffect(Unit) {
         viewModel.event.collect { event ->
             when (event) {
-                ForgetPasswordEvent.ContactUs -> TODO()
                 ForgetPasswordEvent.NavigateToCodeScreen -> {
-                    navigateToCodeScreen()
+                    navigateToCodeScreen(uiState.value.email)
                 }
                 ForgetPasswordEvent.OnBackClicked -> {
                     onCloseClicked()
                 }
-
                 is ForgetPasswordEvent.ShowError -> {
                     Toast.makeText(context, event.message.asString(context), Toast.LENGTH_SHORT)
                         .show()
@@ -130,6 +129,7 @@ fun ForgetPasswordScreen(
                 AppTextField(
                     value = uiState.value.email,
                     onValueChange = { viewModel.onEmailChange(it) },
+                    isError = uiState.value.isEmailError,
                     placeholder = stringResource(id = R.string.email),
                     modifier = Modifier.fillMaxWidth()
                 )
