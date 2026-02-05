@@ -8,7 +8,6 @@ import com.example.domain.repository.prefernces.PreferencesManager
 import com.example.domain.utils.DataError
 import com.example.domain.utils.Result
 import com.example.network.api.AuthApi
-import com.example.network.dto.auth.AuthApiResponseDto
 import com.example.network.dto.auth.GoogleLoginRequest
 import com.example.network.dto.auth.forgetpassword.ForgetPasswordRequest
 import com.example.network.dto.auth.forgetpassword.ResetPasswordRequest
@@ -24,7 +23,6 @@ class AuthRepositoryImpl @Inject constructor(
     private val preferencesManager: PreferencesManager,
     private val tokenProvider: TokenProvider,
 ) : AuthRepository {
-
 
     override suspend fun login(
         email: String, password: String
