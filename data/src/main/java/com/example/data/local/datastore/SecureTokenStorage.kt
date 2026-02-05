@@ -1,6 +1,7 @@
 package com.example.data.local.datastore
 
 import android.content.Context
+import android.util.Log
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.example.common.auth.TokenProvider
@@ -14,8 +15,7 @@ import javax.inject.Singleton
 
 @Singleton
 class SecureTokenStorage @Inject constructor(
-    private val context: Context,
-    private val encryptionManager: EncryptionManager
+    private val context: Context, private val encryptionManager: EncryptionManager
 ) : TokenProvider {
 
     private val dataStore = context.dataStore
@@ -23,6 +23,25 @@ class SecureTokenStorage @Inject constructor(
     companion object {
         private val KEY_ACCESS_TOKEN = stringPreferencesKey("auth_token")
         private val KEY_REFRESH_TOKEN = stringPreferencesKey("auth_refresh_token")
+        private val KEY_RESET_TOKEN = stringPreferencesKey("auth_reset_token")
+    }
+
+    override suspend fun saveResetToken(token: String) {
+        dataStore.edit { preferences ->
+            preferences[KEY_RESET_TOKEN] = encryptionManager.encrypt(token)
+        }
+    }
+
+    override suspend fun clearResetToken() {
+        dataStore.edit { preferences ->
+            preferences.remove(KEY_RESET_TOKEN)
+        }
+    }
+
+    override suspend fun getResetToken(): String? {
+        return dataStore.data.first()[KEY_RESET_TOKEN]?.let {
+            encryptionManager.decrypt(it)
+        }
     }
 
     override suspend fun getAccessToken(): String? {
@@ -49,6 +68,7 @@ class SecureTokenStorage @Inject constructor(
         dataStore.edit { preferences ->
             preferences.remove(KEY_ACCESS_TOKEN)
             preferences.remove(KEY_REFRESH_TOKEN)
+            preferences.remove(KEY_RESET_TOKEN)
         }
     }
 
@@ -56,16 +76,23 @@ class SecureTokenStorage @Inject constructor(
         return runBlocking { getAccessToken() }
     }
 
-    // Reactive access for observing token changes
     fun observeAccessToken(): Flow<String?> {
-        return dataStore.data
-            .map { it[KEY_ACCESS_TOKEN]?.let { token -> encryptionManager.decrypt(token) } }
-            .catch { emit(null) }
+        return dataStore.data.map {
+            it[KEY_ACCESS_TOKEN]?.let { token ->
+                encryptionManager.decrypt(
+                    token
+                )
+            }
+        }.catch { emit(null) }
     }
 
     fun observeRefreshToken(): Flow<String?> {
-        return dataStore.data
-            .map { it[KEY_REFRESH_TOKEN]?.let { token -> encryptionManager.decrypt(token) } }
-            .catch { emit(null) }
+        return dataStore.data.map {
+            it[KEY_REFRESH_TOKEN]?.let { token ->
+                encryptionManager.decrypt(
+                    token
+                )
+            }
+        }.catch { emit(null) }
     }
 }

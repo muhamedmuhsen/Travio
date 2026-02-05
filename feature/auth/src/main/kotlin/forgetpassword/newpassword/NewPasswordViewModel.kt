@@ -1,7 +1,9 @@
 package com.example.feature.forgetpassword.newpassword
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.common.auth.TokenProvider
 import com.example.domain.usecase.auth.ResetPasswordUseCase
 import com.example.domain.utils.DataError
 import com.example.domain.utils.Result
@@ -21,7 +23,8 @@ import javax.inject.Inject
 @HiltViewModel
 class NewPasswordViewModel @Inject constructor(
     private val resetPasswordUseCase: ResetPasswordUseCase,
-    private val validatePasswordUseCase: ValidatePasswordUseCase
+    private val validatePasswordUseCase: ValidatePasswordUseCase,
+    private val tokenProvider: TokenProvider
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(NewPasswordState())
@@ -32,17 +35,21 @@ class NewPasswordViewModel @Inject constructor(
     private suspend fun sendEvent(event: NewPasswordEvent) = _event.send(event)
 
 
-    fun onResetPasswordClicked() {
+    fun onResetPasswordClicked(email: String) {
         if (_state.value.newPasswordState is UiState.Loading) return
+        clearErrors()
+        _state.update { currentState -> currentState.copy(newPasswordState = UiState.Loading) }
 
         val password = _state.value.newPassword
         val confirmPassword = _state.value.confirmNewPassword
 
         viewModelScope.launch {
-            _state.update { currentState -> currentState.copy(newPasswordState = UiState.Loading) }
             if (!hasPasswordValidationError(password, confirmPassword)) return@launch
-            when (val result = resetPasswordUseCase(password, confirmPassword)) {
+            val resetToken = tokenProvider.getResetToken()
+            Log.d("NewPasswordViewModel", "resetToken: $resetToken")
+            when (val result = resetPasswordUseCase(resetToken, email, password, confirmPassword)) {
                 is Result.Error -> {
+                    Log.d("NewPasswordViewModel", "Error: ${result.error}")
                     _state.update { currentState ->
                         currentState.copy(newPasswordState = UiState.Error(result.error.asUiText()))
                     }
@@ -50,6 +57,7 @@ class NewPasswordViewModel @Inject constructor(
                 }
 
                 is Result.Success -> {
+                    Log.d("NewPasswordViewModel", "Success: ${result.data}")
                     _state.update { currentState ->
                         currentState.copy(
                             newPasswordState = UiState.Success(),
@@ -63,6 +71,10 @@ class NewPasswordViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    private fun clearErrors() {
+        _state.update { it.copy(isPasswordsDoesnotMatch = false, isNewPasswordValid = true) }
     }
 
     private suspend fun hasPasswordValidationError(

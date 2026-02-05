@@ -44,7 +44,8 @@ fun NewPasswordScreen(
     modifier: Modifier = Modifier,
     viewModel: NewPasswordViewModel = hiltViewModel(),
     navigateToLogin: () -> Unit,
-    onCloseClicked: () -> Unit
+    onCloseClicked: () -> Unit,
+    email: String
 ) {
     val uiState = viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
@@ -132,7 +133,7 @@ fun NewPasswordScreen(
             Spacer(modifier = Modifier.height(MaterialTheme.spacing.lg))
 
             AppButton(
-                onClick = { viewModel.onResetPasswordClicked() },
+                onClick = { viewModel.onResetPasswordClicked(email) },
                 text = stringResource(id = R.string.reset_your_password_button),
                 modifier = Modifier.fillMaxWidth()
             )

@@ -65,12 +65,13 @@ fun TravioNavHost(
                 onBackClicked = {
                     navController.popBackStack()
                 },
-                navigateToResetPassword = { navController.navigate(Screen.ResetPasswordScreen.route) },
+                navigateToResetPassword = { navController.navigate(Screen.ResetPasswordScreen.route + "/$email") },
                 email = email
             )
         }
 
-        composable(Screen.ResetPasswordScreen.route) {
+        composable(Screen.ResetPasswordScreen.route + "/{email}") {
+            val email = it.arguments?.getString("email") ?: ""
             NewPasswordScreen(
                 onCloseClicked = {
                     navController.popBackStack()
@@ -80,7 +81,8 @@ fun TravioNavHost(
                     navController.navigate(Screen.LoginScreen.route) {
                         popUpTo(Screen.LoginScreen.route) { inclusive = true }
                     }
-                }
+                },
+                email = email
             )
         }
         composable(Screen.SignupScreen.route) {

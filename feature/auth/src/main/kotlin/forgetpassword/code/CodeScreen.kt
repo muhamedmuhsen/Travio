@@ -107,26 +107,7 @@ fun CodeScreen(
                 )
             )
         }) { innerPadding ->
-        val context = LocalContext.current
-        LaunchedEffect(Unit) {
-            viewModel.event.collect { event ->
-                when (event) {
-                    CodeEvent.NavigateToResetPassword -> {
-                        navigateToResetPassword()
-                    }
 
-                    CodeEvent.OnBackClicked -> {
-                        onBackClicked()
-                    }
-
-                    is CodeEvent.ShowError -> {
-                        Toast.makeText(context, event.message.asString(context), Toast.LENGTH_SHORT)
-                            .show()
-                    }
-                }
-
-            }
-        }
         Column(
             modifier = modifier
                 .padding(innerPadding)
