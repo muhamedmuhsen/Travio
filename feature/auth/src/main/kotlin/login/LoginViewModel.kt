@@ -4,11 +4,11 @@ import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.data.repository.GoogleCredentialDataSourceImpl
 import com.example.domain.utils.Result
 import com.example.domain.utils.DataError
-import com.example.data.local.datastore.CredentialsManager
-import com.example.data.local.datastore.PreferencesManager
-import com.example.data.repository.GoogleCredentialDataSource
+import com.example.domain.repository.prefernces.CredentialsManager
+import com.example.domain.repository.prefernces.PreferencesManager
 import com.example.domain.usecase.auth.GoogleSignInUseCase
 import com.example.domain.usecase.auth.LoginUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -26,7 +26,7 @@ import javax.inject.Inject
 class LoginViewModel @Inject constructor(
     private val loginUseCase: LoginUseCase,
     private val googleSignInUseCase: GoogleSignInUseCase,
-    private val googleCredentialDataSource: GoogleCredentialDataSource,
+    private val googleCredentialDataSource: GoogleCredentialDataSourceImpl,
     private val preferencesManager: PreferencesManager,
     private val credentialsManager: CredentialsManager
 ) : ViewModel() {
@@ -35,6 +35,27 @@ class LoginViewModel @Inject constructor(
 
     private val _eventChannel = Channel<LoginEvent>(Channel.BUFFERED)
     val event = _eventChannel.receiveAsFlow()
+
+    init {
+        loadSavedCredentials()
+    }
+
+    private fun loadSavedCredentials() {
+        viewModelScope.launch {
+            val wasRememberMeEnabled = credentialsManager.isRememberMeEnabled()
+            if (wasRememberMeEnabled) {
+                credentialsManager.getCredentials()?.let { credentials ->
+                    _state.update { currentState ->
+                        currentState.copy(
+                            email = credentials.email,
+                            password = credentials.password,
+                            isRememberMeChecked = true
+                        )
+                    }
+                }
+            }
+        }
+    }
 
     private fun sendEvent(event: LoginEvent) {
         viewModelScope.launch {
@@ -59,6 +80,7 @@ class LoginViewModel @Inject constructor(
                     _state.update { it.copy(loginState = UiState.Error(result.error.asUiText())) }
                     sendEvent(LoginEvent.ShowAuthError(result.error.asUiText()))
                 }
+
                 is Result.Success -> {
                     Log.d("Login", "Successfully logged in")
                     preferencesManager.setLoggedIn(true)
@@ -67,6 +89,15 @@ class LoginViewModel @Inject constructor(
                             loginState = UiState.Success(),
                             isPasswordError = false,
                             isEmailError = false
+                        )
+                    }
+                    val isRememberMeChecked = _state.value.isRememberMeChecked
+                    Log.d(
+                        "LoginViewModel", "isRememberMeCheckedInsideSuccess: $isRememberMeChecked"
+                    )
+                    if (isRememberMeChecked) {
+                        credentialsManager.saveCredentials(
+                            email, password, true
                         )
                     }
                     sendEvent(LoginEvent.NavigateToHome)
@@ -99,7 +130,6 @@ class LoginViewModel @Inject constructor(
 
     private fun onGoogleSignInResult(idToken: String) {
         viewModelScope.launch {
-            /*TODO: send the id token to the backend */
             when (val shouldNavigateToHome = googleSignInUseCase(idToken)) {
                 is Result.Error -> {
                     Log.e(
@@ -119,6 +149,7 @@ class LoginViewModel @Inject constructor(
             }
         }
     }
+
     fun onEmailChange(email: String) {
         _state.update { it.copy(email = email, emailError = null) }
     }
@@ -138,13 +169,14 @@ class LoginViewModel @Inject constructor(
     }
 
     fun onPasswordVisibilityCheck() {
-        _state.update { it.copy(isPasswordVisible = !_state.value.isPasswordVisible) }
+        _state.update { it.copy(isPasswordVisible = !it.isPasswordVisible) }
     }
 
     fun onRememberMeChecked() {
-        _state.update { it.copy(isRememberMeChecked = !_state.value.isRememberMeChecked) }
+        _state.update { it.copy(isRememberMeChecked = !it.isRememberMeChecked) }
+        val currentCheckedStatus = _state.value.isRememberMeChecked
         viewModelScope.launch {
-            credentialsManager.setRememberMe(_state.value.isRememberMeChecked)
+            credentialsManager.setRememberMe(currentCheckedStatus)
         }
     }
 }

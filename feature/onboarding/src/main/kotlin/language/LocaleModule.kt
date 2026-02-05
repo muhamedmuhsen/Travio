@@ -13,12 +13,6 @@ import javax.inject.Singleton
 object LocaleModule {
     @Provides
     @Singleton
-    fun provideContext(@ApplicationContext context: Context?): Context? {
-        return context
-    }
-
-    @Provides
-    @Singleton
     fun provideAppLocaleManager(@ApplicationContext context: Context): AppLocaleManager {
         return AppLocaleManager(context)
     }

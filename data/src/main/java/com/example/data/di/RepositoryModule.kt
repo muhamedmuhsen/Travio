@@ -1,9 +1,8 @@
 package com.example.data.di
 
-import com.example.data.repository.TokenManagerImpl
 import com.example.data.repository.AuthRepositoryImpl
+import com.example.data.repository.TokenManagerImpl
 import com.example.domain.repository.auth.AuthRepository
-//import com.example.domain.repository.auth.GoogleSignIn
 import com.example.domain.repository.auth.TokenManager
 import dagger.Binds
 import dagger.Module
@@ -23,10 +22,7 @@ abstract class RepositoryModule {
 
     @Binds
     @Singleton
-    abstract fun bindTokenManager(tokenManagerImpl: TokenManagerImpl): TokenManager
-
-//    @Binds
-//    @Singleton
-//    abstract fun bindGoogleSignIn(impl: GoogleCredentialDataSourceImpl): GoogleSignIn
+    abstract fun bindTokenManager(
+        tokenManagerImpl: TokenManagerImpl
+    ): TokenManager
 }
-

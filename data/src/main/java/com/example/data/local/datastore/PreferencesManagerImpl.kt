@@ -3,6 +3,8 @@ package com.example.data.local.datastore
 import android.content.Context
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
+import com.example.domain.repository.prefernces.PreferencesManager
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
@@ -10,7 +12,8 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class PreferencesManager @Inject constructor(context: Context) {
+class PreferencesManagerImpl @Inject constructor(@ApplicationContext private val context: Context) :
+    PreferencesManager {
 
     private val dataStore = context.dataStore
 
@@ -20,38 +23,37 @@ class PreferencesManager @Inject constructor(context: Context) {
         private val KEY_CHOOSE_LANGUAGE = booleanPreferencesKey("choose_language")
     }
 
-    // Onboarding
-    suspend fun setOnboardingComplete(complete: Boolean = true) {
+    override suspend fun setOnboardingComplete(complete: Boolean) {
         dataStore.edit { it[KEY_ONBOARDING_COMPLETE] = complete }
     }
 
-    suspend fun isOnboardingComplete(): Boolean {
+    override suspend fun isOnboardingComplete(): Boolean {
         return dataStore.data.first()[KEY_ONBOARDING_COMPLETE] ?: false
     }
 
-    fun observeOnboardingComplete(): Flow<Boolean> {
+    override fun observeOnboardingComplete(): Flow<Boolean> {
         return dataStore.data.map { it[KEY_ONBOARDING_COMPLETE] ?: false }
     }
 
     // Language
-    suspend fun setChooseLanguage(complete: Boolean = true) {
+    override suspend fun setChooseLanguage(complete: Boolean) {
         dataStore.edit { it[KEY_CHOOSE_LANGUAGE] = complete }
     }
 
-    fun observeChooseLanguage(): Flow<Boolean> {
+    override fun observeChooseLanguage(): Flow<Boolean> {
         return dataStore.data.map { it[KEY_CHOOSE_LANGUAGE] ?: false }
     }
 
     // Login state
-    suspend fun setLoggedIn(loggedIn: Boolean) {
+    override suspend fun setLoggedIn(loggedIn: Boolean) {
         dataStore.edit { it[KEY_LOGGED_IN] = loggedIn }
     }
 
-    suspend fun isLoggedIn(): Boolean {
+    override suspend fun isLoggedIn(): Boolean {
         return dataStore.data.first()[KEY_LOGGED_IN] ?: false
     }
 
-    fun observeLoggedIn(): Flow<Boolean> {
+    override fun observeLoggedIn(): Flow<Boolean> {
         return dataStore.data.map { it[KEY_LOGGED_IN] ?: false }
     }
 }

@@ -3,8 +3,8 @@ package com.example.feature.onboarding
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.data.local.datastore.PreferencesManager
 import com.example.designsystem.R
+import com.example.domain.repository.prefernces.PreferencesManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
