@@ -145,7 +145,6 @@ fun CodeScreen(
                 SendAgain(
                     onSendAgainClicked = { viewModel.onSendAgainClicked(email) }
                 )
-                // TODO: Implement and display the Timer composable here
                 CountdownTimer(state.timeLeft)
             }
 

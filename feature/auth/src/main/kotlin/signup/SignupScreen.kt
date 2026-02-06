@@ -74,7 +74,6 @@ fun SignupScreen(
         viewModel.event.collect { event ->
             when (event) {
                 SignupEvent.NavigateToLogin -> {
-                    /* TODO: fix why it crash here*/
                     navigateToLogin()
                 }
 
