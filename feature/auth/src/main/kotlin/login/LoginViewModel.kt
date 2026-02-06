@@ -1,7 +1,6 @@
 package com.example.feature.login
 
 import android.content.Context
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.data.repository.GoogleCredentialDataSourceImpl
@@ -63,14 +62,16 @@ class LoginViewModel @Inject constructor(
         }
     }
 
-    fun onLoginClicked(email: String, password: String) {
-        Log.d("Login", "onLoginClicked called")
+    fun onLoginClicked() {
+        if (_state.value.loginState is UiState.Loading) return
+        clearErrors()
         _state.update { it.copy(loginState = UiState.Loading) }
-        Log.d("Login", "email: $email, password: $password")
+        val email = _state.value.email
+        val password = _state.value.password
+        val isRememberMeChecked = _state.value.isRememberMeChecked
         viewModelScope.launch {
-            when (val result = loginUseCase(email, password)) {
+            when (val result = loginUseCase(email, password, isRememberMeChecked)) {
                 is Result.Error -> {
-                    Log.e("Login", "Error logging in: ${result.error}")
                     if (result.error == DataError.Validation.WeakPassword) {
                         _state.update { it.copy(isPasswordError = true) }
                     }
@@ -82,22 +83,13 @@ class LoginViewModel @Inject constructor(
                 }
 
                 is Result.Success -> {
-                    Log.d("Login", "Successfully logged in")
-                    preferencesManager.setLoggedIn(true)
                     _state.update {
                         it.copy(
                             loginState = UiState.Success(),
                             isPasswordError = false,
-                            isEmailError = false
-                        )
-                    }
-                    val isRememberMeChecked = _state.value.isRememberMeChecked
-                    Log.d(
-                        "LoginViewModel", "isRememberMeCheckedInsideSuccess: $isRememberMeChecked"
-                    )
-                    if (isRememberMeChecked) {
-                        credentialsManager.saveCredentials(
-                            email, password, true
+                            isEmailError = false,
+                            passwordError = null,
+                            emailError = null
                         )
                     }
                     sendEvent(LoginEvent.NavigateToHome)
@@ -107,20 +99,17 @@ class LoginViewModel @Inject constructor(
     }
 
     fun onGoogleSignInClicked(context: Context, webClientId: String) {
-        Log.d("GoogleSignIn", "onGoogleSignInClicked called")
         _state.update { it.copy(loginState = UiState.Loading) }
 
         viewModelScope.launch {
             when (val result = googleCredentialDataSource.getGoogleIdToken(context, webClientId)) {
                 is Result.Error -> {
-                    Log.e("GoogleSignIn", "Error getting Google ID token: ${result.error}")
                     val message = result.error.asUiText()
                     _state.update { it.copy(loginState = UiState.Error(message)) }
                     sendEvent(LoginEvent.ShowAuthError(message))
                 }
 
                 is Result.Success -> {
-                    Log.d("GoogleSignIn", "Google ID token obtained: ${result.data}")
                     val idToken = result.data
                     onGoogleSignInResult(idToken)
                 }
@@ -132,21 +121,27 @@ class LoginViewModel @Inject constructor(
         viewModelScope.launch {
             when (val shouldNavigateToHome = googleSignInUseCase(idToken)) {
                 is Result.Error -> {
-                    Log.e(
-                        "GoogleSignIn",
-                        "Error signing in with Google: ${shouldNavigateToHome.error}"
-                    )
                     val message = shouldNavigateToHome.error.asUiText()
                     _state.update { it.copy(loginState = UiState.Error(message)) }
                     sendEvent(LoginEvent.ShowAuthError(message))
                 }
 
                 is Result.Success -> {
-                    Log.d("GoogleSignIn", "Successfully signed in with Google")
                     preferencesManager.setLoggedIn(true)
                     sendEvent(LoginEvent.NavigateToHome)
                 }
             }
+        }
+    }
+
+    private fun clearErrors() {
+        _state.update {
+            it.copy(
+                isPasswordError = false,
+                isEmailError = false,
+                passwordError = null,
+                emailError = null
+            )
         }
     }
 

@@ -13,8 +13,9 @@ class ResetPasswordUseCase @Inject constructor(
     suspend operator fun invoke(
         resetToken: String?, email: String, password: String, confirmPassword: String
     ): Result<Unit, DataError> {
-        if (password != confirmPassword) return Result.Error(DataError.Validation.PasswordMismatch)
+        if (password.isBlank() || confirmPassword.isBlank()) return Result.Error(DataError.Validation.MissingFields)
         if (!validatePasswordUseCase(password)) return Result.Error(DataError.Validation.WeakPassword)
+        if (password != confirmPassword) return Result.Error(DataError.Validation.PasswordMismatch)
         if (resetToken.isNullOrBlank()) return Result.Error(DataError.TokenError.TokenNotFound)
 
         return authRepository.resetPassword(resetToken, email, password, confirmPassword)

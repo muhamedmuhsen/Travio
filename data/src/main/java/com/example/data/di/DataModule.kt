@@ -1,7 +1,7 @@
 package com.example.data.di
 
 import android.content.Context
-import com.example.common.auth.TokenProvider
+import com.example.domain.repository.auth.TokenProvider
 import com.example.data.local.datastore.CredentialsManagerImpl
 import com.example.data.local.datastore.EncryptionManager
 import com.example.data.local.datastore.PreferencesManagerImpl

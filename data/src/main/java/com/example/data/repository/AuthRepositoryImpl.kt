@@ -1,6 +1,6 @@
 package com.example.data.repository
 
-import com.example.common.auth.TokenProvider
+import com.example.domain.repository.auth.TokenProvider
 import com.example.data.utils.safeApiCall
 import com.example.domain.repository.auth.AuthRepository
 import com.example.domain.repository.prefernces.CredentialsManager
@@ -8,7 +8,6 @@ import com.example.domain.repository.prefernces.PreferencesManager
 import com.example.domain.utils.DataError
 import com.example.domain.utils.Result
 import com.example.network.api.AuthApi
-import com.example.network.dto.auth.AuthApiResponseDto
 import com.example.network.dto.auth.GoogleLoginRequest
 import com.example.network.dto.auth.forgetpassword.ForgetPasswordRequest
 import com.example.network.dto.auth.forgetpassword.ResetPasswordRequest
@@ -25,9 +24,8 @@ class AuthRepositoryImpl @Inject constructor(
     private val tokenProvider: TokenProvider,
 ) : AuthRepository {
 
-
     override suspend fun login(
-        email: String, password: String
+        email: String, password: String, isRememberMeChecked: Boolean
     ): Result<Unit, DataError> = safeApiCall {
         val response = api.login(LoginRequest(email, password))
         tokenProvider.saveTokens(
@@ -35,17 +33,33 @@ class AuthRepositoryImpl @Inject constructor(
             response.refreshToken
         )
         preferencesManager.setLoggedIn(true)
+        if (isRememberMeChecked) {
+            credentialsManager.saveCredentials(
+                email, password, true
+            )
+        }
     }
 
     override suspend fun signup(
-        email: String, password: String, username: String, firstname: String, lastname: String
+        email: String, password: String, username: String, firstname: String, lastname: String,
+        confirmPassword: String
+
     ): Result<Unit, DataError> = safeApiCall {
         val response =
-            api.signup(SignupRequest(email = email, username = username, password = password))
+            api.signup(
+                SignupRequest(
+                    firstname = firstname,
+                    lastname = lastname,
+                    email = email,
+                    username = username,
+                    password = password,
+                    confirmPassword = confirmPassword
+                )
+            )
 
         tokenProvider.saveTokens(
-            response.user.accessToken,
-            response.user.refreshToken
+            response.token,
+            response.refreshToken
         )
         preferencesManager.setLoggedIn(true)
     }

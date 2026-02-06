@@ -1,7 +1,7 @@
 package com.example.network.clients
 
 import android.util.Log
-import com.example.common.auth.TokenProvider
+import com.example.domain.repository.auth.TokenProvider
 import com.example.common.extensions.isNotNull
 import com.example.network.api.AuthApi
 import kotlinx.coroutines.runBlocking

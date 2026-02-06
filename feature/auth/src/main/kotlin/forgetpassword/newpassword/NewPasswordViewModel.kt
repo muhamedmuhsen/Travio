@@ -3,7 +3,7 @@ package com.example.feature.forgetpassword.newpassword
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.common.auth.TokenProvider
+import com.example.domain.repository.auth.TokenProvider
 import com.example.domain.usecase.auth.ResetPasswordUseCase
 import com.example.domain.utils.DataError
 import com.example.domain.utils.Result
@@ -46,10 +46,8 @@ class NewPasswordViewModel @Inject constructor(
         viewModelScope.launch {
             if (!hasPasswordValidationError(password, confirmPassword)) return@launch
             val resetToken = tokenProvider.getResetToken()
-            Log.d("NewPasswordViewModel", "resetToken: $resetToken")
             when (val result = resetPasswordUseCase(resetToken, email, password, confirmPassword)) {
                 is Result.Error -> {
-                    Log.d("NewPasswordViewModel", "Error: ${result.error}")
                     _state.update { currentState ->
                         currentState.copy(newPasswordState = UiState.Error(result.error.asUiText()))
                     }
@@ -57,7 +55,6 @@ class NewPasswordViewModel @Inject constructor(
                 }
 
                 is Result.Success -> {
-                    Log.d("NewPasswordViewModel", "Success: ${result.data}")
                     _state.update { currentState ->
                         currentState.copy(
                             newPasswordState = UiState.Success(),

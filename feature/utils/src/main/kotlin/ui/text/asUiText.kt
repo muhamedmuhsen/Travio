@@ -43,6 +43,7 @@ fun DataError.asUiText(): UiText {
         DataError.Validation.WeakPassword -> UiText.StringResource(R.string.error_weak_password)
         DataError.Validation.PasswordMismatch -> UiText.StringResource(R.string.error_password_mismatch)
         DataError.Validation.ShortName -> UiText.StringResource(R.string.error_short_name)
+        DataError.Validation.InvalidOTPFormat -> UiText.StringResource(R.string.error_invalid_otp)
 
         DataError.Verification.InvalidCode -> UiText.StringResource(R.string.error_invalid_code)
         DataError.Verification.CodeExpired -> UiText.StringResource(R.string.error_code_expired)

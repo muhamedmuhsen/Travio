@@ -1,7 +1,7 @@
 package com.example.domain.usecase.auth
 
+import com.example.common.extensions.isValidName
 import com.example.domain.utils.Result
-import com.example.domain.model.User
 import com.example.domain.repository.auth.AuthRepository
 import com.example.domain.utils.DataError
 import com.example.domain.validators.ValidateEmailUseCase
@@ -20,9 +20,15 @@ class SignupUseCase @Inject constructor(
         firstname: String,
         lastname: String
     ): Result<Unit, DataError> {
-        if (firstname.isBlank() || lastname.isBlank() || username.isBlank()) {
+        if (firstname.isBlank() || lastname.isBlank() || username.isBlank() || email.isBlank() || password.isBlank()) {
             return Result.Error(DataError.Validation.MissingFields)
         }
+        if (firstname.isValidName()) {
+            return Result.Error(DataError.Validation.ShortName)
+        }
+        if (lastname.isValidName())
+            return Result.Error(DataError.Validation.ShortName)
+
         if (!validateEmailUseCase(email)) {
             return Result.Error(DataError.Validation.InvalidEmailFormat)
         }
@@ -36,6 +42,8 @@ class SignupUseCase @Inject constructor(
             firstname = firstname,
             lastname = lastname,
             username = username,
+            confirmPassword = password
         )
+
     }
 }

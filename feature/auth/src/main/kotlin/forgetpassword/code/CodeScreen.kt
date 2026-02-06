@@ -46,6 +46,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.feature.auth.R
 import com.example.designsystem.components.AppButton
 import com.example.designsystem.theme.TravioTheme
@@ -63,8 +64,11 @@ fun CodeScreen(
 ) {
 
     val context = LocalContext.current
+    val state by viewModel.state.collectAsStateWithLifecycle()
+
 
     LaunchedEffect(Unit) {
+        viewModel.startCountdown()
         viewModel.event.collect { event ->
             when (event) {
                 CodeEvent.NavigateToResetPassword -> navigateToResetPassword()
@@ -107,7 +111,6 @@ fun CodeScreen(
                 )
             )
         }) { innerPadding ->
-
         Column(
             modifier = modifier
                 .padding(innerPadding)
@@ -128,7 +131,8 @@ fun CodeScreen(
             Spacer(modifier = Modifier.height(MaterialTheme.spacing.lg))
 
             OtpInputField(
-                onOtpFilled = { viewModel.onCodeChange(it) }
+                onOtpFilled = { viewModel.onCodeChange(it) },
+                isError = state.isCodeError,
             )
 
             Spacer(modifier = Modifier.height(MaterialTheme.spacing.lg))
@@ -138,9 +142,11 @@ fun CodeScreen(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                SendAgain(onSendAgainClicked = { viewModel.onSendAgainClicked(email) })
+                SendAgain(
+                    onSendAgainClicked = { viewModel.onSendAgainClicked(email) }
+                )
                 // TODO: Implement and display the Timer composable here
-                // For example: Text(text = "00:30")
+                CountdownTimer(state.timeLeft)
             }
 
             Spacer(modifier = Modifier.height(MaterialTheme.spacing.lg))
@@ -156,6 +162,21 @@ fun CodeScreen(
     }
 }
 
+@Composable
+fun CountdownTimer(timeLeft: Int) {
+    Text(
+        text = formatTime(timeLeft),
+        style = MaterialTheme.typography.bodySmall,
+    )
+}
+
+private fun formatTime(seconds: Int): String {
+
+    val minutes = (seconds % 3600) / 60
+    val secs = seconds % 60
+
+    return String.format("%02d:%02d", minutes, secs)
+}
 @Composable
 fun SendAgain(
     onSendAgainClicked: () -> Unit, modifier: Modifier = Modifier
@@ -190,7 +211,10 @@ fun SendAgain(
 
 @Composable
 fun OtpInputField(
-    modifier: Modifier = Modifier, otpLength: Int = 6, onOtpFilled: (String) -> Unit = {}
+    modifier: Modifier = Modifier,
+    otpLength: Int = 6,
+    onOtpFilled: (String) -> Unit,
+    isError: Boolean
 ) {
     var otpValue by remember { mutableStateOf("") }
 
@@ -214,6 +238,7 @@ fun OtpInputField(
                     OtpCell(
                         char = otpValue.getOrNull(index)?.toString() ?: "",
                         isFilled = index < otpValue.length,
+                        isError = isError,
                         modifier = Modifier.weight(1f)
                     )
                 }
@@ -223,19 +248,24 @@ fun OtpInputField(
 
 @Composable
 fun OtpCell(
-    modifier: Modifier = Modifier, char: String = "", isFilled: Boolean,
+    modifier: Modifier = Modifier, char: String = "", isFilled: Boolean, isError: Boolean
 ) {
-    val borderColor = if (isFilled) {
+
+    var borderColor = if (isFilled) {
         MaterialTheme.colorScheme.primary
     } else {
         MaterialTheme.colorScheme.outline
     }
+
+    if (isError) borderColor = MaterialTheme.colorScheme.error
+
 
     val textColor = if (isFilled) {
         MaterialTheme.colorScheme.onBackground
     } else {
         MaterialTheme.colorScheme.outline
     }
+
     Box(
         modifier = modifier
             .height(52.dp)

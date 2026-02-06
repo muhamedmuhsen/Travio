@@ -41,9 +41,10 @@
     <string name="error_invalid_inputs">يرجى التحقق من المدخلات.</string>
     <string name="error_missing_fields">يرجى ملء جميع الحقول المطلوبة.</string>
     <string name="error_invalid_email">يرجى إدخال عنوان بريد إلكتروني صالح.</string>
-    <string name="error_weak_password">يجب أن تكون كلمة المرور 8 أحرف على الأقل.</string>
+    <string name="error_weak_password">يجب أن تتكون كلمة المرور من 6 أحرف على الأقل وتتضمن حروفًا وأرقامًا ورموزًا خاصة</string>
     <string name="error_password_mismatch">كلمات المرور غير متطابقة.</string>
     <string name="error_short_name">الاسم قصير جداً.</string>
+    <string name="error_invalid_otp">تنسيق رمز التحقق غير صالح.</string>
 
     <!-- Verification -->
     <string name="error_invalid_code">رمز التحقق غير صالح.</string>

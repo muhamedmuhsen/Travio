@@ -10,7 +10,8 @@ class SendVerificationCodeUseCase @Inject constructor(
     private val authRepository: AuthRepository
 ) {
     suspend operator fun invoke(email: String, code: String): Result<Unit, DataError> {
-        if (!code.isValidOTP()) return Result.Error(DataError.Validation.MissingFields)
+        if (code.isBlank()) return Result.Error(DataError.Validation.MissingFields)
+        if (!code.isValidOTP()) return Result.Error(DataError.Validation.InvalidOTPFormat)
         return authRepository.sendVerificationCode(email, code)
     }
 }

@@ -1,4 +1,4 @@
-package com.example.common.auth
+package com.example.domain.repository.auth
 
 interface TokenProvider {
     suspend fun getAccessToken(): String?
