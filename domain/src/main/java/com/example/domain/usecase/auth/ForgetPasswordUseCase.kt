@@ -11,6 +11,7 @@ class ForgetPasswordUseCase @Inject constructor(
     private val authRepository: AuthRepository
 ) {
     suspend operator fun invoke(email: String): Result<Unit, DataError> {
+        if (email.isBlank()) return Result.Error(DataError.Validation.MissingFields)
         if (!validateEmailUseCase(email)) {
             return Result.Error(DataError.Validation.InvalidEmailFormat)
         }

@@ -175,9 +175,7 @@ fun LoginScreen(
 
             AppButton(
                 onClick = {
-                    viewModel.onLoginClicked(
-                        uiState.value.email, uiState.value.password
-                    )
+                    viewModel.onLoginClicked()
                 }, text = stringResource(id = R.string.log_in), modifier = Modifier.fillMaxWidth()
             )
 

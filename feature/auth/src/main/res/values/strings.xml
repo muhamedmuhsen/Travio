@@ -23,7 +23,7 @@
     <string name="last_name">Last Name</string>
     <string name="username">Username</string>
     <string name="your_password_must">Your password must:</string>
-    <string name="at_least_9_characters">• Be at least 9 characters</string>
+    <string name="at_least_9_characters">• Be at least 6 characters</string>
     <string name="include_letters_and_numbers">• Include letters and numbers</string>
     <string name="include_special_character">• Include at least one special character (!@#\$%^&amp;*_)</string>
     <string name="reset_your_password_using">Reset your password using:</string>

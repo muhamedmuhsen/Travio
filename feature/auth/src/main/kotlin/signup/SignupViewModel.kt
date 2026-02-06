@@ -1,9 +1,14 @@
 package com.example.feature.signup
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.data.repository.GoogleCredentialDataSourceImpl
+import com.example.domain.repository.prefernces.PreferencesManager
+import com.example.domain.usecase.auth.GoogleSignInUseCase
 import com.example.domain.utils.Result
 import com.example.domain.usecase.auth.SignupUseCase
+import com.example.feature.login.LoginEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,37 +19,74 @@ import kotlinx.coroutines.launch
 import ui.state.UiState
 import ui.text.asUiText
 import javax.inject.Inject
+import kotlin.Boolean
 
 @HiltViewModel
 class SignupViewModel @Inject constructor(
-    private val signupUseCase: SignupUseCase
-) : ViewModel() {
+    private val signupUseCase: SignupUseCase,
+    private val googleSignInUseCase: GoogleSignInUseCase,
+    private val googleCredentialDataSource: GoogleCredentialDataSourceImpl,
+    private val preferencesManager: PreferencesManager,
+
+    ) : ViewModel() {
     private val _state = MutableStateFlow(SignupUiState())
     val state = _state.asStateFlow()
 
     private val _event = Channel<SignupEvent>(Channel.BUFFERED)
     val event = _event.receiveAsFlow()
-    fun onCreateAccountClicked() {
+
+    private fun sendEvent(event: SignupEvent) {
         viewModelScope.launch {
-            _event.send(SignupEvent.onCreateAccountClicked)
+            _event.send(event)
         }
     }
 
-    fun onFacebookSigninClicked() {
-        TODO("Not yet implemented")
+    fun onGoogleSignInClicked(context: Context, webClientId: String) {
+        _state.update { it.copy(signupState = UiState.Loading) }
+
+        viewModelScope.launch {
+            when (val result = googleCredentialDataSource.getGoogleIdToken(context, webClientId)) {
+                is Result.Error -> {
+                    val message = result.error.asUiText()
+                    _state.update { it.copy(signupState = UiState.Error(message)) }
+                    sendEvent(SignupEvent.ShowAuthError(message))
+                }
+
+                is Result.Success -> {
+                    val idToken = result.data
+                    onGoogleSignInResult(idToken)
+                }
+            }
+        }
     }
 
-    fun onGoogleSigninClicked() {
-        TODO("Not yet implemented")
+    private fun onGoogleSignInResult(idToken: String) {
+        viewModelScope.launch {
+            when (val shouldNavigateToHome = googleSignInUseCase(idToken)) {
+                is Result.Error -> {
+                    val message = shouldNavigateToHome.error.asUiText()
+                    _state.update { it.copy(signupState = UiState.Error(message)) }
+                    sendEvent(SignupEvent.ShowAuthError(message))
+                }
+
+                is Result.Success -> {
+                    preferencesManager.setLoggedIn(true)
+                    sendEvent(SignupEvent.NavigateToHome)
+                }
+            }
+        }
     }
 
-    fun onSignupClicked(
-        firstname: String,
-        lastname: String,
-        username: String,
-        email: String,
-        password: String
-    ) {
+
+    fun onSignupClicked() {
+        if (_state.value.signupState is UiState.Loading) return
+        clearErrors()
+        val email = _state.value.email
+        val password = _state.value.password
+        val firstname = _state.value.firstname
+        val lastname = _state.value.lastname
+        val username = _state.value.username
+
         _state.update { it.copy(signupState = UiState.Loading) }
         viewModelScope.launch {
             when (val result = signupUseCase(
@@ -55,14 +97,32 @@ class SignupViewModel @Inject constructor(
                 username = username
             )) {
                 is Result.Error -> {
-                    // _state.update { it.copy(signupState = UiState.Error(result.error.message)) }
+                    _state.update { it.copy(signupState = UiState.Error(result.error.asUiText())) }
                     _event.send(SignupEvent.ShowAuthError(result.error.asUiText()))
                 }
+
                 is Result.Success -> {
-                    _state.update { it.copy(signupState = UiState.Success()) }
+                    _state.update {
+                        it.copy(
+                            signupState = UiState.Success(),
+                        )
+                    }
                     _event.send(SignupEvent.NavigateToHome)
                 }
             }
+        }
+    }
+
+    private fun clearErrors() {
+        _state.update {
+            it.copy(
+                isPasswordError = false,
+                isEmailError = false,
+                isFirstNameError = false,
+                isLastNameError = false,
+                isUsernameError = false,
+                isPasswordMismatch = false,
+            )
         }
     }
 

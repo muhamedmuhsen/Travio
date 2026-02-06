@@ -23,7 +23,7 @@ interface AuthApi {
     suspend fun login(@Body request: LoginRequest): AuthApiResponseDto
 
     @POST("Auth/register")
-    suspend fun signup(@Body request: SignupRequest): SignupResponse
+    suspend fun signup(@Body request: SignupRequest): AuthApiResponseDto
 
     @POST("Auth/google-login")
     suspend fun googleLogin(@Body request: GoogleLoginRequest): AuthApiResponseDto

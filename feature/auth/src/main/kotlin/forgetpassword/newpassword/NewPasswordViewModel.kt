@@ -3,7 +3,7 @@ package com.example.feature.forgetpassword.newpassword
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.common.auth.TokenProvider
+import com.example.domain.repository.auth.TokenProvider
 import com.example.domain.usecase.auth.ResetPasswordUseCase
 import com.example.domain.utils.DataError
 import com.example.domain.utils.Result

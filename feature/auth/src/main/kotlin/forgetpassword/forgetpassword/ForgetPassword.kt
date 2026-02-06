@@ -44,6 +44,7 @@ import com.example.designsystem.components.AppTextField
 import com.example.designsystem.theme.TravioTheme
 import com.example.designsystem.theme.spacing
 import com.example.feature.forgetpassword.forgetpassword.ForgetPasswordEvent
+import com.example.feature.forgetpassword.forgetpassword.ForgetPasswordViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
