@@ -1,5 +1,6 @@
 package com.example.domain.usecase.auth
 
+import com.example.common.extensions.isValidName
 import com.example.domain.utils.Result
 import com.example.domain.repository.auth.AuthRepository
 import com.example.domain.utils.DataError
@@ -22,10 +23,10 @@ class SignupUseCase @Inject constructor(
         if (firstname.isBlank() || lastname.isBlank() || username.isBlank() || email.isBlank() || password.isBlank()) {
             return Result.Error(DataError.Validation.MissingFields)
         }
-        if (firstname.length < 3) {
+        if (firstname.isValidName()) {
             return Result.Error(DataError.Validation.ShortName)
         }
-        if (lastname.length < 3)
+        if (lastname.isValidName())
             return Result.Error(DataError.Validation.ShortName)
 
         if (!validateEmailUseCase(email)) {

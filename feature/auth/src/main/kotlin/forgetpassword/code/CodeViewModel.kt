@@ -57,10 +57,16 @@ class CodeViewModel @Inject constructor(
             when (val result = verificationCodeUseCase(email = email, _state.value.code)) {
                 is Result.Error -> {
                     if (result.error == DataError.Validation.MissingFields) {
-                        _state.update { it.copy(isCodeError = true) }
+                        _state.update {
+                            it.copy(
+                                isCodeError = true,
+                                codeState = UiState.Error(result.error.asUiText())
+                            )
+                        }
                     }
                     sendEvent(CodeEvent.ShowError(result.error.asUiText()))
                 }
+
                 is Result.Success -> {
                     sendEvent(CodeEvent.NavigateToResetPassword)
                 }
@@ -69,7 +75,13 @@ class CodeViewModel @Inject constructor(
     }
 
     private fun clearErrors() {
-        _state.update { it.copy(isCodeError = false, isCodeFilled = false) }
+        _state.update {
+            it.copy(
+                isCodeError = false,
+                isCodeFilled = false,
+                codeState = UiState.Idle
+            )
+        }
     }
 
     fun onSendAgainClicked(email: String) {
