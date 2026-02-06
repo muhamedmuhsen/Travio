@@ -68,6 +68,7 @@ fun CodeScreen(
 
 
     LaunchedEffect(Unit) {
+        viewModel.startCountdown()
         viewModel.event.collect { event ->
             when (event) {
                 CodeEvent.NavigateToResetPassword -> navigateToResetPassword()
@@ -145,7 +146,7 @@ fun CodeScreen(
                     onSendAgainClicked = { viewModel.onSendAgainClicked(email) }
                 )
                 // TODO: Implement and display the Timer composable here
-                // For example: Text(text = "00:30")
+                CountdownTimer(state.timeLeft)
             }
 
             Spacer(modifier = Modifier.height(MaterialTheme.spacing.lg))
@@ -161,6 +162,21 @@ fun CodeScreen(
     }
 }
 
+@Composable
+fun CountdownTimer(timeLeft: Int) {
+    Text(
+        text = formatTime(timeLeft),
+        style = MaterialTheme.typography.bodySmall,
+    )
+}
+
+private fun formatTime(seconds: Int): String {
+
+    val minutes = (seconds % 3600) / 60
+    val secs = seconds % 60
+
+    return String.format("%02d:%02d", minutes, secs)
+}
 @Composable
 fun SendAgain(
     onSendAgainClicked: () -> Unit, modifier: Modifier = Modifier

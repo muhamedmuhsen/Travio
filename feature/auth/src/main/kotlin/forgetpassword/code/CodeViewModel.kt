@@ -3,20 +3,19 @@ package com.example.feature.forgetpassword.code
 import com.example.domain.utils.Result
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.common.extensions.isValidOTP
 import com.example.domain.usecase.auth.SendVerificationCodeUseCase
 import com.example.domain.utils.DataError
-import com.example.feature.auth.R
 import com.example.feature.code.CodeEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ui.state.UiState
-import ui.text.UiText
 import ui.text.asUiText
 import javax.inject.Inject
 
@@ -30,7 +29,7 @@ class CodeViewModel @Inject constructor(
     private val _event = Channel<CodeEvent>(Channel.BUFFERED)
     val event = _event.receiveAsFlow()
 
-
+    private var countdownJob: Job? = null
     fun sendEvent(event: CodeEvent) {
         viewModelScope.launch {
             _event.send(event)
@@ -74,6 +73,18 @@ class CodeViewModel @Inject constructor(
         }
     }
 
+    fun startCountdown(durationSeconds: Int = 600) {
+        countdownJob?.cancel()
+        countdownJob = viewModelScope.launch {
+            _state.update { it.copy(timeLeft = durationSeconds) }
+            while (_state.value.timeLeft > 0) {
+                delay(1000L)
+                _state.update { it.copy(timeLeft = it.timeLeft - 1) }
+            }
+        }
+    }
+
+
     private fun clearErrors() {
         _state.update {
             it.copy(
@@ -86,5 +97,12 @@ class CodeViewModel @Inject constructor(
 
     fun onSendAgainClicked(email: String) {
         onContinueClicked(email)
+        clearErrors()
+        startCountdown()
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        countdownJob?.cancel()
     }
 }
