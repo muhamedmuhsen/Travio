@@ -4,6 +4,7 @@ import com.example.domain.model.GoogleUser
 import com.example.domain.model.User
 import com.example.network.dto.auth.social.GoogleUserDto
 import com.example.network.dto.auth.UserDto
+import com.example.network.dto.user_managment.GetUserResponse
 
 fun UserDto.toDomain(): User {
     return User(
@@ -33,5 +34,14 @@ fun GoogleUserDto.toUser(): User {
         email = email,
         profilePictureUrl = profilePicUrl
     )
+}
 
+fun GetUserResponse.toDomain(): User {
+    return User(
+        username = "",
+        firstName = data.firstName,
+        lastName = data.lastName,
+        email = data.email,
+        profilePictureUrl = data.profilePictureUrl
+    )
 }

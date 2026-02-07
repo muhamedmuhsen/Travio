@@ -59,6 +59,8 @@ class ProfileViewModel @Inject constructor(
                 }
 
                 is Result.Success -> {
+                    hideLogoutDialog()
+                    // delete user data
                     _event.send(ProfileEvent.NavigateToLogin)
                 }
             }
@@ -66,8 +68,10 @@ class ProfileViewModel @Inject constructor(
     }
 
     private fun loadProfileData() {
+        if (_uiState.value.profileUiState is UiState.Loading) return
+        _uiState.update { state -> state.copy(profileUiState = UiState.Loading) }
+
         viewModelScope.launch {
-            _uiState.update { state -> state.copy(profileUiState = UiState.Loading) }
             when (val result = getUserUseCase()) {
                 is Result.Error -> {
                     _uiState.update { state ->
@@ -91,6 +95,14 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
+    fun onLogoutClicked() {
+        _uiState.update { state -> state.copy(showLogoutDialog = true) }
+
+    }
+
+    fun hideLogoutDialog() {
+        _uiState.update { state -> state.copy(showLogoutDialog = false) }
+    }
     fun toggleDarkMode() {
         viewModelScope.launch { toggleDarkModeUseCase(!_uiState.value.isDarkMode) }
     }

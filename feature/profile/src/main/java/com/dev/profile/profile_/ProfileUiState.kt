@@ -8,5 +8,6 @@ data class ProfileUiState(
     val lastName: String = "",
     val profilePictureUrl: String? = null,
     val isDarkMode: Boolean = false,
+    val showLogoutDialog: Boolean = false,
     val profileUiState: UiState<Unit> = UiState.Idle
 )

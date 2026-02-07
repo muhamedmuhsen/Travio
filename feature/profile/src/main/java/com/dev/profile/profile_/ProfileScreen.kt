@@ -22,6 +22,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.dev.profile.profile_.components.LogoutButton
+import com.dev.profile.profile_.components.LogoutDialog
 import com.dev.profile.profile_.components.ProfileOption
 import com.dev.profile.profile_.components.ProfileOptionWithSwitch
 import com.dev.profile.profile_.components.TopSection
@@ -36,7 +37,11 @@ fun ProfileScreen(
     viewModel: ProfileViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
-
+    ShouldShowLogoutDialog(
+        showLogoutDialog = uiState.showLogoutDialog,
+        onCancel = viewModel::hideLogoutDialog,
+        onConfirm = viewModel::logout
+    )
     Scaffold(
         modifier = Modifier
             .fillMaxSize()
@@ -45,7 +50,7 @@ fun ProfileScreen(
         ProfileContent(
             uiState = uiState,
             onNavigateToDetail = onNavigateToDetail,
-            logout = viewModel::logout,
+            showLogoutDialog = viewModel::onLogoutClicked,
             toggleDarkMode = viewModel::toggleDarkMode,
             modifier = modifier.padding(innerPadding)
         )
@@ -56,7 +61,7 @@ fun ProfileScreen(
 private fun ProfileContent(
     uiState: ProfileUiState,
     onNavigateToDetail: (String) -> Unit,
-    logout: () -> Unit,
+    showLogoutDialog: () -> Unit,
     toggleDarkMode: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -111,9 +116,19 @@ private fun ProfileContent(
 
             // Logout Button
             LogoutButton(
-                modifier = Modifier.fillMaxWidth(), onClick = logout
+                modifier = Modifier.fillMaxWidth(), onClick = showLogoutDialog
             )
         }
+    }
+}
+
+@Composable
+fun ShouldShowLogoutDialog(showLogoutDialog: Boolean, onCancel: () -> Unit, onConfirm: () -> Unit) {
+    if (showLogoutDialog) {
+        LogoutDialog(
+            onDismiss = onCancel,
+            onConfirm = onConfirm
+        )
     }
 }
 
@@ -159,7 +174,10 @@ fun ProfileCategoryWithSwitch(
 
 @Composable
 fun SectionHeader(
-    userName: String, userEmail: String, profileImageUrl: String?, modifier: Modifier = Modifier
+    userName: String,
+    userEmail: String,
+    profileImageUrl: String?,
+    modifier: Modifier = Modifier
 ) {
     Row(
         modifier = modifier
@@ -177,8 +195,9 @@ fun SectionHeader(
         ) {
             AsyncImage(
                 model = ImageRequest.Builder(LocalContext.current)
-                    .data(profileImageUrl ?: R.drawable.ic_default_profile) // Use Coil for both!
-                    .crossfade(true).build(),
+                    .data(profileImageUrl ?: R.drawable.ic_default_profile)
+                    .crossfade(true)
+                    .build(),
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier.fillMaxSize()
@@ -212,6 +231,10 @@ private fun ProfileScreenPreview() {
                 lastName = "Mahmoud",
                 email = "osama.mahmoud00@gmail.com",
                 isDarkMode = false
-            ), onNavigateToDetail = {}, logout = {}, toggleDarkMode = {})
+            ),
+            onNavigateToDetail = {},
+            showLogoutDialog = {},
+            toggleDarkMode = {}
+        )
     }
 }

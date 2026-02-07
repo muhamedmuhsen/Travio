@@ -14,6 +14,7 @@ import com.example.network.dto.user_managment.UpdateProfileRequest
 import com.example.network.dto.user_managment.UpdateProfileResponse
 import javax.inject.Inject
 import androidx.core.net.toUri
+import com.example.data.mapper.toDomain
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
@@ -25,16 +26,12 @@ class UserManagementRepositoryImpl @Inject constructor(
     private val secureTokenStorage: SecureTokenStorage,
     private val preferencesManager: PreferencesManager,
 ) : UserManagementRepository {
+
     override suspend fun getUser(): Result<User, DataError> {
-        return Result.Success(
-            User(
-                firstName = "Osama",
-                lastName = "Mahmoud",
-                username = "osama_mahmoud",
-                email = "Osama.mahmoud0@gmail.com",
-                profilePictureUrl = null
-            )
-        )
+        val result = api.getCurrentUser()
+        val user = result.toDomain()
+        // save user data to local store
+        return Result.Success(user)
     }
 
 
