@@ -25,6 +25,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.DialogProperties
 import com.example.designsystem.components.AppButton
 import com.example.designsystem.components.LanguageButton
 import com.example.feature.profile.R
@@ -38,7 +39,10 @@ fun LogoutDialog(
 ) {
     AlertDialog(
         onDismissRequest = onDismiss,
-        modifier = modifier.fillMaxWidth()
+        properties = DialogProperties(usePlatformDefaultWidth = false),
+        modifier = modifier
+            .padding(horizontal = 12.dp)
+            .fillMaxWidth()
     ) {
         Column(
             modifier = Modifier
