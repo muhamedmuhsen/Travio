@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
@@ -93,7 +94,9 @@ private fun PasswordTrailingIcon(
             painter = painterResource(
                 id = if (passwordVisible) R.drawable.visible_password else R.drawable.unvisible_password
             ),
-            contentDescription = if (passwordVisible) "Hide password" else "Show password",
+            contentDescription = stringResource(
+                id = if (passwordVisible) R.string.hide_password else R.string.show_password
+            ),
             tint = Color.Unspecified,
             modifier = Modifier.size(MaterialTheme.spacing.lg)
         )

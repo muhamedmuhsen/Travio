@@ -35,6 +35,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -130,7 +131,7 @@ fun EditProfileContent(
             AppTextField(
                 value = firstName,
                 onValueChange = onFirstNameChange,
-                placeholder = "First Name",
+                placeholder = stringResource(id = R.string.first_name_placeholder),
                 isError = isFirstNameError,
                 errorMessage = firstNameErrorMessage?.asString(),
                 fieldType = TextFieldType.TEXT,
@@ -139,7 +140,7 @@ fun EditProfileContent(
             AppTextField(
                 value = lastName,
                 onValueChange = onLastNameChange,
-                placeholder = "Last Name",
+                placeholder = stringResource(id = R.string.last_name_placeholder),
                 isError = isLastNameError,
                 errorMessage = lastNameErrorMessage?.asString(),
                 fieldType = TextFieldType.TEXT,
@@ -149,7 +150,7 @@ fun EditProfileContent(
             AppTextField(
                 value = email,
                 onValueChange = onEmailChange,
-                placeholder = "Email Address",
+                placeholder = stringResource(id = R.string.email_address_placeholder),
                 isError = isEmailError,
                 errorMessage = emailErrorMessage?.asString(),
                 fieldType = TextFieldType.EMAIL,
@@ -159,7 +160,7 @@ fun EditProfileContent(
         }
         AppButton(
             onClick = onUpdateClick,
-            text = "Update",
+            text = stringResource(id = R.string.update),
             shape = MaterialTheme.shapes.medium,
             modifier = Modifier
                 .fillMaxWidth()
@@ -188,21 +189,21 @@ fun ChangeProfilePictureBox(
                 .clip(CircleShape)
                 .clickable(
                     onClick = onClick,
-                    onClickLabel = "Change profile picture"
+                    onClickLabel = stringResource(id = R.string.change_profile_picture)
                 ),
             contentAlignment = Alignment.Center
         ) {
             if (imageUri != null) {
                 AsyncImage(
                     model = imageUri,
-                    contentDescription = "Profile picture",
+                    contentDescription = stringResource(id = R.string.profile_picture),
                     modifier = Modifier.fillMaxSize(),
                     contentScale = ContentScale.Crop
                 )
             } else {
                 Image(
                     painter = painterResource(R.drawable.person),
-                    contentDescription = "Default profile picture",
+                    contentDescription = stringResource(id = R.string.default_profile_picture),
                     modifier = Modifier.fillMaxSize(),
                     contentScale = ContentScale.Crop
                 )
@@ -243,7 +244,7 @@ fun AppTopBar(
         TopAppBar(
             title = {
                 Text(
-                    text = "Edit Profile",
+                    text = stringResource(id = R.string.edit_profile),
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.SemiBold,
                     modifier = Modifier.fillMaxWidth(),
@@ -264,7 +265,7 @@ fun AppTopBar(
                 ) {
                     Icon(
                         imageVector = Icons.Default.Close,
-                        contentDescription = "Close",
+                        contentDescription = stringResource(id = com.example.designsystem.R.string.close),
                         modifier = Modifier.size(MaterialTheme.spacing.lg)
                     )
                 }

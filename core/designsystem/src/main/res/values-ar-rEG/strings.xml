@@ -13,6 +13,10 @@
     <string name="language_english">English</string>
     <string name="language_arabic">اللغة العربية</string>
 
+    <!-- Content Descriptions -->
+    <string name="hide_password">إخفاء كلمة المرور</string>
+    <string name="show_password">إظهار كلمة المرور</string>
+
     <!-- Error Messages -->
     <!-- Network -->
     <string name="error_no_internet">لا يوجد اتصال بالإنترنت. يرجى التحقق من الشبكة.</string>

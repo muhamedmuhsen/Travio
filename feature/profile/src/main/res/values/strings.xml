@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Profile Screen -->
+    <string name="logout">Logout</string>
+    <string name="logout_dialog_title">Are you sure you want to logout?</string>
+    <string name="cancel">Cancel</string>
+    <string name="sure">Sure</string>
+
+    <!-- Edit Profile Screen -->
+    <string name="edit_profile">Edit Profile</string>
+    <string name="update">Update</string>
+    <string name="first_name_placeholder">First Name</string>
+    <string name="last_name_placeholder">Last Name</string>
+    <string name="email_address_placeholder">Email Address</string>
+
+    <!-- Content Descriptions -->
+    <string name="profile_picture">Profile picture</string>
+    <string name="default_profile_picture">Default profile picture</string>
+    <string name="change_profile_picture">Change profile picture</string>
+
+    <!-- Profile Categories -->
+    <string name="account_settings">ACCOUNT SETTINGS</string>
+    <string name="preferences">PREFERENCES</string>
+    <string name="support_help">SUPPORT &amp; HELP</string>
+
+    <!-- Profile Options -->
+    <string name="my_profile">My profile</string>
+    <string name="addresses">Addresses</string>
+    <string name="language">Language</string>
+    <string name="dark_mode">Dark Mode</string>
+    <string name="help_center">Help Center</string>
+    <string name="user_default">User</string>
+</resources>
+
+

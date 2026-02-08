@@ -15,6 +15,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -71,7 +72,8 @@ private fun ProfileContent(
     ) {
         // Header Section
         SectionHeader(
-            userName = "${uiState.firstName} ${uiState.lastName}".trim().ifEmpty { "User" },
+            userName = "${uiState.firstName} ${uiState.lastName}".trim()
+                .ifEmpty { stringResource(id = R.string.user_default) },
             userEmail = uiState.email,
             profileImageUrl = uiState.profilePictureUrl
         )
@@ -86,31 +88,33 @@ private fun ProfileContent(
         ) {
             // Account Settings Section
             ProfileCategory(
-                title = "ACCOUNT SETTINGS", options = listOf(
+                title = stringResource(id = R.string.account_settings), options = listOf(
                     ProfileOption(
-                        "My profile", R.drawable.person
+                        stringResource(id = R.string.my_profile), R.drawable.person
                     ) { onNavigateToDetail("profile") }, ProfileOption(
-                        "Addresses", R.drawable.location
+                        stringResource(id = R.string.addresses), R.drawable.location
                     ) { onNavigateToDetail("address") })
             )
 
             // Preferences Section
             ProfileCategoryWithSwitch(
-                title = "PREFERENCES",
+                title = stringResource(id = R.string.preferences),
                 clickableOptions = listOf(
                     ProfileOption(
-                        "Language", R.drawable.language
+                        stringResource(id = R.string.language), R.drawable.language
                     ) { onNavigateToDetail("language") }), switchOptions = listOf(
                     ProfileOptionWithSwitch(
-                        "Dark Mode", R.drawable.light_mode, isChecked = uiState.isDarkMode
+                        stringResource(id = R.string.dark_mode),
+                        R.drawable.light_mode,
+                        isChecked = uiState.isDarkMode
                     ) { toggleDarkMode() })
             )
 
             // Support Section
             ProfileCategory(
-                title = "SUPPORT & HELP", options = listOf(
+                title = stringResource(id = R.string.support_help), options = listOf(
                     ProfileOption(
-                        "Help Center", R.drawable.help_centeer
+                        stringResource(id = R.string.help_center), R.drawable.help_centeer
                     ) { onNavigateToDetail("help") })
             )
 
