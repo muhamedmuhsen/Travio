@@ -65,6 +65,11 @@
 
     <!-- Local -->
     <string name="error_disk_full">المساحة ممتلئة. يرجى توفير مساحة كافية.</string>
+    <string name="error_invalid_input">بيانات إدخال غير صالحة.</string>
+    <string name="error_constraint_violation">انتهاك قيود البيانات.</string>
+    <string name="error_record_not_found">السجل غير موجود.</string>
+    <string name="error_database">خطأ في قاعدة البيانات. حاول مرة أخرى.</string>
+    <string name="error_local_unknown">حدث خطأ محلي غير متوقع.</string>
 
     <!-- Unknown -->
     <string name="error_unknown">حدث خطأ غير متوقع.</string>

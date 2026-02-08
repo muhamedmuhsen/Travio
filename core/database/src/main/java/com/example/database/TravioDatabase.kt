@@ -15,3 +15,4 @@ abstract class TravioDatabase : RoomDatabase() {
 }
 
 
+// TODO: mapping entities to domain model

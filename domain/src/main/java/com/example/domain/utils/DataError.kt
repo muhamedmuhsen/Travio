@@ -59,6 +59,11 @@ sealed interface DataError : Error {
     }
 
     enum class Local : DataError {
-        DiskFull
+        DiskFull,
+        InvalidInput,
+        ConstraintViolation,
+        RecordNotFound,
+        DatabaseError,
+        UnkownError
     }
 }

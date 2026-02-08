@@ -65,6 +65,11 @@
 
     <!-- Local -->
     <string name="error_disk_full">Storage is full. Please free up some space.</string>
+    <string name="error_invalid_input">Invalid input data.</string>
+    <string name="error_constraint_violation">Data constraint violation.</string>
+    <string name="error_record_not_found">Record not found.</string>
+    <string name="error_database">Database error. Please try again.</string>
+    <string name="error_local_unknown">An unexpected local error occurred.</string>
 
     <!-- Unknown -->
     <string name="error_unknown">An unexpected error occurred.</string>
