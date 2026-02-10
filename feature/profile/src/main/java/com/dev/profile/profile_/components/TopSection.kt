@@ -1,6 +1,7 @@
 package com.dev.profile.profile_.components
 
 import androidx.annotation.DrawableRes
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -25,6 +26,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
@@ -56,7 +58,8 @@ fun TopSection(
         modifier = modifier
             .fillMaxWidth()
             .padding(vertical = 16.dp),
-        elevation = CardDefaults.cardElevation(1.dp),
+        elevation = CardDefaults.cardElevation(0.5.dp),
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface
         )
@@ -89,7 +92,9 @@ fun TopSectionWithSwitch(
         modifier = modifier
             .fillMaxWidth()
             .padding(vertical = 16.dp),
-        elevation = CardDefaults.cardElevation(1.dp),
+        elevation = CardDefaults.cardElevation(0.5.dp),
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
+
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface
         )
@@ -144,7 +149,7 @@ fun DetailsCard(
         Icon(
             trailingIcon,
             contentDescription = null,
-            tint = Color.Unspecified,
+            tint = MaterialTheme.colorScheme.onBackground,
             modifier = Modifier
                 .size(18.dp)
         )
@@ -190,7 +195,7 @@ private fun DetailsRowSection(boxIcon: Int, text: String) {
             modifier = Modifier
                 .size(40.dp)
                 .clip(CircleShape)
-                .background(MaterialTheme.colorScheme.surface),
+                .background(MaterialTheme.colorScheme.surfaceContainerHigh),
             contentAlignment = Alignment.Center
         ) {
             Icon(
