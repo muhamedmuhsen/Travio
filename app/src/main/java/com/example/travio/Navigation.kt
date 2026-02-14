@@ -88,17 +88,21 @@ fun TravioNavHost(
 
         composable(Screen.HomeScreen.route) {
             HomeScreen(
-                navigateToProfile = { navController.navigate(Screen.ProfileScreen.route) },
+                navigateToProfile = {
+                    navController.navigate(Screen.ProfileScreen.route)
+                },
             )
         }
         composable(Screen.ProfileScreen.route) {
             ProfileScreen(
-                onNavigateToDetail = { navController.navigate(Screen.EditProfileScreen.route) },
+                onNavigateToDetail = { navController.navigate(Screen.EditProfileScreen.route + "/$it") },
             )
         }
-        composable(Screen.EditProfileScreen.route) {
+        composable(Screen.EditProfileScreen.route + "/{profilePic}") {
+            val profilePic = it.arguments?.getString("profilePic")
             EditProfileScreen(
-                onCloseClicked = { navController.popBackStack() }
+                onCloseClicked = { navController.popBackStack() },
+                profilePic = profilePic
             )
         }
     }

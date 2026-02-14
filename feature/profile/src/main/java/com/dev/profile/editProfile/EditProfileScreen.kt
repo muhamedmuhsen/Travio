@@ -1,5 +1,7 @@
 package com.dev.profile.editProfile
 
+import android.content.Context
+import android.content.Intent
 import android.net.Uri
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -44,6 +46,7 @@ import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.example.designsystem.components.AppButton
 import com.example.designsystem.components.AppTextField
 import com.example.designsystem.components.TextFieldType
@@ -56,22 +59,27 @@ import ui.text.UiText
 fun EditProfileScreen(
     modifier: Modifier = Modifier,
     viewModel: EditProfileViewModel = hiltViewModel(),
-    onCloseClicked: () -> Unit
+    onCloseClicked: () -> Unit,
+    profilePic: String?
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
+    val context = LocalContext.current
     val imagePickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
     ) { uri: Uri? ->
         uri?.let {
             viewModel.onProfileImageSelected(it.toString())
+            context.contentResolver.takePersistableUriPermission(
+                it,
+                Intent.FLAG_GRANT_READ_URI_PERMISSION
+            )
             Log.d("EditProfileScreen", "Image URI selected: $it")
         }
     }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
-        topBar = { AppTopBar(onCloseClicked = onCloseClicked) }
-    ) { innerPadding ->
+        topBar = { AppTopBar(onCloseClicked = onCloseClicked) }) { innerPadding ->
         EditProfileContent(
             modifier = modifier
                 .fillMaxSize()
@@ -91,6 +99,7 @@ fun EditProfileScreen(
             firstNameErrorMessage = state.firstNameErrorMessage,
             lastNameErrorMessage = state.lastNameErrorMessage,
             emailErrorMessage = state.emailErrorMessage,
+            onImageSuccess = viewModel::onProfileImageSelected
         )
     }
 }
@@ -112,7 +121,8 @@ fun EditProfileContent(
     emailErrorMessage: UiText?,
     onUpdateClick: () -> Unit,
     onProfileImageClick: () -> Unit,
-    profileImageUri: String?
+    profileImageUri: String?,
+    onImageSuccess: (String?) -> Unit
 ) {
     Column(
         modifier = modifier.padding(MaterialTheme.spacing.md),
@@ -126,7 +136,8 @@ fun EditProfileContent(
         ) {
             ChangeProfilePictureBox(
                 imageUri = profileImageUri,
-                onClick = onProfileImageClick
+                onClick = onProfileImageClick,
+                onImageSuccess = onImageSuccess,
             )
             AppTextField(
                 value = firstName,
@@ -162,8 +173,7 @@ fun EditProfileContent(
             onClick = onUpdateClick,
             text = stringResource(id = R.string.update),
             shape = MaterialTheme.shapes.medium,
-            modifier = Modifier
-                .fillMaxWidth()
+            modifier = Modifier.fillMaxWidth()
         )
     }
 }
@@ -171,11 +181,12 @@ fun EditProfileContent(
 @Composable
 fun ChangeProfilePictureBox(
     imageUri: String?,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    onImageSuccess: (String?) -> Unit
 ) {
+    Log.d("imageUri", imageUri ?: "null")
     Box(
-        modifier = Modifier.size(96.dp),
-        contentAlignment = Alignment.Center
+        modifier = Modifier.size(96.dp), contentAlignment = Alignment.Center
     ) {
         Box(
             modifier = Modifier
@@ -190,24 +201,25 @@ fun ChangeProfilePictureBox(
                 .clickable(
                     onClick = onClick,
                     onClickLabel = stringResource(id = R.string.change_profile_picture)
-                ),
-            contentAlignment = Alignment.Center
+                ), contentAlignment = Alignment.Center
         ) {
-            if (imageUri != null) {
-                AsyncImage(
-                    model = imageUri,
-                    contentDescription = stringResource(id = R.string.profile_picture),
-                    modifier = Modifier.fillMaxSize(),
-                    contentScale = ContentScale.Crop
-                )
-            } else {
-                Image(
-                    painter = painterResource(R.drawable.person),
-                    contentDescription = stringResource(id = R.string.default_profile_picture),
-                    modifier = Modifier.fillMaxSize(),
-                    contentScale = ContentScale.Crop
-                )
-            }
+
+            AsyncImage(
+                model = ImageRequest.Builder(LocalContext.current)
+                    .data(imageUri?.takeIf { it.isNotBlank() })
+                    .error(R.drawable.ic_default_profile)
+                    .placeholder(R.drawable.ic_default_profile).crossfade(true).listener(
+                        onError = { _, result ->
+                            Log.e("AsyncImage", "Failed to load image", result.throwable)
+                        },
+                        onSuccess = { _, _ ->
+                            onImageSuccess(imageUri)
+                        }
+                    ).build(),
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.fillMaxSize()
+            )
         }
 
         Box(
@@ -217,11 +229,8 @@ fun ChangeProfilePictureBox(
                 .size(32.dp)
                 .background(MaterialTheme.colorScheme.primary, CircleShape)
                 .border(
-                    width = 2.dp,
-                    color = MaterialTheme.colorScheme.surface,
-                    shape = CircleShape
-                ),
-            contentAlignment = Alignment.Center
+                    width = 2.dp, color = MaterialTheme.colorScheme.surface, shape = CircleShape
+                ), contentAlignment = Alignment.Center
         ) {
             Icon(
                 painter = painterResource(R.drawable.camera),
@@ -237,8 +246,7 @@ fun ChangeProfilePictureBox(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppTopBar(
-    modifier: Modifier = Modifier,
-    onCloseClicked: () -> Unit
+    modifier: Modifier = Modifier, onCloseClicked: () -> Unit
 ) {
     Column {
         TopAppBar(
@@ -250,8 +258,7 @@ fun AppTopBar(
                     modifier = Modifier.fillMaxWidth(),
                     textAlign = TextAlign.Center
                 )
-            },
-            navigationIcon = {
+            }, navigationIcon = {
                 Box(
                     modifier = Modifier
                         .padding(start = MaterialTheme.spacing.md)
@@ -260,8 +267,7 @@ fun AppTopBar(
                             color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
                             shape = CircleShape
                         )
-                        .clickable { onCloseClicked() },
-                    contentAlignment = Alignment.Center
+                        .clickable { onCloseClicked() }, contentAlignment = Alignment.Center
                 ) {
                     Icon(
                         imageVector = Icons.Default.Close,
@@ -269,17 +275,14 @@ fun AppTopBar(
                         modifier = Modifier.size(MaterialTheme.spacing.lg)
                     )
                 }
-            },
-            actions = {
+            }, actions = {
                 Spacer(modifier = Modifier.size(MaterialTheme.spacing.xxxl))
-            },
-            colors = TopAppBarDefaults.topAppBarColors(
+            }, colors = TopAppBarDefaults.topAppBarColors(
                 containerColor = MaterialTheme.colorScheme.surface
             )
         )
         HorizontalDivider(
-            thickness = 1.dp,
-            color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
+            thickness = 1.dp, color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
         )
     }
 }
@@ -289,6 +292,6 @@ fun AppTopBar(
 @Composable
 private fun EditScreenPreview() {
     TravioTheme {
-        EditProfileScreen() {}
+        EditProfileScreen(profilePic = "", onCloseClicked = {})
     }
 }

@@ -33,7 +33,7 @@ import com.example.feature.profile.R
 
 @Composable
 fun ProfileScreen(
-    onNavigateToDetail: (String) -> Unit,
+    onNavigateToDetail: (String?) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: ProfileViewModel = hiltViewModel()
 ) {
@@ -61,7 +61,7 @@ fun ProfileScreen(
 @Composable
 private fun ProfileContent(
     uiState: ProfileUiState,
-    onNavigateToDetail: (String) -> Unit,
+    onNavigateToDetail: (String?) -> Unit,
     showLogoutDialog: () -> Unit,
     toggleDarkMode: () -> Unit,
     modifier: Modifier = Modifier
@@ -91,15 +91,14 @@ private fun ProfileContent(
                 title = stringResource(id = R.string.account_settings), options = listOf(
                     ProfileOption(
                         stringResource(id = R.string.my_profile), R.drawable.person
-                    ) { onNavigateToDetail("profile") }, ProfileOption(
+                    ) { onNavigateToDetail(uiState.profilePictureUrl) }, ProfileOption(
                         stringResource(id = R.string.addresses), R.drawable.location
                     ) { onNavigateToDetail("address") })
             )
 
             // Preferences Section
             ProfileCategoryWithSwitch(
-                title = stringResource(id = R.string.preferences),
-                clickableOptions = listOf(
+                title = stringResource(id = R.string.preferences), clickableOptions = listOf(
                     ProfileOption(
                         stringResource(id = R.string.language), R.drawable.language
                     ) { onNavigateToDetail("language") }), switchOptions = listOf(
@@ -130,8 +129,7 @@ private fun ProfileContent(
 fun ShouldShowLogoutDialog(showLogoutDialog: Boolean, onCancel: () -> Unit, onConfirm: () -> Unit) {
     if (showLogoutDialog) {
         LogoutDialog(
-            onDismiss = onCancel,
-            onConfirm = onConfirm
+            onDismiss = onCancel, onConfirm = onConfirm
         )
     }
 }
@@ -178,10 +176,7 @@ fun ProfileCategoryWithSwitch(
 
 @Composable
 fun SectionHeader(
-    userName: String,
-    userEmail: String,
-    profileImageUrl: String?,
-    modifier: Modifier = Modifier
+    userName: String, userEmail: String, profileImageUrl: String?, modifier: Modifier = Modifier
 ) {
     Row(
         modifier = modifier
@@ -198,8 +193,11 @@ fun SectionHeader(
                 .background(MaterialTheme.colorScheme.surfaceVariant)
         ) {
             AsyncImage(
-                model = ImageRequest.Builder(LocalContext.current)
-                    .data(profileImageUrl ?: R.drawable.ic_default_profile)
+                model = ImageRequest
+                    .Builder(LocalContext.current)
+                    .data(profileImageUrl)
+                    .error(R.drawable.ic_default_profile)
+                    .placeholder(R.drawable.ic_default_profile)
                     .crossfade(true)
                     .build(),
                 contentDescription = null,
@@ -235,10 +233,6 @@ private fun ProfileScreenPreview() {
                 lastName = "Mahmoud",
                 email = "osama.mahmoud00@gmail.com",
                 isDarkMode = false
-            ),
-            onNavigateToDetail = {},
-            showLogoutDialog = {},
-            toggleDarkMode = {}
-        )
+            ), onNavigateToDetail = {}, showLogoutDialog = {}, toggleDarkMode = {})
     }
 }

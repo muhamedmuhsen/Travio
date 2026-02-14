@@ -17,7 +17,6 @@ import kotlinx.coroutines.launch
 import ui.state.UiState
 import ui.text.asUiText
 import javax.inject.Inject
-import kotlin.compareTo
 
 @HiltViewModel
 class EditProfileViewModel @Inject constructor(
@@ -121,7 +120,7 @@ class EditProfileViewModel @Inject constructor(
         _uiState.update { state -> state.copy(email = email) }
     }
 
-    fun onProfileImageSelected(imageUri: String) {
+    fun onProfileImageSelected(imageUri: String?) {
         _uiState.update { state -> state.copy(profileImageUri = imageUri) }
     }
 
