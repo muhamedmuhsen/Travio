@@ -103,7 +103,12 @@ class ProfileViewModel @Inject constructor(
     fun hideLogoutDialog() {
         _uiState.update { state -> state.copy(showLogoutDialog = false) }
     }
+
     fun toggleDarkMode() {
         viewModelScope.launch { toggleDarkModeUseCase(!_uiState.value.isDarkMode) }
+    }
+
+    fun updateProfileImage(imageUri: String?) {
+        _uiState.update { state -> state.copy(profilePictureUrl = imageUri) }
     }
 }

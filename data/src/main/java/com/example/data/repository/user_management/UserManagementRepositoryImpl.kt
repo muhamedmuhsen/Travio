@@ -46,16 +46,16 @@ class UserManagementRepositoryImpl @Inject constructor(
 //            val uri = profilePictureUrl?.toUri()
 //            val profileImagePart = toMultipartBodyPart(uri)
 
-            val request = UpdateProfileRequest(
-                firstName = firstName,
-                lastName = lastName,
-                email = email,
-                profilePictureUrl = profilePictureUrl
-            )
-
-            val response = api.updateUserProfile(request)
-
-            handlePostUpdateProfilePersistence(response)
+//            val request = UpdateProfileRequest(
+//                firstName = firstName,
+//                lastName = lastName,
+//                email = email,
+//                profilePictureUrl = profilePictureUrl
+//            )
+//
+//            val response = api.updateUserProfile(request)
+//
+//            handlePostUpdateProfilePersistence(response)
 
             return Result.Success(Unit)
         } catch (e: Exception) {

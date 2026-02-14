@@ -49,6 +49,7 @@ class EditProfileViewModel @Inject constructor(
                 is Result.Error -> {
                     Log.e("EditProfileViewModel", "Error updating profile: ${result.error}")
                     _uiState.update { state -> state.copy(profileUiState = UiState.Error(result.error.asUiText())) }
+                    handleUpdateError(result.error)
                     _event.send(EditProfileEvent.ShowProfileError(result.error.asUiText()))
                 }
 
@@ -83,7 +84,6 @@ class EditProfileViewModel @Inject constructor(
                     )
                 }
             }
-
             else -> {
                 _uiState.update {
                     it.copy(profileUiState = UiState.Error(error.asUiText()))

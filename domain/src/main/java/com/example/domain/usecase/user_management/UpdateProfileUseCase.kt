@@ -17,18 +17,18 @@ class UpdateProfileUseCase @Inject constructor(
         email: String?,
         profilePictureUri: String?
     ): Result<Unit, DataError> {
-        val validationResult =
-            validateUpdateProfileUseCase(
-                firstName = firstName,
-                lastName = lastName,
-                email = email,
-                profilePictureUri = profilePictureUri
-            )
-
-        if (validationResult.isError) {
-            val errorResult = validationResult as Result.Error
-            return Result.Error(errorResult.error)
-        }
+//        val validationResult =
+//            validateUpdateProfileUseCase(
+//                firstName = firstName,
+//                lastName = lastName,
+//                email = email,
+//                profilePictureUri = profilePictureUri
+//            )
+//
+//        if (validationResult.isError) {
+//            val errorResult = validationResult as Result.Error
+//            return Result.Error(errorResult.error)
+//        }
 
         return repository.updateProfile(
             firstName = firstName,

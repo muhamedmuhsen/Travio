@@ -193,13 +193,9 @@ fun SectionHeader(
                 .background(MaterialTheme.colorScheme.surfaceVariant)
         ) {
             AsyncImage(
-                model = ImageRequest
-                    .Builder(LocalContext.current)
-                    .data(profileImageUrl)
-                    .error(R.drawable.ic_default_profile)
-                    .placeholder(R.drawable.ic_default_profile)
-                    .crossfade(true)
-                    .build(),
+                model = ImageRequest.Builder(LocalContext.current).data(profileImageUrl)
+                    .error(R.drawable.ic_default_profile).placeholder(R.drawable.ic_default_profile)
+                    .crossfade(true).build(),
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier.fillMaxSize()

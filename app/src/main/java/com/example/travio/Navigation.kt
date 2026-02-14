@@ -17,6 +17,7 @@ import com.example.feature.newpassword.NewPasswordScreen
 import com.example.feature.onboarding.OnboardingScreen
 import com.example.feature.signup.SignupScreen
 import com.example.feature.starterlogin.StarterLogin
+import kotlin.text.set
 
 @Composable
 fun TravioNavHost(
@@ -93,15 +94,22 @@ fun TravioNavHost(
                 },
             )
         }
-        composable(Screen.ProfileScreen.route) {
+        composable(Screen.ProfileScreen.route) { stackEntry ->
+
             ProfileScreen(
-                onNavigateToDetail = { navController.navigate(Screen.EditProfileScreen.route + "/$it") },
+                onNavigateToDetail = { profilePic -> navController.navigate(Screen.EditProfileScreen.route + "/$profilePic") },
             )
         }
         composable(Screen.EditProfileScreen.route + "/{profilePic}") {
             val profilePic = it.arguments?.getString("profilePic")
             EditProfileScreen(
                 onCloseClicked = { navController.popBackStack() },
+                NavigateToProfile = { imageUri ->
+                    navController.previousBackStackEntry
+                        ?.savedStateHandle
+                        ?.set("imageUri", imageUri)
+                    navController.popBackStack()
+                },
                 profilePic = profilePic
             )
         }

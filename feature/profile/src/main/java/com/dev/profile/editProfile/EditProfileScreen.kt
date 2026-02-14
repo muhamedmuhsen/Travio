@@ -1,12 +1,11 @@
 package com.dev.profile.editProfile
 
-import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -30,6 +29,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -53,6 +53,7 @@ import com.example.designsystem.components.TextFieldType
 import com.example.designsystem.theme.TravioTheme
 import com.example.designsystem.theme.spacing
 import com.example.feature.profile.R
+import kotlinx.coroutines.flow.compose
 import ui.text.UiText
 
 @Composable
@@ -60,6 +61,7 @@ fun EditProfileScreen(
     modifier: Modifier = Modifier,
     viewModel: EditProfileViewModel = hiltViewModel(),
     onCloseClicked: () -> Unit,
+    NavigateToProfile: (String?) -> Unit,
     profilePic: String?
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
@@ -77,9 +79,23 @@ fun EditProfileScreen(
         }
     }
 
+    LaunchedEffect(Unit) {
+        viewModel.event.collect { event ->
+            when (event) {
+                EditProfileEvent.NavigateToProfile -> NavigateToProfile(state.profileImageUri)
+                is EditProfileEvent.ShowProfileError -> {
+                    Toast.makeText(context, event.message.asString(context), Toast.LENGTH_SHORT)
+                        .show()
+                }
+            }
+        }
+    }
+    InitProfilePic(viewModel, profilePic)
+
     Scaffold(
         modifier = Modifier.fillMaxSize(),
-        topBar = { AppTopBar(onCloseClicked = onCloseClicked) }) { innerPadding ->
+        topBar = { AppTopBar(onCloseClicked = onCloseClicked) }
+    ) { innerPadding ->
         EditProfileContent(
             modifier = modifier
                 .fillMaxSize()
@@ -102,6 +118,14 @@ fun EditProfileScreen(
             onImageSuccess = viewModel::onProfileImageSelected
         )
     }
+}
+
+@Composable
+private fun InitProfilePic(
+    viewModel: EditProfileViewModel,
+    profilePic: String?
+) {
+    viewModel.onProfileImageSelected(profilePic)
 }
 
 @Composable
@@ -186,7 +210,8 @@ fun ChangeProfilePictureBox(
 ) {
     Log.d("imageUri", imageUri ?: "null")
     Box(
-        modifier = Modifier.size(96.dp), contentAlignment = Alignment.Center
+        modifier = Modifier.size(96.dp),
+        contentAlignment = Alignment.Center
     ) {
         Box(
             modifier = Modifier
@@ -205,21 +230,26 @@ fun ChangeProfilePictureBox(
         ) {
 
             AsyncImage(
-                model = ImageRequest.Builder(LocalContext.current)
-                    .data(imageUri?.takeIf { it.isNotBlank() })
+                model = ImageRequest
+                    .Builder(LocalContext.current)
+                    .data(imageUri ?: R.drawable.ic_default_profile)
                     .error(R.drawable.ic_default_profile)
-                    .placeholder(R.drawable.ic_default_profile).crossfade(true).listener(
+                    .placeholder(R.drawable.ic_default_profile)
+                    .crossfade(true)
+                    .listener(
                         onError = { _, result ->
                             Log.e("AsyncImage", "Failed to load image", result.throwable)
                         },
                         onSuccess = { _, _ ->
-                            onImageSuccess(imageUri)
+                            imageUri?.let { onImageSuccess(it) }
                         }
-                    ).build(),
+                    )
+                    .build(),
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier.fillMaxSize()
             )
+
         }
 
         Box(
@@ -246,7 +276,8 @@ fun ChangeProfilePictureBox(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppTopBar(
-    modifier: Modifier = Modifier, onCloseClicked: () -> Unit
+    modifier: Modifier = Modifier,
+    onCloseClicked: () -> Unit
 ) {
     Column {
         TopAppBar(
@@ -292,6 +323,10 @@ fun AppTopBar(
 @Composable
 private fun EditScreenPreview() {
     TravioTheme {
-        EditProfileScreen(profilePic = "", onCloseClicked = {})
+        EditProfileScreen(
+            profilePic = "",
+            onCloseClicked = {},
+            NavigateToProfile = {}
+        )
     }
 }
