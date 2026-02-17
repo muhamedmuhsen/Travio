@@ -1,0 +1,16 @@
+default_platform(:android)
+
+platform :android do
+  desc "Build and distribute beta release to Firebase App Distribution"
+  lane :distribute_beta do
+    gradle(task: "clean assembleDebug")
+
+    firebase_app_distribution(
+      app: ENV["FIREBASE_APP_ID"],
+      android_artifact_path: "app/build/outputs/apk/debug/app-debug.apk",
+      testers: ENV["FIREBASE_TESTERS"],
+      firebase_cli_token: ENV["FIREBASE_CLI_TOKEN"],
+      release_notes: "Beta release - #{git_branch} - #{last_git_commit[:message]}"
+    )
+  end
+end
