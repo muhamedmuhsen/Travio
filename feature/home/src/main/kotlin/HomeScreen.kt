@@ -23,11 +23,6 @@ fun HomeScreen(
 
     Scaffold(bottomBar = {
         AppBottomBar(
-            onHomeClicked = viewModel::onHomeClicked,
-            onFavoriteClicked = viewModel::onFavoriteClicked,
-            onCommunityClicked = viewModel::onCommunityClicked,
-            onAiChatClicked = viewModel::onAiChatClicked,
-            onProfileClicked = viewModel::onProfileClicked,
             selectedItem = state.selectedItem
         )
     }
