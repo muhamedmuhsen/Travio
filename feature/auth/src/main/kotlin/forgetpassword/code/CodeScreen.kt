@@ -1,6 +1,7 @@
 package com.example.feature.forgetpassword.code
 
 import android.widget.Toast
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -52,6 +53,7 @@ import com.example.designsystem.components.AppButton
 import com.example.designsystem.theme.TravioTheme
 import com.example.designsystem.theme.spacing
 import com.example.feature.code.CodeEvent
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -174,7 +176,7 @@ private fun formatTime(seconds: Int): String {
     val minutes = (seconds % 3600) / 60
     val secs = seconds % 60
 
-    return String.format("%02d:%02d", minutes, secs)
+    return String.format(Locale.ROOT, "%02d:%02d", minutes, secs)
 }
 @Composable
 fun SendAgain(
