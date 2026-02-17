@@ -12,5 +12,6 @@ data class LoginUiState(
     val isRememberMeChecked: Boolean = false,
     val isEmailError: Boolean = false,
     val isPasswordError: Boolean = false,
+    val errorMessage: String? = null,
     val loginState: UiState<User> = UiState.Idle,
 )
