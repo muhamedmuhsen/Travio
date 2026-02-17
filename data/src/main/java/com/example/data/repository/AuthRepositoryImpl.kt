@@ -8,7 +8,8 @@ import com.example.domain.repository.prefernces.PreferencesManager
 import com.example.domain.utils.DataError
 import com.example.domain.utils.Result
 import com.example.network.api.AuthApi
-import com.example.network.dto.auth.GoogleLoginRequest
+import com.example.network.dto.auth.social.GoogleLoginRequest
+import com.example.network.dto.auth.VerifyEmailRequest
 import com.example.network.dto.auth.forgetpassword.ForgetPasswordRequest
 import com.example.network.dto.auth.forgetpassword.ResetPasswordRequest
 import com.example.network.dto.auth.forgetpassword.VerificationCodeRequest
@@ -89,6 +90,12 @@ class AuthRepositoryImpl @Inject constructor(
         preferencesManager.setLoggedIn(false)
         credentialsManager.clearCredentials()
         return result
+    }
+
+    override suspend fun verifyEmail(): Result<Unit, DataError> {
+        val request = VerifyEmailRequest(email = "")
+        val response = safeApiCall { api.verifyEmail(request) }
+        return response
     }
 
     override suspend fun isAuthenticated(): Result<Boolean, DataError> {
