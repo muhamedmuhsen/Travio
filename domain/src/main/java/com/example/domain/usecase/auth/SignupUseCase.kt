@@ -23,10 +23,10 @@ class SignupUseCase @Inject constructor(
         if (firstname.isBlank() || lastname.isBlank() || username.isBlank() || email.isBlank() || password.isBlank()) {
             return Result.Error(DataError.Validation.MissingFields)
         }
-        if (firstname.isValidName()) {
+        if (!firstname.isValidName()) {
             return Result.Error(DataError.Validation.ShortName)
         }
-        if (lastname.isValidName())
+        if (!lastname.isValidName())
             return Result.Error(DataError.Validation.ShortName)
 
         if (!validateEmailUseCase(email)) {

@@ -4,6 +4,7 @@ import com.example.domain.utils.Result
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.domain.usecase.auth.SendVerificationCodeUseCase
+import com.example.domain.usecase.auth.VerifyEmailUseCase
 import com.example.domain.utils.DataError
 import com.example.feature.code.CodeEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -21,7 +22,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CodeViewModel @Inject constructor(
-    private val verificationCodeUseCase: SendVerificationCodeUseCase
+    private val verificationCodeUseCase: SendVerificationCodeUseCase,
 ) : ViewModel() {
     private val _state = MutableStateFlow(CodeState())
     val state = _state.asStateFlow()
@@ -96,8 +97,8 @@ class CodeViewModel @Inject constructor(
     }
 
     fun onSendAgainClicked(email: String) {
-        onContinueClicked(email)
         clearErrors()
+        onContinueClicked(email)
         startCountdown()
     }
 

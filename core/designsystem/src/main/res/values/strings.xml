@@ -27,6 +27,7 @@
     <string name="error_invalid_credentials">Invalid email or password.</string>
     <string name="error_user_not_found">Account not found.</string>
     <string name="error_user_already_exists">An account with this email already exists.</string>
+    <string name="error_username_already_exists">This username is already taken. Please choose another one.</string>
     <string name="error_sign_in_failed">Sign in failed. Please try again.</string>
     <string name="error_registration_failed">Registration failed. Please try again.</string>
     <string name="error_authentication_error">Authentication error. Please sign in again.</string>

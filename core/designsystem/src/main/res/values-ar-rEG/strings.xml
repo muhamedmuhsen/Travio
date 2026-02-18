@@ -27,6 +27,7 @@
     <string name="error_invalid_credentials">البريد الإلكتروني أو كلمة المرور غير صحيحة.</string>
     <string name="error_user_not_found">الحساب غير موجود.</string>
     <string name="error_user_already_exists">يوجد حساب مسجل بهذا البريد الإلكتروني بالفعل.</string>
+    <string name="error_username_already_exists">اسم المستخدم هذا مستخدم بالفعل. يرجى اختيار اسم آخر.</string>
     <string name="error_sign_in_failed">فشل تسجيل الدخول. حاول مرة أخرى.</string>
     <string name="error_registration_failed">فشل التسجيل. حاول مرة أخرى.</string>
     <string name="error_authentication_error">خطأ في المصادقة. يرجى تسجيل الدخول مرة أخرى.</string>
