@@ -1,18 +1,17 @@
-package com.example.domain.usecase.auth
+package com.example.domain.usecase.auth.passwordreset
 
+import com.example.common.extensions.isValidEmail
+import com.example.domain.repository.auth.PasswordResetRepository
 import com.example.domain.utils.Result
-import com.example.domain.repository.auth.AuthRepository
 import com.example.domain.utils.DataError
-import com.example.domain.validators.ValidateEmailUseCase
 import javax.inject.Inject
 
 class ForgetPasswordUseCase @Inject constructor(
-    private val validateEmailUseCase: ValidateEmailUseCase,
-    private val authRepository: AuthRepository
+    private val authRepository: PasswordResetRepository
 ) {
     suspend operator fun invoke(email: String): Result<Unit, DataError> {
         if (email.isBlank()) return Result.Error(DataError.Validation.MissingFields)
-        if (!validateEmailUseCase(email)) {
+        if (!email.isValidEmail()) {
             return Result.Error(DataError.Validation.InvalidEmailFormat)
         }
         return authRepository.forgetPassword(email)

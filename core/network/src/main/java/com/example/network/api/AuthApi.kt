@@ -1,7 +1,6 @@
 package com.example.network.api
 
 import com.example.network.dto.auth.AuthApiResponseDto
-import com.example.network.dto.auth.GoogleLoginRequest
 import com.example.network.dto.auth.SendOtpResponseDto
 import com.example.network.dto.auth.SendVerifyOTPRequest
 import com.example.network.dto.auth.VerifyEmailRequest
@@ -13,6 +12,7 @@ import com.example.network.dto.auth.forgetpassword.VerificationCodeResponse
 import com.example.network.dto.auth.login.LoginRequest
 import com.example.network.dto.auth.logout.LogoutRequest
 import com.example.network.dto.auth.signup.SignupRequest
+import com.example.network.dto.auth.social.GoogleLoginRequest
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.POST
@@ -30,8 +30,7 @@ interface AuthApi {
     @POST("Auth/Logout")
     suspend fun logout(@Body request: LogoutRequest)
 
-    @POST("Auth/verify-email")
-    suspend fun verifyEmail(@Body request: VerifyEmailRequest)
+
     @POST("Auth/refreshToken")
     fun refreshToken(@Body refreshToken: String): Call<AuthApiResponseDto>
 
