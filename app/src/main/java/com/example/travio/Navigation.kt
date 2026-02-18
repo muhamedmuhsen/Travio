@@ -87,7 +87,6 @@ fun TravioNavHost(
             )
         }
         composable(Screen.SignupScreen.route) {
-
             SignupScreen(
                 onCloseClicked = { navController.popBackStack() },
                 navigateToLogin = {

@@ -145,7 +145,7 @@ class AuthRepositoryImpl @Inject constructor(
         val request = VerifyEmailRequest(email, otp)
         val response = api.verifyEmail(request)
 
-        tokenProvider.saveTokens(response.token, response.refreshToken)
+        //tokenProvider.saveTokens(response.token, response.refreshToken)
 
         preferencesManager.setLoggedIn(true)
     }

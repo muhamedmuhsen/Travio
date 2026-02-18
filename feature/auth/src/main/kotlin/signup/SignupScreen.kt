@@ -83,7 +83,6 @@ fun SignupScreen(
                         Toast.LENGTH_SHORT
                     ).show()
                 }
-
                 SignupEvent.NavigateToVerifyEmail -> navigateToVerifyEmail(uiState.value.email)
             }
         }

@@ -5,6 +5,7 @@ import com.example.network.dto.auth.GoogleLoginRequest
 import com.example.network.dto.auth.SendOtpResponseDto
 import com.example.network.dto.auth.SendVerifyOTPRequest
 import com.example.network.dto.auth.VerifyEmailRequest
+import com.example.network.dto.auth.VerifyEmailResponseDto
 import com.example.network.dto.auth.forgetpassword.ForgetPasswordRequest
 import com.example.network.dto.auth.forgetpassword.ResetPasswordRequest
 import com.example.network.dto.auth.forgetpassword.VerificationCodeRequest
@@ -45,5 +46,5 @@ interface AuthApi {
     suspend fun sendVerifyEmailOtp(@Body request: SendVerifyOTPRequest): SendOtpResponseDto
 
     @POST("Auth/verify-email")
-    suspend fun verifyEmail(@Body request: VerifyEmailRequest): AuthApiResponseDto
+    suspend fun verifyEmail(@Body request: VerifyEmailRequest): VerifyEmailResponseDto
 }

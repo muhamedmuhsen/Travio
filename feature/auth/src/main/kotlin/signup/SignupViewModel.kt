@@ -1,6 +1,7 @@
 package com.example.feature.signup
 
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.data.repository.GoogleCredentialDataSourceImpl
@@ -101,13 +102,25 @@ class SignupViewModel @Inject constructor(
                 }
 
                 is Result.Success -> {
+                    Log.d(
+                        "SignupViewModel",
+                        "Signup successful, sending OTP to: ${_state.value.email}"
+                    )
                     when (val otpResult = sendVerifyEmailOtpUseCase(_state.value.email)) {
                         is Result.Success -> {
+                            Log.d(
+                                "SignupViewModel",
+                                "OTP sent successfully. Expires: ${otpResult.data}"
+                            )
                             _state.update { it.copy(signupState = UiState.Success()) }
                             _event.send(SignupEvent.NavigateToVerifyEmail)
                         }
 
                         is Result.Error -> {
+                            Log.e(
+                                "SignupViewModel",
+                                "Failed to send OTP. Error: ${otpResult.error}"
+                            )
                             _state.update { it.copy(signupState = UiState.Error(otpResult.error.asUiText())) }
                             sendEvent(SignupEvent.ShowAuthError(otpResult.error.asUiText()))
                         }
