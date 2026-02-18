@@ -78,8 +78,11 @@ class LoginViewModel @Inject constructor(
                     if (result.error == DataError.Validation.InvalidEmailFormat) {
                         _state.update { it.copy(isEmailError = true) }
                     }
-                    _state.update { it.copy(loginState = UiState.Error(result.error.asUiText())) }
-                    sendEvent(LoginEvent.ShowAuthError(result.error.asUiText()))
+                    val errorMessage = result.error.asUiText()
+                    _state.update { it.copy(loginState = UiState.Error(errorMessage)) }
+                    sendEvent(LoginEvent.ShowAuthError(errorMessage))
+                    kotlinx.coroutines.delay(100)
+                    _state.update { it.copy(loginState = UiState.Idle) }
                 }
 
                 is Result.Success -> {
@@ -107,6 +110,8 @@ class LoginViewModel @Inject constructor(
                     val message = result.error.asUiText()
                     _state.update { it.copy(loginState = UiState.Error(message)) }
                     sendEvent(LoginEvent.ShowAuthError(message))
+                    kotlinx.coroutines.delay(100)
+                    _state.update { it.copy(loginState = UiState.Idle) }
                 }
 
                 is Result.Success -> {
@@ -124,6 +129,8 @@ class LoginViewModel @Inject constructor(
                     val message = shouldNavigateToHome.error.asUiText()
                     _state.update { it.copy(loginState = UiState.Error(message)) }
                     sendEvent(LoginEvent.ShowAuthError(message))
+                    kotlinx.coroutines.delay(100)
+                    _state.update { it.copy(loginState = UiState.Idle) }
                 }
 
                 is Result.Success -> {
@@ -140,7 +147,8 @@ class LoginViewModel @Inject constructor(
                 isPasswordError = false,
                 isEmailError = false,
                 passwordError = null,
-                emailError = null
+                emailError = null,
+                errorMessage = null
             )
         }
     }

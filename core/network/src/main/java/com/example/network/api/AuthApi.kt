@@ -30,6 +30,8 @@ interface AuthApi {
     @POST("Auth/Logout")
     suspend fun logout(@Body request: LogoutRequest)
 
+    @POST("Auth/verify-email")
+    suspend fun verifyEmail(@Body request: VerifyEmailRequest)
     @POST("Auth/refreshToken")
     fun refreshToken(@Body refreshToken: String): Call<AuthApiResponseDto>
 

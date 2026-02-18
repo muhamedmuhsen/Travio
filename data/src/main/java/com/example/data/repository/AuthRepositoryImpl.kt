@@ -93,6 +93,12 @@ class AuthRepositoryImpl @Inject constructor(
         return result
     }
 
+    override suspend fun verifyEmail(): Result<Unit, DataError> {
+        val request = VerifyEmailRequest(email = "")
+        val response = safeApiCall { api.verifyEmail(request) }
+        return response
+    }
+
     override suspend fun isAuthenticated(): Result<Boolean, DataError> {
         return Result.Success(preferencesManager.isLoggedIn())
     }

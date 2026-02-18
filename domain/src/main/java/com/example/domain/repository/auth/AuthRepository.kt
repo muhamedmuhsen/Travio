@@ -22,6 +22,7 @@ interface AuthRepository {
     suspend fun signInWithGoogle(idToken: String): Result<Unit, DataError>
     suspend fun signInWithFacebook(accessToken: String): Result<Unit, DataError>
     suspend fun logout(): Result<Unit, DataError>
+    suspend fun verifyEmail(): Result<Unit, DataError>
     suspend fun isAuthenticated(): Result<Boolean, DataError>
 
     suspend fun refreshToken(): Result<Unit, DataError>

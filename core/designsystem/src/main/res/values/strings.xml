@@ -13,6 +13,13 @@
     <string name="language_english">English</string>
     <string name="language_arabic">اللغة العربية</string>
 
+    <!-- Bottom Navigation -->
+    <string name="bottom_nav_home">Home</string>
+    <string name="bottom_nav_favorite">Favorite</string>
+    <string name="bottom_nav_community">Community</string>
+    <string name="bottom_nav_ai_chat">AI Chat</string>
+    <string name="bottom_nav_profile">Profile</string>
+
     <!-- Error Messages -->
     <!-- Network -->
     <string name="error_no_internet">No internet connection. Please check your network.</string>
