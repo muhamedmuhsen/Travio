@@ -27,6 +27,7 @@ sealed interface DataError : Error {
         UserAlreadyExists,
         RegistrationFailed,
         SignInFailed,
+        UsernameAlreadyExists
     }
 
     enum class Verification : DataError {

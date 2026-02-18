@@ -8,7 +8,8 @@ import com.example.domain.repository.prefernces.PreferencesManager
 import com.example.domain.utils.DataError
 import com.example.domain.utils.Result
 import com.example.network.api.AuthApi
-import com.example.network.dto.auth.social.GoogleLoginRequest
+import com.example.network.dto.auth.GoogleLoginRequest
+import com.example.network.dto.auth.SendVerifyOTPRequest
 import com.example.network.dto.auth.VerifyEmailRequest
 import com.example.network.dto.auth.forgetpassword.ForgetPasswordRequest
 import com.example.network.dto.auth.forgetpassword.ResetPasswordRequest
@@ -62,7 +63,7 @@ class AuthRepositoryImpl @Inject constructor(
             response.token,
             response.refreshToken
         )
-        preferencesManager.setLoggedIn(true)
+        //preferencesManager.setLoggedIn(true)
     }
 
     override suspend fun signInWithGoogle(idToken: String): Result<Unit, DataError> = safeApiCall {
@@ -119,6 +120,13 @@ class AuthRepositoryImpl @Inject constructor(
         tokenProvider.saveResetToken(response.resetToken)
     }
 
+    override suspend fun sendVerifyEmailOtp(email: String): Result<String, DataError> =
+        safeApiCall {
+            val request = SendVerifyOTPRequest(email)
+            val response = api.sendVerifyEmailOtp(request)
+            return@safeApiCall response.expiresOn
+        }
+
     override suspend fun resetPassword(
         resetToken: String,
         email: String,
@@ -134,6 +142,18 @@ class AuthRepositoryImpl @Inject constructor(
             )
         )
         handlePostResetPassword()
+    }
+
+    override suspend fun verifyEmail(
+        email: String,
+        otp: String
+    ): Result<Unit, DataError> = safeApiCall {
+        val request = VerifyEmailRequest(email, otp)
+        val response = api.verifyEmail(request)
+
+        //tokenProvider.saveTokens(response.token, response.refreshToken)
+
+        preferencesManager.setLoggedIn(true)
     }
 
     private suspend fun handlePostResetPassword() {

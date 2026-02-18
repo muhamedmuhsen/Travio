@@ -291,6 +291,8 @@ private fun CodeScreenPreview() {
         CodeScreen(
             email = "mail@gmail.com",
             navigateToResetPassword = {},
-            onBackClicked = {})
+            onBackClicked = {},
+            viewModel = hiltViewModel()
+        )
     }
 }

@@ -1,22 +1,20 @@
 package com.example.network.api
 
 import com.example.network.dto.auth.AuthApiResponseDto
-import com.example.network.dto.auth.social.GoogleLoginRequest
+import com.example.network.dto.auth.GoogleLoginRequest
+import com.example.network.dto.auth.SendOtpResponseDto
+import com.example.network.dto.auth.SendVerifyOTPRequest
 import com.example.network.dto.auth.VerifyEmailRequest
+import com.example.network.dto.auth.VerifyEmailResponseDto
 import com.example.network.dto.auth.forgetpassword.ForgetPasswordRequest
-import com.example.network.dto.auth.forgetpassword.ForgetPasswordResponse
 import com.example.network.dto.auth.forgetpassword.ResetPasswordRequest
-import com.example.network.dto.auth.forgetpassword.ResetPasswordResponse
 import com.example.network.dto.auth.forgetpassword.VerificationCodeRequest
 import com.example.network.dto.auth.forgetpassword.VerificationCodeResponse
 import com.example.network.dto.auth.login.LoginRequest
-import com.example.network.dto.auth.login.LoginResponse
 import com.example.network.dto.auth.logout.LogoutRequest
 import com.example.network.dto.auth.signup.SignupRequest
-import com.example.network.dto.auth.signup.SignupResponse
 import retrofit2.Call
 import retrofit2.http.Body
-import retrofit2.http.GET
 import retrofit2.http.POST
 
 interface AuthApi {
@@ -45,4 +43,10 @@ interface AuthApi {
 
     @POST("Auth/reset-password")
     suspend fun resetPassword(@Body request: ResetPasswordRequest): AuthApiResponseDto
+
+    @POST("Auth/send-verify-email-otp")
+    suspend fun sendVerifyEmailOtp(@Body request: SendVerifyOTPRequest): SendOtpResponseDto
+
+    @POST("Auth/verify-email")
+    suspend fun verifyEmail(@Body request: VerifyEmailRequest): VerifyEmailResponseDto
 }

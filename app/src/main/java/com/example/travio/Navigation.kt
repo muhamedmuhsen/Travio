@@ -15,6 +15,7 @@ import com.example.feature.forgetpassword.newpassword.NewPasswordScreen
 import com.example.feature.onboarding.OnboardingScreen
 import com.example.feature.signup.SignupScreen
 import com.example.feature.starterlogin.StarterLogin
+import com.example.feature.verifyEmail.VerifyEmailScreen
 
 @Composable
 fun TravioNavHost(
@@ -95,7 +96,23 @@ fun TravioNavHost(
                     navController.navigate(Screen.HomeScreen.route) {
                         popUpTo(Screen.LoginScreen.route) { inclusive = true }
                     }
-                })
+                },
+                navigateToVerifyEmail = {
+                    val email = it
+                    navController.navigate(Screen.VerifyEmailScreen.route + "/$email")
+                }
+            )
+        }
+
+        composable(Screen.VerifyEmailScreen.route + "/{email}") {
+            VerifyEmailScreen(
+                navigateToHome = {
+                    navController.navigate(Screen.HomeScreen.route) {
+                        popUpTo(Screen.StarterLoginScreen.route) { inclusive = true }
+                    }
+                },
+                onBackClicked = { navController.popBackStack() },
+            )
         }
 
         composable(Screen.HomeScreen.route) {

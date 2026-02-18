@@ -51,5 +51,6 @@ authWithGoogle.md
 .kotlin
 /.junie
 /.junie/
-app/google-services.json
 .env
+app/google-services.json
+/verify_email_code_review.md

@@ -16,7 +16,11 @@ suspend fun <T> safeApiCall(
     } catch (e: HttpException) {
         val error = when (e.code()) {
             400 -> DataError.Network.BadRequest
-            401 -> DataError.Authentication.UnauthorizedAccess
+            401 -> if (e.message?.contains("Username is already registered") == true) {
+                DataError.Authentication.UsernameAlreadyExists
+            } else {
+                DataError.Authentication.UnauthorizedAccess
+            }
             404 -> DataError.Authentication.UserNotFound
             408 -> DataError.Network.Timeout
             429 -> DataError.Network.TooManyRequests

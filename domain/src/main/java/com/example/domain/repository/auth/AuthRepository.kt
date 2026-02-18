@@ -29,6 +29,7 @@ interface AuthRepository {
 
     suspend fun forgetPassword(email: String): Result<Unit, DataError>
     suspend fun sendVerificationCode(email: String, code: String): Result<Unit, DataError>
+    suspend fun sendVerifyEmailOtp(email: String): Result<String, DataError>
     suspend fun resetPassword(
         resetToken: String,
         email: String,
@@ -36,4 +37,5 @@ interface AuthRepository {
         confirmNewPassword: String
     ): Result<Unit, DataError>
 
+    suspend fun verifyEmail(email: String, otp: String): Result<Unit, DataError>
 }

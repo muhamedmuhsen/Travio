@@ -61,7 +61,8 @@ fun SignupScreen(
     viewModel: SignupViewModel = hiltViewModel(),
     onCloseClicked: () -> Unit,
     navigateToLogin: () -> Unit,
-    navigateToHome: () -> Unit
+    navigateToHome: () -> Unit,
+    navigateToVerifyEmail: (String) -> Unit
 ) {
 
     val uiState = viewModel.state.collectAsStateWithLifecycle()
@@ -73,23 +74,16 @@ fun SignupScreen(
     LaunchedEffect(Unit) {
         viewModel.event.collect { event ->
             when (event) {
-                SignupEvent.NavigateToLogin -> {
-                    navigateToLogin()
-                }
-
-
-                SignupEvent.NavigateToHome -> {
-                    navigateToHome()
-                }
-
+                SignupEvent.NavigateToLogin -> navigateToLogin()
+                SignupEvent.NavigateToHome -> navigateToHome()
                 is SignupEvent.ShowAuthError -> {
                     Toast.makeText(
                         context,
                         event.message.asString(context),
                         Toast.LENGTH_SHORT
-                    )
-                        .show()
+                    ).show()
                 }
+                SignupEvent.NavigateToVerifyEmail -> navigateToVerifyEmail(uiState.value.email)
             }
         }
     }
@@ -128,7 +122,8 @@ fun SignupScreen(
                     containerColor = MaterialTheme.colorScheme.surface
                 )
             )
-        }) { innerPadding ->
+        }
+    ) { innerPadding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -322,6 +317,6 @@ fun PasswordRulesText(
 @Composable
 private fun SignupScreenPreview() {
     TravioTheme {
-        SignupScreen(onCloseClicked = {}, navigateToLogin = {}, navigateToHome = {})
+        SignupScreen(onCloseClicked = {}, navigateToLogin = {}, navigateToHome = {}) {}
     }
 }
