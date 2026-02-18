@@ -1,11 +1,9 @@
 package com.example.feature.home
 
-import android.util.Log
-import androidx.compose.runtime.MutableState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.domain.usecase.auth.LogoutUseCase
-import com.example.data.local.datastore.CredentialsManagerImpl
+import com.example.domain.usecase.auth.session.LogoutUseCase
+import com.example.data.local.preferences.CredentialsManagerImpl
 import com.example.domain.utils.Result
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow

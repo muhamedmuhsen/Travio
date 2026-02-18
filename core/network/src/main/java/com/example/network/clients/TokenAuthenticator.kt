@@ -47,17 +47,12 @@ class TokenAuthenticator(
                 try {
                     // Double-check: Another thread might have already refreshed the token
                     val currentToken = tokenProvider.getAccessTokenSync()
-                    val storedToken = tokenProvider.getAccessTokenSync()
-
-                    // If tokens differ, another thread already refreshed - use the new token
-                    if (storedToken != null && currentToken != storedToken) {
-                        Log.d(TAG, "Token already refreshed by another thread")
-                        return@runBlocking newRequestWithToken(response.request, storedToken)
-                    }
+                    val requestToken = response.request.header("Authorization")
+                        ?.removePrefix("Bearer ")
 
                     // If we have a current token that's different from the request's token,
                     // it means another request already refreshed - use it
-                    if (currentToken != null && response.request.header("Authorization") != "Bearer $currentToken") {
+                    if (currentToken != null && currentToken != requestToken) {
                         Log.d(TAG, "Using refreshed token from current session")
                         return@runBlocking newRequestWithToken(response.request, currentToken)
                     }

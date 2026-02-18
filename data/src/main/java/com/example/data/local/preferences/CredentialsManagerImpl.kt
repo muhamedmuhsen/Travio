@@ -1,9 +1,10 @@
-package com.example.data.local.datastore
+package com.example.data.local.preferences
 
 import android.content.Context
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
+import com.example.data.local.security.EncryptionManager
 import com.example.domain.model.UserCredentials
 import com.example.domain.repository.prefernces.CredentialsManager
 import dagger.hilt.android.qualifiers.ApplicationContext

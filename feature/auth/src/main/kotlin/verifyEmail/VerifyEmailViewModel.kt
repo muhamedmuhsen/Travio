@@ -4,8 +4,8 @@ import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.domain.usecase.auth.SendVerifyEmailOtpUseCase
-import com.example.domain.usecase.auth.VerifyEmailUseCase
+import com.example.domain.usecase.auth.emailverification.SendVerifyEmailOtpUseCase
+import com.example.domain.usecase.auth.emailverification.VerifyEmailUseCase
 import com.example.domain.utils.DataError
 import com.example.domain.utils.Result
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -123,7 +123,7 @@ class VerifyEmailViewModel @Inject constructor(
         sendEvent(VerifyEmailEvent.ShowError(error.asUiText()))
     }
 
-    fun startCountdown(durationSeconds: Int = DEFAULT_COUNTDOWN_SECONDS) {
+    private fun startCountdown(durationSeconds: Int = DEFAULT_COUNTDOWN_SECONDS) {
         countdownJob?.cancel()
         countdownJob = viewModelScope.launch {
             _state.update { it.copy(timeLeft = durationSeconds) }

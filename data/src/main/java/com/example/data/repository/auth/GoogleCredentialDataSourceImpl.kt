@@ -1,15 +1,14 @@
-package com.example.data.repository
+package com.example.data.repository.auth
 
 import android.content.Context
-import android.util.Log
 import androidx.credentials.CredentialManager
 import androidx.credentials.CustomCredential
 import androidx.credentials.GetCredentialRequest
 import androidx.credentials.GetCredentialResponse
 import androidx.credentials.exceptions.GetCredentialCancellationException
 import androidx.credentials.exceptions.NoCredentialException
-import com.example.domain.utils.Result
 import com.example.domain.utils.DataError
+import com.example.domain.utils.Result
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.google.android.libraries.identity.googleid.GoogleIdTokenParsingException
@@ -25,7 +24,7 @@ class GoogleCredentialDataSourceImpl @Inject constructor(
         try {
 
 
-            val credentialManager = CredentialManager.create(context)
+            val credentialManager = CredentialManager.Companion.create(context)
 
             val googleIdOption = GetGoogleIdOption.Builder()
                 .setFilterByAuthorizedAccounts(false)
@@ -57,10 +56,10 @@ class GoogleCredentialDataSourceImpl @Inject constructor(
     ): Result<String, DataError> {
         return when (val credential = credentialResult.credential) {
             is CustomCredential -> {
-                if (credential.type == GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL) {
+                if (credential.type == GoogleIdTokenCredential.Companion.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL) {
                     try {
                         val googleIdTokenCredential =
-                            GoogleIdTokenCredential.createFrom(credential.data)
+                            GoogleIdTokenCredential.Companion.createFrom(credential.data)
                         Result.Success(googleIdTokenCredential.idToken)
                     } catch (e: GoogleIdTokenParsingException) {
                         Result.Error(DataError.Authentication.SignInFailed)

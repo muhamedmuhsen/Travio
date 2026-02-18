@@ -1,17 +1,14 @@
-package com.example.domain.usecase.auth
+package com.example.domain.usecase.auth.signup
 
+import com.example.common.extensions.isValidEmail
 import com.example.common.extensions.isValidName
-import com.example.domain.utils.Result
-import com.example.domain.repository.auth.AuthRepository
+import com.example.domain.repository.auth.SignupRepository
 import com.example.domain.utils.DataError
-import com.example.domain.validators.ValidateEmailUseCase
-import com.example.domain.validators.ValidatePasswordUseCase
+import com.example.domain.utils.Result
 import javax.inject.Inject
 
 class SignupUseCase @Inject constructor(
-    private val repository: AuthRepository,
-    private val validateEmailUseCase: ValidateEmailUseCase,
-    private val validatePasswordUseCase: ValidatePasswordUseCase
+    private val repository: SignupRepository,
 ) {
     suspend operator fun invoke(
         email: String,
@@ -29,10 +26,10 @@ class SignupUseCase @Inject constructor(
         if (!lastname.isValidName())
             return Result.Error(DataError.Validation.ShortName)
 
-        if (!validateEmailUseCase(email)) {
+        if (!email.isValidEmail()) {
             return Result.Error(DataError.Validation.InvalidEmailFormat)
         }
-        if (!validatePasswordUseCase(password)) {
+        if (!password.isValidEmail()) {
             return Result.Error(DataError.Validation.WeakPassword)
         }
 
