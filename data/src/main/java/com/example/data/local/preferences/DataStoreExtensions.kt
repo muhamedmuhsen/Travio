@@ -1,4 +1,4 @@
-package com.example.data.local.datastore
+package com.example.data.local.preferences
 
 import android.content.Context
 import androidx.datastore.core.DataStore

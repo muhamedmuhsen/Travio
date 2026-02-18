@@ -1,10 +1,11 @@
-package com.example.data.local.datastore
+package com.example.data.local.security
 
 import android.content.Context
-import android.util.Log
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
+import com.example.data.local.preferences.dataStore
 import com.example.domain.repository.auth.TokenProvider
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.first
@@ -15,7 +16,8 @@ import javax.inject.Singleton
 
 @Singleton
 class SecureTokenStorage @Inject constructor(
-    private val context: Context, private val encryptionManager: EncryptionManager
+    @ApplicationContext private val context: Context,
+    private val encryptionManager: EncryptionManager
 ) : TokenProvider {
 
     private val dataStore = context.dataStore
