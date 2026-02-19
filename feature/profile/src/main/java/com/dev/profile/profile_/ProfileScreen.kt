@@ -28,6 +28,7 @@ import com.dev.profile.profile_.components.ProfileOption
 import com.dev.profile.profile_.components.ProfileOptionWithSwitch
 import com.dev.profile.profile_.components.TopSection
 import com.dev.profile.profile_.components.TopSectionWithSwitch
+import com.dev.profile.profile_.components.ProfileLanguageButton
 import com.example.designsystem.theme.TravioTheme
 import com.example.feature.profile.R
 
@@ -53,6 +54,7 @@ fun ProfileScreen(
             onNavigateToDetail = onNavigateToDetail,
             showLogoutDialog = viewModel::onLogoutClicked,
             toggleDarkMode = viewModel::toggleDarkMode,
+            toggleLanguage = viewModel::toggleLanguage,
             modifier = modifier.padding(innerPadding)
         )
     }
@@ -64,6 +66,7 @@ private fun ProfileContent(
     onNavigateToDetail: (String?) -> Unit,
     showLogoutDialog: () -> Unit,
     toggleDarkMode: () -> Unit,
+    toggleLanguage: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -100,8 +103,13 @@ private fun ProfileContent(
             ProfileCategoryWithSwitch(
                 title = stringResource(id = R.string.preferences), clickableOptions = listOf(
                     ProfileOption(
-                        stringResource(id = R.string.language), R.drawable.language
-                    ) { onNavigateToDetail("language") }), switchOptions = listOf(
+                        stringResource(id = R.string.language), R.drawable.language,
+                        trailingContent = {
+                            ProfileLanguageButton(
+                                text = if (uiState.isArabic) "ع" else "EN"
+                            )
+                        }
+                    ) { toggleLanguage() }), switchOptions = listOf(
                     ProfileOptionWithSwitch(
                         stringResource(id = R.string.dark_mode),
                         R.drawable.light_mode,
@@ -174,6 +182,7 @@ fun ProfileCategoryWithSwitch(
     }
 }
 
+
 @Composable
 fun SectionHeader(
     userName: String, userEmail: String, profileImageUrl: String?, modifier: Modifier = Modifier
@@ -229,6 +238,10 @@ private fun ProfileScreenPreview() {
                 lastName = "Mahmoud",
                 email = "osama.mahmoud00@gmail.com",
                 isDarkMode = false
-            ), onNavigateToDetail = {}, showLogoutDialog = {}, toggleDarkMode = {})
+            ),
+            onNavigateToDetail = {},
+            showLogoutDialog = {},
+            toggleDarkMode = {},
+            toggleLanguage = {})
     }
 }

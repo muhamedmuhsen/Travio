@@ -52,6 +52,7 @@ dependencies {
     implementation(project(":data"))
     implementation(project(":core:designsystem"))
     implementation(project(":feature:utils"))
+    implementation(project(":feature:onboarding"))
     // Core Android
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)

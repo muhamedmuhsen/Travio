@@ -39,6 +39,7 @@ import com.example.feature.profile.R
 data class ProfileOption(
     val title: String,
     @DrawableRes val iconRes: Int,
+    val trailingContent: (@Composable () -> Unit)? = null,
     val onClick: () -> Unit
 )
 
@@ -94,7 +95,6 @@ fun TopSectionWithSwitch(
             .padding(vertical = 16.dp),
         elevation = CardDefaults.cardElevation(0.5.dp),
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
-
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface
         )
@@ -107,7 +107,8 @@ fun TopSectionWithSwitch(
                 DetailsCard(
                     text = option.title,
                     boxIcon = option.iconRes,
-                    onClick = option.onClick
+                    onClick = option.onClick,
+                    trailingContent = option.trailingContent
                 )
                 if (index < clickableOptions.size - 1 || switchOptions.isNotEmpty()) {
                     HorizontalDivider(modifier = Modifier.padding(8.dp))
@@ -130,12 +131,33 @@ fun TopSectionWithSwitch(
 }
 
 @Composable
+fun ProfileLanguageButton(
+    text: String = "EN",
+    modifier: Modifier = Modifier
+) {
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = modifier
+            .clip(MaterialTheme.shapes.small)
+            .background(MaterialTheme.colorScheme.primaryContainer)
+            .padding(horizontal = 14.dp, vertical = 4.dp)
+    ) {
+        Text(
+            text = text,
+            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+            color = MaterialTheme.colorScheme.onPrimaryContainer
+        )
+    }
+}
+
+@Composable
 fun DetailsCard(
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
     text: String,
     boxIcon: Int,
-    trailingIcon: ImageVector = Icons.AutoMirrored.Filled.ArrowForwardIos
+    trailingIcon: ImageVector = Icons.AutoMirrored.Filled.ArrowForwardIos,
+    trailingContent: (@Composable () -> Unit)? = null
 ) {
     Row(
         Modifier
@@ -146,13 +168,17 @@ fun DetailsCard(
         verticalAlignment = Alignment.CenterVertically
     ) {
         DetailsRowSection(boxIcon, text)
-        Icon(
-            trailingIcon,
-            contentDescription = null,
-            tint = MaterialTheme.colorScheme.onBackground,
-            modifier = Modifier
-                .size(18.dp)
-        )
+        if (trailingContent != null) {
+            trailingContent()
+        } else {
+            Icon(
+                trailingIcon,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onBackground,
+                modifier = Modifier
+                    .size(18.dp)
+            )
+        }
     }
 }
 
