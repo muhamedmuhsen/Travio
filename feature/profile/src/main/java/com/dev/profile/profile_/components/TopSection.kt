@@ -1,5 +1,6 @@
 package com.dev.profile.profile_.components
 
+import android.content.res.Configuration
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -26,14 +27,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.designsystem.theme.TravioTheme
+import com.example.designsystem.theme.spacing
 import com.example.feature.profile.R
 
 data class ProfileOption(
@@ -56,18 +56,16 @@ fun TopSection(
     modifier: Modifier = Modifier
 ) {
     Card(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(vertical = 16.dp),
+        modifier = modifier.fillMaxWidth(),
         elevation = CardDefaults.cardElevation(0.5.dp),
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.5f)),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface
         )
     ) {
         Column(
             modifier = Modifier
-                .padding(8.dp)
+                .padding(MaterialTheme.spacing.xs)
         ) {
             options.forEachIndexed { index, option ->
                 DetailsCard(
@@ -76,7 +74,7 @@ fun TopSection(
                     onClick = option.onClick
                 )
                 if (index < options.size - 1) {
-                    HorizontalDivider(modifier = Modifier.padding(8.dp))
+                    HorizontalDivider(modifier = Modifier.padding(MaterialTheme.spacing.xs))
                 }
             }
         }
@@ -90,18 +88,16 @@ fun TopSectionWithSwitch(
     modifier: Modifier = Modifier
 ) {
     Card(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(vertical = 16.dp),
+        modifier = modifier.fillMaxWidth(),
         elevation = CardDefaults.cardElevation(0.5.dp),
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.5f)),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface
         )
     ) {
         Column(
             modifier = Modifier
-                .padding(8.dp)
+                .padding(MaterialTheme.spacing.xs)
         ) {
             clickableOptions.forEachIndexed { index, option ->
                 DetailsCard(
@@ -111,7 +107,7 @@ fun TopSectionWithSwitch(
                     trailingContent = option.trailingContent
                 )
                 if (index < clickableOptions.size - 1 || switchOptions.isNotEmpty()) {
-                    HorizontalDivider(modifier = Modifier.padding(8.dp))
+                    HorizontalDivider(modifier = Modifier.padding(MaterialTheme.spacing.xs))
                 }
             }
 
@@ -123,7 +119,7 @@ fun TopSectionWithSwitch(
                     onToggle = option.onToggle
                 )
                 if (index < switchOptions.size - 1) {
-                    HorizontalDivider(modifier = Modifier.padding(8.dp))
+                    HorizontalDivider(modifier = Modifier.padding(MaterialTheme.spacing.xs))
                 }
             }
         }
@@ -160,10 +156,10 @@ fun DetailsCard(
     trailingContent: (@Composable () -> Unit)? = null
 ) {
     Row(
-        Modifier
+        modifier
             .fillMaxWidth()
             .clickable(onClick = onClick)
-            .padding(8.dp),
+            .padding(MaterialTheme.spacing.xs),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -191,9 +187,9 @@ fun DetailsCardWithSwitch(
     onToggle: (Boolean) -> Unit
 ) {
     Row(
-        Modifier
+        modifier
             .fillMaxWidth()
-            .padding(8.dp),
+            .padding(MaterialTheme.spacing.xs),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -215,11 +211,11 @@ fun DetailsCardWithSwitch(
 private fun DetailsRowSection(boxIcon: Int, text: String) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
+        horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.xs)
     ) {
         Box(
             modifier = Modifier
-                .size(40.dp)
+                .size(40.dp) // Icon circle — intentionally fixed
                 .clip(CircleShape)
                 .background(MaterialTheme.colorScheme.surfaceContainerHigh),
             contentAlignment = Alignment.Center
@@ -227,7 +223,7 @@ private fun DetailsRowSection(boxIcon: Int, text: String) {
             Icon(
                 painter = painterResource(boxIcon),
                 contentDescription = null,
-                tint = Color.Unspecified,
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.size(24.dp)
             )
         }
@@ -241,9 +237,10 @@ private fun DetailsRowSection(boxIcon: Int, text: String) {
 }
 
 @Preview(showBackground = true)
+@Preview(name = "Dark", uiMode = Configuration.UI_MODE_NIGHT_YES, showBackground = true)
 @Composable
 private fun TopSectionPreview() {
-    TravioTheme {
+    TravioTheme(dynamicColor = false) {
         TopSection(
             options = listOf(
                 ProfileOption("My Profile", R.drawable.person) { },
@@ -252,4 +249,3 @@ private fun TopSectionPreview() {
         )
     }
 }
-

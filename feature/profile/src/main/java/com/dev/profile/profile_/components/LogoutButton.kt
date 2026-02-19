@@ -57,9 +57,10 @@ fun LogoutButton(modifier: Modifier = Modifier, onClick: () -> Unit) {
 }
 
 @Preview
+@Preview(name = "Dark", uiMode = android.content.res.Configuration.UI_MODE_NIGHT_YES)
 @Composable
 private fun LogoutButtonPreview() {
-    TravioTheme() {
+    TravioTheme(dynamicColor = false) {
         LogoutButton(onClick = {})
 
     }

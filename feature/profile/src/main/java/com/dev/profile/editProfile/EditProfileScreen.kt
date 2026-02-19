@@ -90,7 +90,9 @@ fun EditProfileScreen(
             }
         }
     }
-    InitProfilePic(viewModel, profilePic)
+    LaunchedEffect(profilePic) {
+        viewModel.onProfileImageSelected(profilePic)
+    }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -120,13 +122,7 @@ fun EditProfileScreen(
     }
 }
 
-@Composable
-private fun InitProfilePic(
-    viewModel: EditProfileViewModel,
-    profilePic: String?
-) {
-    viewModel.onProfileImageSelected(profilePic)
-}
+
 
 @Composable
 fun EditProfileContent(
@@ -320,13 +316,34 @@ fun AppTopBar(
 
 
 @Preview
+@Preview(name = "Dark", uiMode = android.content.res.Configuration.UI_MODE_NIGHT_YES)
 @Composable
 private fun EditScreenPreview() {
-    TravioTheme {
-        EditProfileScreen(
-            profilePic = "",
-            onCloseClicked = {},
-            NavigateToProfile = {}
-        )
+    TravioTheme(dynamicColor = false) {
+        Scaffold(
+            topBar = { AppTopBar(onCloseClicked = {}) }
+        ) { innerPadding ->
+            EditProfileContent(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding),
+                firstName = "Osama",
+                onFirstNameChange = {},
+                firstNameErrorMessage = null,
+                isFirstNameError = false,
+                lastName = "Mahmoud",
+                onLastNameChange = {},
+                lastNameErrorMessage = null,
+                isLastNameError = false,
+                email = "osama@gmail.com",
+                onEmailChange = {},
+                isEmailError = false,
+                emailErrorMessage = null,
+                onUpdateClick = {},
+                onProfileImageClick = {},
+                profileImageUri = null,
+                onImageSuccess = {}
+            )
+        }
     }
 }

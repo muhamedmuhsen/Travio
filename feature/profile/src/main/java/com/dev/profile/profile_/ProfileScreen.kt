@@ -1,5 +1,6 @@
 package com.dev.profile.profile_
 
+import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -71,7 +72,6 @@ private fun ProfileContent(
 ) {
     Column(
         modifier = modifier.fillMaxSize()
-
     ) {
         // Header Section
         SectionHeader(
@@ -87,7 +87,7 @@ private fun ProfileContent(
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
                 .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+            verticalArrangement = Arrangement.spacedBy(24.dp)
         ) {
             // Account Settings Section
             ProfileCategory(
@@ -112,7 +112,7 @@ private fun ProfileContent(
                     ) { toggleLanguage() }), switchOptions = listOf(
                     ProfileOptionWithSwitch(
                         stringResource(id = R.string.dark_mode),
-                        R.drawable.light_mode,
+                        com.example.designsystem.R.drawable.dark_mode_icon,
                         isChecked = uiState.isDarkMode
                     ) { toggleDarkMode() })
             )
@@ -229,9 +229,10 @@ fun SectionHeader(
 
 
 @Preview(showBackground = true)
+@Preview(name = "Dark", uiMode = Configuration.UI_MODE_NIGHT_YES, showBackground = true)
 @Composable
 private fun ProfileScreenPreview() {
-    TravioTheme {
+    TravioTheme(dynamicColor = false) {
         ProfileContent(
             uiState = ProfileUiState(
                 firstName = "Osama",
