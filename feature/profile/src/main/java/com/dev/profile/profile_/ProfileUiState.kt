@@ -6,6 +6,7 @@ data class ProfileUiState(
     val email: String = "",
     val firstName: String = "",
     val lastName: String = "",
+    val username: String = "",
     val profilePictureUrl: String? = null,
     val isDarkMode: Boolean = false,
     val isArabic: Boolean = false,

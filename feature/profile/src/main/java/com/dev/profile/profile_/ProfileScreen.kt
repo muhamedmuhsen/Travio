@@ -1,5 +1,6 @@
 package com.dev.profile.profile_
 
+import android.annotation.SuppressLint
 import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -8,6 +9,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -21,6 +23,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.dev.profile.profile_.components.LogoutButton
@@ -33,13 +36,26 @@ import com.dev.profile.profile_.components.ProfileLanguageButton
 import com.example.designsystem.theme.TravioTheme
 import com.example.feature.profile.R
 
+@SuppressLint("StateFlowValueCalledInComposition")
 @Composable
 fun ProfileScreen(
-    onNavigateToDetail: (String?) -> Unit,
+    navController: NavController,
+    onNavigateToDetail: (NavigationData) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: ProfileViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val currentBackStackEntry = navController.currentBackStackEntry
+    val profileUpdated =
+        currentBackStackEntry?.savedStateHandle?.getStateFlow("profile_updated", false)
+
+    LaunchedEffect(profileUpdated?.value) {
+        if (profileUpdated?.value == true) {
+            viewModel.loadProfileData()
+            currentBackStackEntry.savedStateHandle.remove<Boolean>("profile_updated")
+        }
+    }
+
     ShouldShowLogoutDialog(
         showLogoutDialog = uiState.showLogoutDialog,
         onCancel = viewModel::hideLogoutDialog,
@@ -64,7 +80,7 @@ fun ProfileScreen(
 @Composable
 private fun ProfileContent(
     uiState: ProfileUiState,
-    onNavigateToDetail: (String?) -> Unit,
+    onNavigateToDetail: (NavigationData) -> Unit,
     showLogoutDialog: () -> Unit,
     toggleDarkMode: () -> Unit,
     toggleLanguage: () -> Unit,
@@ -94,22 +110,35 @@ private fun ProfileContent(
                 title = stringResource(id = R.string.account_settings), options = listOf(
                     ProfileOption(
                         stringResource(id = R.string.my_profile), R.drawable.person
-                    ) { onNavigateToDetail(uiState.profilePictureUrl) }, ProfileOption(
+                    ) {
+                        onNavigateToDetail(
+                            NavigationData(
+                                firstname = uiState.firstName,
+                                lastname = uiState.lastName,
+                                username = uiState.username,
+                                profilePicUri = uiState.profilePictureUrl
+                            )
+                        )
+                    }, ProfileOption(
                         stringResource(id = R.string.addresses), R.drawable.location
-                    ) { onNavigateToDetail("address") })
+                    ) {
+
+                    })
             )
 
             // Preferences Section
             ProfileCategoryWithSwitch(
-                title = stringResource(id = R.string.preferences), clickableOptions = listOf(
+                title = stringResource(id = R.string.preferences),
+                clickableOptions = listOf(
                     ProfileOption(
-                        stringResource(id = R.string.language), R.drawable.language,
+                        stringResource(id = R.string.language),
+                        R.drawable.language,
                         trailingContent = {
                             ProfileLanguageButton(
                                 text = if (uiState.isArabic) "ع" else "EN"
                             )
-                        }
-                    ) { toggleLanguage() }), switchOptions = listOf(
+                        }) { toggleLanguage() }),
+                switchOptions = listOf(
                     ProfileOptionWithSwitch(
                         stringResource(id = R.string.dark_mode),
                         com.example.designsystem.R.drawable.dark_mode_icon,
@@ -122,7 +151,7 @@ private fun ProfileContent(
                 title = stringResource(id = R.string.support_help), options = listOf(
                     ProfileOption(
                         stringResource(id = R.string.help_center), R.drawable.help_centeer
-                    ) { onNavigateToDetail("help") })
+                    ) { })
             )
 
             // Logout Button

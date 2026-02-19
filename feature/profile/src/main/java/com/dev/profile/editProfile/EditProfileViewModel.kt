@@ -34,18 +34,14 @@ class EditProfileViewModel @Inject constructor(
 
         val firstName = _uiState.value.firstName
         val lastName = _uiState.value.lastName
-        val email = _uiState.value.email
-        val profilePictureUri = _uiState.value.profileImageUri
+        val username = _uiState.value.username
 
         viewModelScope.launch {
-            val result = updateProfileUseCase(
+            when (val result = updateProfileUseCase(
                 firstName = firstName,
                 lastName = lastName,
-                email = email,
-                profilePictureUri = profilePictureUri,
-            )
-
-            when (result) {
+                username = username
+            )) {
                 is Result.Error -> {
                     Log.e("EditProfileViewModel", "Error updating profile: ${result.error}")
                     _uiState.update { state -> state.copy(profileUiState = UiState.Error(result.error.asUiText())) }
@@ -63,16 +59,6 @@ class EditProfileViewModel @Inject constructor(
 
     private fun handleUpdateError(error: DataError) {
         when (error) {
-            DataError.Validation.InvalidEmailFormat -> {
-                _uiState.update {
-                    it.copy(
-                        isEmailError = true,
-                        emailErrorMessage = error.asUiText(),
-                        profileUiState = UiState.Idle
-                    )
-                }
-            }
-
             DataError.Validation.ShortName -> {
                 _uiState.update {
                     it.copy(
@@ -84,6 +70,7 @@ class EditProfileViewModel @Inject constructor(
                     )
                 }
             }
+
             else -> {
                 _uiState.update {
                     it.copy(profileUiState = UiState.Error(error.asUiText()))
@@ -102,8 +89,8 @@ class EditProfileViewModel @Inject constructor(
                 firstNameErrorMessage = null,
                 isLastNameError = false,
                 lastNameErrorMessage = null,
-                isEmailError = false,
-                emailErrorMessage = null
+                isUsernameError = false,
+                usernameErrorMessage = null
             )
         }
     }
@@ -117,11 +104,27 @@ class EditProfileViewModel @Inject constructor(
     }
 
     fun onEmailChange(email: String) {
-        _uiState.update { state -> state.copy(email = email) }
+        _uiState.update { state -> state.copy(username = email) }
     }
 
     fun onProfileImageSelected(imageUri: String?) {
         _uiState.update { state -> state.copy(profileImageUri = imageUri) }
+    }
+
+    fun setUserData(
+        firstName: String?,
+        lastName: String?,
+        username: String?,
+        profilePicUri: String?
+    ) {
+        _uiState.update {
+            it.copy(
+                firstName = firstName ?: it.firstName,
+                lastName = lastName ?: it.lastName,
+                username = username ?: it.username,
+                profileImageUri = profilePicUri
+            )
+        }
     }
 
 }

@@ -1,8 +1,5 @@
 package com.example.data.repository.user_management
 
-import android.annotation.SuppressLint
-import android.content.Context
-import android.net.Uri
 import com.example.data.local.datastore.SecureTokenStorage
 import com.example.domain.model.User
 import com.example.domain.repository.prefernces.PreferencesManager
@@ -11,15 +8,10 @@ import com.example.domain.utils.DataError
 import com.example.domain.utils.Result
 import com.example.network.api.UserManagementApi
 import com.example.network.dto.user_managment.UpdateProfileRequest
-import com.example.network.dto.user_managment.UpdateProfileResponse
+import retrofit2.HttpException
+import java.io.IOException
 import javax.inject.Inject
-import androidx.core.net.toUri
 import com.example.data.mapper.toDomain
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import okhttp3.MultipartBody
-import okhttp3.RequestBody.Companion.asRequestBody
-import retrofit2.http.Multipart
-import java.io.File
 
 class UserManagementRepositoryImpl @Inject constructor(
     private val api: UserManagementApi,
@@ -28,53 +20,48 @@ class UserManagementRepositoryImpl @Inject constructor(
 ) : UserManagementRepository {
 
     override suspend fun getUser(): Result<User, DataError> {
-        val result = api.getCurrentUser()
-        val user = result.toDomain()
-        // save user data to local store
-        return Result.Success(user)
+        return try {
+            val result = api.getCurrentUser()
+            val user = result.toDomain()
+            Result.Success(user)
+        } catch (e: HttpException) {
+            when (e.code()) {
+                401 -> Result.Error(DataError.Authentication.UnauthorizedAccess)
+                404 -> Result.Error(DataError.Authentication.UserNotFound)
+                429 -> Result.Error(DataError.Network.TooManyRequests)
+                in 500..599 -> Result.Error(DataError.Network.ServerError)
+                else -> Result.Error(DataError.Network.UnexpectedResponse)
+            }
+        } catch (e: IOException) {
+            Result.Error(DataError.Network.NoInternetConnection)
+        } catch (e: Exception) {
+            Result.Error(DataError.Data.UnknownError)
+        }
     }
 
 
     override suspend fun updateProfile(
-        firstName: String?,
-        lastName: String?,
-        email: String?,
-        profilePictureUrl: String?
-    ): Result<Unit, DataError> {
+        firstName: String,
+        lastName: String,
+        username: String
+    ): Result<User, DataError> {
         try {
+            val request = UpdateProfileRequest(
+                firstName = firstName, lastName = lastName,
+                username = username
+            )
+            val response = api.updateProfileData(request)
 
-//            val uri = profilePictureUrl?.toUri()
-//            val profileImagePart = toMultipartBodyPart(uri)
-
-//            val request = UpdateProfileRequest(
-//                firstName = firstName,
-//                lastName = lastName,
-//                email = email,
-//                profilePictureUrl = profilePictureUrl
-//            )
-//
-//            val response = api.updateUserProfile(request)
-//
-//            handlePostUpdateProfilePersistence(response)
-
-            return Result.Success(Unit)
+            return Result.Success(response.data.toDomain())
         } catch (e: Exception) {
             return Result.Error(DataError.Data.UnknownError)
         }
     }
 
-//    private fun toMultipartBodyPart(uri: Uri): MultipartBody.Part {
-//        val contentResolver = context.contentResolver
-//        val mimeType = contentResolver.getType(uri) ?: "image/*"
-//        val inputStream = contentResolver.openInputStream(uri)
-//            ?: throw IllegalStateException("Cannot open input stream")
-//        val file = File(context.cacheDir, "profile_${System.currentTimeMillis()}.jpg")
-//        file.outputStream().use { outputStream ->
-//            inputStream.copyTo(outputStream)
-//        }
-//        val requestBody = file.asRequestBody(mimeType.toMediaTypeOrNull())
-//        return MultipartBody.Part.createFormData("profilePicture", file.name, requestBody)
-//    }
+    override suspend fun updateProfilePic(imageUri: String): Result<Unit, DataError> {
+        TODO("Not yet implemented")
+    }
+
 
     private fun hasAtLeastOneField(
         firstName: String?,
@@ -88,10 +75,5 @@ class UserManagementRepositoryImpl @Inject constructor(
             email,
             profilePictureUrl
         ).all { it == null }
-    }
-
-    private suspend fun handlePostUpdateProfilePersistence(response: UpdateProfileResponse) {
-        secureTokenStorage.saveTokens(response.accessToken, response.refreshToken)
-        preferencesManager.setLoggedIn(true)
     }
 }

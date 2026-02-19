@@ -9,9 +9,10 @@ interface UserManagementRepository {
     suspend fun getUser(): Result<User, DataError>
 
     suspend fun updateProfile(
-        firstName: String?,
-        lastName: String?,
-        email: String?,
-        profilePictureUrl: String?
-    ): Result<Unit, DataError>
+        firstName: String,
+        lastName: String,
+        username: String
+    ): Result<User, DataError>
+
+    suspend fun updateProfilePic(imageUri: String): Result<Unit, DataError>
 }

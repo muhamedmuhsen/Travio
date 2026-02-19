@@ -11,7 +11,7 @@
     <string name="update">تحديث</string>
     <string name="first_name_placeholder">الاسم الأول</string>
     <string name="last_name_placeholder">الاسم الأخير</string>
-    <string name="email_address_placeholder">البريد الإلكتروني</string>
+    <string name="username_placeholder">اسم المستخدم</string>
 
     <!-- Content Descriptions -->
     <string name="profile_picture">صورة الملف الشخصي</string>

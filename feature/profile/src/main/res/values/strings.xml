@@ -11,7 +11,7 @@
     <string name="update">Update</string>
     <string name="first_name_placeholder">First Name</string>
     <string name="last_name_placeholder">Last Name</string>
-    <string name="email_address_placeholder">Email Address</string>
+    <string name="username_placeholder">Username</string>
 
     <!-- Content Descriptions -->
     <string name="profile_picture">Profile picture</string>

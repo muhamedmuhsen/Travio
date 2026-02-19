@@ -94,23 +94,41 @@ fun TravioNavHost(
                 },
             )
         }
-        composable(Screen.ProfileScreen.route) { stackEntry ->
-
+        composable(Screen.ProfileScreen.route) {
             ProfileScreen(
-                onNavigateToDetail = { profilePic -> navController.navigate(Screen.EditProfileScreen.route + "/$profilePic") },
+                onNavigateToDetail = { data ->
+                    val encodedPic = java.net.URLEncoder.encode(data.profilePicUri ?: "", "UTF-8")
+                    navController.navigate(Screen.EditProfileScreen.route + "/${encodedPic}" + "/${data.firstname}" + "/${data.lastname}" + "/${data.username}")
+                },
+                navController = navController
+
             )
         }
-        composable(Screen.EditProfileScreen.route + "/{profilePic}") {
-            val profilePic = it.arguments?.getString("profilePic")
+        composable(Screen.EditProfileScreen.route + "/{profilePic}" + "/{firstname}" + "/{lastname}" + "/{username}") {
+            val profilePic = it.arguments?.getString("profilePic")?.let { pic ->
+                java.net.URLDecoder.decode(pic, "UTF-8").ifEmpty { null }
+            }
+            val firstName = it.arguments?.getString("firstname")
+            val lastName = it.arguments?.getString("lastname")
+            val username = it.arguments?.getString("username")
+
             EditProfileScreen(
                 onCloseClicked = { navController.popBackStack() },
                 NavigateToProfile = { imageUri ->
-                    navController.previousBackStackEntry
+                    navController
+                        .previousBackStackEntry
                         ?.savedStateHandle
                         ?.set("imageUri", imageUri)
+                    navController
+                        .previousBackStackEntry
+                        ?.savedStateHandle
+                        ?.set("profile_updated", true)
                     navController.popBackStack()
                 },
-                profilePic = profilePic
+                profilePic = profilePic,
+                firstName = firstName,
+                lastName = lastName,
+                username = username
             )
         }
     }

@@ -53,7 +53,6 @@ import com.example.designsystem.components.TextFieldType
 import com.example.designsystem.theme.TravioTheme
 import com.example.designsystem.theme.spacing
 import com.example.feature.profile.R
-import kotlinx.coroutines.flow.compose
 import ui.text.UiText
 
 @Composable
@@ -62,7 +61,10 @@ fun EditProfileScreen(
     viewModel: EditProfileViewModel = hiltViewModel(),
     onCloseClicked: () -> Unit,
     NavigateToProfile: (String?) -> Unit,
-    profilePic: String?
+    profilePic: String?,
+    firstName: String?,
+    lastName: String?,
+    username: String?
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
@@ -72,11 +74,19 @@ fun EditProfileScreen(
         uri?.let {
             viewModel.onProfileImageSelected(it.toString())
             context.contentResolver.takePersistableUriPermission(
-                it,
-                Intent.FLAG_GRANT_READ_URI_PERMISSION
+                it, Intent.FLAG_GRANT_READ_URI_PERMISSION
             )
             Log.d("EditProfileScreen", "Image URI selected: $it")
         }
+    }
+
+    LaunchedEffect(Unit) {
+        viewModel.setUserData(
+            firstName = firstName,
+            lastName = lastName,
+            username = username,
+            profilePicUri = profilePic
+        )
     }
 
     LaunchedEffect(Unit) {
@@ -90,14 +100,10 @@ fun EditProfileScreen(
             }
         }
     }
-    LaunchedEffect(profilePic) {
-        viewModel.onProfileImageSelected(profilePic)
-    }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
-        topBar = { AppTopBar(onCloseClicked = onCloseClicked) }
-    ) { innerPadding ->
+        topBar = { AppTopBar(onCloseClicked = onCloseClicked) }) { innerPadding ->
         EditProfileContent(
             modifier = modifier
                 .fillMaxSize()
@@ -108,20 +114,19 @@ fun EditProfileScreen(
             lastName = state.lastName,
             onLastNameChange = viewModel::onLastNameChange,
             isLastNameError = state.isLastNameError,
-            email = state.email,
-            onEmailChange = viewModel::onEmailChange,
-            isEmailError = state.isEmailError,
+            username = state.username,
+            onUsernameChange = viewModel::onEmailChange,
+            isUsernameError = state.isUsernameError,
             profileImageUri = state.profileImageUri,
             onProfileImageClick = { imagePickerLauncher.launch("image/*") },
             onUpdateClick = viewModel::updateProfile,
             firstNameErrorMessage = state.firstNameErrorMessage,
             lastNameErrorMessage = state.lastNameErrorMessage,
-            emailErrorMessage = state.emailErrorMessage,
+            usernameErrorMessage = state.usernameErrorMessage,
             onImageSuccess = viewModel::onProfileImageSelected
         )
     }
 }
-
 
 
 @Composable
@@ -135,10 +140,10 @@ fun EditProfileContent(
     onLastNameChange: (String) -> Unit,
     lastNameErrorMessage: UiText?,
     isLastNameError: Boolean,
-    email: String,
-    onEmailChange: (String) -> Unit,
-    isEmailError: Boolean,
-    emailErrorMessage: UiText?,
+    username: String,
+    onUsernameChange: (String) -> Unit,
+    isUsernameError: Boolean,
+    usernameErrorMessage: UiText?,
     onUpdateClick: () -> Unit,
     onProfileImageClick: () -> Unit,
     profileImageUri: String?,
@@ -179,11 +184,11 @@ fun EditProfileContent(
 
             )
             AppTextField(
-                value = email,
-                onValueChange = onEmailChange,
-                placeholder = stringResource(id = R.string.email_address_placeholder),
-                isError = isEmailError,
-                errorMessage = emailErrorMessage?.asString(),
+                value = username,
+                onValueChange = onUsernameChange,
+                placeholder = stringResource(id = R.string.username_placeholder),
+                isError = isUsernameError,
+                errorMessage = usernameErrorMessage?.asString(),
                 fieldType = TextFieldType.EMAIL,
                 modifier = Modifier.fillMaxWidth()
 
@@ -200,14 +205,11 @@ fun EditProfileContent(
 
 @Composable
 fun ChangeProfilePictureBox(
-    imageUri: String?,
-    onClick: () -> Unit,
-    onImageSuccess: (String?) -> Unit
+    imageUri: String?, onClick: () -> Unit, onImageSuccess: (String?) -> Unit
 ) {
     Log.d("imageUri", imageUri ?: "null")
     Box(
-        modifier = Modifier.size(96.dp),
-        contentAlignment = Alignment.Center
+        modifier = Modifier.size(96.dp), contentAlignment = Alignment.Center
     ) {
         Box(
             modifier = Modifier
@@ -226,21 +228,14 @@ fun ChangeProfilePictureBox(
         ) {
 
             AsyncImage(
-                model = ImageRequest
-                    .Builder(LocalContext.current)
+                model = ImageRequest.Builder(LocalContext.current)
                     .data(imageUri ?: R.drawable.ic_default_profile)
-                    .error(R.drawable.ic_default_profile)
-                    .placeholder(R.drawable.ic_default_profile)
-                    .crossfade(true)
-                    .listener(
-                        onError = { _, result ->
-                            Log.e("AsyncImage", "Failed to load image", result.throwable)
-                        },
-                        onSuccess = { _, _ ->
-                            imageUri?.let { onImageSuccess(it) }
-                        }
-                    )
-                    .build(),
+                    .error(R.drawable.ic_default_profile).placeholder(R.drawable.ic_default_profile)
+                    .crossfade(true).listener(onError = { _, result ->
+                        Log.e("AsyncImage", "Failed to load image", result.throwable)
+                    }, onSuccess = { _, _ ->
+                        imageUri?.let { onImageSuccess(it) }
+                    }).build(),
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier.fillMaxSize()
@@ -272,8 +267,7 @@ fun ChangeProfilePictureBox(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppTopBar(
-    modifier: Modifier = Modifier,
-    onCloseClicked: () -> Unit
+    modifier: Modifier = Modifier, onCloseClicked: () -> Unit
 ) {
     Column {
         TopAppBar(
@@ -321,8 +315,7 @@ fun AppTopBar(
 private fun EditScreenPreview() {
     TravioTheme(dynamicColor = false) {
         Scaffold(
-            topBar = { AppTopBar(onCloseClicked = {}) }
-        ) { innerPadding ->
+            topBar = { AppTopBar(onCloseClicked = {}) }) { innerPadding ->
             EditProfileContent(
                 modifier = Modifier
                     .fillMaxSize()
@@ -335,15 +328,14 @@ private fun EditScreenPreview() {
                 onLastNameChange = {},
                 lastNameErrorMessage = null,
                 isLastNameError = false,
-                email = "osama@gmail.com",
-                onEmailChange = {},
-                isEmailError = false,
-                emailErrorMessage = null,
+                username = "osama@gmail.com",
+                onUsernameChange = {},
+                isUsernameError = false,
+                usernameErrorMessage = null,
                 onUpdateClick = {},
                 onProfileImageClick = {},
                 profileImageUri = null,
-                onImageSuccess = {}
-            )
+                onImageSuccess = {})
         }
     }
 }

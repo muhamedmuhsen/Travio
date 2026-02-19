@@ -1,8 +1,8 @@
 package com.example.network.dto.user_managment
 
 data class UpdateProfileResponse(
-    val refreshToken: String,
-    val accessToken: String,
-    val refreshTokenExpiration: Long,
-    val accessTokenExpiration: Long,
+    val `data`: UserData,
+    val errors: List<Any>,
+    val message: String,
+    val success: Boolean
 )

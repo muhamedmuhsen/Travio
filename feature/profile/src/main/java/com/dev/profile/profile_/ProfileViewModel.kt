@@ -7,6 +7,7 @@ import com.example.domain.usecase.auth.LogoutUseCase
 import com.example.domain.usecase.preferences.ToggleDarkModeUseCase
 import com.example.domain.usecase.user_management.GetUserUseCase
 import com.example.domain.utils.Result
+import com.example.domain.utils.isSuccess
 import com.example.feature.language.AppLocaleManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
@@ -76,7 +77,7 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
-    private fun loadProfileData() {
+    fun loadProfileData() {
         if (_uiState.value.profileUiState is UiState.Loading) return
         _uiState.update { state -> state.copy(profileUiState = UiState.Loading) }
 
@@ -96,6 +97,7 @@ class ProfileViewModel @Inject constructor(
                             email = result.data.email,
                             firstName = result.data.firstName,
                             lastName = result.data.lastName,
+                            username = result.data.username.orEmpty(),
                             profilePictureUrl = result.data.profilePictureUrl,
                         )
                     }

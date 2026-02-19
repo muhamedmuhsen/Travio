@@ -10,9 +10,9 @@ data class EditProfileUiState(
     val lastName: String = "",
     val isLastNameError: Boolean = false,
     val lastNameErrorMessage: UiText? = null,
-    val email: String = "",
-    val isEmailError: Boolean = false,
-    val emailErrorMessage: UiText? = null,
+    val username: String = "",
+    val isUsernameError: Boolean = false,
+    val usernameErrorMessage: UiText? = null,
     val profileImageUri: String? = null,
     val profileUiState: UiState<Unit> = UiState.Idle
 )
