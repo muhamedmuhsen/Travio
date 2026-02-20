@@ -3,6 +3,16 @@ default_platform(:android)
 platform :android do
   desc "Build and distribute beta release to Firebase App Distribution"
   lane :distribute_beta do
+
+    path = "../app/build.gradle.kts"
+    re = /versionCode\s*=\s*(\d+)/
+    s = File.read(path)
+    current_version_code = s[re, 1].to_i
+    new_version_code = current_version_code + 1
+    s = s.gsub(re, "versionCode = #{new_version_code}")
+    File.write(path, s)
+    UI.message("Version code updated: #{current_version_code} → #{new_version_code}")
+
     gradle(task: "clean assembleDebug")
 
     firebase_app_distribution(
