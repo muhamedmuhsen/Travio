@@ -2,6 +2,7 @@ package com.example.domain.usecase.auth.signup
 
 import com.example.common.extensions.isValidEmail
 import com.example.common.extensions.isValidName
+import com.example.common.extensions.isValidPassword
 import com.example.domain.repository.auth.SignupRepository
 import com.example.domain.utils.DataError
 import com.example.domain.utils.Result
@@ -29,7 +30,7 @@ class SignupUseCase @Inject constructor(
         if (!email.isValidEmail()) {
             return Result.Error(DataError.Validation.InvalidEmailFormat)
         }
-        if (!password.isValidEmail()) {
+        if (!password.isValidPassword()) {
             return Result.Error(DataError.Validation.WeakPassword)
         }
 
