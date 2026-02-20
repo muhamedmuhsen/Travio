@@ -173,6 +173,7 @@ class EditProfileViewModel @Inject constructor(
                 originalFirstName = firstName ?: it.originalFirstName,
                 originalLastName = lastName ?: it.originalLastName,
                 originalUsername = username ?: it.originalUsername,
+                profileImageUri = profilePicUri,
                 originalProfileImageUri = profilePicUri
             )
         }
