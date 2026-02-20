@@ -1,4 +1,4 @@
-package com.example.feature.forgetpassword
+package com.example.feature.forgetpassword.forgetpassword
 
 data class ForgetPasswordState(
     val email: String = "",

@@ -37,8 +37,10 @@
     <string name="new_password">كلمة المرور الجديدة</string>
     <string name="confirm_new_password">تأكيد كلمة المرور الجديدة</string>
     <string name="reset_your_password_button">إعادة تعيين كلمة المرور الخاصة بك</string>
-
+    <string name="close">إغلاق</string>
     <!-- Error Messages -->
+    <string name="invalid_email">البريد الإلكتروني غير صالح</string>
+    <string name="invalid_code">الرمز غير صالح</string>
     <string name="error_invalid_credentials">البريد الإلكتروني أو كلمة المرور غير صحيحة.</string>
     <string name="error_user_not_found">الحساب غير موجود.</string>
     <string name="error_user_already_exists">يوجد حساب مسجل بهذا البريد الإلكتروني بالفعل.</string>

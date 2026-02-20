@@ -1,12 +1,12 @@
 package com.example.data.di
 
 import android.content.Context
-import com.example.common.auth.TokenProvider
-import com.example.data.local.datastore.CredentialsManagerImpl
-import com.example.data.local.datastore.EncryptionManager
-import com.example.data.local.datastore.PreferencesManagerImpl
-import com.example.data.local.datastore.SecureTokenStorage
-import com.example.data.repository.auth.GoogleCredentialDataSource
+import com.example.domain.repository.auth.TokenProvider
+import com.example.domain.repository.auth.TokenProvider
+import com.example.data.local.preferences.CredentialsManagerImpl
+import com.example.data.local.security.EncryptionManager
+import com.example.data.local.preferences.PreferencesManagerImpl
+import com.example.data.local.security.SecureTokenStorage
 import com.example.data.repository.auth.GoogleCredentialDataSourceImpl
 import com.example.data.BuildConfig
 import com.example.data.repository.user_management.UserManagementRepositoryImpl
@@ -27,7 +27,7 @@ object DataStoreModule {
 
     @Provides
     @Singleton
-    fun provideGoogleCredentialDataSource(): GoogleCredentialDataSourceImpl =
+    fun provideGoogleCredentialDataSource(activityProvider: ActivityProvider): GoogleCredentialDataSourceImpl =
         GoogleCredentialDataSourceImpl()
 
     @Provides
@@ -81,7 +81,6 @@ object DataStoreModule {
     ): PreferencesManager {
         return PreferencesManagerImpl(context)
     }
-
 
     @WebClientId
     @Provides

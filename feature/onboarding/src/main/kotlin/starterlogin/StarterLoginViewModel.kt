@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.data.repository.auth.GoogleCredentialDataSourceImpl
 import com.example.domain.repository.prefernces.PreferencesManager
-import com.example.domain.usecase.auth.GoogleSignInUseCase
+import com.example.domain.usecase.auth.login.GoogleSignInUseCase
 import com.example.domain.utils.Result
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel

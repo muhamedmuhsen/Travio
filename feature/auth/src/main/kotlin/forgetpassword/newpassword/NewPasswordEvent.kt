@@ -1,8 +1,10 @@
-package com.example.feature.newpassword
+package com.example.feature.forgetpassword.newpassword
+
+import ui.text.UiText
 
 sealed interface NewPasswordEvent {
-    data object NavigateToWelcome : NewPasswordEvent
-    data object OnBackClicked : NewPasswordEvent
-    data class ShowError(val message: String) : NewPasswordEvent
+    data object NavigateToLogin : NewPasswordEvent
+    data object OnClosedClicked : NewPasswordEvent
+    data class ShowError(val message: UiText) : NewPasswordEvent
 }
 

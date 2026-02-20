@@ -1,6 +1,6 @@
 package com.example.network.di
 
-import com.example.common.auth.TokenProvider
+import com.example.domain.repository.auth.TokenProvider
 import com.example.network.BuildConfig
 import com.example.network.api.AuthApi
 import com.example.network.api.UserManagementApi
@@ -55,7 +55,10 @@ object NetworkModule {
     @Provides
     @Singleton
     fun provideLoggingInterceptor(): HttpLoggingInterceptor =
-        HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)
+        HttpLoggingInterceptor().setLevel(
+            if (BuildConfig.DEBUG) HttpLoggingInterceptor.Level.BODY
+            else HttpLoggingInterceptor.Level.NONE
+        )
 
     @Provides
     @Singleton

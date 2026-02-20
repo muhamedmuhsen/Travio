@@ -1,3 +1,6 @@
 package com.example.network.dto.auth.forgetpassword
 
-data class VerificationCodeRequest(val code: String)
+data class VerificationCodeRequest(
+    val email: String,
+    val otp: String
+)

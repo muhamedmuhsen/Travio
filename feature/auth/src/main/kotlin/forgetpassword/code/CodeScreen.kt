@@ -1,6 +1,7 @@
-package com.example.feature.code
+package com.example.feature.forgetpassword.code
 
 import android.widget.Toast
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -46,11 +47,13 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.feature.auth.R
 import com.example.designsystem.components.AppButton
 import com.example.designsystem.theme.TravioTheme
 import com.example.designsystem.theme.spacing
-import com.example.feature.forgetpassword.code.CodeViewModel
+import com.example.feature.code.CodeEvent
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -59,12 +62,35 @@ fun CodeScreen(
     viewModel: CodeViewModel = hiltViewModel(),
     navigateToResetPassword: () -> Unit,
     onBackClicked: () -> Unit,
-    email: String = "mail@gmail.com",
+    email: String,
 ) {
+
+    val context = LocalContext.current
+    val state by viewModel.state.collectAsStateWithLifecycle()
+
+
+    LaunchedEffect(Unit) {
+        viewModel.startCountdown()
+        viewModel.event.collect { event ->
+            when (event) {
+                CodeEvent.NavigateToResetPassword -> navigateToResetPassword()
+                CodeEvent.OnBackClicked -> onBackClicked()
+                is CodeEvent.ShowError -> {
+                    Toast.makeText(
+                        context,
+                        event.message.asString(context),
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+        }
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(
-                title = {}, navigationIcon = {
+                title = {},
+                navigationIcon = {
                     Box(
                         modifier = Modifier
                             .padding(start = MaterialTheme.spacing.md)
@@ -87,30 +113,6 @@ fun CodeScreen(
                 )
             )
         }) { innerPadding ->
-        val context = LocalContext.current
-        LaunchedEffect(Unit) {
-            viewModel.event.collect { event ->
-                when (event) {
-                    CodeEvent.NavigateToResetPassword -> {
-                        navigateToResetPassword()
-                    }
-
-                    CodeEvent.OnBackClicked -> {
-                        onBackClicked()
-                    }
-
-                    CodeEvent.OnSendAgain -> {
-                        viewModel.onSendAgainClicked()
-                    }
-
-                    is CodeEvent.ShowError -> {
-                        Toast.makeText(context, event.message.asString(context), Toast.LENGTH_SHORT)
-                            .show()
-                    }
-                }
-
-            }
-        }
         Column(
             modifier = modifier
                 .padding(innerPadding)
@@ -131,7 +133,9 @@ fun CodeScreen(
             Spacer(modifier = Modifier.height(MaterialTheme.spacing.lg))
 
             OtpInputField(
-                onOtpFilled = { /* Handle OTP completion, e.g., pass to ViewModel */ })
+                onOtpFilled = { viewModel.onCodeChange(it) },
+                isError = state.isCodeError,
+            )
 
             Spacer(modifier = Modifier.height(MaterialTheme.spacing.lg))
 
@@ -140,15 +144,16 @@ fun CodeScreen(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                SendAgain(onSendAgainClicked = { viewModel.onSendAgainClicked() })
-                // TODO: Implement and display the Timer composable here
-                // For example: Text(text = "00:30")
+                SendAgain(
+                    onSendAgainClicked = { viewModel.onSendAgainClicked(email) }
+                )
+                CountdownTimer(state.timeLeft)
             }
 
             Spacer(modifier = Modifier.height(MaterialTheme.spacing.lg))
 
             AppButton(
-                onClick = { viewModel.onContinueClicked() },
+                onClick = { viewModel.onContinueClicked(email) },
                 text = stringResource(id = R.string.continue_button),
                 modifier = Modifier
                     .fillMaxWidth()
@@ -158,6 +163,21 @@ fun CodeScreen(
     }
 }
 
+@Composable
+fun CountdownTimer(timeLeft: Int) {
+    Text(
+        text = formatTime(timeLeft),
+        style = MaterialTheme.typography.bodySmall,
+    )
+}
+
+private fun formatTime(seconds: Int): String {
+
+    val minutes = (seconds % 3600) / 60
+    val secs = seconds % 60
+
+    return String.format(Locale.ROOT, "%02d:%02d", minutes, secs)
+}
 @Composable
 fun SendAgain(
     onSendAgainClicked: () -> Unit, modifier: Modifier = Modifier
@@ -192,7 +212,10 @@ fun SendAgain(
 
 @Composable
 fun OtpInputField(
-    modifier: Modifier = Modifier, otpLength: Int = 6, onOtpFilled: (String) -> Unit = {}
+    modifier: Modifier = Modifier,
+    otpLength: Int = 6,
+    onOtpFilled: (String) -> Unit,
+    isError: Boolean
 ) {
     var otpValue by remember { mutableStateOf("") }
 
@@ -216,6 +239,7 @@ fun OtpInputField(
                     OtpCell(
                         char = otpValue.getOrNull(index)?.toString() ?: "",
                         isFilled = index < otpValue.length,
+                        isError = isError,
                         modifier = Modifier.weight(1f)
                     )
                 }
@@ -225,19 +249,24 @@ fun OtpInputField(
 
 @Composable
 fun OtpCell(
-    modifier: Modifier = Modifier, char: String = "", isFilled: Boolean,
+    modifier: Modifier = Modifier, char: String = "", isFilled: Boolean, isError: Boolean
 ) {
-    val borderColor = if (isFilled) {
+
+    var borderColor = if (isFilled) {
         MaterialTheme.colorScheme.primary
     } else {
         MaterialTheme.colorScheme.outline
     }
+
+    if (isError) borderColor = MaterialTheme.colorScheme.error
+
 
     val textColor = if (isFilled) {
         MaterialTheme.colorScheme.onBackground
     } else {
         MaterialTheme.colorScheme.outline
     }
+
     Box(
         modifier = modifier
             .height(52.dp)
@@ -262,6 +291,8 @@ private fun CodeScreenPreview() {
         CodeScreen(
             email = "mail@gmail.com",
             navigateToResetPassword = {},
-            onBackClicked = {})
+            onBackClicked = {},
+            viewModel = hiltViewModel()
+        )
     }
 }

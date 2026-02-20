@@ -16,6 +16,8 @@ sealed interface DataError : Error {
         InvalidEmailFormat,
         WeakPassword,
         PasswordMismatch,
+        ShortName,
+        InvalidOTPFormat,
         ShortFirstName,
         ShortLastName,
         MustHaveAtLeastOneFieldToUpdate,
@@ -32,6 +34,7 @@ sealed interface DataError : Error {
         UserAlreadyExists,
         RegistrationFailed,
         SignInFailed,
+        UsernameAlreadyExists
     }
 
     enum class Verification : DataError {

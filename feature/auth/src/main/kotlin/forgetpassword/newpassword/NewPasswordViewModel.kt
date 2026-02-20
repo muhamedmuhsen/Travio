@@ -2,8 +2,9 @@ package com.example.feature.forgetpassword.newpassword
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.domain.usecase.auth.ResetPasswordUseCase
-import com.example.feature.newpassword.NewPasswordEvent
+import com.example.domain.repository.auth.TokenProvider
+import com.example.domain.usecase.auth.passwordreset.ResetPasswordUseCase
+import com.example.domain.utils.Result
 import com.example.feature.newpassword.NewPasswordState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
@@ -12,47 +13,89 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import ui.state.UiState
+import ui.text.asUiText
 import javax.inject.Inject
 
 @HiltViewModel
-class NewPasswordViewModel @Inject constructor(private val resetPasswordUseCase: ResetPasswordUseCase) :
-    ViewModel() {
+class NewPasswordViewModel @Inject constructor(
+    private val resetPasswordUseCase: ResetPasswordUseCase,
+    private val tokenProvider: TokenProvider
+) : ViewModel() {
 
     private val _state = MutableStateFlow(NewPasswordState())
     val state = _state.asStateFlow()
 
     private val _event = Channel<NewPasswordEvent>(Channel.BUFFERED)
     val event = _event.receiveAsFlow()
+    private suspend fun sendEvent(event: NewPasswordEvent) = _event.send(event)
 
-    fun sendEvent(event: NewPasswordEvent) {
+
+    fun onResetPasswordClicked(email: String) {
+        if (_state.value.newPasswordState is UiState.Loading) return
+        clearErrors()
+        _state.update { currentState -> currentState.copy(newPasswordState = UiState.Loading) }
+
+        val password = _state.value.newPassword
+        val confirmPassword = _state.value.confirmNewPassword
+
         viewModelScope.launch {
-            _event.send(event)
+            val resetToken = tokenProvider.getResetToken()
+            when (val result = resetPasswordUseCase(resetToken, email, password, confirmPassword)) {
+                is Result.Error -> {
+                    _state.update { currentState ->
+                        currentState.copy(newPasswordState = UiState.Error(result.error.asUiText()))
+                    }
+                    sendEvent(NewPasswordEvent.ShowError(result.error.asUiText()))
+                }
+
+                is Result.Success -> {
+                    _state.update { currentState ->
+                        currentState.copy(
+                            newPasswordState = UiState.Success(),
+                            newPassword = "",
+                            confirmNewPassword = "",
+                            isPasswordsDoesnotMatch = false,
+                            isPasswordVisible = false
+                        )
+                    }
+                    sendEvent(NewPasswordEvent.NavigateToLogin)
+                }
+            }
         }
     }
 
+    private fun clearErrors() {
+        _state.update { it.copy(isPasswordsDoesnotMatch = false, isNewPasswordValid = true) }
+    }
+
     fun onPasswordChange(password: String) {
-        _state.update { it.copy(newPassword = password) }
+        _state.update { currentState ->
+            currentState.copy(
+                newPassword = password,
+                newPasswordState = UiState.Idle,
+                isPasswordsDoesnotMatch = false,
+                isNewPasswordValid = true
+            )
+        }
     }
 
     fun onConfirmPasswordChange(confirmPassword: String) {
-        _state.update { it.copy(confirmNewPassword = confirmPassword) }
-    }
-
-    fun onResetPasswordClicked() {/*TODO: check if the new password and confirmation password is the same*/
-        if (_state.value.newPassword != _state.value.confirmNewPassword) {
-            _state.update { it.copy(isPasswordsDoesnotMatch = true) }
-            sendEvent(NewPasswordEvent.ShowError("Passwords do not match"))
-        } else {
-            sendEvent(NewPasswordEvent.NavigateToWelcome)
+        _state.update { currentState ->
+            currentState.copy(
+                confirmNewPassword = confirmPassword,
+                isPasswordsDoesnotMatch = false,
+                isNewPasswordValid = true
+            )
         }
     }
 
     fun onConfirmPasswordVisibilityChanged() {
-        _state.update { it.copy(isConfirmPasswordVisible = !_state.value.isConfirmPasswordVisible) }
+        _state.update { currentState -> currentState.copy(isConfirmPasswordVisible = !currentState.isConfirmPasswordVisible) }
     }
 
     fun onPasswordVisibilityCheck() {
-        _state.update { it.copy(isPasswordVisible = !_state.value.isPasswordVisible) }
+        _state.update { currentState -> currentState.copy(isPasswordVisible = !currentState.isPasswordVisible) }
     }
 
 }

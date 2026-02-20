@@ -1,5 +1,6 @@
-package com.example.feature.newpassword
+package com.example.feature.forgetpassword.newpassword
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -21,8 +22,10 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -33,7 +36,6 @@ import com.example.designsystem.components.AppButton
 import com.example.designsystem.components.AppTextField
 import com.example.designsystem.components.TextFieldType
 import com.example.designsystem.theme.spacing
-import com.example.feature.forgetpassword.newpassword.NewPasswordViewModel
 import com.example.feature.signup.PasswordRulesText
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -41,10 +43,24 @@ import com.example.feature.signup.PasswordRulesText
 fun NewPasswordScreen(
     modifier: Modifier = Modifier,
     viewModel: NewPasswordViewModel = hiltViewModel(),
-    onCloseClicked: () -> Unit
+    navigateToLogin: () -> Unit,
+    onCloseClicked: () -> Unit,
+    email: String
 ) {
     val uiState = viewModel.state.collectAsStateWithLifecycle()
-
+    val context = LocalContext.current
+    LaunchedEffect(Unit) {
+        viewModel.event.collect { event ->
+            when (event) {
+                NewPasswordEvent.NavigateToLogin -> navigateToLogin()
+                NewPasswordEvent.OnClosedClicked -> onCloseClicked()
+                is NewPasswordEvent.ShowError -> {
+                    Toast.makeText(context, event.message.asString(context), Toast.LENGTH_SHORT)
+                        .show()
+                }
+            }
+        }
+    }
     Scaffold(
         topBar = {
             TopAppBar(
@@ -117,7 +133,7 @@ fun NewPasswordScreen(
             Spacer(modifier = Modifier.height(MaterialTheme.spacing.lg))
 
             AppButton(
-                onClick = { viewModel.onResetPasswordClicked() },
+                onClick = { viewModel.onResetPasswordClicked(email) },
                 text = stringResource(id = R.string.reset_your_password_button),
                 modifier = Modifier.fillMaxWidth()
             )

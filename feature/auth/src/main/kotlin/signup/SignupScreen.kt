@@ -1,5 +1,6 @@
 package com.example.feature.signup
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -49,6 +50,7 @@ import com.example.designsystem.components.SigninOptionsButton
 import com.example.designsystem.components.TextFieldType
 import com.example.designsystem.theme.TravioTheme
 import com.example.designsystem.theme.spacing
+import com.example.feature.auth.BuildConfig
 import com.example.feature.login.components.OrSignInWithText
 import com.example.designsystem.R as DesignSystemR
 
@@ -59,33 +61,29 @@ fun SignupScreen(
     viewModel: SignupViewModel = hiltViewModel(),
     onCloseClicked: () -> Unit,
     navigateToLogin: () -> Unit,
-    navigateToHome: () -> Unit
+    navigateToHome: () -> Unit,
+    navigateToVerifyEmail: (String) -> Unit
 ) {
 
     val uiState = viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
+    val webClientId = BuildConfig.GOOGLE_WEB_CLIENT_ID
 
 
     LaunchedEffect(Unit) {
         viewModel.event.collect { event ->
             when (event) {
-                SignupEvent.ContinueWithFacebook -> TODO()
-                SignupEvent.ContinueWithGoogle -> TODO()
-                SignupEvent.NavigateToLogin -> {
-                    /* TODO: fix why it crash here*/
-                    navigateToLogin()
+                SignupEvent.NavigateToLogin -> navigateToLogin()
+                SignupEvent.NavigateToHome -> navigateToHome()
+                is SignupEvent.ShowAuthError -> {
+                    Toast.makeText(
+                        context,
+                        event.message.asString(context),
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
-
-                SignupEvent.onCreateAccountClicked -> {
-                    viewModel.onCreateAccountClicked()
-                }
-
-                SignupEvent.NavigateToHome -> {
-                    navigateToHome()
-                }
-
-                is SignupEvent.ShowAuthError -> TODO()
+                SignupEvent.NavigateToVerifyEmail -> navigateToVerifyEmail(uiState.value.email)
             }
         }
     }
@@ -124,7 +122,8 @@ fun SignupScreen(
                     containerColor = MaterialTheme.colorScheme.surface
                 )
             )
-        }) { innerPadding ->
+        }
+    ) { innerPadding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -189,13 +188,7 @@ fun SignupScreen(
 
             AppButton(
                 onClick = {
-                    viewModel.onSignupClicked(
-                        firstname = uiState.value.firstname,
-                        lastname = uiState.value.lastname,
-                        username = uiState.value.username,
-                        email = uiState.value.email,
-                        password = uiState.value.password
-                    )
+                    viewModel.onSignupClicked()
                 },
                 text = stringResource(id = R.string.create_an_account),
                 modifier = Modifier.fillMaxWidth()
@@ -208,7 +201,7 @@ fun SignupScreen(
             Spacer(modifier = Modifier.height(MaterialTheme.spacing.lg))
 
             SigninOptionsButton(
-                onClick = { viewModel.onGoogleSigninClicked() },
+                onClick = { viewModel.onGoogleSignInClicked(context, webClientId) },
                 text = stringResource(id = R.string.continue_with_google),
                 icon = DesignSystemR.drawable.google_icon,
                 modifier = Modifier.fillMaxWidth()
@@ -217,7 +210,7 @@ fun SignupScreen(
             Spacer(modifier = Modifier.height(MaterialTheme.spacing.sm))
 
             SigninOptionsButton(
-                onClick = { viewModel.onFacebookSigninClicked() },
+                onClick = {/* viewModel.onFacebookSigninClicked()*/ },
                 text = stringResource(id = R.string.continue_with_facebook),
                 icon = DesignSystemR.drawable.facebook_icon,
                 modifier = Modifier.fillMaxWidth()
@@ -239,7 +232,7 @@ fun SignupScreen(
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.SemiBold,
                     color = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.clickable { viewModel.onCreateAccountClicked() })
+                    modifier = Modifier.clickable { navigateToLogin() })
             }
 
             Spacer(modifier = Modifier.height(MaterialTheme.spacing.md))
@@ -324,6 +317,6 @@ fun PasswordRulesText(
 @Composable
 private fun SignupScreenPreview() {
     TravioTheme {
-        SignupScreen(onCloseClicked = {}, navigateToLogin = {}, navigateToHome = {})
+        SignupScreen(onCloseClicked = {}, navigateToLogin = {}, navigateToHome = {}) {}
     }
 }

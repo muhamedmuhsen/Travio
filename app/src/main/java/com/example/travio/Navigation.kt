@@ -9,15 +9,15 @@ import androidx.navigation.compose.composable
 import com.dev.profile.editProfile.EditProfileScreen
 import com.dev.profile.profile_.ProfileScreen
 import com.example.common.navigation.Screen
-import com.example.feature.code.CodeScreen
+import com.example.feature.forgetpassword.code.CodeScreen
 import com.example.feature.forgetpassword.ForgetPasswordScreen
 import com.example.feature.language.LanguageScreen
 import com.example.feature.login.LoginScreen
-import com.example.feature.newpassword.NewPasswordScreen
+import com.example.feature.forgetpassword.newpassword.NewPasswordScreen
 import com.example.feature.onboarding.OnboardingScreen
 import com.example.feature.signup.SignupScreen
 import com.example.feature.starterlogin.StarterLogin
-import kotlin.text.set
+import com.example.feature.verifyEmail.VerifyEmailScreen
 
 @Composable
 fun TravioNavHost(
@@ -57,34 +57,64 @@ fun TravioNavHost(
         composable(Screen.ForgetPasswordScreen.route) {
             ForgetPasswordScreen(
                 onCloseClicked = { navController.popBackStack() },
-                navigateToCodeScreen = { navController.navigate(Screen.CodeScreen.route) })
+                navigateToCodeScreen = {
+                    val email = it
+                    navController.navigate(Screen.CodeScreen.route + "/$email")
+                })
         }
-        composable(Screen.CodeScreen.route) {
+        composable(Screen.CodeScreen.route + "/{email}") {
+            val email = it.arguments?.getString("email") ?: ""
             CodeScreen(
                 onBackClicked = {
                     navController.popBackStack()
                 },
-                navigateToResetPassword = {},
+                navigateToResetPassword = { navController.navigate(Screen.ResetPasswordScreen.route + "/$email") },
+                email = email
             )
         }
 
-        composable(Screen.ResetPasswordScreen.route) {
+        composable(Screen.ResetPasswordScreen.route + "/{email}") {
+            val email = it.arguments?.getString("email") ?: ""
             NewPasswordScreen(
                 onCloseClicked = {
+                    navController.popBackStack()
+                    navController.popBackStack()
+                },
+                navigateToLogin = {
                     navController.navigate(Screen.LoginScreen.route) {
-                        popUpTo(Screen.LoginScreen.route) {
-                            inclusive = true
-                        }
+                        popUpTo(Screen.LoginScreen.route) { inclusive = true }
                     }
-                })
+                },
+                email = email
+            )
         }
         composable(Screen.SignupScreen.route) {
             SignupScreen(
-                onCloseClicked = { navController.navigate(Screen.StarterLoginScreen.route) },
+                onCloseClicked = { navController.popBackStack() },
                 navigateToLogin = {
                     navController.navigate(Screen.LoginScreen.route)
                 },
-                navigateToHome = { navController.navigate(Screen.HomeScreen.route) })
+                navigateToHome = {
+                    navController.navigate(Screen.HomeScreen.route) {
+                        popUpTo(Screen.LoginScreen.route) { inclusive = true }
+                    }
+                },
+                navigateToVerifyEmail = {
+                    val email = it
+                    navController.navigate(Screen.VerifyEmailScreen.route + "/$email")
+                }
+            )
+        }
+
+        composable(Screen.VerifyEmailScreen.route + "/{email}") {
+            VerifyEmailScreen(
+                navigateToHome = {
+                    navController.navigate(Screen.HomeScreen.route) {
+                        popUpTo(Screen.StarterLoginScreen.route) { inclusive = true }
+                    }
+                },
+                onBackClicked = { navController.popBackStack() },
+            )
         }
 
         composable(Screen.HomeScreen.route) {
