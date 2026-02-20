@@ -193,7 +193,7 @@ private fun ProfileContent(
                 switchOptions = listOf(
                     ProfileOptionWithSwitch(
                         stringResource(id = R.string.dark_mode),
-                        com.example.designsystem.R.drawable.dark_mode_icon,
+                        R.drawable.dark_mode,
                         isChecked = uiState.isDarkMode
                     ) { toggleDarkMode() })
             )

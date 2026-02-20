@@ -60,12 +60,11 @@ fun TopSection(
         elevation = CardDefaults.cardElevation(0.5.dp),
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.5f)),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceContainerHigh
+            containerColor = MaterialTheme.colorScheme.surface
         )
     ) {
         Column(
-            modifier = Modifier
-                .padding(MaterialTheme.spacing.xs)
+            modifier = Modifier.padding(MaterialTheme.spacing.xs)
         ) {
             options.forEachIndexed { index, option ->
                 DetailsCard(
@@ -92,12 +91,11 @@ fun TopSectionWithSwitch(
         elevation = CardDefaults.cardElevation(0.5.dp),
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.5f)),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceContainerHigh
+            containerColor = MaterialTheme.colorScheme.surface
         )
     ) {
         Column(
-            modifier = Modifier
-                .padding(MaterialTheme.spacing.xs)
+            modifier = Modifier.padding(MaterialTheme.spacing.xs)
         ) {
             clickableOptions.forEachIndexed { index, option ->
                 DetailsCard(
@@ -110,7 +108,6 @@ fun TopSectionWithSwitch(
                     HorizontalDivider(modifier = Modifier.padding(MaterialTheme.spacing.xs))
                 }
             }
-
             switchOptions.forEachIndexed { index, option ->
                 DetailsCardWithSwitch(
                     text = option.title,
@@ -215,9 +212,9 @@ private fun DetailsRowSection(boxIcon: Int, text: String) {
     ) {
         Box(
             modifier = Modifier
-                .size(40.dp) // Icon circle — intentionally fixed
+                .size(40.dp)
                 .clip(CircleShape)
-                .background(MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.85f)),
+                .background(MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.15f)),
             contentAlignment = Alignment.Center
         ) {
             Icon(
