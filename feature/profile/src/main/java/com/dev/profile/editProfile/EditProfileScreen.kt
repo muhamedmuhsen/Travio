@@ -3,7 +3,6 @@ package com.dev.profile.editProfile
 import android.content.Intent
 import android.net.Uri
 import android.util.Log
-import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
@@ -31,6 +30,9 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -48,6 +50,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.designsystem.components.AppButton
+import com.example.designsystem.components.ErrorSnackBar
 import com.example.designsystem.components.AppTextField
 import com.example.designsystem.components.TextFieldType
 import com.example.designsystem.theme.TravioTheme
@@ -68,6 +71,7 @@ fun EditProfileScreen(
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
+    var errorMessage by remember { mutableStateOf<String?>(null) }
     val imagePickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
     ) { uri: Uri? ->
@@ -89,13 +93,19 @@ fun EditProfileScreen(
         )
     }
 
+    LaunchedEffect(errorMessage) {
+        errorMessage?.let {
+            kotlinx.coroutines.delay(3000)
+            errorMessage = null
+        }
+    }
+
     LaunchedEffect(Unit) {
         viewModel.event.collect { event ->
             when (event) {
                 EditProfileEvent.NavigateToProfile -> NavigateToProfile(state.profileImageUri)
                 is EditProfileEvent.ShowProfileError -> {
-                    Toast.makeText(context, event.message.asString(context), Toast.LENGTH_SHORT)
-                        .show()
+                    errorMessage = event.message.asString(context)
                 }
             }
         }
@@ -103,6 +113,11 @@ fun EditProfileScreen(
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
+        snackbarHost = {
+            errorMessage?.let { message ->
+                ErrorSnackBar(text = message)
+            }
+        },
         topBar = { AppTopBar(onCloseClicked = onCloseClicked) }) { innerPadding ->
         EditProfileContent(
             modifier = modifier

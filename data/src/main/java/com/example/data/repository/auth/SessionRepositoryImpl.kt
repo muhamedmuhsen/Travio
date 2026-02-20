@@ -25,7 +25,9 @@ class SessionRepositoryImpl @Inject constructor(
         }
         tokenProvider.clearTokens()
         preferencesManager.setLoggedIn(false)
-        credentialsManager.clearCredentials()
+        if (!credentialsManager.isRememberMeEnabled()) {
+            credentialsManager.clearCredentials()
+        }
         return result
     }
 

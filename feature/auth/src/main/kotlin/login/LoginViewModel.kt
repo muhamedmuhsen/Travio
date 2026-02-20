@@ -175,6 +175,9 @@ class LoginViewModel @Inject constructor(
         _state.update { it.copy(isRememberMeChecked = newValue) }
         viewModelScope.launch {
             credentialsManager.setRememberMe(newValue)
+            if (!newValue) {
+                credentialsManager.clearCredentials()
+            }
         }
     }
 

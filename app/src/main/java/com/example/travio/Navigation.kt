@@ -130,8 +130,10 @@ fun TravioNavHost(
                     val encodedPic = java.net.URLEncoder.encode(data.profilePicUri ?: "", "UTF-8")
                     navController.navigate(Screen.EditProfileScreen.route + "/${encodedPic}" + "/${data.firstname}" + "/${data.lastname}" + "/${data.username}")
                 },
+                navigateToHome = {
+                    navController.popBackStack(Screen.HomeScreen.route, inclusive = false)
+                },
                 navController = navController
-
             )
         }
         composable(Screen.EditProfileScreen.route + "/{profilePic}" + "/{firstname}" + "/{lastname}" + "/{username}") {

@@ -60,7 +60,7 @@ fun TopSection(
         elevation = CardDefaults.cardElevation(0.5.dp),
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.5f)),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface
+            containerColor = MaterialTheme.colorScheme.surfaceContainerHigh
         )
     ) {
         Column(
@@ -92,7 +92,7 @@ fun TopSectionWithSwitch(
         elevation = CardDefaults.cardElevation(0.5.dp),
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.5f)),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface
+            containerColor = MaterialTheme.colorScheme.surfaceContainerHigh
         )
     ) {
         Column(
@@ -217,13 +217,13 @@ private fun DetailsRowSection(boxIcon: Int, text: String) {
             modifier = Modifier
                 .size(40.dp) // Icon circle — intentionally fixed
                 .clip(CircleShape)
-                .background(MaterialTheme.colorScheme.surfaceContainerHigh),
+                .background(MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.85f)),
             contentAlignment = Alignment.Center
         ) {
             Icon(
                 painter = painterResource(boxIcon),
                 contentDescription = null,
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                tint = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.size(24.dp)
             )
         }

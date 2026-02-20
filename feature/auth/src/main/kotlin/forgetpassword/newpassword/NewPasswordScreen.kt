@@ -1,6 +1,5 @@
 package com.example.feature.forgetpassword.newpassword
 
-import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -23,6 +22,10 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -33,6 +36,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.feature.auth.R
 import com.example.designsystem.components.AppButton
+import com.example.designsystem.components.ErrorSnackBar
 import com.example.designsystem.components.AppTextField
 import com.example.designsystem.components.TextFieldType
 import com.example.designsystem.theme.spacing
@@ -49,19 +53,31 @@ fun NewPasswordScreen(
 ) {
     val uiState = viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
+    var errorMessage by remember { mutableStateOf<String?>(null) }
+
+    LaunchedEffect(errorMessage) {
+        errorMessage?.let {
+            kotlinx.coroutines.delay(3000)
+            errorMessage = null
+        }
+    }
     LaunchedEffect(Unit) {
         viewModel.event.collect { event ->
             when (event) {
                 NewPasswordEvent.NavigateToLogin -> navigateToLogin()
                 NewPasswordEvent.OnClosedClicked -> onCloseClicked()
                 is NewPasswordEvent.ShowError -> {
-                    Toast.makeText(context, event.message.asString(context), Toast.LENGTH_SHORT)
-                        .show()
+                    errorMessage = event.message.asString(context)
                 }
             }
         }
     }
     Scaffold(
+        snackbarHost = {
+            errorMessage?.let { message ->
+                ErrorSnackBar(text = message)
+            }
+        },
         topBar = {
             TopAppBar(
                 title = {

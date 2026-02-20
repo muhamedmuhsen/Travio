@@ -32,6 +32,8 @@ class LoginRepositoryImpl @Inject constructor(
             credentialsManager.saveCredentials(
                 email, password, true
             )
+        } else {
+            credentialsManager.clearCredentials()
         }
     }
 

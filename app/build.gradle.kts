@@ -23,18 +23,6 @@ android {
         localProperties.load(FileInputStream(localPropertiesFile))
     }
 
-    flavorDimensions += "device"
-    productFlavors {
-        create("emulator") {
-            dimension = "device"
-            applicationIdSuffix =
-                ".emulator"  // Optional: different app ID for parallel installation
-        }
-        create("physical") {
-            dimension = "device"
-            applicationIdSuffix = ".physical"  // Optional
-        }
-    }
 
     defaultConfig {
         applicationId = "com.example.travio"
@@ -128,4 +116,8 @@ dependencies {
 
     // Compose Navigation
     implementation(libs.androidx.navigation.compose)
+
+    // Coil (image loading) + OkHttp for custom ImageLoader
+    implementation(libs.coil.compose)
+    implementation(libs.okhttp)
 }

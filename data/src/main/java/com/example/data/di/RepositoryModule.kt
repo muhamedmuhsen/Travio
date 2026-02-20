@@ -1,6 +1,6 @@
 package com.example.data.di
 
-import com.example.data.repository.TokenManagerImpl
+import com.example.data.repository.auth.TokenManagerImpl
 import com.example.data.repository.auth.EmailVerificationRepositoryImpl
 import com.example.data.repository.auth.LoginRepositoryImpl
 import com.example.data.repository.auth.PasswordResetRepositoryImpl

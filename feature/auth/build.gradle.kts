@@ -17,15 +17,6 @@ android {
         compose = true
         buildConfig = true
     }
-    flavorDimensions += "device"
-    productFlavors {
-        create("emulator") {
-            dimension = "device"
-        }
-        create("physical") {
-            dimension = "device"
-        }
-    }
     val localProperties = Properties()
     val localPropertiesFile = rootProject.file("local.properties")
     if (localPropertiesFile.exists()) {

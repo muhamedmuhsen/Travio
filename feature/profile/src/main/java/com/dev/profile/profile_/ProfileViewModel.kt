@@ -3,7 +3,7 @@ package com.dev.profile.profile_
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.domain.repository.prefernces.PreferencesManager
-import com.example.domain.usecase.auth.LogoutUseCase
+import com.example.domain.usecase.auth.session.LogoutUseCase
 import com.example.domain.usecase.preferences.ToggleDarkModeUseCase
 import com.example.domain.usecase.user_management.GetUserUseCase
 import com.example.domain.utils.Result

@@ -12,6 +12,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -33,6 +36,8 @@ import com.dev.profile.profile_.components.ProfileOptionWithSwitch
 import com.dev.profile.profile_.components.TopSection
 import com.dev.profile.profile_.components.TopSectionWithSwitch
 import com.dev.profile.profile_.components.ProfileLanguageButton
+import com.example.designsystem.components.AppBottomBar
+import com.example.designsystem.components.ErrorSnackBar
 import com.example.designsystem.theme.TravioTheme
 import com.example.feature.profile.R
 
@@ -41,6 +46,7 @@ import com.example.feature.profile.R
 fun ProfileScreen(
     navController: NavController,
     onNavigateToDetail: (NavigationData) -> Unit,
+    navigateToHome: () -> Unit = {},
     modifier: Modifier = Modifier,
     viewModel: ProfileViewModel = hiltViewModel()
 ) {
@@ -48,6 +54,37 @@ fun ProfileScreen(
     val currentBackStackEntry = navController.currentBackStackEntry
     val profileUpdated =
         currentBackStackEntry?.savedStateHandle?.getStateFlow("profile_updated", false)
+    val context = LocalContext.current
+    var errorMessage by remember { mutableStateOf<String?>(null) }
+
+    LaunchedEffect(errorMessage) {
+        errorMessage?.let {
+            kotlinx.coroutines.delay(3000)
+            errorMessage = null
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        viewModel.event.collect { event ->
+            when (event) {
+                is ProfileEvent.ShowProfileError -> {
+                    errorMessage = event.message.asString(context)
+                }
+
+                ProfileEvent.NavigateToLogin -> { /* handled elsewhere */
+                }
+
+                ProfileEvent.NavigateToEditProfile -> { /* handled elsewhere */
+                }
+
+                ProfileEvent.NavigateToChangeLanguage -> { /* handled elsewhere */
+                }
+
+                is ProfileEvent.ToggleDarkMode -> { /* handled elsewhere */
+                }
+            }
+        }
+    }
 
     LaunchedEffect(profileUpdated?.value) {
         if (profileUpdated?.value == true) {
@@ -64,7 +101,22 @@ fun ProfileScreen(
     Scaffold(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.surfaceContainerHigh)
+            .background(MaterialTheme.colorScheme.surfaceContainerHigh),
+        snackbarHost = {
+            errorMessage?.let { message ->
+                ErrorSnackBar(text = message)
+            }
+        },
+        bottomBar = {
+            AppBottomBar(
+                selectedItem = 4,
+                onItemSelected = { index ->
+                    when (index) {
+                        0 -> navigateToHome()
+                    }
+                }
+            )
+        }
     ) { innerPadding ->
         ProfileContent(
             uiState = uiState,

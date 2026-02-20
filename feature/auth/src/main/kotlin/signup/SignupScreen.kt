@@ -1,6 +1,6 @@
 package com.example.feature.signup
 
-import android.widget.Toast
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -27,7 +27,10 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -45,6 +48,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.feature.auth.R
 import com.example.designsystem.components.AppButton
+import com.example.designsystem.components.ErrorSnackBar
 import com.example.designsystem.components.AppTextField
 import com.example.designsystem.components.SigninOptionsButton
 import com.example.designsystem.components.TextFieldType
@@ -69,6 +73,14 @@ fun SignupScreen(
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val webClientId = BuildConfig.GOOGLE_WEB_CLIENT_ID
+    var errorMessage by remember { mutableStateOf<String?>(null) }
+
+    LaunchedEffect(errorMessage) {
+        errorMessage?.let {
+            kotlinx.coroutines.delay(3000)
+            errorMessage = null
+        }
+    }
 
 
     LaunchedEffect(Unit) {
@@ -77,11 +89,7 @@ fun SignupScreen(
                 SignupEvent.NavigateToLogin -> navigateToLogin()
                 SignupEvent.NavigateToHome -> navigateToHome()
                 is SignupEvent.ShowAuthError -> {
-                    Toast.makeText(
-                        context,
-                        event.message.asString(context),
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    errorMessage = event.message.asString(context)
                 }
                 SignupEvent.NavigateToVerifyEmail -> navigateToVerifyEmail(uiState.value.email)
             }
@@ -89,6 +97,11 @@ fun SignupScreen(
     }
 
     Scaffold(
+        snackbarHost = {
+            errorMessage?.let { message ->
+                ErrorSnackBar(text = message)
+            }
+        },
         topBar = {
             TopAppBar(
                 title = {

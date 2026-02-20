@@ -15,18 +15,6 @@ android {
         buildConfig = true
     }
 
-    flavorDimensions += "device"
-    productFlavors {
-        create("emulator") {
-            dimension = "device"
-            buildConfigField("String", "BASE_URL", "\"http://10.0.2.2:5116/api/\"")
-        }
-        create("physical") {
-            dimension = "device"
-            buildConfigField("String", "BASE_URL", "\"http://192.168.1.13:5116/api/\"")
-        }
-    }
-
     defaultConfig {
         minSdk = 29
 
@@ -38,12 +26,8 @@ android {
         if (propertiesFile.exists()) {
             properties.load(propertiesFile.inputStream())
         }
-        val baseUrl = properties.getProperty("BASE_URL", "")
-        buildConfigField(
-            "String",
-            "BASE_URL",
-            "\"$baseUrl\""
-        )
+        val baseUrl = properties.getProperty("BASE_URL", "http://10.0.2.2:5116/api/")
+        buildConfigField("String", "BASE_URL", "\"$baseUrl\"")
     }
 
     buildTypes {

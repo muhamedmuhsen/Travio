@@ -13,10 +13,12 @@ sealed class Screen(val route: String) {
     data object CodeScreen : Screen(Screens.CODE.name)
     data object ResetPasswordScreen : Screen(Screens.RESET_PASSWORD.name)
     data object VerifyEmailScreen : Screen(Screens.VERIFY_EMAIL.name)
+    data object EditProfileScreen : Screen(Screens.EDIT_PROFILE.name)
 }
 
 enum class Screens {
     LOGIN, SIGNUP, ONBOARDING, HOME, PROFILE, STARTER_LOGIN, LANGUAGE, FORGET_PASSWORD, CODE, RESET_PASSWORD,
-    VERIFY_EMAIL
+    VERIFY_EMAIL,
+    EDIT_PROFILE
 
 }

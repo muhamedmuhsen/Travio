@@ -17,6 +17,10 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -30,6 +34,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.feature.onboarding.R
 import com.example.designsystem.components.AppButton
+import com.example.designsystem.components.ErrorSnackBar
 import com.example.designsystem.components.SigninOptionsButton
 import com.example.designsystem.theme.TravioTheme
 import com.example.designsystem.theme.spacing
@@ -43,6 +48,14 @@ fun StarterLogin(
 ) {
     val webClientId = BuildConfig.GOOGLE_WEB_CLIENT_ID
     val context = LocalContext.current
+    var errorMessage by remember { mutableStateOf<String?>(null) }
+
+    LaunchedEffect(errorMessage) {
+        errorMessage?.let {
+            kotlinx.coroutines.delay(3000)
+            errorMessage = null
+        }
+    }
 
     LaunchedEffect(Unit) {
         viewModel.event.collect { event ->
@@ -57,10 +70,20 @@ fun StarterLogin(
 
                 StarterLoginEvent.GoogleSignIn -> TODO()
                 StarterLoginEvent.FacebookSignIn -> TODO()
+                StarterLoginEvent.NavigateToHome -> {}
+                is StarterLoginEvent.ShowAuthError -> {
+                    errorMessage = event.message.asString(context)
+                }
             }
         }
     }
-    Scaffold() { innerPadding ->
+    Scaffold(
+        snackbarHost = {
+            errorMessage?.let { message ->
+                ErrorSnackBar(text = message)
+            }
+        }
+    ) { innerPadding ->
         Column(
             modifier = modifier
                 .fillMaxSize()

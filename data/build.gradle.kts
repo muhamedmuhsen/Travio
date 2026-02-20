@@ -31,22 +31,10 @@ android {
         consumerProguardFiles("consumer-rules.pro")
 
         val googleWebClientId = localProperties.getProperty("GOOGLE_WEB_CLIENT_ID", "")
-        buildConfigField(
-            "String",
-            "GOOGLE_WEB_CLIENT_ID",
-            "\"$googleWebClientId\""
-        )
-    }
-    flavorDimensions += "device"
-    productFlavors {
-        create("emulator") {
-            dimension = "device"
-            buildConfigField("String", "IMAGE_BASE_URL", "\"http://10.0.2.2:5116\"")
-        }
-        create("physical") {
-            dimension = "device"
-            buildConfigField("String", "IMAGE_BASE_URL", "\"http://192.168.1.13:5116\"")
-        }
+        buildConfigField("String", "GOOGLE_WEB_CLIENT_ID", "\"$googleWebClientId\"")
+
+        val imageBaseUrl = localProperties.getProperty("IMAGE_BASE_URL", "http://10.0.2.2:5116")
+        buildConfigField("String", "IMAGE_BASE_URL", "\"$imageBaseUrl\"")
     }
     buildTypes {
         release {

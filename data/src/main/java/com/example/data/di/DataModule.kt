@@ -2,12 +2,10 @@ package com.example.data.di
 
 import android.content.Context
 import com.example.domain.repository.auth.TokenProvider
-import com.example.domain.repository.auth.TokenProvider
 import com.example.data.local.preferences.CredentialsManagerImpl
 import com.example.data.local.security.EncryptionManager
 import com.example.data.local.preferences.PreferencesManagerImpl
 import com.example.data.local.security.SecureTokenStorage
-import com.example.data.repository.auth.GoogleCredentialDataSourceImpl
 import com.example.data.BuildConfig
 import com.example.data.repository.user_management.UserManagementRepositoryImpl
 import com.example.domain.repository.prefernces.CredentialsManager
@@ -24,11 +22,6 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object DataStoreModule {
-
-    @Provides
-    @Singleton
-    fun provideGoogleCredentialDataSource(activityProvider: ActivityProvider): GoogleCredentialDataSourceImpl =
-        GoogleCredentialDataSourceImpl()
 
     @Provides
     @Singleton

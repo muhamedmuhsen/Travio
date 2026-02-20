@@ -2,7 +2,7 @@ package com.example.data.repository.user_management
 
 import android.content.Context
 import android.net.Uri
-import com.example.data.local.datastore.SecureTokenStorage
+import com.example.data.local.security.SecureTokenStorage
 import com.example.domain.model.User
 import com.example.domain.repository.prefernces.PreferencesManager
 import com.example.domain.repository.user_management.UserManagementRepository

@@ -1,6 +1,6 @@
 package com.example.feature.forgetpassword.code
 
-import android.widget.Toast
+import androidx.compose.runtime.mutableStateOf
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -50,6 +50,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.feature.auth.R
 import com.example.designsystem.components.AppButton
+import com.example.designsystem.components.ErrorSnackBar
 import com.example.designsystem.theme.TravioTheme
 import com.example.designsystem.theme.spacing
 import com.example.feature.code.CodeEvent
@@ -67,6 +68,14 @@ fun CodeScreen(
 
     val context = LocalContext.current
     val state by viewModel.state.collectAsStateWithLifecycle()
+    var errorMessage by remember { mutableStateOf<String?>(null) }
+
+    LaunchedEffect(errorMessage) {
+        errorMessage?.let {
+            kotlinx.coroutines.delay(3000)
+            errorMessage = null
+        }
+    }
 
 
     LaunchedEffect(Unit) {
@@ -76,17 +85,18 @@ fun CodeScreen(
                 CodeEvent.NavigateToResetPassword -> navigateToResetPassword()
                 CodeEvent.OnBackClicked -> onBackClicked()
                 is CodeEvent.ShowError -> {
-                    Toast.makeText(
-                        context,
-                        event.message.asString(context),
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    errorMessage = event.message.asString(context)
                 }
             }
         }
     }
 
     Scaffold(
+        snackbarHost = {
+            errorMessage?.let { message ->
+                ErrorSnackBar(text = message)
+            }
+        },
         topBar = {
             TopAppBar(
                 title = {},

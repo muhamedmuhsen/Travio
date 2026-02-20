@@ -15,23 +15,20 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.annotation.StringRes
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.designsystem.R
 import com.example.designsystem.theme.TravioTheme
 import com.example.designsystem.theme.spacing
 
 data class BottomNavigationItem(
-    val title: String,
+    @StringRes val title: Int,
     val selectedIcon: Int,
     val unselectedIcon: Int
     // TODO: add route to navigate to
@@ -40,27 +37,27 @@ data class BottomNavigationItem(
 
 val items = listOf(
     BottomNavigationItem(
-        title = "Home",
+        title = R.string.bottom_nav_home,
         selectedIcon = R.drawable.home_fill,
         unselectedIcon = R.drawable.home_icon
     ),
     BottomNavigationItem(
-        title = "Favorite",
+        title = R.string.bottom_nav_favorite,
         selectedIcon = R.drawable.favorite_fill,
         unselectedIcon = R.drawable.favorite_icon
     ),
     BottomNavigationItem(
-        title = "Community",
+        title = R.string.bottom_nav_community,
         selectedIcon = R.drawable.community_fill,
         unselectedIcon = R.drawable.comunity_icon
     ),
     BottomNavigationItem(
-        title = "AI Chat",
+        title = R.string.bottom_nav_ai_chat,
         selectedIcon = R.drawable.ai_chat_fill,
         unselectedIcon = R.drawable.ai_chat_icon
     ),
     BottomNavigationItem(
-        title = "Profile",
+        title = R.string.bottom_nav_profile,
         selectedIcon = R.drawable.profile_fill,
         unselectedIcon = R.drawable.profile_icon
     )
@@ -69,38 +66,38 @@ val items = listOf(
 @Composable
 fun AppBottomBar(
     modifier: Modifier = Modifier,
-    selectedItem: Int = 0
+    selectedItem: Int = 0,
+    onItemSelected: (Int) -> Unit = {}
 ) {
-    var selectedItemIndex by rememberSaveable() {
-        mutableIntStateOf(selectedItem)
-    }
     NavigationBar(
         modifier = modifier.fillMaxWidth()
     ) {
         items.forEachIndexed { index, item ->
             NavigationBarItem(
-                selected = selectedItemIndex == index,
+                selected = selectedItem == index,
                 onClick = {
-                    selectedItemIndex = index
-                    // TODO: navigate
+                    onItemSelected(index)
                 },
                 label = {
-                    val textColor = if (selectedItemIndex == index) {
+                    val textColor = if (selectedItem == index) {
                         MaterialTheme.colorScheme.primary
                     } else {
                         MaterialTheme.colorScheme.onSurfaceVariant
                     }
                     Text(
-                        text = item.title,
+                        text = stringResource(id = item.title),
                         style = MaterialTheme.typography.labelSmall,
-                        color = textColor
+                        color = textColor,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
                     )
                 },
                 icon = {
                     val iconR =
-                        if (selectedItemIndex == index) item.selectedIcon else item.unselectedIcon
+                        if (selectedItem == index) item.selectedIcon else item.unselectedIcon
                     Icon(
-                        painterResource(iconR), contentDescription = item.title,
+                        painterResource(iconR),
+                        contentDescription = stringResource(id = item.title),
                         modifier = Modifier.size(MaterialTheme.spacing.lg),
                         tint = Color.Unspecified
                     )
