@@ -19,7 +19,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -29,43 +31,55 @@ import com.example.designsystem.theme.spacing
 
 @Composable
 fun AppButton(
-    modifier: Modifier = Modifier, onClick: () -> Unit, isEnabled: Boolean = true, text: String
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
+    isEnabled: Boolean = true,
+    shape: Shape = MaterialTheme.shapes.extraLarge,
+    buttonHeight: Int = 48,
+    text: String,
+    style: TextStyle = MaterialTheme.typography.titleMedium.copy(
+        fontWeight = FontWeight.Bold
+    ),
+    containerColor: Color = MaterialTheme.colorScheme.primary
 ) {
     Button(
-        modifier = modifier.height(48.dp),
+        modifier = modifier.height(buttonHeight.dp),
         onClick = onClick,
-        shape = MaterialTheme.shapes.extraLarge,
+        shape = shape,
         enabled = isEnabled,
         colors = ButtonDefaults.buttonColors(
-            containerColor = MaterialTheme.colorScheme.primary,
+            containerColor = containerColor,
             contentColor = MaterialTheme.colorScheme.onPrimary,
             disabledContainerColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f),
             disabledContentColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
         )
     ) {
         Text(
-            text = text, style = MaterialTheme.typography.titleMedium.copy(
-                fontWeight = FontWeight.Bold
-            )
+            text = text,
+            style = style
         )
     }
 }
 
 @Composable
 fun LanguageButton(
-    modifier: Modifier = Modifier, onClick: () -> Unit, language: String
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
+    language: String,
+    shape: Shape = MaterialTheme.shapes.extraLarge,
+    buttonHeight: Int = 40,
+    style: TextStyle = MaterialTheme.typography.titleMedium
 ) {
-
     OutlinedButton(
-        modifier = modifier,
+        modifier = modifier.height(buttonHeight.dp),
         onClick = onClick,
-        shape = MaterialTheme.shapes.extraLarge,
+        shape = shape,
         colors = ButtonDefaults.outlinedButtonColors(
             contentColor = MaterialTheme.colorScheme.onBackground
         ),
         border = BorderStroke(width = 1.dp, color = MaterialTheme.colorScheme.primary)
     ) {
-        Text(text = language)
+        Text(text = language, style = style)
     }
 }
 
@@ -96,8 +110,7 @@ fun SigninOptionsButton(
             )
             Spacer(Modifier.width(MaterialTheme.spacing.sm))
             Text(
-                text = text,
-                style = MaterialTheme.typography.titleSmall.copy(
+                text = text, style = MaterialTheme.typography.titleSmall.copy(
                     fontWeight = FontWeight.Bold
 
                 )

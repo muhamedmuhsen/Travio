@@ -17,6 +17,7 @@ import com.example.designsystem.components.AppBottomBar
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
+    navigateToProfile: () -> Unit,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -35,9 +36,9 @@ fun HomeScreen(
             ) {
             Text("Hi")
             Button(onClick = {
-                viewModel.logout()
+                navigateToProfile()
             }) {
-                Text("Logout")
+                Text("Profile")
             }
         }
     }

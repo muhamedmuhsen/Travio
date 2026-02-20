@@ -16,7 +16,15 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
     }
-
+    flavorDimensions += "device"
+    productFlavors {
+        create("emulator") {
+            dimension = "device"
+        }
+        create("physical") {
+            dimension = "device"
+        }
+    }
     buildTypes {
         release {
             isMinifyEnabled = false

@@ -15,6 +15,18 @@ android {
         buildConfig = true
     }
 
+    flavorDimensions += "device"
+    productFlavors {
+        create("emulator") {
+            dimension = "device"
+            buildConfigField("String", "BASE_URL", "\"http://10.0.2.2:5116/api/\"")
+        }
+        create("physical") {
+            dimension = "device"
+            buildConfigField("String", "BASE_URL", "\"http://192.168.1.13:5116/api/\"")
+        }
+    }
+
     defaultConfig {
         minSdk = 29
 

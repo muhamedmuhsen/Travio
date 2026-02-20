@@ -3,6 +3,7 @@ package com.example.network.di
 import com.example.domain.repository.auth.TokenProvider
 import com.example.network.BuildConfig
 import com.example.network.api.AuthApi
+import com.example.network.api.UserManagementApi
 import com.example.network.clients.AuthInterceptor
 import com.example.network.clients.TokenAuthenticator
 import dagger.Module
@@ -59,6 +60,11 @@ object NetworkModule {
             else HttpLoggingInterceptor.Level.NONE
         )
 
+    @Provides
+    @Singleton
+    fun provideUserManagementApi(retrofit: Retrofit): UserManagementApi {
+        return retrofit.create(UserManagementApi::class.java)
+    }
 
     @Provides
     @Singleton

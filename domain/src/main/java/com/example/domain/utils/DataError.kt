@@ -17,7 +17,14 @@ sealed interface DataError : Error {
         WeakPassword,
         PasswordMismatch,
         ShortName,
-        InvalidOTPFormat
+        InvalidOTPFormat,
+        ShortFirstName,
+        ShortLastName,
+        MustHaveAtLeastOneFieldToUpdate,
+        InvalidUri,
+        EMPTY_FIRSTNAME,
+        EMPTY_LASTNAME,
+        ShortUsername
     }
 
     enum class Authentication : DataError {

@@ -1,4 +1,4 @@
-package com.example.data.repository
+package com.example.data.repository.auth
 
 import com.auth0.android.jwt.DecodeException
 import com.auth0.android.jwt.JWT

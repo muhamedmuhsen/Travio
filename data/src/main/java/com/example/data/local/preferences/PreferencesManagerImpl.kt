@@ -8,6 +8,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
+import okio.IOException
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -21,7 +22,9 @@ class PreferencesManagerImpl @Inject constructor(@ApplicationContext private val
         private val KEY_ONBOARDING_COMPLETE = booleanPreferencesKey("onboarding_complete")
         private val KEY_LOGGED_IN = booleanPreferencesKey("is_logged_in")
         private val KEY_CHOOSE_LANGUAGE = booleanPreferencesKey("choose_language")
+        private val KEY_DARK_MODE = booleanPreferencesKey("dark_mode")
     }
+
 
     override suspend fun setOnboardingComplete(complete: Boolean) {
         dataStore.edit { it[KEY_ONBOARDING_COMPLETE] = complete }
@@ -35,7 +38,6 @@ class PreferencesManagerImpl @Inject constructor(@ApplicationContext private val
         return dataStore.data.map { it[KEY_ONBOARDING_COMPLETE] ?: false }
     }
 
-    // Language
     override suspend fun setChooseLanguage(complete: Boolean) {
         dataStore.edit { it[KEY_CHOOSE_LANGUAGE] = complete }
     }
@@ -44,7 +46,18 @@ class PreferencesManagerImpl @Inject constructor(@ApplicationContext private val
         return dataStore.data.map { it[KEY_CHOOSE_LANGUAGE] ?: false }
     }
 
-    // Login state
+    override suspend fun saveDarkModePreference(isDarkMode: Boolean) {
+        dataStore.edit { it[KEY_DARK_MODE] = isDarkMode }
+    }
+
+    override suspend fun isDarkModeEnabled(): Boolean {
+        return dataStore.data.first()[KEY_DARK_MODE] ?: false
+    }
+
+    override fun observeDarkMode(): Flow<Boolean> {
+        return dataStore.data.map { it[KEY_DARK_MODE] ?: false }
+    }
+
     override suspend fun setLoggedIn(loggedIn: Boolean) {
         dataStore.edit { it[KEY_LOGGED_IN] = loggedIn }
     }

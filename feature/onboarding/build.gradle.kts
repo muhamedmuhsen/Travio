@@ -30,7 +30,15 @@ android {
             "\"$googleWebClientId\""
         )
     }
-
+    flavorDimensions += "device"
+    productFlavors {
+        create("emulator") {
+            dimension = "device"
+        }
+        create("physical") {
+            dimension = "device"
+        }
+    }
     buildTypes {
         release {
             isMinifyEnabled = false
@@ -61,7 +69,6 @@ dependencies {
     implementation(project(":feature:utils"))
     implementation(project(":domain"))
     implementation(project(":data"))
-
     // Core Android
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
