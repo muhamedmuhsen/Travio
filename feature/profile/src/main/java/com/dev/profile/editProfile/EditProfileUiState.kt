@@ -14,5 +14,9 @@ data class EditProfileUiState(
     val isUsernameError: Boolean = false,
     val usernameErrorMessage: UiText? = null,
     val profileImageUri: String? = null,
+    val originalProfileImageUri: String? = null,
+    val originalFirstName: String = "",
+    val originalLastName: String = "",
+    val originalUsername: String = "",
     val profileUiState: UiState<Unit> = UiState.Idle
 )

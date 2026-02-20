@@ -1,11 +1,21 @@
 package com.example.data.mapper
 
+import com.example.data.BuildConfig
 import com.example.domain.model.GoogleUser
 import com.example.domain.model.User
 import com.example.network.dto.auth.social.GoogleUserDto
 import com.example.network.dto.auth.UserDto
 import com.example.network.dto.user_managment.GetUserResponse
 import com.example.network.dto.user_managment.UserData
+
+/**
+ * Converts a relative image path like "/uploads/abc.jpg" to a full URL.
+ * Already-absolute URLs (starting with "http") are returned unchanged.
+ */
+private fun String?.toAbsoluteImageUrl(): String? {
+    if (this.isNullOrBlank()) return null
+    return if (this.startsWith("http")) this else "${BuildConfig.IMAGE_BASE_URL}$this"
+}
 
 fun UserDto.toDomain(): User {
     return User(
@@ -23,7 +33,6 @@ fun GoogleUserDto.toDomain(): GoogleUser {
         displayName = displayName,
         email = email,
         profilePicUrl = profilePicUrl
-
     )
 }
 
@@ -43,7 +52,7 @@ fun GetUserResponse.toDomain(): User {
         firstName = data.firstName,
         lastName = data.lastName,
         email = data.email,
-        profilePictureUrl = data.profilePictureUrl
+        profilePictureUrl = data.profilePictureUrl.toAbsoluteImageUrl()
     )
 }
 
@@ -53,6 +62,6 @@ fun UserData.toDomain(): User {
         lastName = lastName,
         username = userName,
         email = email,
-        profilePictureUrl = profilePictureUrl
+        profilePictureUrl = profilePictureUrl.toAbsoluteImageUrl()
     )
 }

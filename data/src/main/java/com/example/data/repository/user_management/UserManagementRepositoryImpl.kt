@@ -1,5 +1,7 @@
 package com.example.data.repository.user_management
 
+import android.content.Context
+import android.net.Uri
 import com.example.data.local.datastore.SecureTokenStorage
 import com.example.domain.model.User
 import com.example.domain.repository.prefernces.PreferencesManager
@@ -12,11 +14,16 @@ import retrofit2.HttpException
 import java.io.IOException
 import javax.inject.Inject
 import com.example.data.mapper.toDomain
+import com.example.data.BuildConfig
+import com.example.data.utils.toMultipartBodyPart
+import dagger.hilt.android.qualifiers.ApplicationContext
+import androidx.core.net.toUri
 
 class UserManagementRepositoryImpl @Inject constructor(
     private val api: UserManagementApi,
     private val secureTokenStorage: SecureTokenStorage,
     private val preferencesManager: PreferencesManager,
+    @ApplicationContext private val context: Context
 ) : UserManagementRepository {
 
     override suspend fun getUser(): Result<User, DataError> {
@@ -58,8 +65,17 @@ class UserManagementRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun updateProfilePic(imageUri: String): Result<Unit, DataError> {
-        TODO("Not yet implemented")
+    override suspend fun updateProfilePic(imageUri: String): Result<String, DataError> {
+        try {
+            val uri = imageUri.toUri()
+            val multipartBody =
+                uri.toMultipartBodyPart(context) ?: return Result.Error(DataError.Data.UnknownError)
+            val response = api.updateProfilePic(multipartBody)
+            val absoluteUrl = "${BuildConfig.IMAGE_BASE_URL}${response.data}"
+            return Result.Success(absoluteUrl)
+        } catch (e: Exception) {
+            return Result.Error(DataError.Network.UnexpectedResponse)
+        }
     }
 
 

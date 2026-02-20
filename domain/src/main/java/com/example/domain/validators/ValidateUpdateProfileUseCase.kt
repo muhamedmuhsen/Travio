@@ -30,14 +30,24 @@ class ValidateUpdateProfileUseCase @Inject constructor(
             return Result.Error(DataError.Validation.InvalidEmailFormat)
         }
 
-        // Validate first name if provided and not blank
-        if (!firstName.isNullOrBlank() && firstName.length <= 2) {
-            return Result.Error(DataError.Validation.ShortName)
+        // Validate first name
+        if (firstName != null) {
+            if (firstName.isBlank()) {
+                return Result.Error(DataError.Validation.EMPTY_FIRSTNAME)
+            }
+            if (firstName.length <= 2) {
+                return Result.Error(DataError.Validation.ShortFirstName)
+            }
         }
 
-        // Validate last name if provided and not blank
-        if (!lastName.isNullOrBlank() && lastName.length <= 2) {
-            return Result.Error(DataError.Validation.ShortName)
+        // Validate last name
+        if (lastName != null) {
+            if (lastName.isBlank()) {
+                return Result.Error(DataError.Validation.EMPTY_LASTNAME)
+            }
+            if (lastName.length <= 2) {
+                return Result.Error(DataError.Validation.ShortLastName)
+            }
         }
 
         // Validate profile picture URI if provided and not blank

@@ -14,5 +14,5 @@ interface UserManagementRepository {
         username: String
     ): Result<User, DataError>
 
-    suspend fun updateProfilePic(imageUri: String): Result<Unit, DataError>
+    suspend fun updateProfilePic(imageUri: String): Result<String, DataError>
 }

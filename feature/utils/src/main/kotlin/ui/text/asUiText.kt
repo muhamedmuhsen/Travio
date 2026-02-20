@@ -43,7 +43,11 @@ fun DataError.asUiText(): UiText {
         DataError.Validation.InvalidEmailFormat -> StringResource(R.string.error_invalid_email)
         DataError.Validation.WeakPassword -> StringResource(R.string.error_weak_password)
         DataError.Validation.PasswordMismatch -> StringResource(R.string.error_password_mismatch)
-        DataError.Validation.ShortName -> StringResource(R.string.error_short_name)
+        DataError.Validation.ShortFirstName -> StringResource(R.string.error_short_first_name)
+        DataError.Validation.ShortLastName -> StringResource(R.string.error_short_last_name)
+        DataError.Validation.ShortUsername -> StringResource(R.string.error_short_username)
+        DataError.Validation.EMPTY_FIRSTNAME -> StringResource(R.string.error_empty_first_name)
+        DataError.Validation.EMPTY_LASTNAME -> StringResource(R.string.error_empty_last_name)
         DataError.Validation.MustHaveAtLeastOneFieldToUpdate -> StringResource(R.string.error_must_have_at_least_one_field_to_update)
         DataError.Validation.InvalidUri -> StringResource(R.string.error_invalid_uri)
 

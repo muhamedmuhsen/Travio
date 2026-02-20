@@ -119,7 +119,7 @@ fun EditProfileScreen(
             isUsernameError = state.isUsernameError,
             profileImageUri = state.profileImageUri,
             onProfileImageClick = { imagePickerLauncher.launch("image/*") },
-            onUpdateClick = viewModel::updateProfile,
+            onUpdateClick = viewModel::saveProfile,
             firstNameErrorMessage = state.firstNameErrorMessage,
             lastNameErrorMessage = state.lastNameErrorMessage,
             usernameErrorMessage = state.usernameErrorMessage,

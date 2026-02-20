@@ -17,9 +17,9 @@ class UpdateProfileUseCase @Inject constructor(
         if (firstName.isEmpty() || lastName.isEmpty() || username.isEmpty()) return Result.Error(
             DataError.Validation.MissingFields
         )
-        if (firstName.length < 3 || lastName.length < 3 || username.length < 3) return Result.Error(
-            DataError.Validation.ShortName
-        )
+        if (firstName.length < 3) return Result.Error(DataError.Validation.ShortFirstName)
+        if (lastName.length < 3) return Result.Error(DataError.Validation.ShortLastName)
+        if (username.length < 3) return Result.Error(DataError.Validation.ShortUsername)
 
         return repository.updateProfile(
             firstName = firstName,

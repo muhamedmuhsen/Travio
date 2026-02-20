@@ -16,9 +16,13 @@ sealed interface DataError : Error {
         InvalidEmailFormat,
         WeakPassword,
         PasswordMismatch,
-        ShortName,
+        ShortFirstName,
+        ShortLastName,
         MustHaveAtLeastOneFieldToUpdate,
-        InvalidUri
+        InvalidUri,
+        EMPTY_FIRSTNAME,
+        EMPTY_LASTNAME,
+        ShortUsername
     }
 
     enum class Authentication : DataError {
