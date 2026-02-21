@@ -5,6 +5,7 @@ import android.database.sqlite.SQLiteException
 import android.database.sqlite.SQLiteFullException
 import com.example.data.mapper.place.toDomain
 import com.example.data.mapper.place.toEntity
+import com.example.database.di.IoDispatcher
 import com.example.database.place.FavoritePlaceDao
 import com.example.domain.model.Place
 import com.example.domain.repository.favorite.FavoritePlaceRepository
@@ -20,7 +21,7 @@ import javax.inject.Inject
 
 class FavoritePlaceRepositoryImpl @Inject constructor(
     private val favoritePlaceDao: FavoritePlaceDao,
-    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
+    @IoDispatcher private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : FavoritePlaceRepository {
     override fun getFavoritePlaces(): Flow<List<Place>> {
         return favoritePlaceDao

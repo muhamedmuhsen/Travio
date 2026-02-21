@@ -5,6 +5,7 @@ import android.database.sqlite.SQLiteException
 import android.database.sqlite.SQLiteFullException
 import com.example.data.mapper.post.toDomain
 import com.example.data.mapper.post.toEntity
+import com.example.database.di.IoDispatcher
 import com.example.database.post.FavoritePostDao
 import com.example.domain.model.Post
 import com.example.domain.repository.favorite.FavoritePostRepository
@@ -20,7 +21,7 @@ import javax.inject.Inject
 
 class FavoritePostRepositoryImpl @Inject constructor(
     private val favoritePostDao: FavoritePostDao,
-    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
+    @IoDispatcher private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : FavoritePostRepository {
     override fun getFavoritePosts(): Flow<List<Post>> {
         return favoritePostDao.getAllFavoritePosts()

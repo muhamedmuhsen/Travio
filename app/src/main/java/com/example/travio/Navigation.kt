@@ -6,6 +6,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.dev.favroite.FavoriteScreen
 import com.dev.profile.editProfile.EditProfileScreen
 import com.dev.profile.profile_.ProfileScreen
 import com.example.common.navigation.Screen
@@ -18,6 +19,8 @@ import com.example.feature.onboarding.OnboardingScreen
 import com.example.feature.signup.SignupScreen
 import com.example.feature.starterlogin.StarterLogin
 import com.example.feature.verifyEmail.VerifyEmailScreen
+import java.net.URLDecoder
+import java.net.URLEncoder
 
 @Composable
 fun TravioNavHost(
@@ -122,12 +125,13 @@ fun TravioNavHost(
                 navigateToProfile = {
                     navController.navigate(Screen.ProfileScreen.route)
                 },
+                navigateToFavorite = { navController.navigate(Screen.FavoriteScreen.route) },
             )
         }
         composable(Screen.ProfileScreen.route) {
             ProfileScreen(
                 onNavigateToDetail = { data ->
-                    val encodedPic = java.net.URLEncoder.encode(data.profilePicUri ?: "", "UTF-8")
+                    val encodedPic = URLEncoder.encode(data.profilePicUri ?: "", "UTF-8")
                     navController.navigate(Screen.EditProfileScreen.route + "/${encodedPic}" + "/${data.firstname}" + "/${data.lastname}" + "/${data.username}")
                 },
                 navigateToHome = {
@@ -136,9 +140,10 @@ fun TravioNavHost(
                 navController = navController
             )
         }
+
         composable(Screen.EditProfileScreen.route + "/{profilePic}" + "/{firstname}" + "/{lastname}" + "/{username}") {
             val profilePic = it.arguments?.getString("profilePic")?.let { pic ->
-                java.net.URLDecoder.decode(pic, "UTF-8").ifEmpty { null }
+                URLDecoder.decode(pic, "UTF-8").ifEmpty { null }
             }
             val firstName = it.arguments?.getString("firstname")
             val lastName = it.arguments?.getString("lastname")
@@ -161,6 +166,15 @@ fun TravioNavHost(
                 firstName = firstName,
                 lastName = lastName,
                 username = username
+            )
+        }
+
+        composable(Screen.FavoriteScreen.route) {
+            FavoriteScreen(
+                navigateToProfile = {
+                    navController.navigate(Screen.ProfileScreen.route)
+                },
+                navigateToHome = { navController.navigate(Screen.HomeScreen.route) }
             )
         }
     }
