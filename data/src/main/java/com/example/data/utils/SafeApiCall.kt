@@ -38,7 +38,6 @@ private fun mapHttpError(e: HttpException): DataError {
                 DataError.Authentication.UnauthorizedAccess
             }
         }
-
         404 -> DataError.Authentication.UserNotFound
         408 -> DataError.Network.Timeout
         429 -> DataError.Network.TooManyRequests

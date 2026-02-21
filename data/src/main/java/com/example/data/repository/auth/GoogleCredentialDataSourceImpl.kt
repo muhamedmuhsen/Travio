@@ -14,16 +14,12 @@ import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.google.android.libraries.identity.googleid.GoogleIdTokenParsingException
 import javax.inject.Inject
 
-class GoogleCredentialDataSourceImpl @Inject constructor(
-) {
-
+class GoogleCredentialDataSourceImpl @Inject constructor() {
     suspend fun getGoogleIdToken(
         context: Context,
         webClientId: String
     ): Result<String, DataError> {
         try {
-
-
             val credentialManager = CredentialManager.Companion.create(context)
 
             val googleIdOption = GetGoogleIdOption.Builder()

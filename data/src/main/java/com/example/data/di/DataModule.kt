@@ -32,15 +32,11 @@ object DataStoreModule {
     @Provides
     @Singleton
     fun provideUserManagementRepository(
-        secureTokenStorage: SecureTokenStorage,
-        preferencesManager: PreferencesManager,
         api: UserManagementApi,
         @ApplicationContext context: Context
     ): UserManagementRepository {
         return UserManagementRepositoryImpl(
             api = api,
-            secureTokenStorage = secureTokenStorage,
-            preferencesManager = preferencesManager,
             context = context
         )
     }

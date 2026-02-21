@@ -21,8 +21,6 @@ import androidx.core.net.toUri
 
 class UserManagementRepositoryImpl @Inject constructor(
     private val api: UserManagementApi,
-    private val secureTokenStorage: SecureTokenStorage,
-    private val preferencesManager: PreferencesManager,
     @ApplicationContext private val context: Context
 ) : UserManagementRepository {
 
