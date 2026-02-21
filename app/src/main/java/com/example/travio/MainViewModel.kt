@@ -20,7 +20,7 @@ class MainViewModel @Inject constructor(private val preferencesManager: Preferen
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),
             initialValue = false
-    )
+        )
 
     sealed interface StartDestination {
         data object Onboarding : StartDestination
