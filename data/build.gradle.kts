@@ -22,6 +22,8 @@ android {
         localProperties.load(FileInputStream(localPropertiesFile))
     }
 
+
+
     defaultConfig {
         minSdk = 29
 
@@ -29,13 +31,11 @@ android {
         consumerProguardFiles("consumer-rules.pro")
 
         val googleWebClientId = localProperties.getProperty("GOOGLE_WEB_CLIENT_ID", "")
-        buildConfigField(
-            "String",
-            "GOOGLE_WEB_CLIENT_ID",
-            "\"$googleWebClientId\""
-        )
-    }
+        buildConfigField("String", "GOOGLE_WEB_CLIENT_ID", "\"$googleWebClientId\"")
 
+        val imageBaseUrl = localProperties.getProperty("IMAGE_BASE_URL", "http://10.0.2.2:5116")
+        buildConfigField("String", "IMAGE_BASE_URL", "\"$imageBaseUrl\"")
+    }
     buildTypes {
         release {
             isMinifyEnabled = false

@@ -3,13 +3,13 @@ package com.example.feature.login
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.data.repository.GoogleCredentialDataSourceImpl
+import com.example.data.repository.auth.GoogleCredentialDataSourceImpl
 import com.example.domain.utils.Result
 import com.example.domain.utils.DataError
 import com.example.domain.repository.prefernces.CredentialsManager
 import com.example.domain.repository.prefernces.PreferencesManager
-import com.example.domain.usecase.auth.GoogleSignInUseCase
-import com.example.domain.usecase.auth.LoginUseCase
+import com.example.domain.usecase.auth.login.GoogleSignInUseCase
+import com.example.domain.usecase.auth.login.LoginUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -26,7 +26,6 @@ class LoginViewModel @Inject constructor(
     private val loginUseCase: LoginUseCase,
     private val googleSignInUseCase: GoogleSignInUseCase,
     private val googleCredentialDataSource: GoogleCredentialDataSourceImpl,
-    private val preferencesManager: PreferencesManager,
     private val credentialsManager: CredentialsManager
 ) : ViewModel() {
     private val _state = MutableStateFlow(LoginUiState())
@@ -78,8 +77,10 @@ class LoginViewModel @Inject constructor(
                     if (result.error == DataError.Validation.InvalidEmailFormat) {
                         _state.update { it.copy(isEmailError = true) }
                     }
-                    _state.update { it.copy(loginState = UiState.Error(result.error.asUiText())) }
-                    sendEvent(LoginEvent.ShowAuthError(result.error.asUiText()))
+                    val errorMessage = result.error.asUiText()
+                    _state.update { it.copy(loginState = UiState.Error(errorMessage)) }
+                    sendEvent(LoginEvent.ShowAuthError(errorMessage))
+                    _state.update { it.copy(loginState = UiState.Idle) }
                 }
 
                 is Result.Success -> {
@@ -107,6 +108,7 @@ class LoginViewModel @Inject constructor(
                     val message = result.error.asUiText()
                     _state.update { it.copy(loginState = UiState.Error(message)) }
                     sendEvent(LoginEvent.ShowAuthError(message))
+                    _state.update { it.copy(loginState = UiState.Idle) }
                 }
 
                 is Result.Success -> {
@@ -124,10 +126,10 @@ class LoginViewModel @Inject constructor(
                     val message = shouldNavigateToHome.error.asUiText()
                     _state.update { it.copy(loginState = UiState.Error(message)) }
                     sendEvent(LoginEvent.ShowAuthError(message))
+                    _state.update { it.copy(loginState = UiState.Idle) }
                 }
 
                 is Result.Success -> {
-                    preferencesManager.setLoggedIn(true)
                     sendEvent(LoginEvent.NavigateToHome)
                 }
             }
@@ -140,7 +142,8 @@ class LoginViewModel @Inject constructor(
                 isPasswordError = false,
                 isEmailError = false,
                 passwordError = null,
-                emailError = null
+                emailError = null,
+                errorMessage = null
             )
         }
     }
@@ -168,10 +171,14 @@ class LoginViewModel @Inject constructor(
     }
 
     fun onRememberMeChecked() {
-        _state.update { it.copy(isRememberMeChecked = !it.isRememberMeChecked) }
-        val currentCheckedStatus = _state.value.isRememberMeChecked
+        val newValue = !_state.value.isRememberMeChecked
+        _state.update { it.copy(isRememberMeChecked = newValue) }
         viewModelScope.launch {
-            credentialsManager.setRememberMe(currentCheckedStatus)
+            credentialsManager.setRememberMe(newValue)
+            if (!newValue) {
+                credentialsManager.clearCredentials()
+            }
         }
     }
+
 }

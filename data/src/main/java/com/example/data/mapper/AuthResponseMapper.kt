@@ -9,7 +9,8 @@ fun AuthApiResponseDto.toDomain(): AuthResponse {
         username = username,
         email = email,
         token = token,
-        refreshTokenExpiration = refreshTokenExpiration,
-        expiresOn = expiresOn
+        refreshToken = refreshToken,
+        refreshTokenExpiration = refreshTokenExpiration.toLong(),
+        expiresOn = expiresOn.toLong()
     )
 }

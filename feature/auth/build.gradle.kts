@@ -17,7 +17,6 @@ android {
         compose = true
         buildConfig = true
     }
-
     val localProperties = Properties()
     val localPropertiesFile = rootProject.file("local.properties")
     if (localPropertiesFile.exists()) {

@@ -3,7 +3,8 @@ package com.example.feature.forgetpassword.code
 import com.example.domain.utils.Result
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.domain.usecase.auth.SendVerificationCodeUseCase
+import com.example.domain.usecase.auth.passwordreset.ForgetPasswordUseCase
+import com.example.domain.usecase.auth.passwordreset.SendVerificationCodeUseCase
 import com.example.domain.utils.DataError
 import com.example.feature.code.CodeEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -21,7 +22,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CodeViewModel @Inject constructor(
-    private val verificationCodeUseCase: SendVerificationCodeUseCase
+    private val verificationCodeUseCase: SendVerificationCodeUseCase,
+    private val forgetPasswordUseCase: ForgetPasswordUseCase
 ) : ViewModel() {
     private val _state = MutableStateFlow(CodeState())
     val state = _state.asStateFlow()
@@ -96,10 +98,15 @@ class CodeViewModel @Inject constructor(
     }
 
     fun onSendAgainClicked(email: String) {
-        onContinueClicked(email)
         clearErrors()
-        startCountdown()
+        viewModelScope.launch {
+            when (val result = forgetPasswordUseCase(email)) {
+                is Result.Success -> startCountdown()
+                is Result.Error -> sendEvent(CodeEvent.ShowError(result.error.asUiText()))
+            }
+        }
     }
+
 
     override fun onCleared() {
         super.onCleared()

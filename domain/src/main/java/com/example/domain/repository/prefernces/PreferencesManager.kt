@@ -15,5 +15,9 @@ interface PreferencesManager {
     suspend fun setChooseLanguage(complete: Boolean)
     fun observeChooseLanguage(): Flow<Boolean>
 
+    suspend fun saveDarkModePreference(isDarkMode: Boolean)
+    suspend fun isDarkModeEnabled(): Boolean
+
+    fun observeDarkMode(): Flow<Boolean>
 
 }

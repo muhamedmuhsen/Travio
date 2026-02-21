@@ -13,6 +13,7 @@ fun DataError.asUiText(): UiText {
         DataError.Authentication.UserAlreadyExists -> StringResource(R.string.error_user_already_exists)
         DataError.Authentication.RegistrationFailed -> StringResource(R.string.error_registration_failed)
         DataError.Authentication.SignInFailed -> StringResource(R.string.error_sign_in_failed)
+        DataError.Authentication.UsernameAlreadyExists -> StringResource(R.string.error_username_already_exists)
 
         DataError.Authorization.AccessDenied -> StringResource(R.string.error_access_denied)
         DataError.Authorization.AccountDisabled -> StringResource(R.string.error_account_disabled)
@@ -43,6 +44,13 @@ fun DataError.asUiText(): UiText {
         DataError.Validation.InvalidEmailFormat -> StringResource(R.string.error_invalid_email)
         DataError.Validation.WeakPassword -> StringResource(R.string.error_weak_password)
         DataError.Validation.PasswordMismatch -> StringResource(R.string.error_password_mismatch)
+        DataError.Validation.ShortFirstName -> StringResource(R.string.error_short_first_name)
+        DataError.Validation.ShortLastName -> StringResource(R.string.error_short_last_name)
+        DataError.Validation.ShortUsername -> StringResource(R.string.error_short_username)
+        DataError.Validation.EMPTY_FIRSTNAME -> StringResource(R.string.error_empty_first_name)
+        DataError.Validation.EMPTY_LASTNAME -> StringResource(R.string.error_empty_last_name)
+        DataError.Validation.MustHaveAtLeastOneFieldToUpdate -> StringResource(R.string.error_must_have_at_least_one_field_to_update)
+        DataError.Validation.InvalidUri -> StringResource(R.string.error_invalid_uri)
         DataError.Validation.ShortName -> StringResource(R.string.error_short_name)
         DataError.Validation.InvalidOTPFormat -> StringResource(R.string.error_invalid_otp)
 
@@ -50,11 +58,7 @@ fun DataError.asUiText(): UiText {
         DataError.Verification.CodeExpired -> StringResource(R.string.error_code_expired)
         DataError.Verification.TooManyAttempts -> StringResource(R.string.error_too_many_attempts)
         DataError.Verification.VerificationFailed -> StringResource(R.string.error_verification_failed)
-        DataError.Local.InvalidInput -> StringResource(R.string.error_invalid_input)
-        DataError.Local.ConstraintViolation -> StringResource(R.string.error_constraint_violation)
-        DataError.Local.RecordNotFound -> StringResource(R.string.error_record_not_found)
-        DataError.Local.DatabaseError -> StringResource(R.string.error_database)
-        DataError.Local.UnkownError -> StringResource(R.string.error_local_unknown)
+
     }
 }
 

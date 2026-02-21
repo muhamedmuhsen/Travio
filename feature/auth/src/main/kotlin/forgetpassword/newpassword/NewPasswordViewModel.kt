@@ -1,13 +1,10 @@
 package com.example.feature.forgetpassword.newpassword
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.domain.repository.auth.TokenProvider
-import com.example.domain.usecase.auth.ResetPasswordUseCase
-import com.example.domain.utils.DataError
+import com.example.domain.usecase.auth.passwordreset.ResetPasswordUseCase
 import com.example.domain.utils.Result
-import com.example.domain.validators.ValidatePasswordUseCase
 import com.example.feature.newpassword.NewPasswordState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
@@ -23,7 +20,6 @@ import javax.inject.Inject
 @HiltViewModel
 class NewPasswordViewModel @Inject constructor(
     private val resetPasswordUseCase: ResetPasswordUseCase,
-    private val validatePasswordUseCase: ValidatePasswordUseCase,
     private val tokenProvider: TokenProvider
 ) : ViewModel() {
 
@@ -44,7 +40,6 @@ class NewPasswordViewModel @Inject constructor(
         val confirmPassword = _state.value.confirmNewPassword
 
         viewModelScope.launch {
-            if (!hasPasswordValidationError(password, confirmPassword)) return@launch
             val resetToken = tokenProvider.getResetToken()
             when (val result = resetPasswordUseCase(resetToken, email, password, confirmPassword)) {
                 is Result.Error -> {
@@ -72,23 +67,6 @@ class NewPasswordViewModel @Inject constructor(
 
     private fun clearErrors() {
         _state.update { it.copy(isPasswordsDoesnotMatch = false, isNewPasswordValid = true) }
-    }
-
-    private suspend fun hasPasswordValidationError(
-        password: String, confirmPassword: String
-    ): Boolean {
-        if (password != confirmPassword) {
-            _state.update { currentState -> currentState.copy(isPasswordsDoesnotMatch = true) }
-            sendEvent(NewPasswordEvent.ShowError(DataError.Validation.PasswordMismatch.asUiText()))
-            return false
-        }
-
-        if (!validatePasswordUseCase(password)) {
-            _state.update { currentState -> currentState.copy(isNewPasswordValid = false) }
-            sendEvent(NewPasswordEvent.ShowError(DataError.Validation.WeakPassword.asUiText()))
-            return false
-        }
-        return true
     }
 
     fun onPasswordChange(password: String) {

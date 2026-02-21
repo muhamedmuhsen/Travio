@@ -1,14 +1,15 @@
 package com.example.feature.signup
 
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.data.repository.GoogleCredentialDataSourceImpl
+import com.example.data.repository.auth.GoogleCredentialDataSourceImpl
 import com.example.domain.repository.prefernces.PreferencesManager
-import com.example.domain.usecase.auth.GoogleSignInUseCase
+import com.example.domain.usecase.auth.login.GoogleSignInUseCase
+import com.example.domain.usecase.auth.emailverification.SendVerifyEmailOtpUseCase
 import com.example.domain.utils.Result
-import com.example.domain.usecase.auth.SignupUseCase
-import com.example.feature.login.LoginEvent
+import com.example.domain.usecase.auth.signup.SignupUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,16 +20,15 @@ import kotlinx.coroutines.launch
 import ui.state.UiState
 import ui.text.asUiText
 import javax.inject.Inject
-import kotlin.Boolean
 
 @HiltViewModel
 class SignupViewModel @Inject constructor(
     private val signupUseCase: SignupUseCase,
     private val googleSignInUseCase: GoogleSignInUseCase,
+    private val sendVerifyEmailOtpUseCase: SendVerifyEmailOtpUseCase,
     private val googleCredentialDataSource: GoogleCredentialDataSourceImpl,
     private val preferencesManager: PreferencesManager,
-
-    ) : ViewModel() {
+) : ViewModel() {
     private val _state = MutableStateFlow(SignupUiState())
     val state = _state.asStateFlow()
 
@@ -102,16 +102,35 @@ class SignupViewModel @Inject constructor(
                 }
 
                 is Result.Success -> {
-                    _state.update {
-                        it.copy(
-                            signupState = UiState.Success(),
-                        )
+                    Log.d(
+                        "SignupViewModel",
+                        "Signup successful, sending OTP to: ${_state.value.email}"
+                    )
+                    when (val otpResult = sendVerifyEmailOtpUseCase(_state.value.email)) {
+                        is Result.Success -> {
+                            Log.d(
+                                "SignupViewModel",
+                                "OTP sent successfully. Expires: ${otpResult.data}"
+                            )
+                            _state.update { it.copy(signupState = UiState.Success()) }
+                            _event.send(SignupEvent.NavigateToVerifyEmail)
+                        }
+
+                        is Result.Error -> {
+                            Log.e(
+                                "SignupViewModel",
+                                "Failed to send OTP. Error: ${otpResult.error}"
+                            )
+                            _state.update { it.copy(signupState = UiState.Error(otpResult.error.asUiText())) }
+                            sendEvent(SignupEvent.ShowAuthError(otpResult.error.asUiText()))
+                        }
                     }
-                    _event.send(SignupEvent.NavigateToHome)
                 }
             }
         }
     }
+
+
 
     private fun clearErrors() {
         _state.update {

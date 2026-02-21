@@ -14,15 +14,7 @@ suspend fun <T> safeApiCall(
         val result = apiCall()
         Result.Success(result)
     } catch (e: HttpException) {
-        val error = when (e.code()) {
-            400 -> DataError.Network.BadRequest
-            401 -> DataError.Authentication.UnauthorizedAccess
-            404 -> DataError.Authentication.UserNotFound
-            408 -> DataError.Network.Timeout
-            429 -> DataError.Network.TooManyRequests
-            in 500..599 -> DataError.Network.ServerError
-            else -> DataError.Network.UnexpectedResponse
-        }
+        val error = mapHttpError(e)
         Result.Error(error)
     } catch (e: UnknownHostException) {
         Result.Error(DataError.Network.NoInternetConnection)
@@ -33,4 +25,24 @@ suspend fun <T> safeApiCall(
     } catch (e: Exception) {
         Result.Error(DataError.Network.UnexpectedResponse)
     }
+}
+
+private fun mapHttpError(e: HttpException): DataError {
+    val error = when (e.code()) {
+        400 -> DataError.Network.BadRequest
+        401 -> {
+            val errorBody = e.response()?.errorBody()?.string().orEmpty()
+            if (errorBody.contains("Username is already registered", ignoreCase = true)) {
+                DataError.Authentication.UsernameAlreadyExists
+            } else {
+                DataError.Authentication.UnauthorizedAccess
+            }
+        }
+        404 -> DataError.Authentication.UserNotFound
+        408 -> DataError.Network.Timeout
+        429 -> DataError.Network.TooManyRequests
+        in 500..599 -> DataError.Network.ServerError
+        else -> DataError.Network.UnexpectedResponse
+    }
+    return error
 }

@@ -13,6 +13,17 @@
     <string name="language_english">English</string>
     <string name="language_arabic">اللغة العربية</string>
 
+    <!-- Bottom Navigation -->
+    <string name="bottom_nav_home">الرئيسية</string>
+    <string name="bottom_nav_favorite">المفضلة</string>
+    <string name="bottom_nav_community">المجتمع</string>
+    <string name="bottom_nav_ai_chat">الدردشة الذكية</string>
+    <string name="bottom_nav_profile">الملف الشخصي</string>
+
+    <!-- Content Descriptions -->
+    <string name="hide_password">إخفاء كلمة المرور</string>
+    <string name="show_password">إظهار كلمة المرور</string>
+
     <!-- Error Messages -->
     <!-- Network -->
     <string name="error_no_internet">لا يوجد اتصال بالإنترنت. يرجى التحقق من الشبكة.</string>
@@ -27,6 +38,7 @@
     <string name="error_invalid_credentials">البريد الإلكتروني أو كلمة المرور غير صحيحة.</string>
     <string name="error_user_not_found">الحساب غير موجود.</string>
     <string name="error_user_already_exists">يوجد حساب مسجل بهذا البريد الإلكتروني بالفعل.</string>
+    <string name="error_username_already_exists">اسم المستخدم هذا مستخدم بالفعل. يرجى اختيار اسم آخر.</string>
     <string name="error_sign_in_failed">فشل تسجيل الدخول. حاول مرة أخرى.</string>
     <string name="error_registration_failed">فشل التسجيل. حاول مرة أخرى.</string>
     <string name="error_authentication_error">خطأ في المصادقة. يرجى تسجيل الدخول مرة أخرى.</string>
@@ -44,6 +56,13 @@
     <string name="error_weak_password">يجب أن تتكون كلمة المرور من 6 أحرف على الأقل وتتضمن حروفًا وأرقامًا ورموزًا خاصة</string>
     <string name="error_password_mismatch">كلمات المرور غير متطابقة.</string>
     <string name="error_short_name">الاسم قصير جداً.</string>
+    <string name="error_short_first_name">الاسم الأول قصير جداً.</string>
+    <string name="error_short_last_name">اسم العائلة قصير جداً.</string>
+    <string name="error_short_username">اسم المستخدم قصير جداً.</string>
+    <string name="error_empty_first_name">لا يمكن أن يكون الاسم الأول فارغاً.</string>
+    <string name="error_empty_last_name">لا يمكن أن يكون اسم العائلة فارغاً.</string>
+    <string name="error_must_have_at_least_one_field_to_update">يجب تقديم حقل واحد على الأقل للتحديث.</string>
+    <string name="error_invalid_uri">صورة غير صالحة. يرجى اختيار صورة صالحة.</string>
     <string name="error_invalid_otp">تنسيق رمز التحقق غير صالح.</string>
 
     <!-- Verification -->

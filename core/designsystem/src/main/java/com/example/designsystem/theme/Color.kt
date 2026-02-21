@@ -2,6 +2,22 @@ package com.example.designsystem.theme
 
 import androidx.compose.ui.graphics.Color
 
+/**
+ * Material Design 3 color tokens for the Travio app theme.
+ *
+ * This file contains color definitions for:
+ * - Light theme (standard, medium contrast, high contrast)
+ * - Dark theme (standard, medium contrast, high contrast)
+ *
+ * Contrast levels follow WCAG accessibility guidelines:
+ * - Standard: Default contrast
+ * - Medium: Enhanced contrast for better readability
+ * - High: Maximum contrast (WCAG AAA compliant)
+ */
+
+// ============================================
+// Light Theme - Standard Contrast
+// ============================================
 val primaryLight = Color(0xFF00535B)
 val onPrimaryLight = Color(0xFFFFFFFF)
 val primaryContainerLight = Color(0xFF006D77)
@@ -38,6 +54,9 @@ val surfaceContainerLight = Color(0xFFF0EDEC)
 val surfaceContainerHighLight = Color(0xFFEAE8E7)
 val surfaceContainerHighestLight = Color(0xFFE4E2E1)
 
+// ============================================
+// Light Theme - Medium Contrast (Enhanced Accessibility)
+// ============================================
 val primaryLightMediumContrast = Color(0xFF003D43)
 val onPrimaryLightMediumContrast = Color(0xFFFFFFFF)
 val primaryContainerLightMediumContrast = Color(0xFF006D77)
@@ -74,6 +93,9 @@ val surfaceContainerLightMediumContrast = Color(0xFFEAE8E7)
 val surfaceContainerHighLightMediumContrast = Color(0xFFDFDCDB)
 val surfaceContainerHighestLightMediumContrast = Color(0xFFD3D1D0)
 
+// ============================================
+// Light Theme - High Contrast (WCAG AAA Compliant)
+// ============================================
 val primaryLightHighContrast = Color(0xFF003237)
 val onPrimaryLightHighContrast = Color(0xFFFFFFFF)
 val primaryContainerLightHighContrast = Color(0xFF005159)
@@ -110,6 +132,9 @@ val surfaceContainerLightHighContrast = Color(0xFFE4E2E1)
 val surfaceContainerHighLightHighContrast = Color(0xFFD6D4D3)
 val surfaceContainerHighestLightHighContrast = Color(0xFFC8C6C5)
 
+// ============================================
+// Dark Theme - Standard Contrast
+// ============================================
 val primaryDark = Color(0xFF82D3DE)
 val onPrimaryDark = Color(0xFF00363C)
 val primaryContainerDark = Color(0xFF006D77)
@@ -146,6 +171,9 @@ val surfaceContainerDark = Color(0xFF1F201F)
 val surfaceContainerHighDark = Color(0xFF2A2A2A)
 val surfaceContainerHighestDark = Color(0xFF353534)
 
+// ============================================
+// Dark Theme - Medium Contrast (Enhanced Accessibility)
+// ============================================
 val primaryDarkMediumContrast = Color(0xFF98E9F4)
 val onPrimaryDarkMediumContrast = Color(0xFF002A2F)
 val primaryContainerDarkMediumContrast = Color(0xFF4A9CA7)
@@ -182,6 +210,9 @@ val surfaceContainerDarkMediumContrast = Color(0xFF282828)
 val surfaceContainerHighDarkMediumContrast = Color(0xFF333232)
 val surfaceContainerHighestDarkMediumContrast = Color(0xFF3E3E3D)
 
+// ============================================
+// Dark Theme - High Contrast (WCAG AAA Compliant)
+// ============================================
 val primaryDarkHighContrast = Color(0xFFCAF8FF)
 val onPrimaryDarkHighContrast = Color(0xFF000000)
 val primaryContainerDarkHighContrast = Color(0xFF7ECFDA)
@@ -217,11 +248,4 @@ val surfaceContainerLowDarkHighContrast = Color(0xFF1F201F)
 val surfaceContainerDarkHighContrast = Color(0xFF303030)
 val surfaceContainerHighDarkHighContrast = Color(0xFF3B3B3B)
 val surfaceContainerHighestDarkHighContrast = Color(0xFF474746)
-
-
-
-
-
-
-
 

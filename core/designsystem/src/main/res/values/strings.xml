@@ -13,6 +13,17 @@
     <string name="language_english">English</string>
     <string name="language_arabic">اللغة العربية</string>
 
+    <!-- Bottom Navigation -->
+    <string name="bottom_nav_home">Home</string>
+    <string name="bottom_nav_favorite">Favorite</string>
+    <string name="bottom_nav_community">Community</string>
+    <string name="bottom_nav_ai_chat">AI Chat</string>
+    <string name="bottom_nav_profile">Profile</string>
+
+    <!-- Content Descriptions -->
+    <string name="hide_password">Hide password</string>
+    <string name="show_password">Show password</string>
+
     <!-- Error Messages -->
     <!-- Network -->
     <string name="error_no_internet">No internet connection. Please check your network.</string>
@@ -27,6 +38,7 @@
     <string name="error_invalid_credentials">Invalid email or password.</string>
     <string name="error_user_not_found">Account not found.</string>
     <string name="error_user_already_exists">An account with this email already exists.</string>
+    <string name="error_username_already_exists">This username is already taken. Please choose another one.</string>
     <string name="error_sign_in_failed">Sign in failed. Please try again.</string>
     <string name="error_registration_failed">Registration failed. Please try again.</string>
     <string name="error_authentication_error">Authentication error. Please sign in again.</string>
@@ -45,6 +57,13 @@
     <string name="error_password_mismatch">Passwords do not match.</string>
     <string name="error_short_name">Name is too short.</string>
     <string name="error_invalid_otp">Invalid verification code format.</string>
+    <string name="error_short_first_name">First name is too short.</string>
+    <string name="error_short_last_name">Last name is too short.</string>
+    <string name="error_short_username">Username is too short.</string>
+    <string name="error_empty_first_name">First name cannot be empty.</string>
+    <string name="error_empty_last_name">Last name cannot be empty.</string>
+    <string name="error_must_have_at_least_one_field_to_update">Must provide at least one field to update.</string>
+    <string name="error_invalid_uri">Invalid image. Please select a valid image.</string>
 
     <!-- Verification -->
     <string name="error_invalid_code">Invalid verification code.</string>
