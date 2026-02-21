@@ -18,11 +18,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import com.example.designsystem.theme.TravioTheme
+import com.example.designsystem.theme.elevation
+import com.example.designsystem.theme.spacing
 
 enum class SectionTab {
     All, Places, Posts
@@ -35,66 +35,101 @@ fun Section(
     onTabSelected: (SectionTab) -> Unit = {}
 ) {
     val tabs = listOf(SectionTab.All, SectionTab.Places, SectionTab.Posts)
-    val containerColor = Color(0xFFE8E8E8)
 
-    Row(
-        modifier = modifier
-            .clip(RoundedCornerShape(50))
-            .background(containerColor)
-            .padding(4.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
+    SectionContainer(modifier = modifier) {
         tabs.forEach { tab ->
-            val isSelected = tab == selectedTab
-            val interactionSource = remember { MutableInteractionSource() }
-
-            Box(
-                modifier = Modifier
-                    .clip(RoundedCornerShape(50))
-                    .then(
-                        if (isSelected) {
-                            Modifier
-                                .shadow(
-                                    elevation = 2.dp,
-                                    shape = RoundedCornerShape(50),
-                                    ambientColor = Color.Black.copy(alpha = 0.08f),
-                                    spotColor = Color.Black.copy(alpha = 0.08f)
-                                )
-                                .background(Color.White)
-                        } else {
-                            Modifier.background(Color.Transparent)
-                        }
-                    )
-                    .clickable(
-                        interactionSource = interactionSource,
-                        indication = null
-                    ) { onTabSelected(tab) }
-                    .padding(horizontal = 20.dp, vertical = 8.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = when (tab) {
-                        SectionTab.All -> "All"
-                        SectionTab.Places -> "Places"
-                        SectionTab.Posts -> "Posts"
-                    },
-                    style = MaterialTheme.typography.bodyMedium,
-                    fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Normal,
-                    color = if (isSelected) Color(0xFF1B1C1B) else Color(0xFF8A8A8A)
-                )
-            }
+            SectionTabItem(
+                tab = tab,
+                isSelected = tab == selectedTab,
+                onTabSelected = onTabSelected
+            )
         }
     }
 }
 
-@Preview(showBackground = true, backgroundColor = 0xFFF7FAFA)
+@Composable
+private fun SectionContainer(
+    modifier: Modifier = Modifier,
+    content: @Composable () -> Unit
+) {
+    Row(
+        modifier = modifier
+            .clip(MaterialTheme.shapes.large)
+            .background(MaterialTheme.colorScheme.surfaceContainerHighest)
+            .padding(MaterialTheme.spacing.xxs),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        content()
+    }
+}
+
+@Composable
+private fun SectionTabItem(
+    tab: SectionTab,
+    isSelected: Boolean,
+    onTabSelected: (SectionTab) -> Unit
+) {
+    val interactionSource = remember { MutableInteractionSource() }
+
+    Box(
+        modifier = Modifier
+            .clip(MaterialTheme.shapes.medium)
+            .selectedTabBackground(isSelected)
+            .clickable(
+                interactionSource = interactionSource,
+                indication = null
+            ) { onTabSelected(tab) }
+            .padding(
+                horizontal = MaterialTheme.spacing.xxl,
+                vertical = MaterialTheme.spacing.xs
+            ),
+        contentAlignment = Alignment.Center
+    ) {
+        SectionTabLabel(label = tab.label, isSelected = isSelected)
+    }
+}
+
+@Composable
+private fun Modifier.selectedTabBackground(isSelected: Boolean): Modifier =
+    if (isSelected) {
+        this
+            .shadow(
+                elevation = MaterialTheme.elevation.sm,
+                shape = RoundedCornerShape(50),
+                ambientColor = MaterialTheme.colorScheme.scrim.copy(alpha = 0.08f),
+                spotColor = MaterialTheme.colorScheme.scrim.copy(alpha = 0.08f)
+            )
+            .background(MaterialTheme.colorScheme.surface)
+    } else {
+        this.background(MaterialTheme.colorScheme.surfaceContainerHighest)
+    }
+
+@Composable
+private fun SectionTabLabel(label: String, isSelected: Boolean) {
+    Text(
+        text = label,
+        style = MaterialTheme.typography.bodyMedium,
+        fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Normal,
+        color = if (isSelected) MaterialTheme.colorScheme.onSurface
+        else MaterialTheme.colorScheme.onSurfaceVariant
+    )
+}
+
+private val SectionTab.label: String
+    get() = when (this) {
+        SectionTab.All -> "All"
+        SectionTab.Places -> "Places"
+        SectionTab.Posts -> "Posts"
+    }
+
+@Preview(showBackground = true)
 @Composable
 private fun SectionPreview() {
     TravioTheme {
         var selected by remember { mutableIntStateOf(0) }
         val tabs = SectionTab.entries
         Section(
-            modifier = Modifier.padding(16.dp),
+            modifier = Modifier.padding(MaterialTheme.spacing.md),
             selectedTab = tabs[selected],
             onTabSelected = { selected = tabs.indexOf(it) }
         )
