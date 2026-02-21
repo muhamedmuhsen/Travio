@@ -25,6 +25,11 @@ fun DataError.asUiText(): UiText {
         DataError.Data.UnknownError -> StringResource(R.string.error_unknown)
 
         DataError.Local.DiskFull -> StringResource(R.string.error_disk_full)
+        DataError.Local.InvalidInput -> StringResource(R.string.error_invalid_input)
+        DataError.Local.ConstraintViolation -> StringResource(R.string.error_constraint_violation)
+        DataError.Local.RecordNotFound -> StringResource(R.string.error_record_not_found)
+        DataError.Local.DatabaseError -> StringResource(R.string.error_database)
+        DataError.Local.UnkownError -> StringResource(R.string.error_local_unknown)
 
         DataError.Network.BadRequest -> StringResource(R.string.error_invalid_request)
         DataError.Network.NoInternetConnection -> StringResource(R.string.error_no_internet)
@@ -58,7 +63,6 @@ fun DataError.asUiText(): UiText {
         DataError.Verification.CodeExpired -> StringResource(R.string.error_code_expired)
         DataError.Verification.TooManyAttempts -> StringResource(R.string.error_too_many_attempts)
         DataError.Verification.VerificationFailed -> StringResource(R.string.error_verification_failed)
-
     }
 }
 
