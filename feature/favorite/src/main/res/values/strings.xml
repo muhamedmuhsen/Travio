@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Favorite Screen - Header -->
+    <string name="favorite_title">My Favorites</string>
+    <string name="favorite_items_count">%d items favourite</string>
+
+    <!-- Favorite Screen - Tabs -->
+    <string name="favorite_tab_all">All</string>
+    <string name="favorite_tab_places">Places</string>
+    <string name="favorite_tab_posts">Posts</string>
+
+    <!-- Favorite Screen - Empty State -->
+    <string name="favorite_empty_title">No favorites yet</string>
+    <string name="favorite_empty_subtitle">Start exploring and save your favorites</string>
+
+    <!-- Favorite Screen - Content Descriptions -->
+    <string name="favorite_icon_cd">Favorite</string>
+    <string name="favorite_remove_cd">Remove from favorites</string>
+</resources>
+

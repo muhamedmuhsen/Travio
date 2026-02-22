@@ -22,6 +22,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
@@ -29,10 +30,10 @@ import com.example.designsystem.theme.TravioTheme
 import com.example.feature.favorite.R
 
 @Composable
-fun PlaceCard(
+fun PostCard(
     modifier: Modifier = Modifier,
-    country: String,
-    city: String,
+    title: String,
+    author: String,
     imageUrl: String,
     isFavorite: Boolean,
     onFavoriteClick: () -> Unit,
@@ -46,9 +47,9 @@ fun PlaceCard(
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.outlineVariant),
         onClick = onClick
     ) {
-        PlaceContent(
-            country = country,
-            city = city,
+        PostContent(
+            title = title,
+            author = author,
             imageUrl = imageUrl,
             isFavorite = isFavorite,
             onFavoriteClick = onFavoriteClick
@@ -57,9 +58,9 @@ fun PlaceCard(
 }
 
 @Composable
-private fun PlaceContent(
-    country: String,
-    city: String,
+private fun PostContent(
+    title: String,
+    author: String,
     imageUrl: String,
     isFavorite: Boolean,
     onFavoriteClick: () -> Unit
@@ -72,25 +73,26 @@ private fun PlaceContent(
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Row(
+            modifier = Modifier.weight(1f),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             AsyncImage(
                 model = imageUrl,
-                contentDescription = "$city, $country",
+                contentDescription = title,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .size(96.dp)
                     .clip(MaterialTheme.shapes.medium)
             )
-            PlaceDetails(country = country, city = city)
+            PostDetails(title = title, author = author)
         }
-        FavoriteIcon(isFavorite = isFavorite, onFavoriteClick = onFavoriteClick)
+        PostFavoriteIcon(isFavorite = isFavorite, onFavoriteClick = onFavoriteClick)
     }
 }
 
 @Composable
-private fun FavoriteIcon(
+private fun PostFavoriteIcon(
     isFavorite: Boolean,
     onFavoriteClick: () -> Unit
 ) {
@@ -114,32 +116,37 @@ private fun FavoriteIcon(
 }
 
 @Composable
-private fun PlaceDetails(country: String, city: String) {
+private fun PostDetails(title: String, author: String) {
     Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
         Text(
-            text = country,
+            text = title,
             style = MaterialTheme.typography.titleMedium,
-            color = MaterialTheme.colorScheme.onBackground
+            color = MaterialTheme.colorScheme.onBackground,
+            maxLines = 2,
+            overflow = TextOverflow.Ellipsis
         )
         Text(
-            text = city,
+            text = author,
             style = MaterialTheme.typography.labelMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
         )
     }
 }
 
 @Preview(showBackground = true)
 @Composable
-private fun PlaceCardPreviewNotFavorite() {
+private fun PostCardPreview() {
     TravioTheme {
-        PlaceCard(
-            country = "Japan",
-            city = "Tokyo",
+        PostCard(
+            title = "Top 10 places to visit in Europe",
+            author = "John Doe",
             imageUrl = "",
-            isFavorite = false,
+            isFavorite = true,
             onFavoriteClick = {},
             onClick = {}
         )
     }
 }
+

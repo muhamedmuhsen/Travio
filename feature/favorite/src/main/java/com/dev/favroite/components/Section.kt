@@ -18,11 +18,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.designsystem.theme.TravioTheme
 import com.example.designsystem.theme.elevation
 import com.example.designsystem.theme.spacing
+import com.example.feature.favorite.R
 
 enum class SectionTab {
     All, Places, Posts
@@ -85,7 +87,7 @@ private fun SectionTabItem(
             ),
         contentAlignment = Alignment.Center
     ) {
-        SectionTabLabel(label = tab.label, isSelected = isSelected)
+        SectionTabLabel(label = tab.labelString(), isSelected = isSelected)
     }
 }
 
@@ -115,12 +117,12 @@ private fun SectionTabLabel(label: String, isSelected: Boolean) {
     )
 }
 
-private val SectionTab.label: String
-    get() = when (this) {
-        SectionTab.All -> "All"
-        SectionTab.Places -> "Places"
-        SectionTab.Posts -> "Posts"
-    }
+@Composable
+private fun SectionTab.labelString(): String = when (this) {
+    SectionTab.All -> stringResource(R.string.favorite_tab_all)
+    SectionTab.Places -> stringResource(R.string.favorite_tab_places)
+    SectionTab.Posts -> stringResource(R.string.favorite_tab_posts)
+}
 
 @Preview(showBackground = true)
 @Composable
