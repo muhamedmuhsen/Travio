@@ -1,21 +1,18 @@
 package com.example.travio
 
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatDelegate
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.getValue
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.rememberNavController
 import com.example.common.navigation.Screen
 import com.example.designsystem.theme.TravioTheme
-import com.example.domain.repository.prefernces.PreferencesManager
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 
 
 @AndroidEntryPoint
@@ -28,7 +25,8 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             val startDestination by viewModel.startDestination.collectAsStateWithLifecycle()
-            val isDarkMode by viewModel.isDarkMode.collectAsStateWithLifecycle()
+            val isDarkModePreference by viewModel.isDarkMode.collectAsStateWithLifecycle()
+            val isDarkMode = isDarkModePreference ?: isSystemInDarkTheme()
             TravioTheme(darkTheme = isDarkMode) {
                 if (startDestination != null) {
                     val destination = when (startDestination) {

@@ -2,6 +2,7 @@ package com.dev.profile.profile_
 
 import android.annotation.SuppressLint
 import android.content.res.Configuration
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -44,10 +45,10 @@ import com.example.feature.profile.R
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
 fun ProfileScreen(
+    modifier: Modifier = Modifier,
     navController: NavController,
     onNavigateToDetail: (NavigationData) -> Unit,
     navigateToHome: () -> Unit = {},
-    modifier: Modifier = Modifier,
     viewModel: ProfileViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -64,7 +65,10 @@ fun ProfileScreen(
         }
     }
 
+    val isSystemDark = isSystemInDarkTheme()
+
     LaunchedEffect(Unit) {
+        viewModel.initSystemDarkMode(isSystemDark)
         viewModel.event.collect { event ->
             when (event) {
                 is ProfileEvent.ShowProfileError -> {

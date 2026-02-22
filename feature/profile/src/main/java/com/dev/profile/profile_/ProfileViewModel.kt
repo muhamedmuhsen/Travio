@@ -51,10 +51,23 @@ class ProfileViewModel @Inject constructor(
 
     private fun observeTheme() {
         viewModelScope.launch {
-            preferencesManager.observeDarkMode().collect { isDarkMode ->
-                _uiState.update { state ->
-                    state.copy(isDarkMode = isDarkMode)
+            preferencesManager.observeDarkModeNullable().collect { isDarkMode ->
+                if (isDarkMode != null) {
+                    _uiState.update { state -> state.copy(isDarkMode = isDarkMode) }
                 }
+            }
+        }
+    }
+
+    fun initSystemDarkMode(isSystemDark: Boolean) {
+        viewModelScope.launch {
+            val hasExplicitPref = preferencesManager.observeDarkModeNullable()
+            hasExplicitPref.collect { stored ->
+                if (stored == null) {
+                    _uiState.update { state -> state.copy(isDarkMode = isSystemDark) }
+                }
+                // only need first emission
+                return@collect
             }
         }
     }
