@@ -17,11 +17,14 @@ interface FavoritePostDao {
     @Upsert
     suspend fun addPostToFavorite(post: Post)
 
+    @Query("SELECT COUNT(*) > 0 FROM post WHERE id = :postId")
+    fun isPostFavorite(postId: String): Flow<Boolean>
+
     @Delete
     suspend fun deletePostFromFavorite(post: Post)
 
     @Query("DELETE FROM post WHERE id = :postId")
-    suspend fun deletePostById(postId: Int)
+    suspend fun deletePostById(postId: String)
 }
 
 

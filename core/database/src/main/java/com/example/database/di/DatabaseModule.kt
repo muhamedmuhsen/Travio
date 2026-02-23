@@ -23,7 +23,9 @@ object DatabaseModule {
             context,
             TravioDatabase::class.java,
             "travio_database"
-        ).fallbackToDestructiveMigration().build()
+        )
+            .fallbackToDestructiveMigration()
+            .build()
 
     @Provides
     @Singleton
@@ -32,5 +34,4 @@ object DatabaseModule {
     @Provides
     @Singleton
     fun providePlaceDao(database: TravioDatabase): FavoritePlaceDao = database.placeDao()
-
 }

@@ -11,9 +11,12 @@ interface FavoritePlaceDao {
     @Query("SELECT * FROM place")
     fun getAllFavoritePlaces(): Flow<List<Place>>
 
+    @Query("SELECT COUNT(*) FROM place WHERE id = :placeId")
+    fun isPlaceFavorite(placeId: String): Flow<Boolean>
+
     @Upsert
     suspend fun addPlaceToFavorite(place: Place)
 
-    @Delete
-    suspend fun deletePlaceFromFavorite(place: Place)
+    @Query("DELETE FROM place WHERE id = :placeId")
+    suspend fun deletePlaceFromFavorite(placeId: String)
 }

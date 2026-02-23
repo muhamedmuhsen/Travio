@@ -16,16 +16,19 @@ import com.example.designsystem.components.AppBottomBar
 fun HomeScreen(
     modifier: Modifier = Modifier,
     navigateToProfile: () -> Unit,
+    navigateToFavorite: () -> Unit,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
-    Scaffold(bottomBar = {
-        AppBottomBar(
+    Scaffold(
+        bottomBar = {
+            AppBottomBar(
             selectedItem = state.selectedItem,
             onItemSelected = { index ->
                 when (index) {
                     4 -> navigateToProfile()
+                    1 -> navigateToFavorite()
                 }
             }
         )
