@@ -17,7 +17,8 @@ interface PreferencesManager {
 
     suspend fun saveDarkModePreference(isDarkMode: Boolean)
     suspend fun isDarkModeEnabled(): Boolean
-
     fun observeDarkMode(): Flow<Boolean>
+
+    fun observeDarkModeNullable(): Flow<Boolean?>
 
 }

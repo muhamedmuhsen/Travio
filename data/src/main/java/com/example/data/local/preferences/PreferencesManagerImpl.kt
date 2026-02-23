@@ -58,6 +58,10 @@ class PreferencesManagerImpl @Inject constructor(@ApplicationContext private val
         return dataStore.data.map { it[KEY_DARK_MODE] ?: false }
     }
 
+    override fun observeDarkModeNullable(): Flow<Boolean?> {
+        return dataStore.data.map { it[KEY_DARK_MODE] }
+    }
+
     override suspend fun setLoggedIn(loggedIn: Boolean) {
         dataStore.edit { it[KEY_LOGGED_IN] = loggedIn }
     }

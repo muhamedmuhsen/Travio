@@ -5,6 +5,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
@@ -20,6 +21,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.designsystem.theme.TravioTheme
 import com.example.designsystem.theme.elevation
@@ -41,6 +43,7 @@ fun Section(
     SectionContainer(modifier = modifier) {
         tabs.forEach { tab ->
             SectionTabItem(
+                modifier = Modifier.weight(1f),
                 tab = tab,
                 isSelected = tab == selectedTab,
                 onTabSelected = onTabSelected
@@ -52,7 +55,7 @@ fun Section(
 @Composable
 private fun SectionContainer(
     modifier: Modifier = Modifier,
-    content: @Composable () -> Unit
+    content: @Composable RowScope.() -> Unit
 ) {
     Row(
         modifier = modifier
@@ -67,6 +70,7 @@ private fun SectionContainer(
 
 @Composable
 private fun SectionTabItem(
+    modifier: Modifier = Modifier,
     tab: SectionTab,
     isSelected: Boolean,
     onTabSelected: (SectionTab) -> Unit
@@ -74,7 +78,7 @@ private fun SectionTabItem(
     val interactionSource = remember { MutableInteractionSource() }
 
     Box(
-        modifier = Modifier
+        modifier = modifier
             .clip(MaterialTheme.shapes.medium)
             .selectedTabBackground(isSelected)
             .clickable(
@@ -82,7 +86,7 @@ private fun SectionTabItem(
                 indication = null
             ) { onTabSelected(tab) }
             .padding(
-                horizontal = MaterialTheme.spacing.xxl,
+                horizontal = MaterialTheme.spacing.md,
                 vertical = MaterialTheme.spacing.xs
             ),
         contentAlignment = Alignment.Center
@@ -113,7 +117,10 @@ private fun SectionTabLabel(label: String, isSelected: Boolean) {
         style = MaterialTheme.typography.bodyMedium,
         fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Normal,
         color = if (isSelected) MaterialTheme.colorScheme.onSurface
-        else MaterialTheme.colorScheme.onSurfaceVariant
+        else MaterialTheme.colorScheme.onSurfaceVariant,
+        maxLines = 1,
+        softWrap = false,
+        overflow = TextOverflow.Ellipsis
     )
 }
 
