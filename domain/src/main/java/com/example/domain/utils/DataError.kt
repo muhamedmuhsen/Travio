@@ -74,4 +74,8 @@ sealed interface DataError : Error {
         DatabaseError,
         UnkownError
     }
+
+    enum class Location : DataError {
+        CouldNotGetTheLocation
+    }
 }

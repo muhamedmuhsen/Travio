@@ -1,6 +1,6 @@
-package com.example.data.mapper
+package com.example.data.mapper.auth
 
-import com.example.domain.model.AuthResponse
+import com.example.domain.model.auth.AuthResponse
 import com.example.network.dto.auth.AuthApiResponseDto
 
 fun AuthApiResponseDto.toDomain(): AuthResponse {

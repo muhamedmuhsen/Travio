@@ -7,6 +7,7 @@ facebookLogin = "17.0.0"
 googleid = "1.1.1"
 javaxInject = "1"
 kotlin = "2.0.21"
+kotlinxCoroutinesPlayServices = "1.10.2"
 ksp = "2.0.21-1.0.27"
 jetbrainsKotlinJvm = "2.0.21"
 kotlinxCoroutines = "1.9.0"
@@ -30,6 +31,7 @@ hilt = "2.52"
 hiltNavigationCompose = "1.2.0"
 
 # Networking
+playServicesLocation = "21.3.0"
 retrofit = "2.11.0"
 okhttp = "4.12.0"
 
@@ -91,6 +93,8 @@ androidx-hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navig
 
 # Networking - Retrofit
 javax-inject = { module = "javax.inject:javax.inject", version.ref = "javaxInject" }
+kotlinx-coroutines-play-services = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-play-services", version.ref = "kotlinxCoroutinesPlayServices" }
+play-services-location = { module = "com.google.android.gms:play-services-location", version.ref = "playServicesLocation" }
 retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit" }
 retrofit-converter-gson = { group = "com.squareup.retrofit2", name = "converter-gson", version.ref = "retrofit" }
 okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp" }

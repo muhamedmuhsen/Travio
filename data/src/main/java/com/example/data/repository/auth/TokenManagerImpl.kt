@@ -4,7 +4,7 @@ import com.auth0.android.jwt.DecodeException
 import com.auth0.android.jwt.JWT
 import com.example.domain.utils.Result
 import com.example.data.local.security.SecureTokenStorage
-import com.example.domain.model.DecodedToken
+import com.example.domain.model.auth.DecodedToken
 import com.example.domain.repository.auth.TokenManager
 import com.example.domain.utils.DataError
 import java.util.Date

@@ -1,17 +1,14 @@
-package com.example.data.mapper
+package com.example.data.mapper.auth
 
 import com.example.data.BuildConfig
-import com.example.domain.model.GoogleUser
-import com.example.domain.model.User
+import com.example.domain.model.auth.GoogleUser
+import com.example.domain.model.auth.User
 import com.example.network.dto.auth.social.GoogleUserDto
 import com.example.network.dto.auth.UserDto
 import com.example.network.dto.user_managment.GetUserResponse
 import com.example.network.dto.user_managment.UserData
 
-/**
- * Converts a relative image path like "/uploads/abc.jpg" to a full URL.
- * Already-absolute URLs (starting with "http") are returned unchanged.
- */
+
 private fun String?.toAbsoluteImageUrl(): String? {
     if (this.isNullOrBlank()) return null
     return if (this.startsWith("http")) this else "${BuildConfig.IMAGE_BASE_URL}$this"

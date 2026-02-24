@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Location -->
+    <string name="error_could_not_get_location">تعذّر الحصول على موقعك. يرجى المحاولة مجدداً.</string>
+</resources>
+

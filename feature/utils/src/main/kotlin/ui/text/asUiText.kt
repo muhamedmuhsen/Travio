@@ -63,6 +63,8 @@ fun DataError.asUiText(): UiText {
         DataError.Verification.CodeExpired -> StringResource(R.string.error_code_expired)
         DataError.Verification.TooManyAttempts -> StringResource(R.string.error_too_many_attempts)
         DataError.Verification.VerificationFailed -> StringResource(R.string.error_verification_failed)
+
+        DataError.Location.CouldNotGetTheLocation -> StringResource(R.string.error_could_not_get_location)
     }
 }
 

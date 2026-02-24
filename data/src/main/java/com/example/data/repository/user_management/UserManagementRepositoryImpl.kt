@@ -1,10 +1,7 @@
 package com.example.data.repository.user_management
 
 import android.content.Context
-import android.net.Uri
-import com.example.data.local.security.SecureTokenStorage
-import com.example.domain.model.User
-import com.example.domain.repository.prefernces.PreferencesManager
+import com.example.domain.model.auth.User
 import com.example.domain.repository.user_management.UserManagementRepository
 import com.example.domain.utils.DataError
 import com.example.domain.utils.Result
@@ -13,7 +10,7 @@ import com.example.network.dto.user_managment.UpdateProfileRequest
 import retrofit2.HttpException
 import java.io.IOException
 import javax.inject.Inject
-import com.example.data.mapper.toDomain
+import com.example.data.mapper.auth.toDomain
 import com.example.data.BuildConfig
 import com.example.data.utils.toMultipartBodyPart
 import dagger.hilt.android.qualifiers.ApplicationContext

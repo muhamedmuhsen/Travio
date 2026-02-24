@@ -1,6 +1,6 @@
 package com.example.domain.repository.favorite
 
-import com.example.domain.model.Post
+import com.example.domain.model.favorite.Post
 import com.example.domain.utils.DataError
 import com.example.domain.utils.Result
 import kotlinx.coroutines.flow.Flow

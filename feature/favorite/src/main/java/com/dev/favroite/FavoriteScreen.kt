@@ -40,8 +40,8 @@ import com.dev.favroite.components.SectionTab
 import com.example.designsystem.components.AppBottomBar
 import com.example.designsystem.theme.TravioTheme
 import com.example.designsystem.theme.spacing
-import com.example.domain.model.Place
-import com.example.domain.model.Post
+import com.example.domain.model.favorite.Place
+import com.example.domain.model.favorite.Post
 import com.example.feature.favorite.R
 import ui.state.UiState
 

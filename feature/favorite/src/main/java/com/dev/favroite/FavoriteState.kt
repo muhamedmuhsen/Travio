@@ -1,8 +1,8 @@
 package com.dev.favroite
 
 import com.dev.favroite.components.SectionTab
-import com.example.domain.model.Place
-import com.example.domain.model.Post
+import com.example.domain.model.favorite.Place
+import com.example.domain.model.favorite.Post
 import ui.state.UiState
 
 data class FavoriteState(

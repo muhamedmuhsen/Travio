@@ -1,6 +1,6 @@
 package com.example.domain.usecase.favorite.place
 
-import com.example.domain.model.Place
+import com.example.domain.model.favorite.Place
 import com.example.domain.repository.favorite.FavoritePlaceRepository
 import com.example.domain.utils.DataError
 import com.example.domain.utils.Result

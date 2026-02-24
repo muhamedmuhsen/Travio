@@ -5,7 +5,7 @@ import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.example.data.local.security.EncryptionManager
-import com.example.domain.model.UserCredentials
+import com.example.domain.model.auth.UserCredentials
 import com.example.domain.repository.prefernces.CredentialsManager
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.first

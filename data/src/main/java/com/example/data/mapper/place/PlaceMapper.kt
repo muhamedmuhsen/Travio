@@ -1,6 +1,6 @@
 package com.example.data.mapper.place
 
-import com.example.domain.model.Place
+import com.example.domain.model.favorite.Place
 
 typealias DatabasePlace = com.example.database.place.Place
 

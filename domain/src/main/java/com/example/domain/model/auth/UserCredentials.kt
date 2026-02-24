@@ -1,4 +1,4 @@
-package com.example.domain.model
+package com.example.domain.model.auth
 
 data class UserCredentials(
     val email: String,

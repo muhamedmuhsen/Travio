@@ -6,6 +6,7 @@ import com.example.data.repository.auth.LoginRepositoryImpl
 import com.example.data.repository.auth.PasswordResetRepositoryImpl
 import com.example.data.repository.auth.SessionRepositoryImpl
 import com.example.data.repository.auth.SignupRepositoryImpl
+import com.example.data.repository.destinations.LocationRepositoryImpl
 import com.example.data.repository.favorite.FavoritePlaceRepositoryImpl
 import com.example.data.repository.favorite.FavoritePostRepositoryImpl
 import com.example.domain.repository.auth.EmailVerificationRepository
@@ -14,6 +15,7 @@ import com.example.domain.repository.auth.PasswordResetRepository
 import com.example.domain.repository.auth.SessionRepository
 import com.example.domain.repository.auth.SignupRepository
 import com.example.domain.repository.auth.TokenManager
+import com.example.domain.repository.destinations.LocationRepository
 import com.example.domain.repository.favorite.FavoritePlaceRepository
 import com.example.domain.repository.favorite.FavoritePostRepository
 import dagger.Binds
@@ -74,4 +76,10 @@ abstract class RepositoryModule {
     abstract fun bindTokenManager(
         tokenManagerImpl: TokenManagerImpl
     ): TokenManager
+
+    @Binds
+    @Singleton
+    abstract fun bindLocationRepository(
+        locationRepositoryImpl: LocationRepositoryImpl
+    ): LocationRepository
 }

@@ -1,4 +1,4 @@
-package com.example.domain.model
+package com.example.domain.model.favorite
 
 data class Post(
     val id: Int,

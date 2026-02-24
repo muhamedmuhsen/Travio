@@ -1,6 +1,6 @@
 package com.example.domain.repository.user_management
 
-import com.example.domain.model.User
+import com.example.domain.model.auth.User
 import com.example.domain.utils.DataError
 import com.example.domain.utils.Result
 
