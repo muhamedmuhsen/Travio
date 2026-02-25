@@ -120,4 +120,7 @@ dependencies {
     // Coil (image loading) + OkHttp for custom ImageLoader
     implementation(libs.coil.compose)
     implementation(libs.okhttp)
+
+    // Timber logging library
+    implementation(libs.timber)
 }

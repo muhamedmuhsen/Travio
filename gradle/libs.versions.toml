@@ -35,6 +35,7 @@ okhttp = "4.12.0"
 
 # Security & Auth
 jwtdecode = "2.0.2"
+timber = "5.0.1"
 tinkAndroid = "1.18.0"
 
 # Image Loading
@@ -99,6 +100,7 @@ okhttp-logging-interceptor = { group = "com.squareup.okhttp3", name = "logging-i
 
 # Security & Authentication
 jwtdecode = { group = "com.auth0.android", name = "jwtdecode", version.ref = "jwtdecode" }
+timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
 tink-android = { group = "com.google.crypto.tink", name = "tink-android", version.ref = "tinkAndroid" }
 
 # Local Storage

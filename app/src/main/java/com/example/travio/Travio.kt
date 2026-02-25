@@ -5,6 +5,7 @@ import coil.Coil
 import coil.ImageLoader
 import dagger.hilt.android.HiltAndroidApp
 import okhttp3.OkHttpClient
+import timber.log.Timber
 import javax.net.ssl.HostnameVerifier
 import java.security.SecureRandom
 import java.security.cert.X509Certificate
@@ -17,6 +18,7 @@ class Travio : Application() {
     override fun onCreate() {
         super.onCreate()
         if (BuildConfig.DEBUG) {
+            Timber.plant(Timber.DebugTree())
             Coil.setImageLoader(
                 ImageLoader.Builder(this)
                     .okHttpClient(buildUnsafeOkHttpClient())
