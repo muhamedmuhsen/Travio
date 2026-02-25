@@ -11,8 +11,6 @@ jobs:
     if: github.event.pull_request.merged == true
     steps:
       - name: Delete merged branch
-        uses: SvanBoxel/delete-merged-branch@v1
-        with:
-          ignore: "master,development"
+        uses: SvanBoxel/delete-merged-branch@main
         env:
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
