@@ -1,16 +1,16 @@
 package com.example.data.di
 
 import android.content.Context
-import com.example.domain.repository.auth.TokenProvider
-import com.example.data.local.preferences.CredentialsManagerImpl
-import com.example.data.local.security.EncryptionManager
-import com.example.data.local.preferences.PreferencesManagerImpl
-import com.example.data.local.security.SecureTokenStorage
 import com.example.data.BuildConfig
-import com.example.data.repository.user_management.UserManagementRepositoryImpl
+import com.example.data.local.preferences.CredentialsManagerImpl
+import com.example.data.local.preferences.PreferencesManagerImpl
+import com.example.data.local.security.EncryptionManager
+import com.example.data.local.security.SecureTokenStorage
+import com.example.data.repository.usermanagement.UserManagementRepositoryImpl
+import com.example.domain.repository.auth.TokenProvider
 import com.example.domain.repository.prefernces.CredentialsManager
 import com.example.domain.repository.prefernces.PreferencesManager
-import com.example.domain.repository.user_management.UserManagementRepository
+import com.example.domain.repository.usermanagement.UserManagementRepository
 import com.example.network.api.UserManagementApi
 import dagger.Module
 import dagger.Provides
@@ -44,7 +44,8 @@ object DataStoreModule {
     @Provides
     @Singleton
     fun provideSecureTokenStorage(
-        @ApplicationContext context: Context, encryptionManager: EncryptionManager
+        @ApplicationContext context: Context,
+        encryptionManager: EncryptionManager
     ): SecureTokenStorage {
         return SecureTokenStorage(context, encryptionManager)
     }
@@ -58,16 +59,15 @@ object DataStoreModule {
     @Provides
     @Singleton
     fun provideCredentialsManager(
-        @ApplicationContext context: Context, encryptionManager: EncryptionManager
+        @ApplicationContext context: Context,
+        encryptionManager: EncryptionManager
     ): CredentialsManager {
         return CredentialsManagerImpl(context, encryptionManager)
     }
 
     @Provides
     @Singleton
-    fun providePreferencesManager(
-        @ApplicationContext context: Context
-    ): PreferencesManager {
+    fun providePreferencesManager(@ApplicationContext context: Context): PreferencesManager {
         return PreferencesManagerImpl(context)
     }
 

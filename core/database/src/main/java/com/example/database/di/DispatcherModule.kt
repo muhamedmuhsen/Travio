@@ -12,7 +12,6 @@ import javax.inject.Qualifier
 @Retention(AnnotationRetention.BINARY)
 annotation class IoDispatcher
 
-
 @Module
 @InstallIn(SingletonComponent::class)
 object DispatcherModule {

@@ -1,6 +1,5 @@
 package com.example.common.navigation
 
-
 sealed class Screen(val route: String) {
     data object OnboardingScreen : Screen(Screens.ONBOARDING.name)
     data object LoginScreen : Screen(Screens.LOGIN.name)
@@ -18,9 +17,17 @@ sealed class Screen(val route: String) {
 }
 
 enum class Screens {
-    LOGIN, SIGNUP, ONBOARDING, HOME, PROFILE, STARTER_LOGIN, LANGUAGE, FORGET_PASSWORD, CODE, RESET_PASSWORD,
+    LOGIN,
+    SIGNUP,
+    ONBOARDING,
+    HOME,
+    PROFILE,
+    STARTER_LOGIN,
+    LANGUAGE,
+    FORGET_PASSWORD,
+    CODE,
+    RESET_PASSWORD,
     VERIFY_EMAIL,
     EDIT_PROFILE,
     FAVORITE
-
 }

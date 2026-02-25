@@ -30,7 +30,6 @@ interface AuthApi {
     @POST("Auth/Logout")
     suspend fun logout(@Body request: LogoutRequest)
 
-
     @POST("Auth/refreshToken")
     fun refreshToken(@Body refreshToken: String): Call<AuthApiResponseDto>
 

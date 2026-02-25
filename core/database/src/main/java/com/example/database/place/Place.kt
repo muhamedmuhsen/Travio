@@ -10,5 +10,5 @@ data class Place(
     val name: String,
     val description: String,
     val imageUrl: String,
-    val rating: Float,
+    val rating: Float
 )

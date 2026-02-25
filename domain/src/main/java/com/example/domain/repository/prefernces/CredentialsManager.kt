@@ -3,7 +3,11 @@ package com.example.domain.repository.prefernces
 import com.example.domain.model.UserCredentials
 
 interface CredentialsManager {
-    suspend fun saveCredentials(email: String, password: String, rememberMe: Boolean)
+    suspend fun saveCredentials(
+        email: String,
+        password: String,
+        rememberMe: Boolean
+    )
     suspend fun getCredentials(): UserCredentials?
     suspend fun getSavedEmail(): String?
     suspend fun getSavedPassword(): String?

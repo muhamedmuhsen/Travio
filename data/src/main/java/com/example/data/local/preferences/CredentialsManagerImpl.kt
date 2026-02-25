@@ -12,7 +12,6 @@ import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 import javax.inject.Singleton
 
-
 @Singleton
 class CredentialsManagerImpl @Inject constructor(
     @ApplicationContext private val context: Context,
@@ -26,7 +25,11 @@ class CredentialsManagerImpl @Inject constructor(
         private val KEY_REMEMBER_ME = booleanPreferencesKey("remember_me")
     }
 
-    override suspend fun saveCredentials(email: String, password: String, rememberMe: Boolean) {
+    override suspend fun saveCredentials(
+        email: String,
+        password: String,
+        rememberMe: Boolean
+    ) {
         dataStore.edit { prefs ->
             prefs[KEY_EMAIL] = email
             prefs[KEY_PASSWORD] = encryptionManager.encrypt(password)

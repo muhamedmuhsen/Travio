@@ -9,7 +9,3 @@ data class LoginResponse(
     val email: String,
     val tokenDto: TokenDto
 )
-
-
-
-

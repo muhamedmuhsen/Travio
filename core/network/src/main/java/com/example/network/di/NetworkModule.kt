@@ -28,12 +28,14 @@ object NetworkModule {
         try {
             val trustAllCerts = arrayOf<TrustManager>(object : X509TrustManager {
                 override fun checkClientTrusted(
-                    chain: Array<X509Certificate>, authType: String
+                    chain: Array<X509Certificate>,
+                    authType: String
                 ) {
                 }
 
                 override fun checkServerTrusted(
-                    chain: Array<X509Certificate>, authType: String
+                    chain: Array<X509Certificate>,
+                    authType: String
                 ) {
                 }
 
@@ -44,7 +46,8 @@ object NetworkModule {
             sslContext.init(null, trustAllCerts, SecureRandom())
 
             builder.sslSocketFactory(
-                sslContext.socketFactory, trustAllCerts[0] as X509TrustManager
+                sslContext.socketFactory,
+                trustAllCerts[0] as X509TrustManager
             )
             builder.hostnameVerifier { _, _ -> true }
         } catch (e: Exception) {
@@ -56,8 +59,11 @@ object NetworkModule {
     @Singleton
     fun provideLoggingInterceptor(): HttpLoggingInterceptor =
         HttpLoggingInterceptor().setLevel(
-            if (BuildConfig.DEBUG) HttpLoggingInterceptor.Level.BODY
-            else HttpLoggingInterceptor.Level.NONE
+            if (BuildConfig.DEBUG) {
+                HttpLoggingInterceptor.Level.BODY
+            } else {
+                HttpLoggingInterceptor.Level.NONE
+            }
         )
 
     @Provides
@@ -99,7 +105,10 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideRetrofit(@BaseUrl baseUrl: String, client: OkHttpClient): Retrofit {
+    fun provideRetrofit(
+        @BaseUrl baseUrl: String,
+        client: OkHttpClient
+    ): Retrofit {
         return Retrofit.Builder().baseUrl(baseUrl).client(client)
             .addConverterFactory(GsonConverterFactory.create()).build()
     }
@@ -109,7 +118,6 @@ object NetworkModule {
     fun provideAuthApi(retrofit: Retrofit): AuthApi {
         return retrofit.create(AuthApi::class.java)
     }
-
 
     @Provides
     @Singleton

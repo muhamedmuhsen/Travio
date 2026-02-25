@@ -1,6 +1,5 @@
-package com.example.network.dto.user_managment
+package com.example.network.dto.usermanagment
 
 data class GetUserResponse(
     val data: UserData
 )
-

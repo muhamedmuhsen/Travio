@@ -1,7 +1,7 @@
 package com.example.network.clients
 
-import com.example.domain.repository.auth.TokenProvider
 import com.example.common.extensions.isNotNull
+import com.example.domain.repository.auth.TokenProvider
 import okhttp3.Interceptor
 import okhttp3.Response
 import javax.inject.Inject

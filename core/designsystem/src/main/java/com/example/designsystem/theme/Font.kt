@@ -18,4 +18,3 @@ val CairoFontFamily = FontFamily(
     Font(R.font.cairo_semibold, FontWeight.SemiBold),
     Font(R.font.cairo_bold, FontWeight.Bold)
 )
-

@@ -109,7 +109,6 @@ fun provideTypography(fontFamily: FontFamily): Typography {
     )
 }
 
-
 @Preview(showBackground = true, locale = "en")
 @Composable
 fun TypographyPreviewEnglish() {
