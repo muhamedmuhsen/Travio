@@ -20,5 +20,4 @@ interface PreferencesManager {
     fun observeDarkMode(): Flow<Boolean>
 
     fun observeDarkModeNullable(): Flow<Boolean?>
-
 }

@@ -2,11 +2,11 @@ package com.example.data.repository.auth
 
 import com.auth0.android.jwt.DecodeException
 import com.auth0.android.jwt.JWT
-import com.example.domain.utils.Result
 import com.example.data.local.security.SecureTokenStorage
 import com.example.domain.model.DecodedToken
 import com.example.domain.repository.auth.TokenManager
 import com.example.domain.utils.DataError
+import com.example.domain.utils.Result
 import java.util.Date
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -23,7 +23,8 @@ class TokenManagerImpl @Inject constructor(private val secureTokenStorage: Secur
             val result = DecodedToken(
                 userId = (jwt.subject ?: jwt.getClaim("userId").asString()),
                 expiresAt = jwt.expiresAt,
-                claims = jwt.claims.mapValues { it.value.asObject(Any::class.java) })
+                claims = jwt.claims.mapValues { it.value.asObject(Any::class.java) }
+            )
             return Result.Success(result)
         } catch (_: DecodeException) {
             return Result.Error(DataError.TokenError.DecodingFailed)
@@ -42,7 +43,6 @@ class TokenManagerImpl @Inject constructor(private val secureTokenStorage: Secur
             }
         }
     }
-
 
     override suspend fun getTokenClaims(): Result<Map<String, Any?>, DataError> {
         return when (val result = decodeToken()) {

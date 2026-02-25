@@ -1,4 +1,4 @@
-package com.example.network.dto.user_managment
+package com.example.network.dto.usermanagment
 
 import com.google.gson.annotations.SerializedName
 

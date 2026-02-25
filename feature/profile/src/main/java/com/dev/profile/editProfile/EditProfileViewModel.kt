@@ -3,8 +3,8 @@ package com.dev.profile.editProfile
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.domain.usecase.user_management.UpdateProfilePicUseCase
-import com.example.domain.usecase.user_management.UpdateProfileUseCase
+import com.example.domain.usecase.usermanagement.UpdateProfilePicUseCase
+import com.example.domain.usecase.usermanagement.UpdateProfileUseCase
 import com.example.domain.utils.DataError
 import com.example.domain.utils.Result
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -22,7 +22,7 @@ import javax.inject.Inject
 @HiltViewModel
 class EditProfileViewModel @Inject constructor(
     private val updateProfileUseCase: UpdateProfileUseCase,
-    private val updateProfilePicUseCase: UpdateProfilePicUseCase,
+    private val updateProfilePicUseCase: UpdateProfilePicUseCase
 
 ) : ViewModel() {
 
@@ -62,11 +62,13 @@ class EditProfileViewModel @Inject constructor(
         viewModelScope.launch {
             // Step 1: upload picture if changed
             if (picChanged) {
-                when (val result =
-                    updateProfilePicUseCase(requireNotNull(currentState.profileImageUri))) {
+                when (
+                    val result =
+                        updateProfilePicUseCase(requireNotNull(currentState.profileImageUri))
+                ) {
                     is Result.Error -> {
                         handleUpdateError(result.error)
-                        return@launch          // stop here; don't attempt data update
+                        return@launch // stop here; don't attempt data update
                     }
 
                     is Result.Success -> {
@@ -80,11 +82,13 @@ class EditProfileViewModel @Inject constructor(
 
             // Step 2: update text data if changed
             if (dataChanged) {
-                when (val result = updateProfileUseCase(
-                    firstName = currentState.firstName,
-                    lastName = currentState.lastName,
-                    username = currentState.username
-                )) {
+                when (
+                    val result = updateProfileUseCase(
+                        firstName = currentState.firstName,
+                        lastName = currentState.lastName,
+                        username = currentState.username
+                    )
+                ) {
                     is Result.Error -> {
                         handleUpdateError(result.error)
                         return@launch
@@ -103,7 +107,6 @@ class EditProfileViewModel @Inject constructor(
         _uiState.update { state ->
             when (error) {
                 is DataError.Validation -> {
-
                     state.copy(
                         isFirstNameError = error == DataError.Validation.ShortFirstName,
                         firstNameErrorMessage = if (error == DataError.Validation.ShortFirstName) error.asUiText() else null,

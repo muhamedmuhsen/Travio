@@ -7,12 +7,14 @@ import androidx.room.PrimaryKey
 
 @Entity(
     tableName = "comment",
-    foreignKeys = [ForeignKey(
-        entity = Post::class,
-        parentColumns = ["id"],
-        childColumns = ["postId"],
-        onDelete = ForeignKey.CASCADE
-    )],
+    foreignKeys = [
+        ForeignKey(
+            entity = Post::class,
+            parentColumns = ["id"],
+            childColumns = ["postId"],
+            onDelete = ForeignKey.CASCADE
+        )
+    ],
     indices = [Index(value = ["postId"])]
 )
 data class Comment(
@@ -21,5 +23,5 @@ data class Comment(
     val postId: Int,
     val content: String,
     val author: String,
-    val createdAt: String,
+    val createdAt: String
 )

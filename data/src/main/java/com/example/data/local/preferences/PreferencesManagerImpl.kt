@@ -8,7 +8,6 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
-import okio.IOException
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -24,7 +23,6 @@ class PreferencesManagerImpl @Inject constructor(@ApplicationContext private val
         private val KEY_CHOOSE_LANGUAGE = booleanPreferencesKey("choose_language")
         private val KEY_DARK_MODE = booleanPreferencesKey("dark_mode")
     }
-
 
     override suspend fun setOnboardingComplete(complete: Boolean) {
         dataStore.edit { it[KEY_ONBOARDING_COMPLETE] = complete }

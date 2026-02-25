@@ -2,8 +2,8 @@ package com.example.domain.usecase.auth.passwordreset
 
 import com.example.common.extensions.isValidEmail
 import com.example.domain.repository.auth.PasswordResetRepository
-import com.example.domain.utils.Result
 import com.example.domain.utils.DataError
+import com.example.domain.utils.Result
 import javax.inject.Inject
 
 class ForgetPasswordUseCase @Inject constructor(

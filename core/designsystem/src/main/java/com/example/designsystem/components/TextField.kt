@@ -32,7 +32,7 @@ fun AppTextField(
     errorMessage: String? = null,
     fieldType: TextFieldType = TextFieldType.TEXT,
     isEnabled: Boolean = true,
-    onPasswordVisibilityChecked: () -> Unit = {},
+    onPasswordVisibilityChecked: () -> Unit = {}
 ) {
     OutlinedTextField(
         modifier = modifier,
@@ -84,10 +84,10 @@ fun AppTextField(
     )
 }
 
-
 @Composable
 private fun PasswordTrailingIcon(
-    passwordVisible: Boolean, onToggleVisibility: () -> Unit
+    passwordVisible: Boolean,
+    onToggleVisibility: () -> Unit
 ) {
     IconButton(onClick = onToggleVisibility) {
         Icon(
@@ -104,7 +104,10 @@ private fun PasswordTrailingIcon(
 }
 
 enum class TextFieldType {
-    TEXT, EMAIL, PHONE, PASSWORD
+    TEXT,
+    EMAIL,
+    PHONE,
+    PASSWORD
 }
 
 @Preview
@@ -112,7 +115,9 @@ enum class TextFieldType {
 private fun AppTextFieldPreview() {
     MaterialTheme {
         AppTextField(
-            value = "", onValueChange = { "mohamed" }, placeholder = "Email"
+            value = "",
+            onValueChange = { "mohamed" },
+            placeholder = "Email"
         )
     }
 }
@@ -149,9 +154,10 @@ private fun AppTextFieldPreviewPasswordInVisible() {
 private fun AppTextFieldPreviewError() {
     TravioTheme {
         AppTextField(
-            value = "3565262", onValueChange = { }, placeholder = "password", isError = true
+            value = "3565262",
+            onValueChange = { },
+            placeholder = "password",
+            isError = true
         )
     }
 }
-
-

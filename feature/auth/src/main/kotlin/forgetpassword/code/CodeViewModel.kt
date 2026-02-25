@@ -1,11 +1,11 @@
 package com.example.feature.forgetpassword.code
 
-import com.example.domain.utils.Result
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.domain.usecase.auth.passwordreset.ForgetPasswordUseCase
 import com.example.domain.usecase.auth.passwordreset.SendVerificationCodeUseCase
 import com.example.domain.utils.DataError
+import com.example.domain.utils.Result
 import com.example.feature.code.CodeEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
@@ -86,7 +86,6 @@ class CodeViewModel @Inject constructor(
         }
     }
 
-
     private fun clearErrors() {
         _state.update {
             it.copy(
@@ -106,7 +105,6 @@ class CodeViewModel @Inject constructor(
             }
         }
     }
-
 
     override fun onCleared() {
         super.onCleared()

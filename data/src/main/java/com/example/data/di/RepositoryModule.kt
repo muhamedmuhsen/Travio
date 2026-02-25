@@ -1,11 +1,11 @@
 package com.example.data.di
 
-import com.example.data.repository.auth.TokenManagerImpl
 import com.example.data.repository.auth.EmailVerificationRepositoryImpl
 import com.example.data.repository.auth.LoginRepositoryImpl
 import com.example.data.repository.auth.PasswordResetRepositoryImpl
 import com.example.data.repository.auth.SessionRepositoryImpl
 import com.example.data.repository.auth.SignupRepositoryImpl
+import com.example.data.repository.auth.TokenManagerImpl
 import com.example.data.repository.favorite.FavoritePlaceRepositoryImpl
 import com.example.data.repository.favorite.FavoritePostRepositoryImpl
 import com.example.domain.repository.auth.EmailVerificationRepository
@@ -34,44 +34,29 @@ abstract class RepositoryModule {
 
     @Binds
     @Singleton
-    abstract fun bindPasswordResetRepository(
-        passwordResetRepositoryImpl: PasswordResetRepositoryImpl
-    ): PasswordResetRepository
+    abstract fun bindPasswordResetRepository(passwordResetRepositoryImpl: PasswordResetRepositoryImpl): PasswordResetRepository
 
     @Binds
     @Singleton
-    abstract fun bindLoginRepository(
-        loginRepositoryImpl: LoginRepositoryImpl
-    ): LoginRepository
+    abstract fun bindLoginRepository(loginRepositoryImpl: LoginRepositoryImpl): LoginRepository
 
     @Binds
     @Singleton
-    abstract fun bindSessionRepository(
-        sessionRepositoryImpl: SessionRepositoryImpl
-    ): SessionRepository
+    abstract fun bindSessionRepository(sessionRepositoryImpl: SessionRepositoryImpl): SessionRepository
 
     @Binds
     @Singleton
-    abstract fun bindSignupRepository(
-        signupRepositoryImpl: SignupRepositoryImpl
-    ): SignupRepository
-
+    abstract fun bindSignupRepository(signupRepositoryImpl: SignupRepositoryImpl): SignupRepository
 
     @Binds
     @Singleton
-    abstract fun bindFavoritePlaceRepository(
-        favoritePlaceRepositoryImpl: FavoritePlaceRepositoryImpl
-    ): FavoritePlaceRepository
+    abstract fun bindFavoritePlaceRepository(favoritePlaceRepositoryImpl: FavoritePlaceRepositoryImpl): FavoritePlaceRepository
 
     @Binds
     @Singleton
-    abstract fun bindFavoritePostRepository(
-        favoritePostRepositoryImpl: FavoritePostRepositoryImpl
-    ): FavoritePostRepository
+    abstract fun bindFavoritePostRepository(favoritePostRepositoryImpl: FavoritePostRepositoryImpl): FavoritePostRepository
 
     @Binds
     @Singleton
-    abstract fun bindTokenManager(
-        tokenManagerImpl: TokenManagerImpl
-    ): TokenManager
+    abstract fun bindTokenManager(tokenManagerImpl: TokenManagerImpl): TokenManager
 }

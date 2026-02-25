@@ -34,12 +34,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.example.feature.auth.R
 import com.example.designsystem.components.AppButton
-import com.example.designsystem.components.ErrorSnackBar
 import com.example.designsystem.components.AppTextField
+import com.example.designsystem.components.ErrorSnackBar
 import com.example.designsystem.components.TextFieldType
 import com.example.designsystem.theme.spacing
+import com.example.feature.auth.R
 import com.example.feature.signup.PasswordRulesText
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -88,7 +88,8 @@ fun NewPasswordScreen(
                         modifier = Modifier.fillMaxWidth(),
                         textAlign = TextAlign.Center
                     )
-                }, navigationIcon = {
+                },
+                navigationIcon = {
                     Box(
                         modifier = Modifier
                             .padding(start = MaterialTheme.spacing.md)
@@ -97,7 +98,8 @@ fun NewPasswordScreen(
                                 color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
                                 shape = CircleShape
                             )
-                            .clickable { onCloseClicked() }, contentAlignment = Alignment.Center
+                            .clickable { onCloseClicked() },
+                        contentAlignment = Alignment.Center
                     ) {
                         Icon(
                             imageVector = Icons.Default.Close,
@@ -105,13 +107,16 @@ fun NewPasswordScreen(
                             modifier = Modifier.size(MaterialTheme.spacing.lg)
                         )
                     }
-                }, actions = {
+                },
+                actions = {
                     Spacer(modifier = Modifier.size(MaterialTheme.spacing.xxxl))
-                }, colors = TopAppBarDefaults.topAppBarColors(
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.surface
                 )
             )
-        }) { innerPadding ->
+        }
+    ) { innerPadding ->
         Column(
             modifier = modifier
                 .padding(innerPadding)

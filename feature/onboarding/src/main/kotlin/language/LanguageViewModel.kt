@@ -1,6 +1,5 @@
 package com.example.feature.language
 
-import ui.localization.AppLanguage
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.domain.repository.prefernces.PreferencesManager
@@ -11,6 +10,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import ui.localization.AppLanguage
 import javax.inject.Inject
 
 @HiltViewModel

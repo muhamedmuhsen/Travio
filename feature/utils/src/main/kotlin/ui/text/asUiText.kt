@@ -3,7 +3,7 @@ package ui.text
 import com.example.designsystem.R
 import com.example.domain.utils.DataError
 import com.example.domain.utils.Result
-import ui.text.UiText.*
+import ui.text.UiText.StringResource
 
 fun DataError.asUiText(): UiText {
     return when (this) {

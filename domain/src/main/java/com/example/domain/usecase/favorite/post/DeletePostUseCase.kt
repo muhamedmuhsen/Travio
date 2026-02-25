@@ -11,5 +11,4 @@ class DeletePostUseCase @Inject constructor(
     suspend operator fun invoke(postId: String): Result<Unit, DataError.Local> {
         return repository.deletePostFromFavorite(postId)
     }
-
 }

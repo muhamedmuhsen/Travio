@@ -1,4 +1,3 @@
-import com.google.firebase.appdistribution.gradle.firebaseAppDistribution
 import java.io.FileInputStream
 import java.util.Properties
 
@@ -12,7 +11,6 @@ plugins {
     alias(libs.plugins.google.gms.google.services)
 }
 
-
 android {
     namespace = "com.example.travio"
     compileSdk = 36
@@ -22,7 +20,6 @@ android {
     if (localPropertiesFile.exists()) {
         localProperties.load(FileInputStream(localPropertiesFile))
     }
-
 
     defaultConfig {
         applicationId = "com.example.travio"
@@ -37,10 +34,9 @@ android {
         buildConfigField(
             "String",
             "GOOGLE_WEB_CLIENT_ID",
-            "\"$googleWebClientId\""
+            "\"$googleWebClientId\"",
         )
     }
-
 
     buildTypes {
         debug {
@@ -50,7 +46,7 @@ android {
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
+                "proguard-rules.pro",
             )
         }
     }
@@ -120,4 +116,7 @@ dependencies {
     // Coil (image loading) + OkHttp for custom ImageLoader
     implementation(libs.coil.compose)
     implementation(libs.okhttp)
+
+    // Timber logging library
+    implementation(libs.timber)
 }

@@ -7,9 +7,7 @@ import java.io.IOException
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 
-suspend fun <T> safeApiCall(
-    apiCall: suspend () -> T
-): Result<T, DataError> {
+suspend fun <T> safeApiCall(apiCall: suspend () -> T): Result<T, DataError> {
     return try {
         val result = apiCall()
         Result.Success(result)

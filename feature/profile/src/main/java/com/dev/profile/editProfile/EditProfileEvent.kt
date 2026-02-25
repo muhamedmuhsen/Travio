@@ -6,4 +6,3 @@ sealed interface EditProfileEvent {
     data object NavigateToProfile : EditProfileEvent
     data class ShowProfileError(val message: UiText) : EditProfileEvent
 }
-

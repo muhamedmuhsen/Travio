@@ -1,9 +1,9 @@
 package com.example.network.api
 
-import com.example.network.dto.user_managment.GetUserResponse
-import com.example.network.dto.user_managment.UpdateProfileRequest
-import com.example.network.dto.user_managment.UpdateProfileResponse
-import com.example.network.dto.user_managment.UploadImageResponse
+import com.example.network.dto.usermanagment.GetUserResponse
+import com.example.network.dto.usermanagment.UpdateProfileRequest
+import com.example.network.dto.usermanagment.UpdateProfileResponse
+import com.example.network.dto.usermanagment.UploadImageResponse
 import okhttp3.MultipartBody
 import retrofit2.http.Body
 import retrofit2.http.GET

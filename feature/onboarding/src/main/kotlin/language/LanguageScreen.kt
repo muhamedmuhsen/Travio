@@ -1,6 +1,5 @@
 package com.example.feature.language
 
-import ui.localization.AppLanguage
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -30,12 +29,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.example.feature.onboarding.R
 import com.example.designsystem.components.AppButton
 import com.example.designsystem.components.LanguageButton
 import com.example.designsystem.theme.TravioTheme
 import com.example.designsystem.theme.spacing
-
+import com.example.feature.onboarding.R
+import ui.localization.AppLanguage
 
 @Composable
 fun LanguageScreen(
@@ -54,10 +53,9 @@ fun LanguageScreen(
                     navigateToStarterLogin()
                 }
             }
-
         }
     }
-    Scaffold() { innerPadding ->
+    Scaffold { innerPadding ->
         Box(
             modifier = modifier
                 .fillMaxSize()
@@ -86,13 +84,14 @@ fun LanguageScreen(
 @Composable
 private fun LanguageSelectionSheet(
     modifier: Modifier = Modifier,
-    onLanguageSelected: (AppLanguage) -> Unit,
+    onLanguageSelected: (AppLanguage) -> Unit
 ) {
     Box(
         modifier = modifier
             .clip(
                 RoundedCornerShape(
-                    topStart = MaterialTheme.spacing.lg, topEnd = MaterialTheme.spacing.lg
+                    topStart = MaterialTheme.spacing.lg,
+                    topEnd = MaterialTheme.spacing.lg
                 )
             )
             .background(
@@ -141,15 +140,14 @@ private fun LanguageSelectionSheet(
     }
 }
 
-
 @Preview()
 @Composable
 private fun LanguageScreenPreview() {
-    TravioTheme { LanguageScreen() {} }
+    TravioTheme { LanguageScreen {} }
 }
 
 @Preview(locale = "ar-rEG")
 @Composable
 private fun LanguageScreenPreviewArabic() {
-    TravioTheme { LanguageScreen() {} }
+    TravioTheme { LanguageScreen {} }
 }

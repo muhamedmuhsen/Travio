@@ -16,35 +16,38 @@ class PasswordResetRepositoryImpl @Inject constructor(
     private val tokenProvider: TokenProvider
 ) : PasswordResetRepository {
 
-    override suspend fun forgetPassword(email: String): Result<Unit, DataError> = safeApiCall {
-        api.forgetPassword(ForgetPasswordRequest(email))
-    }
+    override suspend fun forgetPassword(email: String): Result<Unit, DataError> =
+        safeApiCall {
+            api.forgetPassword(ForgetPasswordRequest(email))
+        }
 
     override suspend fun sendVerificationCode(
         email: String,
         code: String
-    ): Result<Unit, DataError> = safeApiCall {
-        val response =
-            api.sendVerificationCode(VerificationCodeRequest(email = email, otp = code))
-        tokenProvider.saveResetToken(response.resetToken)
-    }
+    ): Result<Unit, DataError> =
+        safeApiCall {
+            val response =
+                api.sendVerificationCode(VerificationCodeRequest(email = email, otp = code))
+            tokenProvider.saveResetToken(response.resetToken)
+        }
 
     override suspend fun resetPassword(
         resetToken: String,
         email: String,
         newPassword: String,
         confirmNewPassword: String
-    ): Result<Unit, DataError> = safeApiCall {
-        api.resetPassword(
-            ResetPasswordRequest(
-                resetToken,
-                email,
-                newPassword,
-                confirmNewPassword
+    ): Result<Unit, DataError> =
+        safeApiCall {
+            api.resetPassword(
+                ResetPasswordRequest(
+                    resetToken,
+                    email,
+                    newPassword,
+                    confirmNewPassword
+                )
             )
-        )
-        handlePostResetPassword()
-    }
+            handlePostResetPassword()
+        }
 
     private suspend fun handlePostResetPassword() {
         tokenProvider.clearResetToken()

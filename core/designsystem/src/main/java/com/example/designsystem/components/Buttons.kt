@@ -85,7 +85,10 @@ fun LanguageButton(
 
 @Composable
 fun SigninOptionsButton(
-    modifier: Modifier = Modifier, onClick: () -> Unit, text: String, @DrawableRes icon: Int
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
+    text: String,
+    @DrawableRes icon: Int
 ) {
     OutlinedButton(
         modifier = modifier.height(48.dp),
@@ -93,7 +96,7 @@ fun SigninOptionsButton(
         shape = MaterialTheme.shapes.extraLarge,
         colors = ButtonDefaults.outlinedButtonColors(
             contentColor = MaterialTheme.colorScheme.primary,
-            containerColor = MaterialTheme.colorScheme.background,
+            containerColor = MaterialTheme.colorScheme.background
         ),
         border = BorderStroke(width = 1.dp, color = MaterialTheme.colorScheme.primary)
     ) {
@@ -110,7 +113,8 @@ fun SigninOptionsButton(
             )
             Spacer(Modifier.width(MaterialTheme.spacing.sm))
             Text(
-                text = text, style = MaterialTheme.typography.titleSmall.copy(
+                text = text,
+                style = MaterialTheme.typography.titleSmall.copy(
                     fontWeight = FontWeight.Bold
 
                 )
@@ -124,7 +128,9 @@ fun SigninOptionsButton(
 private fun SigninOptionsButtonPreview() {
     TravioTheme {
         SigninOptionsButton(
-            onClick = { }, text = "Continue with Google", icon = R.drawable.google_icon
+            onClick = { },
+            text = "Continue with Google",
+            icon = R.drawable.google_icon
         )
     }
 }
@@ -146,7 +152,9 @@ private fun LanguageButtonPreviewArabic() {
 private fun AppButtonPreview() {
     TravioTheme {
         AppButton(
-            onClick = {}, text = "Continue", isEnabled = true
+            onClick = {},
+            text = "Continue",
+            isEnabled = true
         )
     }
 }
@@ -158,7 +166,9 @@ private fun AppButtonPreview() {
 private fun AppButtonDisabledDarkModePreview() {
     TravioTheme {
         AppButton(
-            onClick = {}, text = "Continue", isEnabled = false
+            onClick = {},
+            text = "Continue",
+            isEnabled = false
         )
     }
 }

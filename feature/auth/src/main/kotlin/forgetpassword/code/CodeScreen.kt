@@ -1,7 +1,5 @@
 package com.example.feature.forgetpassword.code
 
-import androidx.compose.runtime.mutableStateOf
-
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -48,11 +46,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.example.feature.auth.R
 import com.example.designsystem.components.AppButton
 import com.example.designsystem.components.ErrorSnackBar
 import com.example.designsystem.theme.TravioTheme
 import com.example.designsystem.theme.spacing
+import com.example.feature.auth.R
 import com.example.feature.code.CodeEvent
 import java.util.Locale
 
@@ -63,9 +61,8 @@ fun CodeScreen(
     viewModel: CodeViewModel = hiltViewModel(),
     navigateToResetPassword: () -> Unit,
     onBackClicked: () -> Unit,
-    email: String,
+    email: String
 ) {
-
     val context = LocalContext.current
     val state by viewModel.state.collectAsStateWithLifecycle()
     var errorMessage by remember { mutableStateOf<String?>(null) }
@@ -76,7 +73,6 @@ fun CodeScreen(
             errorMessage = null
         }
     }
-
 
     LaunchedEffect(Unit) {
         viewModel.startCountdown()
@@ -116,13 +112,16 @@ fun CodeScreen(
                             modifier = Modifier.size(MaterialTheme.spacing.lg)
                         )
                     }
-                }, actions = {
+                },
+                actions = {
                     Spacer(modifier = Modifier.size(MaterialTheme.spacing.xxxl))
-                }, colors = TopAppBarDefaults.topAppBarColors(
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.surface
                 )
             )
-        }) { innerPadding ->
+        }
+    ) { innerPadding ->
         Column(
             modifier = modifier
                 .padding(innerPadding)
@@ -131,20 +130,20 @@ fun CodeScreen(
             Text(
                 text = stringResource(id = R.string.please_enter_code),
                 style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
 
             Text(
                 text = email,
                 style = MaterialTheme.typography.titleSmall,
-                color = MaterialTheme.colorScheme.onBackground,
+                color = MaterialTheme.colorScheme.onBackground
             )
 
             Spacer(modifier = Modifier.height(MaterialTheme.spacing.lg))
 
             OtpInputField(
                 onOtpFilled = { viewModel.onCodeChange(it) },
-                isError = state.isCodeError,
+                isError = state.isCodeError
             )
 
             Spacer(modifier = Modifier.height(MaterialTheme.spacing.lg))
@@ -177,20 +176,21 @@ fun CodeScreen(
 fun CountdownTimer(timeLeft: Int) {
     Text(
         text = formatTime(timeLeft),
-        style = MaterialTheme.typography.bodySmall,
+        style = MaterialTheme.typography.bodySmall
     )
 }
 
 private fun formatTime(seconds: Int): String {
-
     val minutes = (seconds % 3600) / 60
     val secs = seconds % 60
 
     return String.format(Locale.ROOT, "%02d:%02d", minutes, secs)
 }
+
 @Composable
 fun SendAgain(
-    onSendAgainClicked: () -> Unit, modifier: Modifier = Modifier
+    onSendAgainClicked: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     val annotatedString = buildAnnotatedString {
         val regularStyle = SpanStyle(
@@ -217,7 +217,8 @@ fun SendAgain(
         modifier = modifier
             .clip(RoundedCornerShape(MaterialTheme.spacing.sm))
             .clickable { onSendAgainClicked() }
-            .padding(MaterialTheme.spacing.xs))
+            .padding(MaterialTheme.spacing.xs)
+    )
 }
 
 @Composable
@@ -254,14 +255,17 @@ fun OtpInputField(
                     )
                 }
             }
-        })
+        }
+    )
 }
 
 @Composable
 fun OtpCell(
-    modifier: Modifier = Modifier, char: String = "", isFilled: Boolean, isError: Boolean
+    modifier: Modifier = Modifier,
+    char: String = "",
+    isFilled: Boolean,
+    isError: Boolean
 ) {
-
     var borderColor = if (isFilled) {
         MaterialTheme.colorScheme.primary
     } else {
@@ -269,7 +273,6 @@ fun OtpCell(
     }
 
     if (isError) borderColor = MaterialTheme.colorScheme.error
-
 
     val textColor = if (isFilled) {
         MaterialTheme.colorScheme.onBackground
@@ -284,7 +287,8 @@ fun OtpCell(
                 width = 1.dp,
                 color = borderColor,
                 shape = RoundedCornerShape(MaterialTheme.spacing.sm)
-            ), contentAlignment = Alignment.Center
+            ),
+        contentAlignment = Alignment.Center
     ) {
         Text(
             text = char.ifEmpty { "0" },

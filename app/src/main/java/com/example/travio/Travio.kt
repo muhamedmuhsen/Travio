@@ -5,9 +5,10 @@ import coil.Coil
 import coil.ImageLoader
 import dagger.hilt.android.HiltAndroidApp
 import okhttp3.OkHttpClient
-import javax.net.ssl.HostnameVerifier
+import timber.log.Timber
 import java.security.SecureRandom
 import java.security.cert.X509Certificate
+import javax.net.ssl.HostnameVerifier
 import javax.net.ssl.SSLContext
 import javax.net.ssl.TrustManager
 import javax.net.ssl.X509TrustManager
@@ -17,6 +18,7 @@ class Travio : Application() {
     override fun onCreate() {
         super.onCreate()
         if (BuildConfig.DEBUG) {
+            Timber.plant(Timber.DebugTree())
             Coil.setImageLoader(
                 ImageLoader.Builder(this)
                     .okHttpClient(buildUnsafeOkHttpClient())
@@ -27,8 +29,17 @@ class Travio : Application() {
 
     private fun buildUnsafeOkHttpClient(): OkHttpClient {
         val trustAllCerts = arrayOf<TrustManager>(object : X509TrustManager {
-            override fun checkClientTrusted(chain: Array<X509Certificate>, authType: String) {}
-            override fun checkServerTrusted(chain: Array<X509Certificate>, authType: String) {}
+            override fun checkClientTrusted(
+                chain: Array<X509Certificate>,
+                authType: String
+            ) {
+            }
+
+            override fun checkServerTrusted(
+                chain: Array<X509Certificate>,
+                authType: String
+            ) {
+            }
             override fun getAcceptedIssuers(): Array<X509Certificate> = arrayOf()
         })
         val sslContext = SSLContext.getInstance("TLS")

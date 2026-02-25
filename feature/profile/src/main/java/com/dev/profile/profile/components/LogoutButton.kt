@@ -1,4 +1,4 @@
-package com.dev.profile.profile_.components
+package com.dev.profile.profile.components
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
@@ -24,7 +24,10 @@ import com.example.designsystem.theme.TravioTheme
 import com.example.feature.profile.R
 
 @Composable
-fun LogoutButton(modifier: Modifier = Modifier, onClick: () -> Unit) {
+fun LogoutButton(
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit
+) {
     OutlinedButton(
         modifier = modifier,
         onClick = onClick,
@@ -62,6 +65,5 @@ fun LogoutButton(modifier: Modifier = Modifier, onClick: () -> Unit) {
 private fun LogoutButtonPreview() {
     TravioTheme(dynamicColor = false) {
         LogoutButton(onClick = {})
-
     }
 }

@@ -1,6 +1,5 @@
 package com.example.feature.signup
 
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -28,6 +27,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
@@ -46,15 +46,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.example.feature.auth.R
 import com.example.designsystem.components.AppButton
-import com.example.designsystem.components.ErrorSnackBar
 import com.example.designsystem.components.AppTextField
+import com.example.designsystem.components.ErrorSnackBar
 import com.example.designsystem.components.SigninOptionsButton
 import com.example.designsystem.components.TextFieldType
 import com.example.designsystem.theme.TravioTheme
 import com.example.designsystem.theme.spacing
 import com.example.feature.auth.BuildConfig
+import com.example.feature.auth.R
 import com.example.feature.login.components.OrSignInWithText
 import com.example.designsystem.R as DesignSystemR
 
@@ -68,7 +68,6 @@ fun SignupScreen(
     navigateToHome: () -> Unit,
     navigateToVerifyEmail: (String) -> Unit
 ) {
-
     val uiState = viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -81,7 +80,6 @@ fun SignupScreen(
             errorMessage = null
         }
     }
-
 
     LaunchedEffect(Unit) {
         viewModel.event.collect { event ->
@@ -112,7 +110,8 @@ fun SignupScreen(
                         modifier = Modifier.fillMaxWidth(),
                         textAlign = TextAlign.Center
                     )
-                }, navigationIcon = {
+                },
+                navigationIcon = {
                     Box(
                         modifier = Modifier
                             .padding(start = MaterialTheme.spacing.md)
@@ -121,7 +120,8 @@ fun SignupScreen(
                                 color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
                                 shape = CircleShape
                             )
-                            .clickable { onCloseClicked() }, contentAlignment = Alignment.Center
+                            .clickable { onCloseClicked() },
+                        contentAlignment = Alignment.Center
                     ) {
                         Icon(
                             imageVector = Icons.Default.Close,
@@ -129,9 +129,11 @@ fun SignupScreen(
                             modifier = Modifier.size(20.dp)
                         )
                     }
-                }, actions = {
+                },
+                actions = {
                     Spacer(modifier = Modifier.size(56.dp))
-                }, colors = TopAppBarDefaults.topAppBarColors(
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.surface
                 )
             )
@@ -143,7 +145,7 @@ fun SignupScreen(
                 .padding(innerPadding)
                 .verticalScroll(rememberScrollState())
                 .padding(horizontal = 20.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Spacer(modifier = Modifier.height(MaterialTheme.spacing.lg))
 
@@ -223,7 +225,7 @@ fun SignupScreen(
             Spacer(modifier = Modifier.height(MaterialTheme.spacing.sm))
 
             SigninOptionsButton(
-                onClick = {/* viewModel.onFacebookSigninClicked()*/ },
+                onClick = { /* viewModel.onFacebookSigninClicked()*/ },
                 text = stringResource(id = R.string.continue_with_facebook),
                 icon = DesignSystemR.drawable.facebook_icon,
                 modifier = Modifier.fillMaxWidth()
@@ -231,9 +233,9 @@ fun SignupScreen(
 
             Spacer(modifier = Modifier.height(MaterialTheme.spacing.md))
 
-
             Row(
-                horizontalArrangement = Arrangement.Center, modifier = Modifier.fillMaxWidth()
+                horizontalArrangement = Arrangement.Center,
+                modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
                     text = stringResource(id = R.string.already_have_an_account) + " ",
@@ -245,14 +247,14 @@ fun SignupScreen(
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.SemiBold,
                     color = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.clickable { navigateToLogin() })
+                    modifier = Modifier.clickable { navigateToLogin() }
+                )
             }
 
             Spacer(modifier = Modifier.height(MaterialTheme.spacing.md))
             AcknowledgementSection()
         }
     }
-
 }
 
 @Composable
@@ -292,7 +294,9 @@ fun AcknowledgementSection(modifier: Modifier = Modifier) {
 
 @Composable
 fun PasswordRulesText(
-    modifier: Modifier = Modifier, textColor: Color, textStyle: TextStyle
+    modifier: Modifier = Modifier,
+    textColor: Color,
+    textStyle: TextStyle
 ) {
     Column(
         modifier = modifier

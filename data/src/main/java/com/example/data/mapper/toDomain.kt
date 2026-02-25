@@ -3,10 +3,10 @@ package com.example.data.mapper
 import com.example.data.BuildConfig
 import com.example.domain.model.GoogleUser
 import com.example.domain.model.User
-import com.example.network.dto.auth.social.GoogleUserDto
 import com.example.network.dto.auth.UserDto
-import com.example.network.dto.user_managment.GetUserResponse
-import com.example.network.dto.user_managment.UserData
+import com.example.network.dto.auth.social.GoogleUserDto
+import com.example.network.dto.usermanagment.GetUserResponse
+import com.example.network.dto.usermanagment.UserData
 
 /**
  * Converts a relative image path like "/uploads/abc.jpg" to a full URL.

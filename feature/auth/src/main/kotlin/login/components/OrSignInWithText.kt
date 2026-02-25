@@ -11,8 +11,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.example.feature.auth.R
 import com.example.designsystem.theme.spacing
+import com.example.feature.auth.R
 
 @Composable
 fun OrSignInWithText(modifier: Modifier = Modifier) {
@@ -29,7 +29,7 @@ fun OrSignInWithText(modifier: Modifier = Modifier) {
         Text(
             text = stringResource(id = R.string.or_sign_in_with),
             color = MaterialTheme.colorScheme.onSurfaceVariant,
-            style = MaterialTheme.typography.bodySmall,
+            style = MaterialTheme.typography.bodySmall
         )
         HorizontalDivider(
             modifier = Modifier.weight(1f),
