@@ -3,6 +3,7 @@ package com.example.network.di
 import com.example.domain.repository.auth.TokenProvider
 import com.example.network.BuildConfig
 import com.example.network.api.AuthApi
+import com.example.network.api.DestinationsApi
 import com.example.network.api.UserManagementApi
 import com.example.network.clients.AuthInterceptor
 import com.example.network.clients.TokenAuthenticator
@@ -110,6 +111,11 @@ object NetworkModule {
         return retrofit.create(AuthApi::class.java)
     }
 
+    @Provides
+    @Singleton
+    fun provideDestinationApi(retrofit: Retrofit): DestinationsApi {
+        return retrofit.create(DestinationsApi::class.java)
+    }
 
     @Provides
     @Singleton

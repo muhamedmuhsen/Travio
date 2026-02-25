@@ -5,7 +5,7 @@ import com.example.domain.utils.DataError
 import com.example.domain.utils.Result
 
 interface DestinationsRepository {
-    suspend fun getDestinationsById(destinationId: String): Result<Destination, DataError>
+    suspend fun getDestinationsById(destinationId: Int): Result<Destination, DataError>
     suspend fun getAllDestinations(
         pageIndex: Int,
         pageSize: Int,
@@ -14,6 +14,12 @@ interface DestinationsRepository {
     ): Result<List<Destination>, DataError>
 
     suspend fun getTopRatedDestinations(): Result<List<Destination>, DataError>
-    suspend fun getNearbyDestinations(): Result<List<Destination>, DataError>
-    suspend fun searchForDestinations()
+    suspend fun getNearbyDestinations(
+        latitude: Double,
+        longitude: Double,
+        radiusKm: Double = 50.0,
+        count: Int = 10
+    ): Result<List<Destination>, DataError>
+
+    suspend fun searchForDestinations(): Result<List<Destination>, DataError>
 }

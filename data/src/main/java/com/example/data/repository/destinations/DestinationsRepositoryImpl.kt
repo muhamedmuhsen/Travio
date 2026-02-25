@@ -7,27 +7,21 @@ import com.example.domain.repository.destinations.DestinationsRepository
 import com.example.domain.utils.DataError
 import com.example.domain.utils.Result
 import com.example.network.api.DestinationsApi
-import com.example.network.dto.destinations.GetAllDestinationsRequest
 import javax.inject.Inject
 
 class DestinationsRepositoryImpl @Inject constructor(
-    private val api: DestinationsApi,
-    private val locationDataSoruce: LocationDataSoruce
+    private val api: DestinationsApi
 ) : DestinationsRepository {
-    override suspend fun getDestinationsById(destinationId: String): Result<Destination, DataError> =
+    override suspend fun getDestinationsById(destinationId: Int): Result<Destination, DataError> =
         safeApiCall {
             val destination = api.getDestinationById(destinationId)
             destination.toDomain()
         }
 
     override suspend fun getAllDestinations(
-        pageIndex: Int,
-        pageSize: Int,
-        cityId: Int,
-        interestId: Int
+        pageIndex: Int, pageSize: Int, cityId: Int, interestId: Int
     ): Result<List<Destination>, DataError> = safeApiCall {
-        val request = GetAllDestinationsRequest(pageIndex, pageSize, cityId, interestId)
-        val response = api.getAllDestinations(request)
+        val response = api.getAllDestinations(pageIndex, pageSize, cityId, interestId)
         response.data.map { it.toDomain() }
     }
 
@@ -37,12 +31,15 @@ class DestinationsRepositoryImpl @Inject constructor(
             response.map { it.toDomain() }
         }
 
-    override suspend fun getNearbyDestinations(): Result<List<Destination>, DataError> =
-        safeApiCall {
-            TODO("Not yet implemented")
-        }
+    override suspend fun getNearbyDestinations(
+        latitude: Double, longitude: Double, radiusKm: Double, count: Int
+    ): Result<List<Destination>, DataError> = safeApiCall {
+        val response = api.getNearbyDestinations(latitude, longitude, radiusKm, count)
 
-    override suspend fun searchForDestinations() {
+        response.map { it.toDomain() }
+    }
+
+    override suspend fun searchForDestinations(): Result<List<Destination>, DataError> {
         TODO("Not yet implemented")
     }
 }

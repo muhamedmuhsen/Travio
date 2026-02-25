@@ -1,7 +1,7 @@
 package com.example.data.di
 
 import android.content.Context
-import com.example.data.repository.destinations.LocationDataSoruce
+import com.example.data.repository.destinations.LocationDataSource
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -16,6 +16,6 @@ object LocationModule {
     @Singleton
     fun provideLocationDatasource(
         @ApplicationContext context: Context
-    ): LocationDataSoruce = LocationDataSoruce(context)
+    ): LocationDataSource = LocationDataSource(context)
 
 }

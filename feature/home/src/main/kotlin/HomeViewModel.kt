@@ -4,8 +4,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.domain.usecase.auth.session.LogoutUseCase
 import com.example.data.local.preferences.CredentialsManagerImpl
+import com.example.domain.usecase.destinations.GetAllDestinationsUseCase
 import com.example.domain.utils.Result
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -15,7 +18,7 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val logoutUseCase: LogoutUseCase,
-    private val credentialsManagerImpl: CredentialsManagerImpl
+    private val getAllDestinationsUseCase: GetAllDestinationsUseCase
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(HomeState())
@@ -35,6 +38,18 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    fun onGetAllClicked() {
+        viewModelScope.launch() {
+            when (val result = getAllDestinationsUseCase(1, 3, 2, 1)) {
+                is Result.Error -> {
+                }
+
+                is Result.Success -> {
+
+                }
+            }
+        }
+    }
 
     fun onHomeClicked() {
         _state.update { homeState -> homeState.copy(selectedItem = 0) }

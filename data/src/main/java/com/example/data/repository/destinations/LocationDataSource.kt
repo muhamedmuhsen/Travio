@@ -19,7 +19,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class LocationDataSoruce @Inject constructor(@ApplicationContext private val context: Context) {
+class LocationDataSource @Inject constructor(@ApplicationContext private val context: Context) {
     private val fusedClient: FusedLocationProviderClient by lazy {
         LocationServices.getFusedLocationProviderClient(context)
     }
@@ -31,12 +31,15 @@ class LocationDataSoruce @Inject constructor(@ApplicationContext private val con
             .build()
     }
 
+    /*
+    *   Location Flow to observe location changes,
+    *   used minByOrNull to find the smallest radius (highest accuracy)
+    * */
     @SuppressLint("MissingPermission")
     fun locationFlow(): Flow<UserLocation> = callbackFlow {
         val callback = object : LocationCallback() {
             override fun onLocationResult(result: LocationResult) {
-                result.locations.maxByOrNull { it.accuracy }
-                    ?.let { location ->
+                result.locations.minByOrNull { it.accuracy }?.let { location ->
                         trySend(
                             UserLocation(
                                 latitude = location.latitude,
@@ -63,14 +66,13 @@ class LocationDataSoruce @Inject constructor(@ApplicationContext private val con
     }
 
     @SuppressLint("MissingPermission")
-    suspend fun getLastKnown(): UserLocation? =
-        fusedClient.lastLocation.await()?.let { location ->
-            UserLocation(
-                latitude = location.latitude,
-                longitude = location.longitude,
-                accuracyMeters = location.accuracy
-            )
-        }
+    suspend fun getLastKnown(): UserLocation? = fusedClient.lastLocation.await()?.let { location ->
+        UserLocation(
+            latitude = location.latitude,
+            longitude = location.longitude,
+            accuracyMeters = location.accuracy
+        )
+    }
 
 
     companion object {

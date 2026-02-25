@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class LocationRepositoryImpl @Inject constructor(
-    private val dataSource: LocationDataSoruce
+    private val dataSource: LocationDataSource
 ) : LocationRepository {
     override fun observeLocation(): Flow<Result<UserLocation, DataError>> {
         return dataSource.locationFlow()
@@ -19,14 +19,14 @@ class LocationRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getLastKnownLocation(): Result<UserLocation, DataError> {
-        runCatching { dataSource.getLastKnown() }
+        return runCatching { dataSource.getLastKnown() }
             .fold(
                 onSuccess = { location ->
-                    if (location != null) return Result.Success(location)
-                    else return Result.Error(DataError.Location.CouldNotGetTheLocation)
+                    location?.let { Result.Success(it) }
+                        ?: Result.Error(DataError.Location.CouldNotGetTheLocation)
                 },
                 onFailure = {
-                    return Result.Error(DataError.Location.CouldNotGetTheLocation)
+                    Result.Error(DataError.Location.CouldNotGetTheLocation)
                 }
             )
     }
