@@ -46,7 +46,6 @@ captures/
 
 # Custom files
 template.txt
-.github/
 authWithGoogle.md
 .kotlin
 /.junie
