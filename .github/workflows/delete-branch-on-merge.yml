@@ -13,6 +13,6 @@ jobs:
       - name: Delete merged branch
         uses: SvanBoxel/delete-merged-branch@v1
         with:
-          ignore: "main,development"
+          ignore: "master,development"
         env:
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
