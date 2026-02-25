@@ -1,5 +1,4 @@
 name: Delete Branch on Merge
-
 on:
   pull_request:
     types:
@@ -9,8 +8,12 @@ jobs:
   delete-branch:
     runs-on: ubuntu-latest
     if: github.event.pull_request.merged == true
+    # Explicitly grant permission to delete the branch
+    permissions:
+      contents: write
     steps:
       - name: Delete merged branch
-        uses: SvanBoxel/delete-merged-branch@main
+        # Pointing to a specific, stable version (check the action's repo for the latest)
+        uses: SvanBoxel/delete-merged-branch@v1.4.0
         env:
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
