@@ -11,8 +11,8 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
-import com.example.feature.auth.R
 import com.example.designsystem.theme.spacing
+import com.example.feature.auth.R
 
 @Composable
 fun ByLoggingSection(modifier: Modifier = Modifier) {

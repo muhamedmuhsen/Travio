@@ -32,13 +32,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.feature.onboarding.R
 import com.example.designsystem.components.AppButton
 import com.example.designsystem.components.ErrorSnackBar
 import com.example.designsystem.components.SigninOptionsButton
 import com.example.designsystem.theme.TravioTheme
 import com.example.designsystem.theme.spacing
 import com.example.feature.onboarding.BuildConfig
+import com.example.feature.onboarding.R
 @Composable
 fun StarterLogin(
     modifier: Modifier = Modifier,
@@ -94,7 +94,7 @@ fun StarterLogin(
                 contentAlignment = Alignment.BottomCenter,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .weight(1f) // Use weight to take up available space
+                    .weight(1f)
             ) {
                 // Placeholder for the image collage as requested
                 Image(
@@ -109,9 +109,10 @@ fun StarterLogin(
                         .background(
                             brush = Brush.verticalGradient(
                                 colors = listOf(
-                                    Color.Transparent, MaterialTheme.colorScheme.background
+                                    Color.Transparent,
+                                    MaterialTheme.colorScheme.background
                                 ),
-                                startY = 400f // Adjust this value to control where the fade starts
+                                startY = 400f
                             )
                         )
                 )
@@ -151,7 +152,8 @@ fun StarterLogin(
             )
             Spacer(modifier = Modifier.height(MaterialTheme.spacing.xl))
             Row(
-                horizontalArrangement = Arrangement.Center, modifier = Modifier.fillMaxWidth()
+                horizontalArrangement = Arrangement.Center,
+                modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
                     text = stringResource(id = R.string.already_have_an_account) + " ",
@@ -163,14 +165,14 @@ fun StarterLogin(
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.SemiBold,
                     color = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.clickable { viewModel.onLoginClicked() })
+                    modifier = Modifier.clickable { viewModel.onLoginClicked() }
+                )
             }
             Spacer(modifier = Modifier.height(MaterialTheme.spacing.md))
 
             ByLoggingSection()
 
             Spacer(modifier = Modifier.height(MaterialTheme.spacing.lg))
-
         }
     }
 }
@@ -178,5 +180,5 @@ fun StarterLogin(
 @Preview(showSystemUi = true, showBackground = true)
 @Composable
 private fun StarterLoginPreview() {
-    TravioTheme() { StarterLogin(navigateToLogin = {}) {} }
+    TravioTheme { StarterLogin(navigateToLogin = {}) {} }
 }

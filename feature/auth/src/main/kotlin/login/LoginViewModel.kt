@@ -4,12 +4,11 @@ import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.data.repository.auth.GoogleCredentialDataSourceImpl
-import com.example.domain.utils.Result
-import com.example.domain.utils.DataError
 import com.example.domain.repository.prefernces.CredentialsManager
-import com.example.domain.repository.prefernces.PreferencesManager
 import com.example.domain.usecase.auth.login.GoogleSignInUseCase
 import com.example.domain.usecase.auth.login.LoginUseCase
+import com.example.domain.utils.DataError
+import com.example.domain.utils.Result
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -31,8 +30,8 @@ class LoginViewModel @Inject constructor(
     private val _state = MutableStateFlow(LoginUiState())
     val state = _state.asStateFlow()
 
-    private val _eventChannel = Channel<LoginEvent>(Channel.BUFFERED)
-    val event = _eventChannel.receiveAsFlow()
+    private val _event = Channel<LoginEvent>(Channel.BUFFERED)
+    val event = _event.receiveAsFlow()
 
     init {
         loadSavedCredentials()
@@ -57,7 +56,7 @@ class LoginViewModel @Inject constructor(
 
     private fun sendEvent(event: LoginEvent) {
         viewModelScope.launch {
-            _eventChannel.send(event)
+            _event.send(event)
         }
     }
 
@@ -99,7 +98,10 @@ class LoginViewModel @Inject constructor(
         }
     }
 
-    fun onGoogleSignInClicked(context: Context, webClientId: String) {
+    fun onGoogleSignInClicked(
+        context: Context,
+        webClientId: String
+    ) {
         _state.update { it.copy(loginState = UiState.Loading) }
 
         viewModelScope.launch {
@@ -162,7 +164,7 @@ class LoginViewModel @Inject constructor(
 
     fun onForgotPasswordClicked() {
         viewModelScope.launch {
-            _eventChannel.send(LoginEvent.NavigateToForgotPassword)
+            _event.send(LoginEvent.NavigateToForgotPassword)
         }
     }
 
@@ -180,5 +182,4 @@ class LoginViewModel @Inject constructor(
             }
         }
     }
-
 }

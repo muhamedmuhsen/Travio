@@ -29,7 +29,9 @@ import com.example.designsystem.theme.spacing
 import com.example.feature.favorite.R
 
 enum class SectionTab {
-    All, Places, Posts
+    All,
+    Places,
+    Posts
 }
 
 @Composable
@@ -111,13 +113,19 @@ private fun Modifier.selectedTabBackground(isSelected: Boolean): Modifier =
     }
 
 @Composable
-private fun SectionTabLabel(label: String, isSelected: Boolean) {
+private fun SectionTabLabel(
+    label: String,
+    isSelected: Boolean
+) {
     Text(
         text = label,
         style = MaterialTheme.typography.bodyMedium,
         fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Normal,
-        color = if (isSelected) MaterialTheme.colorScheme.onSurface
-        else MaterialTheme.colorScheme.onSurfaceVariant,
+        color = if (isSelected) {
+            MaterialTheme.colorScheme.onSurface
+        } else {
+            MaterialTheme.colorScheme.onSurfaceVariant
+        },
         maxLines = 1,
         softWrap = false,
         overflow = TextOverflow.Ellipsis
@@ -125,11 +133,12 @@ private fun SectionTabLabel(label: String, isSelected: Boolean) {
 }
 
 @Composable
-private fun SectionTab.labelString(): String = when (this) {
-    SectionTab.All -> stringResource(R.string.favorite_tab_all)
-    SectionTab.Places -> stringResource(R.string.favorite_tab_places)
-    SectionTab.Posts -> stringResource(R.string.favorite_tab_posts)
-}
+private fun SectionTab.labelString(): String =
+    when (this) {
+        SectionTab.All -> stringResource(R.string.favorite_tab_all)
+        SectionTab.Places -> stringResource(R.string.favorite_tab_places)
+        SectionTab.Posts -> stringResource(R.string.favorite_tab_posts)
+    }
 
 @Preview(showBackground = true)
 @Composable

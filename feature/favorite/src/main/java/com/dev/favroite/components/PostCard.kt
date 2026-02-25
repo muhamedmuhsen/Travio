@@ -108,15 +108,21 @@ private fun PostFavoriteIcon(
         Icon(
             painter = painterResource(id = R.drawable.favorite_icon),
             contentDescription = stringResource(R.string.favorite_remove_cd),
-            tint = if (isFavorite) MaterialTheme.colorScheme.error
-            else MaterialTheme.colorScheme.outlineVariant,
+            tint = if (isFavorite) {
+                MaterialTheme.colorScheme.error
+            } else {
+                MaterialTheme.colorScheme.outlineVariant
+            },
             modifier = Modifier.size(20.dp)
         )
     }
 }
 
 @Composable
-private fun PostDetails(title: String, author: String) {
+private fun PostDetails(
+    title: String,
+    author: String
+) {
     Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
         Text(
             text = title,
@@ -149,4 +155,3 @@ private fun PostCardPreview() {
         )
     }
 }
-

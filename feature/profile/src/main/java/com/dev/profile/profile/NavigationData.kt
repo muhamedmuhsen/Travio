@@ -1,4 +1,4 @@
-package com.dev.profile.profile_
+package com.dev.profile.profile
 
 data class NavigationData(
     val firstname: String,

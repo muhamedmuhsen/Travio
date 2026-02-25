@@ -7,4 +7,3 @@ sealed interface VerifyEmailEvent {
     data object NavigateToSuccess : VerifyEmailEvent
     data class ShowError(val message: UiText) : VerifyEmailEvent
 }
-

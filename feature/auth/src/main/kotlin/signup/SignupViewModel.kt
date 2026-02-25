@@ -6,10 +6,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.data.repository.auth.GoogleCredentialDataSourceImpl
 import com.example.domain.repository.prefernces.PreferencesManager
-import com.example.domain.usecase.auth.login.GoogleSignInUseCase
 import com.example.domain.usecase.auth.emailverification.SendVerifyEmailOtpUseCase
-import com.example.domain.utils.Result
+import com.example.domain.usecase.auth.login.GoogleSignInUseCase
 import com.example.domain.usecase.auth.signup.SignupUseCase
+import com.example.domain.utils.Result
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -27,7 +27,7 @@ class SignupViewModel @Inject constructor(
     private val googleSignInUseCase: GoogleSignInUseCase,
     private val sendVerifyEmailOtpUseCase: SendVerifyEmailOtpUseCase,
     private val googleCredentialDataSource: GoogleCredentialDataSourceImpl,
-    private val preferencesManager: PreferencesManager,
+    private val preferencesManager: PreferencesManager
 ) : ViewModel() {
     private val _state = MutableStateFlow(SignupUiState())
     val state = _state.asStateFlow()
@@ -41,7 +41,10 @@ class SignupViewModel @Inject constructor(
         }
     }
 
-    fun onGoogleSignInClicked(context: Context, webClientId: String) {
+    fun onGoogleSignInClicked(
+        context: Context,
+        webClientId: String
+    ) {
         _state.update { it.copy(signupState = UiState.Loading) }
 
         viewModelScope.launch {
@@ -77,7 +80,6 @@ class SignupViewModel @Inject constructor(
         }
     }
 
-
     fun onSignupClicked() {
         if (_state.value.signupState is UiState.Loading) return
         clearErrors()
@@ -89,13 +91,15 @@ class SignupViewModel @Inject constructor(
 
         _state.update { it.copy(signupState = UiState.Loading) }
         viewModelScope.launch {
-            when (val result = signupUseCase(
-                email = email,
-                password = password,
-                firstname = firstname,
-                lastname = lastname,
-                username = username
-            )) {
+            when (
+                val result = signupUseCase(
+                    email = email,
+                    password = password,
+                    firstname = firstname,
+                    lastname = lastname,
+                    username = username
+                )
+            ) {
                 is Result.Error -> {
                     _state.update { it.copy(signupState = UiState.Error(result.error.asUiText())) }
                     _event.send(SignupEvent.ShowAuthError(result.error.asUiText()))
@@ -130,8 +134,6 @@ class SignupViewModel @Inject constructor(
         }
     }
 
-
-
     private fun clearErrors() {
         _state.update {
             it.copy(
@@ -140,7 +142,7 @@ class SignupViewModel @Inject constructor(
                 isFirstNameError = false,
                 isLastNameError = false,
                 isUsernameError = false,
-                isPasswordMismatch = false,
+                isPasswordMismatch = false
             )
         }
     }
@@ -168,5 +170,4 @@ class SignupViewModel @Inject constructor(
     fun onFirstNameChange(firstname: String) {
         _state.update { it.copy(firstname = firstname) }
     }
-
 }

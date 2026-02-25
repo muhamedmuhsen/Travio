@@ -24,22 +24,22 @@ fun HomeScreen(
     Scaffold(
         bottomBar = {
             AppBottomBar(
-            selectedItem = state.selectedItem,
-            onItemSelected = { index ->
-                when (index) {
-                    4 -> navigateToProfile()
-                    1 -> navigateToFavorite()
+                selectedItem = state.selectedItem,
+                onItemSelected = { index ->
+                    when (index) {
+                        4 -> navigateToProfile()
+                        1 -> navigateToFavorite()
+                    }
                 }
-            }
-        )
-    }
+            )
+        }
     ) { innerPadding ->
         Column(
             Modifier
                 .fillMaxSize()
-                .padding(innerPadding),
+                .padding(innerPadding)
 
-            ) {
+        ) {
             Text("Hi")
         }
     }

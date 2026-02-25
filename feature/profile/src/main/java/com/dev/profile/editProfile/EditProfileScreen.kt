@@ -50,8 +50,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.designsystem.components.AppButton
-import com.example.designsystem.components.ErrorSnackBar
 import com.example.designsystem.components.AppTextField
+import com.example.designsystem.components.ErrorSnackBar
 import com.example.designsystem.components.TextFieldType
 import com.example.designsystem.theme.TravioTheme
 import com.example.designsystem.theme.spacing
@@ -78,7 +78,8 @@ fun EditProfileScreen(
         uri?.let {
             viewModel.onProfileImageSelected(it.toString())
             context.contentResolver.takePersistableUriPermission(
-                it, Intent.FLAG_GRANT_READ_URI_PERMISSION
+                it,
+                Intent.FLAG_GRANT_READ_URI_PERMISSION
             )
             Log.d("EditProfileScreen", "Image URI selected: $it")
         }
@@ -118,7 +119,8 @@ fun EditProfileScreen(
                 ErrorSnackBar(text = message)
             }
         },
-        topBar = { AppTopBar(onCloseClicked = onCloseClicked) }) { innerPadding ->
+        topBar = { AppTopBar(onCloseClicked = onCloseClicked) }
+    ) { innerPadding ->
         EditProfileContent(
             modifier = modifier
                 .fillMaxSize()
@@ -142,7 +144,6 @@ fun EditProfileScreen(
         )
     }
 }
-
 
 @Composable
 fun EditProfileContent(
@@ -177,7 +178,7 @@ fun EditProfileContent(
             ChangeProfilePictureBox(
                 imageUri = profileImageUri,
                 onClick = onProfileImageClick,
-                onImageSuccess = onImageSuccess,
+                onImageSuccess = onImageSuccess
             )
             AppTextField(
                 value = firstName,
@@ -220,11 +221,14 @@ fun EditProfileContent(
 
 @Composable
 fun ChangeProfilePictureBox(
-    imageUri: String?, onClick: () -> Unit, onImageSuccess: (String?) -> Unit
+    imageUri: String?,
+    onClick: () -> Unit,
+    onImageSuccess: (String?) -> Unit
 ) {
     Log.d("imageUri", imageUri ?: "null")
     Box(
-        modifier = Modifier.size(96.dp), contentAlignment = Alignment.Center
+        modifier = Modifier.size(96.dp),
+        contentAlignment = Alignment.Center
     ) {
         Box(
             modifier = Modifier
@@ -239,9 +243,9 @@ fun ChangeProfilePictureBox(
                 .clickable(
                     onClick = onClick,
                     onClickLabel = stringResource(id = R.string.change_profile_picture)
-                ), contentAlignment = Alignment.Center
+                ),
+            contentAlignment = Alignment.Center
         ) {
-
             AsyncImage(
                 model = ImageRequest.Builder(LocalContext.current)
                     .data(imageUri ?: R.drawable.ic_default_profile)
@@ -255,7 +259,6 @@ fun ChangeProfilePictureBox(
                 contentScale = ContentScale.Crop,
                 modifier = Modifier.fillMaxSize()
             )
-
         }
 
         Box(
@@ -265,8 +268,11 @@ fun ChangeProfilePictureBox(
                 .size(32.dp)
                 .background(MaterialTheme.colorScheme.primary, CircleShape)
                 .border(
-                    width = 2.dp, color = MaterialTheme.colorScheme.surface, shape = CircleShape
-                ), contentAlignment = Alignment.Center
+                    width = 2.dp,
+                    color = MaterialTheme.colorScheme.surface,
+                    shape = CircleShape
+                ),
+            contentAlignment = Alignment.Center
         ) {
             Icon(
                 painter = painterResource(R.drawable.camera),
@@ -278,11 +284,11 @@ fun ChangeProfilePictureBox(
     }
 }
 
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppTopBar(
-    modifier: Modifier = Modifier, onCloseClicked: () -> Unit
+    modifier: Modifier = Modifier,
+    onCloseClicked: () -> Unit
 ) {
     Column {
         TopAppBar(
@@ -294,7 +300,8 @@ fun AppTopBar(
                     modifier = Modifier.fillMaxWidth(),
                     textAlign = TextAlign.Center
                 )
-            }, navigationIcon = {
+            },
+            navigationIcon = {
                 Box(
                     modifier = Modifier
                         .padding(start = MaterialTheme.spacing.md)
@@ -303,7 +310,8 @@ fun AppTopBar(
                             color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
                             shape = CircleShape
                         )
-                        .clickable { onCloseClicked() }, contentAlignment = Alignment.Center
+                        .clickable { onCloseClicked() },
+                    contentAlignment = Alignment.Center
                 ) {
                     Icon(
                         imageVector = Icons.Default.Close,
@@ -311,18 +319,20 @@ fun AppTopBar(
                         modifier = Modifier.size(MaterialTheme.spacing.lg)
                     )
                 }
-            }, actions = {
+            },
+            actions = {
                 Spacer(modifier = Modifier.size(MaterialTheme.spacing.xxxl))
-            }, colors = TopAppBarDefaults.topAppBarColors(
+            },
+            colors = TopAppBarDefaults.topAppBarColors(
                 containerColor = MaterialTheme.colorScheme.surface
             )
         )
         HorizontalDivider(
-            thickness = 1.dp, color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
+            thickness = 1.dp,
+            color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
         )
     }
 }
-
 
 @Preview
 @Preview(name = "Dark", uiMode = android.content.res.Configuration.UI_MODE_NIGHT_YES)
@@ -330,7 +340,8 @@ fun AppTopBar(
 private fun EditScreenPreview() {
     TravioTheme(dynamicColor = false) {
         Scaffold(
-            topBar = { AppTopBar(onCloseClicked = {}) }) { innerPadding ->
+            topBar = { AppTopBar(onCloseClicked = {}) }
+        ) { innerPadding ->
             EditProfileContent(
                 modifier = Modifier
                     .fillMaxSize()
@@ -350,7 +361,8 @@ private fun EditScreenPreview() {
                 onUpdateClick = {},
                 onProfileImageClick = {},
                 profileImageUri = null,
-                onImageSuccess = {})
+                onImageSuccess = {}
+            )
         }
     }
 }

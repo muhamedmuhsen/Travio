@@ -26,11 +26,11 @@ fun RememberMeAndForgetPasswordSection(
         modifier = modifier.fillMaxWidth()
     ) {
         Row(
-            verticalAlignment = Alignment.CenterVertically,
+            verticalAlignment = Alignment.CenterVertically
         ) {
             Checkbox(
                 checked = checked,
-                onCheckedChange = onRememberMeCheckedChange,
+                onCheckedChange = onRememberMeCheckedChange
             )
             Text(
                 text = stringResource(R.string.remember_me),
@@ -42,6 +42,7 @@ fun RememberMeAndForgetPasswordSection(
             text = stringResource(R.string.forgot_password),
             color = MaterialTheme.colorScheme.primary,
             style = MaterialTheme.typography.bodySmall,
-            modifier = Modifier.clickable { onForgetPasswordClicked() })
+            modifier = Modifier.clickable { onForgetPasswordClicked() }
+        )
     }
 }

@@ -2,8 +2,8 @@ package com.example.feature.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.domain.usecase.auth.session.LogoutUseCase
 import com.example.data.local.preferences.CredentialsManagerImpl
+import com.example.domain.usecase.auth.session.LogoutUseCase
 import com.example.domain.utils.Result
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -35,19 +35,16 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-
     fun onHomeClicked() {
         _state.update { homeState -> homeState.copy(selectedItem = 0) }
     }
 
     fun onFavoriteClicked() {
         _state.update { homeState -> homeState.copy(selectedItem = 1) }
-
     }
 
     fun onCommunityClicked() {
         _state.update { homeState -> homeState.copy(selectedItem = 2) }
-
     }
 
     fun onAiChatClicked() {

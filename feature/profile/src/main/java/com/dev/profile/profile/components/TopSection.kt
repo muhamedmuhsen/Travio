@@ -1,4 +1,4 @@
-package com.dev.profile.profile_.components
+package com.dev.profile.profile.components
 
 import android.content.res.Configuration
 import androidx.annotation.DrawableRes
@@ -205,7 +205,10 @@ fun DetailsCardWithSwitch(
 }
 
 @Composable
-private fun DetailsRowSection(boxIcon: Int, text: String) {
+private fun DetailsRowSection(
+    boxIcon: Int,
+    text: String
+) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.xs)

@@ -51,7 +51,7 @@ fun FavoriteScreen(
     viewModel: FavoriteViewModel = hiltViewModel(),
     navigateToProfile: () -> Unit,
     navigateToHome: () -> Unit,
-    navigateToCommunity: () -> Unit = {},
+    navigateToCommunity: () -> Unit = {}
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
@@ -78,7 +78,7 @@ private fun FavoriteContent(
     onTabSelected: (SectionTab) -> Unit,
     onDeletePlace: (String) -> Unit,
     onDeletePost: (String) -> Unit,
-    onBottomBarItemSelected: (Int) -> Unit,
+    onBottomBarItemSelected: (Int) -> Unit
 ) {
     Scaffold(
         bottomBar = {
@@ -185,7 +185,7 @@ private fun FavoriteList(
     places: List<Place>,
     posts: List<Post>,
     onDeletePlace: (String) -> Unit,
-    onDeletePost: (String) -> Unit,
+    onDeletePost: (String) -> Unit
 ) {
     LazyColumn(
         modifier = modifier.fillMaxSize(),
@@ -315,7 +315,7 @@ private fun FavoriteScreenWithDataPreview() {
                         description = "Rome, Italy",
                         imageUrl = "",
                         rating = 4.7f
-                    ),
+                    )
                 ),
                 posts = listOf(
                     Post(

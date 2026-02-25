@@ -30,7 +30,6 @@ class NewPasswordViewModel @Inject constructor(
     val event = _event.receiveAsFlow()
     private suspend fun sendEvent(event: NewPasswordEvent) = _event.send(event)
 
-
     fun onResetPasswordClicked(email: String) {
         if (_state.value.newPasswordState is UiState.Loading) return
         clearErrors()
@@ -97,5 +96,4 @@ class NewPasswordViewModel @Inject constructor(
     fun onPasswordVisibilityCheck() {
         _state.update { currentState -> currentState.copy(isPasswordVisible = !currentState.isPasswordVisible) }
     }
-
 }

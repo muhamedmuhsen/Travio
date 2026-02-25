@@ -71,7 +71,8 @@ fun OnboardingScreen(
         ) {
             // LAYER 1: The Pager with images and text (at the bottom of the stack)
             HorizontalPager(
-                state = pagerState, modifier = Modifier.fillMaxSize()
+                state = pagerState,
+                modifier = Modifier.fillMaxSize()
             ) { currentPage ->
                 val page = pages[currentPage]
 
@@ -82,7 +83,7 @@ fun OnboardingScreen(
                         painter = painterResource(page.image),
                         contentDescription = null,
                         modifier = Modifier.fillMaxSize(),
-                        contentScale = ContentScale.Crop,
+                        contentScale = ContentScale.Crop
                     )
 
                     // Gradient overlay with Text on top
@@ -92,8 +93,10 @@ fun OnboardingScreen(
                             .background(
                                 Brush.verticalGradient(
                                     colors = listOf(
-                                        Color.Transparent, Color.Black.copy(alpha = 0.8f)
-                                    ), startY = 400f
+                                        Color.Transparent,
+                                        Color.Black.copy(alpha = 0.8f)
+                                    ),
+                                    startY = 400f
                                 )
                             )
                     ) {
@@ -107,13 +110,13 @@ fun OnboardingScreen(
                             Text(
                                 text = stringResource(id = page.title),
                                 style = MaterialTheme.typography.headlineLarge,
-                                color = Color.White // Use a static color for visibility
+                                color = Color.White
                             )
                             Spacer(modifier = Modifier.height(MaterialTheme.spacing.sm))
                             Text(
                                 text = stringResource(id = page.description),
                                 style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.SemiBold),
-                                color = Color.White.copy(alpha = 0.9f), // Use a static color
+                                color = Color.White.copy(alpha = 0.9f)
                             )
                             // Space to prevent overlap with the navigation row
                             Spacer(modifier = Modifier.height(MaterialTheme.spacing.xxxl))
@@ -130,7 +133,7 @@ fun OnboardingScreen(
                         .padding(top = 36.dp)
                         .clickable { viewModel.onFinishClicked() },
                     style = MaterialTheme.typography.titleLarge,
-                    color = Color.White,
+                    color = Color.White
                 )
             }
 
@@ -150,8 +153,11 @@ fun OnboardingScreen(
                             .height(MaterialTheme.spacing.xs)
                             .clip(CircleShape)
                             .background(
-                                if (pagerState.currentPage == index) MaterialTheme.colorScheme.secondaryContainer
-                                else MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.5f)
+                                if (pagerState.currentPage == index) {
+                                    MaterialTheme.colorScheme.secondaryContainer
+                                } else {
+                                    MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.5f)
+                                }
                             )
                     )
                     if (index < pages.size - 1) {
@@ -171,7 +177,8 @@ fun OnboardingScreen(
                                 viewModel.onFinishClicked()
                             }
                         }
-                    }, modifier = Modifier
+                    },
+                    modifier = Modifier
                         .size(MaterialTheme.spacing.xxxl)
                         .background(
                             color = MaterialTheme.colorScheme.secondaryContainer,
@@ -194,11 +201,10 @@ fun OnboardingScreen(
     }
 }
 
-
 @Preview
 @Composable
 private fun OnboardingPreview() {
     TravioTheme {
-        OnboardingScreen() {}
+        OnboardingScreen {}
     }
 }
