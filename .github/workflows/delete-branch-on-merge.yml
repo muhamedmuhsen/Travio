@@ -7,13 +7,12 @@ on:
 jobs:
   delete-branch:
     runs-on: ubuntu-latest
-    if: github.event.pull_request.merged == true
-    # Explicitly grant permission to delete the branch
+    # Only run if merged AND if the PR is NOT from a fork
+    if: github.event.pull_request.merged == true && github.event.pull_request.head.repo.full_name == github.repository
     permissions:
-      contents: write
+      contents: write # Required to delete the branch
     steps:
       - name: Delete merged branch
-        # Pointing to a specific, stable version (check the action's repo for the latest)
         uses: SvanBoxel/delete-merged-branch@v1.4.0
         env:
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
