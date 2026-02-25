@@ -1,6 +1,5 @@
 package com.example.travio
 
-import com.example.feature.home.HomeScreen
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
@@ -8,13 +7,14 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.dev.favroite.FavoriteScreen
 import com.dev.profile.editProfile.EditProfileScreen
-import com.dev.profile.profile_.ProfileScreen
+import com.dev.profile.profile.ProfileScreen
 import com.example.common.navigation.Screen
-import com.example.feature.forgetpassword.code.CodeScreen
 import com.example.feature.forgetpassword.ForgetPasswordScreen
+import com.example.feature.forgetpassword.code.CodeScreen
+import com.example.feature.forgetpassword.newpassword.NewPasswordScreen
+import com.example.feature.home.HomeScreen
 import com.example.feature.language.LanguageScreen
 import com.example.feature.login.LoginScreen
-import com.example.feature.forgetpassword.newpassword.NewPasswordScreen
 import com.example.feature.onboarding.OnboardingScreen
 import com.example.feature.signup.SignupScreen
 import com.example.feature.starterlogin.StarterLogin
@@ -55,7 +55,8 @@ fun TravioNavHost(
         }
         composable(Screen.LanguageScreen.route) {
             LanguageScreen(
-                navigateToStarterLogin = { navController.navigate(Screen.StarterLoginScreen.route) })
+                navigateToStarterLogin = { navController.navigate(Screen.StarterLoginScreen.route) }
+            )
         }
         composable(Screen.ForgetPasswordScreen.route) {
             ForgetPasswordScreen(
@@ -63,7 +64,8 @@ fun TravioNavHost(
                 navigateToCodeScreen = {
                     val email = it
                     navController.navigate(Screen.CodeScreen.route + "/$email")
-                })
+                }
+            )
         }
         composable(Screen.CodeScreen.route + "/{email}") {
             val email = it.arguments?.getString("email") ?: ""
@@ -116,7 +118,7 @@ fun TravioNavHost(
                         popUpTo(Screen.StarterLoginScreen.route) { inclusive = true }
                     }
                 },
-                onBackClicked = { navController.popBackStack() },
+                onBackClicked = { navController.popBackStack() }
             )
         }
 
@@ -125,14 +127,16 @@ fun TravioNavHost(
                 navigateToProfile = {
                     navController.navigate(Screen.ProfileScreen.route)
                 },
-                navigateToFavorite = { navController.navigate(Screen.FavoriteScreen.route) },
+                navigateToFavorite = { navController.navigate(Screen.FavoriteScreen.route) }
             )
         }
         composable(Screen.ProfileScreen.route) {
             ProfileScreen(
                 onNavigateToDetail = { data ->
                     val encodedPic = URLEncoder.encode(data.profilePicUri ?: "", "UTF-8")
-                    navController.navigate(Screen.EditProfileScreen.route + "/${encodedPic}" + "/${data.firstname}" + "/${data.lastname}" + "/${data.username}")
+                    navController.navigate(
+                        Screen.EditProfileScreen.route + "/$encodedPic" + "/${data.firstname}" + "/${data.lastname}" + "/${data.username}"
+                    )
                 },
                 navigateToHome = {
                     navController.popBackStack(Screen.HomeScreen.route, inclusive = false)

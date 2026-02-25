@@ -32,7 +32,7 @@ class OnboardingViewModel @Inject constructor(private val preferencesManager: Pr
             image = R.drawable.onboarding_2,
             title = R.string.onboarding_title_3,
             description = R.string.onboarding_description_3
-        ),
+        )
     )
 
     var currentPage = mutableStateOf(0)

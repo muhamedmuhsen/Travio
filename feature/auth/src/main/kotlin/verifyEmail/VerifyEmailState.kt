@@ -9,4 +9,3 @@ data class VerifyEmailState(
     val verificationState: UiState<Unit> = UiState.Idle,
     val timeLeft: Int = 0
 )
-

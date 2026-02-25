@@ -1,6 +1,5 @@
 package com.example.feature.forgetpassword.forgetpassword
 
-
 import ui.text.UiText
 
 sealed interface ForgetPasswordEvent {
@@ -9,5 +8,3 @@ sealed interface ForgetPasswordEvent {
 
     data class ShowError(val message: UiText) : ForgetPasswordEvent
 }
-
-

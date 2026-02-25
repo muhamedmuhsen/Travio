@@ -4,8 +4,8 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.common.extensions.isValidEmail
-import com.example.domain.utils.Result
 import com.example.domain.usecase.auth.passwordreset.ForgetPasswordUseCase
+import com.example.domain.utils.Result
 import com.example.feature.auth.R
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel

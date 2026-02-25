@@ -22,7 +22,7 @@ class FavoriteViewModel @Inject constructor(
     private val getAllPlacesUseCase: GetAllPlacesUseCase,
     private val getAllPostsUseCase: GetAllPostsUseCase,
     private val deletePlaceUseCase: DeletePlaceUseCase,
-    private val deletePostUseCase: DeletePostUseCase,
+    private val deletePostUseCase: DeletePostUseCase
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(FavoriteState())

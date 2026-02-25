@@ -20,33 +20,39 @@ class LoginRepositoryImpl @Inject constructor(
 ) : LoginRepository {
 
     override suspend fun login(
-        email: String, password: String, isRememberMeChecked: Boolean
-    ): Result<Unit, DataError> = safeApiCall {
-        val response = api.login(LoginRequest(email, password))
-        tokenProvider.saveTokens(
-            response.token,
-            response.refreshToken
-        )
-        preferencesManager.setLoggedIn(true)
-        if (isRememberMeChecked) {
-            credentialsManager.saveCredentials(
-                email, password, true
+        email: String,
+        password: String,
+        isRememberMeChecked: Boolean
+    ): Result<Unit, DataError> =
+        safeApiCall {
+            val response = api.login(LoginRequest(email, password))
+            tokenProvider.saveTokens(
+                response.token,
+                response.refreshToken
             )
-        } else {
-            credentialsManager.clearCredentials()
+            preferencesManager.setLoggedIn(true)
+            if (isRememberMeChecked) {
+                credentialsManager.saveCredentials(
+                    email,
+                    password,
+                    true
+                )
+            } else {
+                credentialsManager.clearCredentials()
+            }
         }
-    }
 
-    override suspend fun signInWithGoogle(idToken: String): Result<Unit, DataError> = safeApiCall {
-        val request = GoogleLoginRequest(idToken)
-        val response = api.googleLogin(request)
+    override suspend fun signInWithGoogle(idToken: String): Result<Unit, DataError> =
+        safeApiCall {
+            val request = GoogleLoginRequest(idToken)
+            val response = api.googleLogin(request)
 
-        tokenProvider.saveTokens(
-            response.token,
-            response.refreshToken
-        )
-        preferencesManager.setLoggedIn(true)
-    }
+            tokenProvider.saveTokens(
+                response.token,
+                response.refreshToken
+            )
+            preferencesManager.setLoggedIn(true)
+        }
 
     override suspend fun signInWithFacebook(accessToken: String): Result<Unit, DataError> =
         safeApiCall {

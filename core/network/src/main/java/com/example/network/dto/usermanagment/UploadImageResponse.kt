@@ -1,4 +1,4 @@
-package com.example.network.dto.user_managment
+package com.example.network.dto.usermanagment
 
 data class UploadImageResponse(
     val `data`: String,
@@ -6,4 +6,3 @@ data class UploadImageResponse(
     val message: String,
     val success: Boolean
 )
-

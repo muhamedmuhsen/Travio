@@ -22,11 +22,13 @@ class EmailVerificationRepositoryImpl @Inject constructor(
         }
 
     override suspend fun verifyEmail(
-        email: String, otp: String
-    ): Result<Unit, DataError> = safeApiCall {
-        val request = VerifyEmailRequest(email, otp)
-        api.verifyEmail(request)
+        email: String,
+        otp: String
+    ): Result<Unit, DataError> =
+        safeApiCall {
+            val request = VerifyEmailRequest(email, otp)
+            api.verifyEmail(request)
 
-        preferencesManager.setLoggedIn(true)
-    }
+            preferencesManager.setLoggedIn(true)
+        }
 }

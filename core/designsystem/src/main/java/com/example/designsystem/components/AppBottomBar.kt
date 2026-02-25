@@ -1,5 +1,6 @@
 package com.example.designsystem.components
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -13,7 +14,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.annotation.StringRes
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -28,7 +28,6 @@ data class BottomNavigationItem(
     val unselectedIcon: Int
     // TODO: add route to navigate to
 )
-
 
 val items = listOf(
     BottomNavigationItem(
@@ -108,8 +107,7 @@ private fun AppBottomBarPreview() {
     TravioTheme {
         Scaffold(
             bottomBar = {
-                AppBottomBar(
-                )
+                AppBottomBar()
             }
         ) { innerPadding ->
             Column(Modifier.padding(innerPadding)) { Text(text = "Hi") }

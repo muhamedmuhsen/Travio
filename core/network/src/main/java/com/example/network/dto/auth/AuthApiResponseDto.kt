@@ -9,6 +9,3 @@ data class AuthApiResponseDto(
     val refreshToken: String,
     val refreshTokenExpiration: String
 )
-
-
-

@@ -48,7 +48,7 @@ fun VerifyEmailScreen(
     modifier: Modifier = Modifier,
     navigateToHome: () -> Unit,
     onBackClicked: () -> Unit,
-    viewModel: VerifyEmailViewModel = hiltViewModel(),
+    viewModel: VerifyEmailViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -106,7 +106,8 @@ fun VerifyEmailScreen(
                     containerColor = MaterialTheme.colorScheme.surface
                 )
             )
-        }) { innerPadding ->
+        }
+    ) { innerPadding ->
         Column(
             modifier = modifier
                 .padding(innerPadding)
@@ -115,20 +116,20 @@ fun VerifyEmailScreen(
             Text(
                 text = stringResource(id = R.string.please_enter_code),
                 style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
 
             Text(
                 text = state.email,
                 style = MaterialTheme.typography.titleSmall,
-                color = MaterialTheme.colorScheme.onBackground,
+                color = MaterialTheme.colorScheme.onBackground
             )
 
             Spacer(modifier = Modifier.height(MaterialTheme.spacing.lg))
 
             OtpInputField(
                 onOtpFilled = { viewModel.onCodeChange(it) },
-                isError = state.isCodeError,
+                isError = state.isCodeError
             )
 
             Spacer(modifier = Modifier.height(MaterialTheme.spacing.lg))

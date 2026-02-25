@@ -1,4 +1,4 @@
-package com.dev.profile.profile_.components
+package com.dev.profile.profile.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -87,7 +87,8 @@ fun LogoutDialog(
                     )
                 }
             }
-        })
+        }
+    )
 }
 
 @Composable

@@ -23,7 +23,7 @@ class StarterLoginViewModel
 @Inject constructor(
     private val googleCredentialDataSource: GoogleCredentialDataSourceImpl,
     private val googleSignInUseCase: GoogleSignInUseCase,
-    private val preferencesManager: PreferencesManager,
+    private val preferencesManager: PreferencesManager
 ) : ViewModel() {
     private val _state = MutableStateFlow(StarterLoginUiState())
     val state = _state.asStateFlow()
@@ -43,7 +43,10 @@ class StarterLoginViewModel
         sendEvent(StarterLoginEvent.NavigateToSignup)
     }
 
-    fun onGoogleSignInClicked(context: Context, webClientId: String) {
+    fun onGoogleSignInClicked(
+        context: Context,
+        webClientId: String
+    ) {
         if (_state.value.loginState is UiState.Loading) return
 
         _state.update { it.copy(loginState = UiState.Loading) }
@@ -81,4 +84,3 @@ class StarterLoginViewModel
         }
     }
 }
-

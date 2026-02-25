@@ -9,7 +9,7 @@ import com.example.domain.utils.Result
 import javax.inject.Inject
 
 class SignupUseCase @Inject constructor(
-    private val repository: SignupRepository,
+    private val repository: SignupRepository
 ) {
     suspend operator fun invoke(
         email: String,
@@ -24,8 +24,9 @@ class SignupUseCase @Inject constructor(
         if (!firstname.isValidName()) {
             return Result.Error(DataError.Validation.ShortName)
         }
-        if (!lastname.isValidName())
+        if (!lastname.isValidName()) {
             return Result.Error(DataError.Validation.ShortName)
+        }
 
         if (!email.isValidEmail()) {
             return Result.Error(DataError.Validation.InvalidEmailFormat)
@@ -42,6 +43,5 @@ class SignupUseCase @Inject constructor(
             username = username,
             confirmPassword = password
         )
-
     }
 }

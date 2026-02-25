@@ -1,6 +1,5 @@
 package com.example.feature.forgetpassword
 
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -25,6 +24,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -41,19 +41,20 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.example.feature.auth.R
 import com.example.designsystem.components.AppButton
-import com.example.designsystem.components.ErrorSnackBar
 import com.example.designsystem.components.AppTextField
+import com.example.designsystem.components.ErrorSnackBar
 import com.example.designsystem.theme.TravioTheme
 import com.example.designsystem.theme.spacing
+import com.example.feature.auth.R
 import com.example.feature.forgetpassword.forgetpassword.ForgetPasswordEvent
 import com.example.feature.forgetpassword.forgetpassword.ForgetPasswordViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ForgetPasswordScreen(
-    modifier: Modifier = Modifier, onCloseClicked: () -> Unit,
+    modifier: Modifier = Modifier,
+    onCloseClicked: () -> Unit,
     viewModel: ForgetPasswordViewModel = hiltViewModel(),
     navigateToCodeScreen: (email: String) -> Unit
 ) {
@@ -98,7 +99,8 @@ fun ForgetPasswordScreen(
                         modifier = Modifier.fillMaxWidth(),
                         textAlign = TextAlign.Center
                     )
-                }, navigationIcon = {
+                },
+                navigationIcon = {
                     Box(
                         modifier = Modifier
                             .padding(start = MaterialTheme.spacing.md)
@@ -116,13 +118,16 @@ fun ForgetPasswordScreen(
                             modifier = Modifier.size(20.dp)
                         )
                     }
-                }, actions = {
+                },
+                actions = {
                     Spacer(modifier = Modifier.size(56.dp))
-                }, colors = TopAppBarDefaults.topAppBarColors(
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.surface
                 )
             )
-        }) { innerPadding ->
+        }
+    ) { innerPadding ->
         Column(
             modifier = modifier
                 .fillMaxSize()

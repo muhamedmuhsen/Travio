@@ -13,10 +13,10 @@ import okhttp3.Route
 import javax.inject.Provider
 import javax.inject.Singleton
 
-
 @Singleton
 class TokenAuthenticator(
-    private val tokenProvider: TokenProvider, private val authApi: Provider<AuthApi>
+    private val tokenProvider: TokenProvider,
+    private val authApi: Provider<AuthApi>
 ) : Authenticator {
 
     private val mutex = Mutex()
@@ -28,7 +28,10 @@ class TokenAuthenticator(
         private const val RETRY_TAG = "auth_retry"
     }
 
-    override fun authenticate(route: Route?, response: Response): Request? {
+    override fun authenticate(
+        route: Route?,
+        response: Response
+    ): Request? {
         Log.d(TAG, "authenticate() called | code=${response.code}")
 
         // Check if we've already tried to refresh for this request
@@ -93,13 +96,13 @@ class TokenAuthenticator(
 
                     // Save new tokens
                     tokenProvider.saveTokens(
-                        accessToken = session.token, refreshToken = session.refreshToken
+                        accessToken = session.token,
+                        refreshToken = session.refreshToken
                     )
                     Log.d(TAG, "Token refreshed successfully")
 
                     // Return request with new token and mark as retried
                     newRequestWithToken(response.request, session.token, retry = true)
-
                 } catch (e: Exception) {
                     Log.e(TAG, "Unexpected error during authentication", e)
                     null

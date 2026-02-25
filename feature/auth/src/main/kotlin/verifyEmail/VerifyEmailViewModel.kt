@@ -23,12 +23,11 @@ import java.time.Duration
 import java.time.Instant
 import javax.inject.Inject
 
-
 @HiltViewModel
 class VerifyEmailViewModel @Inject constructor(
     private val verifyEmailUseCase: VerifyEmailUseCase,
     private val sendVerifyEmailOtpUseCase: SendVerifyEmailOtpUseCase,
-    savedStateHandle: SavedStateHandle,
+    savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
     private companion object {
@@ -189,6 +188,3 @@ class VerifyEmailViewModel @Inject constructor(
         countdownJob?.cancel()
     }
 }
-
-
-

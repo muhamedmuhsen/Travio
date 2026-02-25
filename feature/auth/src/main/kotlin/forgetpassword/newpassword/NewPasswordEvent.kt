@@ -7,4 +7,3 @@ sealed interface NewPasswordEvent {
     data object OnClosedClicked : NewPasswordEvent
     data class ShowError(val message: UiText) : NewPasswordEvent
 }
-

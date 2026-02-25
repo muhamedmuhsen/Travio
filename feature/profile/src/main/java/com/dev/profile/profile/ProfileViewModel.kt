@@ -1,13 +1,12 @@
-package com.dev.profile.profile_
+package com.dev.profile.profile
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.domain.repository.prefernces.PreferencesManager
 import com.example.domain.usecase.auth.session.LogoutUseCase
 import com.example.domain.usecase.preferences.ToggleDarkModeUseCase
-import com.example.domain.usecase.user_management.GetUserUseCase
+import com.example.domain.usecase.usermanagement.GetUserUseCase
 import com.example.domain.utils.Result
-import com.example.domain.utils.isSuccess
 import com.example.feature.language.AppLocaleManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
@@ -111,7 +110,7 @@ class ProfileViewModel @Inject constructor(
                             firstName = result.data.firstName,
                             lastName = result.data.lastName,
                             username = result.data.username.orEmpty(),
-                            profilePictureUrl = result.data.profilePictureUrl,
+                            profilePictureUrl = result.data.profilePictureUrl
                         )
                     }
                 }
@@ -121,7 +120,6 @@ class ProfileViewModel @Inject constructor(
 
     fun onLogoutClicked() {
         _uiState.update { state -> state.copy(showLogoutDialog = true) }
-
     }
 
     fun hideLogoutDialog() {

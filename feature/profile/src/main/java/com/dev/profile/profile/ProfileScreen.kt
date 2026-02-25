@@ -1,14 +1,23 @@
-package com.dev.profile.profile_
+package com.dev.profile.profile
 
 import android.annotation.SuppressLint
 import android.content.res.Configuration
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.*
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -30,13 +39,13 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.dev.profile.profile_.components.LogoutButton
-import com.dev.profile.profile_.components.LogoutDialog
-import com.dev.profile.profile_.components.ProfileOption
-import com.dev.profile.profile_.components.ProfileOptionWithSwitch
-import com.dev.profile.profile_.components.TopSection
-import com.dev.profile.profile_.components.TopSectionWithSwitch
-import com.dev.profile.profile_.components.ProfileLanguageButton
+import com.dev.profile.profile.components.LogoutButton
+import com.dev.profile.profile.components.LogoutDialog
+import com.dev.profile.profile.components.ProfileLanguageButton
+import com.dev.profile.profile.components.ProfileOption
+import com.dev.profile.profile.components.ProfileOptionWithSwitch
+import com.dev.profile.profile.components.TopSection
+import com.dev.profile.profile.components.TopSectionWithSwitch
 import com.example.designsystem.components.AppBottomBar
 import com.example.designsystem.components.ErrorSnackBar
 import com.example.designsystem.theme.TravioTheme
@@ -75,16 +84,20 @@ fun ProfileScreen(
                     errorMessage = event.message.asString(context)
                 }
 
-                ProfileEvent.NavigateToLogin -> { /* handled elsewhere */
+                ProfileEvent.NavigateToLogin -> {
+                    /* handled elsewhere */
                 }
 
-                ProfileEvent.NavigateToEditProfile -> { /* handled elsewhere */
+                ProfileEvent.NavigateToEditProfile -> {
+                    /* handled elsewhere */
                 }
 
-                ProfileEvent.NavigateToChangeLanguage -> { /* handled elsewhere */
+                ProfileEvent.NavigateToChangeLanguage -> {
+                    /* handled elsewhere */
                 }
 
-                is ProfileEvent.ToggleDarkMode -> { /* handled elsewhere */
+                is ProfileEvent.ToggleDarkMode -> {
+                    /* handled elsewhere */
                 }
             }
         }
@@ -163,9 +176,11 @@ private fun ProfileContent(
         ) {
             // Account Settings Section
             ProfileCategory(
-                title = stringResource(id = R.string.account_settings), options = listOf(
+                title = stringResource(id = R.string.account_settings),
+                options = listOf(
                     ProfileOption(
-                        stringResource(id = R.string.my_profile), R.drawable.person
+                        stringResource(id = R.string.my_profile),
+                        R.drawable.person
                     ) {
                         onNavigateToDetail(
                             NavigationData(
@@ -175,11 +190,13 @@ private fun ProfileContent(
                                 profilePicUri = uiState.profilePictureUrl
                             )
                         )
-                    }, ProfileOption(
-                        stringResource(id = R.string.addresses), R.drawable.location
+                    },
+                    ProfileOption(
+                        stringResource(id = R.string.addresses),
+                        R.drawable.location
                     ) {
-
-                    })
+                    }
+                )
             )
 
             // Preferences Section
@@ -193,46 +210,61 @@ private fun ProfileContent(
                             ProfileLanguageButton(
                                 text = if (uiState.isArabic) "ع" else "EN"
                             )
-                        }) { toggleLanguage() }),
+                        }
+                    ) { toggleLanguage() }
+                ),
                 switchOptions = listOf(
                     ProfileOptionWithSwitch(
                         stringResource(id = R.string.dark_mode),
                         R.drawable.dark_mode,
                         isChecked = uiState.isDarkMode
-                    ) { toggleDarkMode() })
+                    ) { toggleDarkMode() }
+                )
             )
 
             // Support Section
             ProfileCategory(
-                title = stringResource(id = R.string.support_help), options = listOf(
+                title = stringResource(id = R.string.support_help),
+                options = listOf(
                     ProfileOption(
-                        stringResource(id = R.string.help_center), R.drawable.help_centeer
-                    ) { })
+                        stringResource(id = R.string.help_center),
+                        R.drawable.help_centeer
+                    ) { }
+                )
             )
 
             // Logout Button
             LogoutButton(
-                modifier = Modifier.fillMaxWidth(), onClick = showLogoutDialog
+                modifier = Modifier.fillMaxWidth(),
+                onClick = showLogoutDialog
             )
         }
     }
 }
 
 @Composable
-fun ShouldShowLogoutDialog(showLogoutDialog: Boolean, onCancel: () -> Unit, onConfirm: () -> Unit) {
+fun ShouldShowLogoutDialog(
+    showLogoutDialog: Boolean,
+    onCancel: () -> Unit,
+    onConfirm: () -> Unit
+) {
     if (showLogoutDialog) {
         LogoutDialog(
-            onDismiss = onCancel, onConfirm = onConfirm
+            onDismiss = onCancel,
+            onConfirm = onConfirm
         )
     }
 }
 
 @Composable
 fun ProfileCategory(
-    title: String, options: List<ProfileOption>, modifier: Modifier = Modifier
+    title: String,
+    options: List<ProfileOption>,
+    modifier: Modifier = Modifier
 ) {
     Column(
-        modifier = modifier, verticalArrangement = Arrangement.spacedBy(12.dp)
+        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         Text(
             text = title,
@@ -253,24 +285,28 @@ fun ProfileCategoryWithSwitch(
     modifier: Modifier = Modifier
 ) {
     Column(
-        modifier = modifier, verticalArrangement = Arrangement.spacedBy(12.dp)
+        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         Text(
             text = title,
             style = MaterialTheme.typography.labelMedium,
             fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.outline,
+            color = MaterialTheme.colorScheme.outline
         )
         TopSectionWithSwitch(
-            clickableOptions = clickableOptions, switchOptions = switchOptions
+            clickableOptions = clickableOptions,
+            switchOptions = switchOptions
         )
     }
 }
 
-
 @Composable
 fun SectionHeader(
-    userName: String, userEmail: String, profileImageUrl: String?, modifier: Modifier = Modifier
+    userName: String,
+    userEmail: String,
+    profileImageUrl: String?,
+    modifier: Modifier = Modifier
 ) {
     Row(
         modifier = modifier
@@ -312,7 +348,6 @@ fun SectionHeader(
     }
 }
 
-
 @Preview(showBackground = true)
 @Preview(name = "Dark", uiMode = Configuration.UI_MODE_NIGHT_YES, showBackground = true)
 @Composable
@@ -328,6 +363,7 @@ private fun ProfileScreenPreview() {
             onNavigateToDetail = {},
             showLogoutDialog = {},
             toggleDarkMode = {},
-            toggleLanguage = {})
+            toggleLanguage = {}
+        )
     }
 }

@@ -1,4 +1,4 @@
-package com.example.domain.repository.user_management
+package com.example.domain.repository.usermanagement
 
 import com.example.domain.model.auth.User
 import com.example.domain.utils.DataError

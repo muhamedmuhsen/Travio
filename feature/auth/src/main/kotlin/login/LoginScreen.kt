@@ -1,6 +1,5 @@
 package com.example.feature.login
 
-
 import android.content.res.Configuration
 import android.util.Log
 import androidx.compose.foundation.background
@@ -43,8 +42,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.example.feature.auth.R
-import com.example.feature.auth.BuildConfig
 import com.example.designsystem.components.AppButton
 import com.example.designsystem.components.AppTextField
 import com.example.designsystem.components.ErrorSnackBar
@@ -52,12 +49,12 @@ import com.example.designsystem.components.SigninOptionsButton
 import com.example.designsystem.components.TextFieldType
 import com.example.designsystem.theme.TravioTheme
 import com.example.designsystem.theme.spacing
+import com.example.feature.auth.BuildConfig
+import com.example.feature.auth.R
 import com.example.feature.login.components.ByLoggingSection
 import com.example.feature.login.components.OrSignInWithText
 import com.example.feature.login.components.RememberMeAndForgetPasswordSection
-import ui.state.UiState
 import com.example.designsystem.R as DesignSystemR
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -92,7 +89,7 @@ fun LoginScreen(
                 }
 
                 LoginEvent.ContinueWithFacebook -> {
-                    //performLogin()
+                    // performLogin()
                 }
 
                 LoginEvent.ContinueWithGoogle -> {
@@ -118,7 +115,8 @@ fun LoginScreen(
                         modifier = Modifier.fillMaxWidth(),
                         textAlign = TextAlign.Center
                     )
-                }, navigationIcon = {
+                },
+                navigationIcon = {
                     Box(
                         modifier = Modifier
                             .padding(start = MaterialTheme.spacing.md)
@@ -127,7 +125,8 @@ fun LoginScreen(
                                 color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
                                 shape = CircleShape
                             )
-                            .clickable { onCloseClicked() }, contentAlignment = Alignment.Center
+                            .clickable { onCloseClicked() },
+                        contentAlignment = Alignment.Center
                     ) {
                         Icon(
                             imageVector = Icons.Default.Close,
@@ -135,9 +134,11 @@ fun LoginScreen(
                             modifier = Modifier.size(20.dp)
                         )
                     }
-                }, actions = {
+                },
+                actions = {
                     Spacer(modifier = Modifier.size(56.dp))
-                }, colors = TopAppBarDefaults.topAppBarColors(
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.surface
                 )
             )
@@ -149,7 +150,7 @@ fun LoginScreen(
                 .padding(innerPadding)
                 .verticalScroll(rememberScrollState())
                 .padding(horizontal = 20.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Spacer(modifier = Modifier.height(MaterialTheme.spacing.lg))
 
@@ -185,12 +186,15 @@ fun LoginScreen(
             RememberMeAndForgetPasswordSection(
                 checked = uiState.value.isRememberMeChecked,
                 onRememberMeCheckedChange = { viewModel.onRememberMeChecked() },
-                onForgetPasswordClicked = { viewModel.onForgotPasswordClicked() })
+                onForgetPasswordClicked = { viewModel.onForgotPasswordClicked() }
+            )
 
             AppButton(
                 onClick = {
                     viewModel.onLoginClicked()
-                }, text = stringResource(id = R.string.log_in), modifier = Modifier.fillMaxWidth()
+                },
+                text = stringResource(id = R.string.log_in),
+                modifier = Modifier.fillMaxWidth()
             )
 
             Spacer(modifier = Modifier.height(MaterialTheme.spacing.lg))
@@ -223,7 +227,8 @@ fun LoginScreen(
             Spacer(modifier = Modifier.height(MaterialTheme.spacing.lg))
 
             Row(
-                horizontalArrangement = Arrangement.Center, modifier = Modifier.fillMaxWidth()
+                horizontalArrangement = Arrangement.Center,
+                modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
                     text = stringResource(id = R.string.dont_have_an_account_yet) + " ",
@@ -235,7 +240,8 @@ fun LoginScreen(
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.SemiBold,
                     color = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.clickable { viewModel.onCreateAccountClicked() })
+                    modifier = Modifier.clickable { viewModel.onCreateAccountClicked() }
+                )
             }
 
             Spacer(modifier = Modifier.height(MaterialTheme.spacing.lg))
@@ -243,11 +249,11 @@ fun LoginScreen(
     }
 }
 
-
 @Preview(
     name = "Light Mode",
     group = "Login Screen",
-    device = "id:pixel_9", showSystemUi = true
+    device = "id:pixel_9",
+    showSystemUi = true
 )
 @Preview(
     name = "Dark Mode",

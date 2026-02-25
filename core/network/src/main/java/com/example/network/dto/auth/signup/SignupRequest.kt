@@ -8,4 +8,3 @@ data class SignupRequest(
     val password: String,
     val confirmPassword: String
 )
-

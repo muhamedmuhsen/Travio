@@ -1,8 +1,8 @@
 package com.example.domain.usecase.auth.login
 
 import com.example.domain.repository.auth.LoginRepository
-import com.example.domain.utils.Result
 import com.example.domain.utils.DataError
+import com.example.domain.utils.Result
 import javax.inject.Inject
 
 class GoogleSignInUseCase @Inject constructor(

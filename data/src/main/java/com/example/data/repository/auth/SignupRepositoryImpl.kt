@@ -20,21 +20,22 @@ class SignupRepositoryImpl @Inject constructor(
         firstname: String,
         lastname: String,
         confirmPassword: String
-
-    ): Result<Unit, DataError> = safeApiCall {
-        val response = api.signup(
-            SignupRequest(
-                firstname = firstname,
-                lastname = lastname,
-                email = email,
-                username = username,
-                password = password,
-                confirmPassword = confirmPassword
+    ): Result<Unit, DataError> =
+        safeApiCall {
+            val response = api.signup(
+                SignupRequest(
+                    firstname = firstname,
+                    lastname = lastname,
+                    email = email,
+                    username = username,
+                    password = password,
+                    confirmPassword = confirmPassword
+                )
             )
-        )
 
-        tokenProvider.saveTokens(
-            response.token, response.refreshToken
-        )
-    }
+            tokenProvider.saveTokens(
+                response.token,
+                response.refreshToken
+            )
+        }
 }

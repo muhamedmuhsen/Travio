@@ -106,15 +106,21 @@ private fun FavoriteIcon(
         Icon(
             painter = painterResource(id = R.drawable.favorite_icon),
             contentDescription = stringResource(R.string.favorite_remove_cd),
-            tint = if (isFavorite) MaterialTheme.colorScheme.error
-            else MaterialTheme.colorScheme.outlineVariant,
+            tint = if (isFavorite) {
+                MaterialTheme.colorScheme.error
+            } else {
+                MaterialTheme.colorScheme.outlineVariant
+            },
             modifier = Modifier.size(20.dp)
         )
     }
 }
 
 @Composable
-private fun PlaceDetails(country: String, city: String) {
+private fun PlaceDetails(
+    country: String,
+    city: String
+) {
     Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
         Text(
             text = country,

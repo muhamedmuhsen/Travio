@@ -38,9 +38,9 @@ fun HomeScreen(
         Column(
             Modifier
                 .fillMaxSize()
-                .padding(innerPadding),
+                .padding(innerPadding)
 
-            ) {
+        ) {
             Text("Hi")
             Button(onClick = viewModel::onGetAllClicked) { Text("Destinations") }
         }

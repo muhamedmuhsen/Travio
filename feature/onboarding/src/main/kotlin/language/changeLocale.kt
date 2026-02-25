@@ -1,6 +1,5 @@
 package com.example.feature.language
 
-import ui.localization.AppLanguage
 import android.app.LocaleManager
 import android.content.Context
 import android.os.Build
@@ -9,9 +8,8 @@ import android.util.Log
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.os.LocaleListCompat
 import dagger.hilt.android.qualifiers.ApplicationContext
+import ui.localization.AppLanguage
 import javax.inject.Inject
-
-
 
 class AppLocaleManager @Inject constructor(
     @param:ApplicationContext private val context: Context
@@ -28,5 +26,3 @@ class AppLocaleManager @Inject constructor(
         }
     }
 }
-
-

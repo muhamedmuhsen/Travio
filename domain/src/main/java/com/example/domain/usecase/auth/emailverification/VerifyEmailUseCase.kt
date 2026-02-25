@@ -7,7 +7,10 @@ import com.example.domain.utils.Result
 import javax.inject.Inject
 
 class VerifyEmailUseCase @Inject constructor(private val repository: EmailVerificationRepository) {
-    suspend operator fun invoke(email: String, otp: String): Result<Unit, DataError> {
+    suspend operator fun invoke(
+        email: String,
+        otp: String
+    ): Result<Unit, DataError> {
         if (email.isBlank() || otp.isBlank()) {
             return Result.Error(DataError.Validation.MissingFields)
         }
@@ -21,5 +24,4 @@ class VerifyEmailUseCase @Inject constructor(private val repository: EmailVerifi
             otp = otp
         )
     }
-
 }

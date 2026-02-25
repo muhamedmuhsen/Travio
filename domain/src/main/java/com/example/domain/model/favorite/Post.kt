@@ -7,5 +7,5 @@ data class Post(
     val createdAt: String,
     val postLikes: Int,
     val imageUrl: String,
-    val author: String,
+    val author: String
 )

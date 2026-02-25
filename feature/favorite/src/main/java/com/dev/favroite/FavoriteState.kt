@@ -11,7 +11,7 @@ data class FavoriteState(
     val places: List<Place> = emptyList(),
     val posts: List<Post> = emptyList(),
     val placesUiState: UiState<Unit> = UiState.Idle,
-    val postsUiState: UiState<Unit> = UiState.Idle,
+    val postsUiState: UiState<Unit> = UiState.Idle
 ) {
     val totalFavoriteCount: Int get() = places.size + posts.size
 

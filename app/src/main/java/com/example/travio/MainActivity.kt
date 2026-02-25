@@ -14,7 +14,6 @@ import com.example.common.navigation.Screen
 import com.example.designsystem.theme.TravioTheme
 import dagger.hilt.android.AndroidEntryPoint
 
-
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     private val viewModel: MainViewModel by viewModels()
@@ -45,5 +44,3 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
-
-

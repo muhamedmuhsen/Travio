@@ -37,7 +37,6 @@ class GoogleCredentialDataSourceImpl @Inject constructor() {
                 context = context
             )
             return parseCredentialResult(result)
-
         } catch (_: GetCredentialCancellationException) {
             return Result.Error(DataError.Authentication.UserCancelled)
         } catch (_: NoCredentialException) {
@@ -47,9 +46,7 @@ class GoogleCredentialDataSourceImpl @Inject constructor() {
         }
     }
 
-    private fun parseCredentialResult(
-        credentialResult: GetCredentialResponse
-    ): Result<String, DataError> {
+    private fun parseCredentialResult(credentialResult: GetCredentialResponse): Result<String, DataError> {
         return when (val credential = credentialResult.credential) {
             is CustomCredential -> {
                 if (credential.type == GoogleIdTokenCredential.Companion.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL) {
@@ -70,5 +67,4 @@ class GoogleCredentialDataSourceImpl @Inject constructor() {
             }
         }
     }
-
 }
