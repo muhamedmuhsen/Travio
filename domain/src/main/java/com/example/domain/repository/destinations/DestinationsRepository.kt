@@ -21,5 +21,9 @@ interface DestinationsRepository {
         count: Int = 10
     ): Result<List<Destination>, DataError>
 
-    suspend fun searchForDestinations(): Result<List<Destination>, DataError>
+    suspend fun searchForDestinations(
+        keyword: String,
+        pageIndex: Int = 1,
+        pageSize: Int = 10
+    ): Result<List<Destination>, DataError>
 }

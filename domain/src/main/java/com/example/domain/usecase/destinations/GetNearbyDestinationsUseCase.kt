@@ -4,11 +4,10 @@ import com.example.domain.model.destination.Destination
 import com.example.domain.repository.destinations.DestinationsRepository
 import com.example.domain.repository.destinations.LocationRepository
 import com.example.domain.utils.DataError
-import javax.inject.Inject
 import com.example.domain.utils.Result
+import javax.inject.Inject
 
-class GetNearbyDestinationsUseCase @Inject constructor
-    (
+class GetNearbyDestinationsUseCase @Inject constructor(
     private val locationRepository: LocationRepository,
     private val destinationsRepository: DestinationsRepository
 ) {
@@ -28,5 +27,4 @@ class GetNearbyDestinationsUseCase @Inject constructor
             }
         }
     }
-
 }

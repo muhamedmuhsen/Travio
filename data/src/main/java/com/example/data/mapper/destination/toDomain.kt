@@ -3,7 +3,6 @@ package com.example.data.mapper.destination
 import com.example.network.dto.destinations.Destination
 import com.example.network.dto.destinations.Interest
 
-
 fun Destination.toDomain(): com.example.domain.model.destination.Destination {
     return com.example.domain.model.destination.Destination(
         cityName = this.cityName,

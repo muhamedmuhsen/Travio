@@ -7,7 +7,7 @@ sealed interface DataError : Error {
         Timeout,
         ServerError,
         UnexpectedResponse,
-        TooManyRequests,
+        TooManyRequests
     }
 
     enum class Validation : DataError {
@@ -41,13 +41,13 @@ sealed interface DataError : Error {
         InvalidCode,
         CodeExpired,
         TooManyAttempts,
-        VerificationFailed,
+        VerificationFailed
     }
 
     enum class Authorization : DataError {
         AccessDenied,
         AccountDisabled,
-        AccountLocked,
+        AccountLocked
     }
 
     enum class TokenError : DataError {
@@ -55,15 +55,14 @@ sealed interface DataError : Error {
         InvalidToken,
         ExpiredToken,
         CouldNotGetClaims,
-        DecodingFailed,
-
+        DecodingFailed
     }
 
     enum class Data : DataError {
         InvalidData,
         NotFound,
         ParsingError,
-        UnknownError,
+        UnknownError
     }
 
     enum class Local : DataError {

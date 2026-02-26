@@ -1,20 +1,20 @@
-package com.example.data.repository.user_management
+package com.example.data.repository.usermanagement
 
 import android.content.Context
+import androidx.core.net.toUri
+import com.example.data.BuildConfig
+import com.example.data.mapper.auth.toDomain
+import com.example.data.utils.toMultipartBodyPart
 import com.example.domain.model.auth.User
-import com.example.domain.repository.user_management.UserManagementRepository
+import com.example.domain.repository.usermanagement.UserManagementRepository
 import com.example.domain.utils.DataError
 import com.example.domain.utils.Result
 import com.example.network.api.UserManagementApi
-import com.example.network.dto.user_managment.UpdateProfileRequest
+import com.example.network.dto.usermanagment.UpdateProfileRequest
+import dagger.hilt.android.qualifiers.ApplicationContext
 import retrofit2.HttpException
 import java.io.IOException
 import javax.inject.Inject
-import com.example.data.mapper.auth.toDomain
-import com.example.data.BuildConfig
-import com.example.data.utils.toMultipartBodyPart
-import dagger.hilt.android.qualifiers.ApplicationContext
-import androidx.core.net.toUri
 
 class UserManagementRepositoryImpl @Inject constructor(
     private val api: UserManagementApi,
@@ -41,7 +41,6 @@ class UserManagementRepositoryImpl @Inject constructor(
         }
     }
 
-
     override suspend fun updateProfile(
         firstName: String,
         lastName: String,
@@ -49,7 +48,8 @@ class UserManagementRepositoryImpl @Inject constructor(
     ): Result<User, DataError> {
         try {
             val request = UpdateProfileRequest(
-                firstName = firstName, lastName = lastName,
+                firstName = firstName,
+                lastName = lastName,
                 username = username
             )
             val response = api.updateProfileData(request)
@@ -71,20 +71,5 @@ class UserManagementRepositoryImpl @Inject constructor(
         } catch (e: Exception) {
             return Result.Error(DataError.Network.UnexpectedResponse)
         }
-    }
-
-
-    private fun hasAtLeastOneField(
-        firstName: String?,
-        lastName: String?,
-        email: String?,
-        profilePictureUrl: String?
-    ): Boolean {
-        return !listOf(
-            firstName,
-            lastName,
-            email,
-            profilePictureUrl
-        ).all { it == null }
     }
 }

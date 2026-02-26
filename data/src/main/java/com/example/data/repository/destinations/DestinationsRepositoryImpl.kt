@@ -19,11 +19,15 @@ class DestinationsRepositoryImpl @Inject constructor(
         }
 
     override suspend fun getAllDestinations(
-        pageIndex: Int, pageSize: Int, cityId: Int, interestId: Int
-    ): Result<List<Destination>, DataError> = safeApiCall {
-        val response = api.getAllDestinations(pageIndex, pageSize, cityId, interestId)
-        response.data.map { it.toDomain() }
-    }
+        pageIndex: Int,
+        pageSize: Int,
+        cityId: Int,
+        interestId: Int
+    ): Result<List<Destination>, DataError> =
+        safeApiCall {
+            val response = api.getAllDestinations(pageIndex, pageSize, cityId, interestId)
+            response.data.map { it.toDomain() }
+        }
 
     override suspend fun getTopRatedDestinations(): Result<List<Destination>, DataError> =
         safeApiCall {
@@ -32,14 +36,23 @@ class DestinationsRepositoryImpl @Inject constructor(
         }
 
     override suspend fun getNearbyDestinations(
-        latitude: Double, longitude: Double, radiusKm: Double, count: Int
-    ): Result<List<Destination>, DataError> = safeApiCall {
-        val response = api.getNearbyDestinations(latitude, longitude, radiusKm, count)
+        latitude: Double,
+        longitude: Double,
+        radiusKm: Double,
+        count: Int
+    ): Result<List<Destination>, DataError> =
+        safeApiCall {
+            val response = api.getNearbyDestinations(latitude, longitude, radiusKm, count)
+            response.map { it.toDomain() }
+        }
 
-        response.map { it.toDomain() }
-    }
-
-    override suspend fun searchForDestinations(): Result<List<Destination>, DataError> {
-        TODO("Not yet implemented")
-    }
+    override suspend fun searchForDestinations(
+        keyword: String,
+        pageIndex: Int,
+        pageSize: Int
+    ): Result<List<Destination>, DataError> =
+        safeApiCall {
+            val response = api.searchForDestinations(keyword, pageIndex, pageSize)
+            response.data.map { it.toDomain() }
+        }
 }

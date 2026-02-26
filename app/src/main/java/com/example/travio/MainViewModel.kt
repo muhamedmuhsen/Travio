@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.domain.repository.prefernces.PreferencesManager
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
@@ -13,6 +14,17 @@ import javax.inject.Inject
 @HiltViewModel
 class MainViewModel @Inject constructor(private val preferencesManager: PreferencesManager) :
     ViewModel() {
+    fun onPermissionResult(
+        permission: String,
+        isGranted: Boolean
+    ) {
+    }
+
+    val requiresLocationPermission = MutableStateFlow(false)
+
+    fun checkLocationPermissionRequired() {
+        requiresLocationPermission.value = true
+    }
     val isDarkMode: StateFlow<Boolean?> =
         preferencesManager.observeDarkModeNullable().stateIn(
             scope = viewModelScope,

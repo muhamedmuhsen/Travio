@@ -6,18 +6,15 @@ import com.example.domain.utils.DataError
 import com.example.domain.utils.Result
 import javax.inject.Inject
 
-class GetAllDestinationsUseCase @Inject constructor(private val repository: DestinationsRepository) {
+class SearchForDestinationsUseCase @Inject constructor(private val repository: DestinationsRepository) {
     suspend operator fun invoke(
+        keyword: String,
         pageIndex: Int,
-        pageSize: Int,
-        cityId: Int,
-        interestId: Int
+        pageSize: Int
     ): Result<List<Destination>, DataError> {
-        return repository.getAllDestinations(
-            pageIndex = pageIndex,
-            pageSize = pageSize,
-            cityId = cityId,
-            interestId = interestId
-        )
+        if (keyword.isNotEmpty()) {
+            return Result.Error(DataError.Validation.MissingFields)
+        }
+        return repository.searchForDestinations(keyword, pageIndex, pageSize)
     }
 }

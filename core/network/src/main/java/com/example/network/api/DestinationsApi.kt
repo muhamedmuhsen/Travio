@@ -1,9 +1,7 @@
 package com.example.network.api
 
 import com.example.network.dto.destinations.Destination
-import com.example.network.dto.destinations.GetAllDestinationsRequest
 import com.example.network.dto.destinations.GetAllDestinationsResponse
-import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
@@ -11,7 +9,8 @@ import retrofit2.http.Query
 interface DestinationsApi {
     @GET("Destinations")
     suspend fun getAllDestinations(
-        @Query("pageIndex") pageIndex: Int, @Query("pageSize") pageSize: Int,
+        @Query("pageIndex") pageIndex: Int,
+        @Query("pageSize") pageSize: Int,
         @Query("cityId") cityId: Int,
         @Query("interestId") interestId: Int,
         @Query("sortBy") sortBy: Int = 0
@@ -32,5 +31,9 @@ interface DestinationsApi {
     ): List<Destination>
 
     @GET("Destinations/search")
-    suspend fun searchForDestinations(): List<Destination>
+    suspend fun searchForDestinations(
+        @Query("keyword") keyword: String,
+        @Query("pageIndex") pageIndex: Int = 1,
+        @Query("pageSize") pageSize: Int = 10
+    ): GetAllDestinationsResponse
 }

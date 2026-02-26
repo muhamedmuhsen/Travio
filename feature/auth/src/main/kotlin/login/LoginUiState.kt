@@ -1,7 +1,7 @@
 package com.example.feature.login
 
-import ui.state.UiState
 import com.example.domain.model.auth.User
+import ui.state.UiState
 
 data class LoginUiState(
     val email: String = "",
@@ -13,5 +13,5 @@ data class LoginUiState(
     val isEmailError: Boolean = false,
     val isPasswordError: Boolean = false,
     val errorMessage: String? = null,
-    val loginState: UiState<User> = UiState.Idle,
+    val loginState: UiState<User> = UiState.Idle
 )

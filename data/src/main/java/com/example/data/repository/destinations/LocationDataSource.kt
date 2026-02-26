@@ -26,20 +26,22 @@ class LocationDataSource @Inject constructor(@ApplicationContext private val con
 
     private val locationRequest: LocationRequest by lazy {
         LocationRequest.Builder(
-            Priority.PRIORITY_HIGH_ACCURACY, INTERVAL_MS
+            Priority.PRIORITY_HIGH_ACCURACY,
+            INTERVAL_MS
         ).setMinUpdateIntervalMillis(FASTEST_INTERVAL_MS).setMaxUpdateDelayMillis(MAX_DELAY_MS)
             .build()
     }
 
     /*
-    *   Location Flow to observe location changes,
-    *   used minByOrNull to find the smallest radius (highest accuracy)
-    * */
+     *   Location Flow to observe location changes,
+     *   used minByOrNull to find the smallest radius (highest accuracy)
+     * */
     @SuppressLint("MissingPermission")
-    fun locationFlow(): Flow<UserLocation> = callbackFlow {
-        val callback = object : LocationCallback() {
-            override fun onLocationResult(result: LocationResult) {
-                result.locations.minByOrNull { it.accuracy }?.let { location ->
+    fun locationFlow(): Flow<UserLocation> =
+        callbackFlow {
+            val callback = object : LocationCallback() {
+                override fun onLocationResult(result: LocationResult) {
+                    result.locations.minByOrNull { it.accuracy }?.let { location ->
                         trySend(
                             UserLocation(
                                 latitude = location.latitude,
@@ -48,36 +50,35 @@ class LocationDataSource @Inject constructor(@ApplicationContext private val con
                             )
                         )
                     }
+                }
+            }
+
+            fusedClient.requestLocationUpdates(
+                locationRequest,
+                callback,
+                Looper.getMainLooper()
+            ).addOnFailureListener { exception ->
+                close(exception)
+            }
+
+            awaitClose {
+                fusedClient.removeLocationUpdates(callback)
             }
         }
 
-
-        fusedClient.requestLocationUpdates(
-            locationRequest,
-            callback,
-            Looper.getMainLooper() // Looper required; Main is fine — callback is lightweight
-        ).addOnFailureListener { exception ->
-            close(exception) // Propagate error downstream into the Flow
-        }
-
-        awaitClose {
-            fusedClient.removeLocationUpdates(callback)
-        }
-    }
-
     @SuppressLint("MissingPermission")
-    suspend fun getLastKnown(): UserLocation? = fusedClient.lastLocation.await()?.let { location ->
-        UserLocation(
-            latitude = location.latitude,
-            longitude = location.longitude,
-            accuracyMeters = location.accuracy
-        )
-    }
-
+    suspend fun getLastKnown(): UserLocation? =
+        fusedClient.lastLocation.await()?.let { location ->
+            UserLocation(
+                latitude = location.latitude,
+                longitude = location.longitude,
+                accuracyMeters = location.accuracy
+            )
+        }
 
     companion object {
-        private const val INTERVAL_MS = 10_000L        // 10 seconds
+        private const val INTERVAL_MS = 10_000L // 10 seconds
         private const val FASTEST_INTERVAL_MS = 5_000L // 5 seconds
-        private const val MAX_DELAY_MS = 15_000L       // batch delay
+        private const val MAX_DELAY_MS = 15_000L // batch delay
     }
 }

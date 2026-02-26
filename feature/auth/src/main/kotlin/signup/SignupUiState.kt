@@ -1,7 +1,7 @@
 package com.example.feature.signup
 
-import ui.state.UiState
 import com.example.domain.model.auth.User
+import ui.state.UiState
 
 data class SignupUiState(
     val firstname: String = "",

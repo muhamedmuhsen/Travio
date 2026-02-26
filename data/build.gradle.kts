@@ -22,8 +22,6 @@ android {
         localProperties.load(FileInputStream(localPropertiesFile))
     }
 
-
-
     defaultConfig {
         minSdk = 29
 
@@ -41,7 +39,7 @@ android {
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
+                "proguard-rules.pro",
             )
         }
     }
@@ -93,5 +91,4 @@ dependencies {
     // Location
     implementation(libs.play.services.location)
     implementation(libs.kotlinx.coroutines.play.services)
-
 }

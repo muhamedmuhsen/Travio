@@ -3,11 +3,10 @@ package com.example.data.mapper.auth
 import com.example.data.BuildConfig
 import com.example.domain.model.auth.GoogleUser
 import com.example.domain.model.auth.User
-import com.example.network.dto.auth.social.GoogleUserDto
 import com.example.network.dto.auth.UserDto
-import com.example.network.dto.user_managment.GetUserResponse
-import com.example.network.dto.user_managment.UserData
-
+import com.example.network.dto.auth.social.GoogleUserDto
+import com.example.network.dto.usermanagment.GetUserResponse
+import com.example.network.dto.usermanagment.UserData
 
 private fun String?.toAbsoluteImageUrl(): String? {
     if (this.isNullOrBlank()) return null
