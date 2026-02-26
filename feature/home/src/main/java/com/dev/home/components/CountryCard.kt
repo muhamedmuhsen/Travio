@@ -21,6 +21,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.example.designsystem.components.shimmerEffect
 import com.example.designsystem.theme.TravioTheme
 import com.example.feature.home.R
 
@@ -65,6 +66,16 @@ fun CountryCard(
 }
 
 @Composable
+fun LoadingCountryCard(modifier: Modifier = Modifier) {
+    Box(
+        modifier = modifier
+            .size(160.dp)
+            .clip(MaterialTheme.shapes.medium)
+            .shimmerEffect()
+    )
+}
+
+@Composable
 private fun GradientOverlay() {
     val gradientColors = listOf(
         Color.Transparent,
@@ -98,5 +109,13 @@ private fun CountryCardPreview() {
                 modifier = Modifier.size(160.dp)
             )
         }
+    }
+}
+
+@Preview(name = "Loading State")
+@Composable
+private fun LoadingCountryCardPreview() {
+    TravioTheme {
+        LoadingCountryCard()
     }
 }

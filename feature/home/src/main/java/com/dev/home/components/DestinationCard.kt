@@ -29,6 +29,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -42,6 +43,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.example.designsystem.components.shimmerEffect
 import com.example.designsystem.theme.TravioTheme
 import com.example.designsystem.theme.spacing
 import com.example.feature.home.R
@@ -80,6 +82,57 @@ fun DestinationCard(
                 description = description,
                 price = price
             )
+        }
+    }
+}
+
+@Composable
+fun LoadingDestinationCard(modifier: Modifier = Modifier) {
+    Card(
+        modifier = modifier
+            .width(320.dp),
+        shape = RoundedCornerShape(MaterialTheme.spacing.md),
+        elevation = CardDefaults.cardElevation(defaultElevation = MaterialTheme.spacing.xs),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surface
+        )
+    ) {
+        Column {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(260.dp)
+                    .shimmerEffect()
+            )
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(MaterialTheme.spacing.md),
+                verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.sm)
+            ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth(0.7f)
+                        .height(20.dp)
+                        .clip(RoundedCornerShape(4.dp))
+                        .shimmerEffect()
+                )
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth(0.5f)
+                        .height(20.dp)
+                        .clip(RoundedCornerShape(4.dp))
+                        .shimmerEffect()
+                )
+                Spacer(modifier = Modifier.height(MaterialTheme.spacing.sm))
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth(0.4f)
+                        .height(24.dp)
+                        .clip(RoundedCornerShape(4.dp))
+                        .shimmerEffect()
+                )
+            }
         }
     }
 }
@@ -271,6 +324,16 @@ fun DestinationCardLightTheme() {
                 imageUrl = "https://example.com/image.jpg",
                 onFavoriteClicked = {}
             )
+        }
+    }
+}
+
+@Preview(name = "Loading State")
+@Composable
+fun LoadingDestinationCardPreview() {
+    TravioTheme {
+        Box(Modifier.padding(MaterialTheme.spacing.md)) {
+            LoadingDestinationCard()
         }
     }
 }

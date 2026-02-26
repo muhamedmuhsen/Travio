@@ -2,7 +2,6 @@ package com.dev.home.components
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,6 +13,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Card
@@ -30,6 +30,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.designsystem.components.shimmerEffect
+import com.example.designsystem.theme.TravioTheme
 import com.example.feature.home.R
 
 data class RecentViewedUiState(
@@ -53,10 +55,6 @@ fun RecentViewedCard(
             .padding(8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        StripeIndicator()
-
-        Spacer(modifier = Modifier.width(12.dp))
-
         Card(
             modifier = Modifier.fillMaxWidth(),
             shape = MaterialTheme.shapes.medium,
@@ -78,17 +76,68 @@ fun RecentViewedCard(
 }
 
 @Composable
-private fun StripeIndicator() {
-    Box(
-        modifier = Modifier
-            .width(4.dp)
-            .height(110.dp)
-            .background(
-                color = MaterialTheme.colorScheme.secondary,
-                shape = MaterialTheme.shapes.small
-            )
-    )
+fun LoadingRecentViewedCard(modifier: Modifier = Modifier) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .height(IntrinsicSize.Min)
+            .padding(8.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            shape = MaterialTheme.shapes.medium,
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surfaceVariant
+            ),
+            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
+            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(110.dp)
+                        .shimmerEffect()
+                )
+                Column(
+                    modifier = Modifier
+                        .padding(12.dp)
+                        .fillMaxWidth()
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(14.dp)
+                            .clip(RoundedCornerShape(4.dp))
+                            .shimmerEffect()
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth(0.7f)
+                            .height(14.dp)
+                            .clip(RoundedCornerShape(4.dp))
+                            .shimmerEffect()
+                    )
+
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    Box(
+                        modifier = Modifier
+                            .width(80.dp)
+                            .height(16.dp)
+                            .clip(RoundedCornerShape(4.dp))
+                            .shimmerEffect()
+                    )
+                }
+            }
+        }
+    }
 }
+
 
 @Composable
 private fun CardThumbnail(imageRes: Int) {
@@ -147,10 +196,18 @@ private fun RecentViewedCardPreview() {
         rating = 3.7f,
         reviewCount = 40
     )
-    MaterialTheme {
+    TravioTheme {
         RecentViewedCard(
             state = mockState,
             onClick = { }
         )
+    }
+}
+
+@Preview(name = "Loading State", showBackground = true)
+@Composable
+private fun LoadingRecentViewedCardPreview() {
+    TravioTheme {
+        LoadingRecentViewedCard()
     }
 }
