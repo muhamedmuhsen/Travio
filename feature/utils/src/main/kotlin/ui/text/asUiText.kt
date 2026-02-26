@@ -9,7 +9,6 @@ fun DataError.asUiText(): UiText {
     return when (this) {
         DataError.UnknownError -> StringResource(R.string.error_unknown)
 
-
         DataError.Authentication.UserCancelled -> StringResource(R.string.error_user_cancelled)
         DataError.Authentication.UnauthorizedAccess -> StringResource(R.string.error_invalid_credentials)
         DataError.Authentication.UserNotFound -> StringResource(R.string.error_user_not_found)
@@ -70,7 +69,6 @@ fun DataError.asUiText(): UiText {
         DataError.Location.PermissionDenied -> StringResource(R.string.error_location_permission_denied)
         DataError.Location.LocationDisabled -> StringResource(R.string.error_location_disabled)
         DataError.Location.Timeout -> StringResource(R.string.error_location_timeout)
-
     }
 }
 

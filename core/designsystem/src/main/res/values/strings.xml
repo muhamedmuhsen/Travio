@@ -13,6 +13,7 @@
     <string name="language_english">English</string>
     <string name="language_arabic">اللغة العربية</string>
 
+
     <!-- Bottom Navigation -->
     <string name="bottom_nav_home">Home</string>
     <string name="bottom_nav_favorite">Favorite</string>

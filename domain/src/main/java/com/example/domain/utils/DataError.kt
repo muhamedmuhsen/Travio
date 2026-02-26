@@ -63,8 +63,7 @@ sealed interface DataError : Error {
     enum class Data : DataError {
         InvalidData,
         NotFound,
-        ParsingError,
-
+        ParsingError
     }
 
     enum class Local : DataError {

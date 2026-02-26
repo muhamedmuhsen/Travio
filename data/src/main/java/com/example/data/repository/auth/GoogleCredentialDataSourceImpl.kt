@@ -22,20 +22,23 @@ class GoogleCredentialDataSourceImpl @Inject constructor() {
         try {
             val credentialManager = CredentialManager.Companion.create(context)
 
-            val googleIdOption = GetGoogleIdOption.Builder()
+            val googleIdOption = GetGoogleIdOption
+                .Builder()
                 .setFilterByAuthorizedAccounts(false)
                 .setAutoSelectEnabled(false)
                 .setServerClientId(webClientId)
                 .build()
 
-            val request = GetCredentialRequest.Builder()
+            val request = GetCredentialRequest
+                .Builder()
                 .addCredentialOption(googleIdOption)
                 .build()
 
-            val result = credentialManager.getCredential(
-                request = request,
-                context = context
-            )
+            val result = credentialManager
+                .getCredential(
+                    request = request,
+                    context = context
+                )
             return parseCredentialResult(result)
         } catch (_: GetCredentialCancellationException) {
             return Result.Error(DataError.Authentication.UserCancelled)
@@ -61,7 +64,6 @@ class GoogleCredentialDataSourceImpl @Inject constructor() {
                     Result.Error(DataError.Authentication.SignInFailed)
                 }
             }
-
             else -> {
                 Result.Error(DataError.Authentication.SignInFailed)
             }

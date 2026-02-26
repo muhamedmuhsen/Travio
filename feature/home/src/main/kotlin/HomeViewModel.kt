@@ -39,8 +39,10 @@ class HomeViewModel @Inject constructor(
 
     fun searchForDestination() {
         viewModelScope.launch {
-            when (val result =
-                searchForDestinationsUseCase(keyword = "Egypt", pageSize = 10, pageIndex = 1)) {
+            when (
+                val result =
+                    searchForDestinationsUseCase(keyword = "Egypt", pageSize = 10, pageIndex = 1)
+            ) {
                 is Result.Error -> {
                 }
                 is Result.Success -> {
