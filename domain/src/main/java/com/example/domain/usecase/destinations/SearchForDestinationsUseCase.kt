@@ -12,7 +12,7 @@ class SearchForDestinationsUseCase @Inject constructor(private val repository: D
         pageIndex: Int,
         pageSize: Int
     ): Result<List<Destination>, DataError> {
-        if (keyword.isNotEmpty()) {
+        if (keyword.isEmpty()) {
             return Result.Error(DataError.Validation.MissingFields)
         }
         return repository.searchForDestinations(keyword, pageIndex, pageSize)

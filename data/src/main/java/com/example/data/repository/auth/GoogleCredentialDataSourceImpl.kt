@@ -42,7 +42,7 @@ class GoogleCredentialDataSourceImpl @Inject constructor() {
         } catch (_: NoCredentialException) {
             return Result.Error(DataError.Authentication.SignInFailed)
         } catch (e: Exception) {
-            return Result.Error(DataError.Data.UnknownError)
+            return Result.Error(DataError.UnknownError)
         }
     }
 

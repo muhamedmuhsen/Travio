@@ -46,7 +46,7 @@ class FavoritePlaceRepositoryImpl @Inject constructor(
             } catch (_: SQLiteException) {
                 Result.Error(DataError.Local.DatabaseError)
             } catch (_: Exception) {
-                Result.Error(DataError.Local.UnkownError)
+                Result.Error(DataError.Local.UnknownError)
             }
         }
     }
@@ -59,7 +59,7 @@ class FavoritePlaceRepositoryImpl @Inject constructor(
             } catch (_: SQLiteException) {
                 Result.Error(DataError.Local.DatabaseError)
             } catch (_: Exception) {
-                Result.Error(DataError.Local.UnkownError)
+                Result.Error(DataError.Local.UnknownError)
             }
         }
     }

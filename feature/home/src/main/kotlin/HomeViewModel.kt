@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.domain.usecase.auth.session.LogoutUseCase
 import com.example.domain.usecase.destinations.GetNearbyDestinationsUseCase
+import com.example.domain.usecase.destinations.SearchForDestinationsUseCase
 import com.example.domain.utils.Result
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,7 +16,8 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val logoutUseCase: LogoutUseCase,
-    private val getNearbyDestinationsUseCase: GetNearbyDestinationsUseCase
+    private val getNearbyDestinationsUseCase: GetNearbyDestinationsUseCase,
+    private val searchForDestinationsUseCase: SearchForDestinationsUseCase
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(HomeState())
@@ -35,6 +37,17 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    fun searchForDestination() {
+        viewModelScope.launch {
+            when (val result =
+                searchForDestinationsUseCase(keyword = "Egypt", pageSize = 10, pageIndex = 1)) {
+                is Result.Error -> {
+                }
+                is Result.Success -> {
+                }
+            }
+        }
+    }
     fun onGetAllClicked() {
         viewModelScope.launch {
             when (val result = getNearbyDestinationsUseCase()) {

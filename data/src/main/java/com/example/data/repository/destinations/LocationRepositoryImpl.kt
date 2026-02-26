@@ -7,6 +7,7 @@ import com.example.domain.utils.Result
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
+import timber.log.Timber
 import javax.inject.Inject
 
 class LocationRepositoryImpl @Inject constructor(
@@ -14,18 +15,33 @@ class LocationRepositoryImpl @Inject constructor(
 ) : LocationRepository {
     override fun observeLocation(): Flow<Result<UserLocation, DataError>> {
         return dataSource.locationFlow()
-            .map<UserLocation, Result<UserLocation, DataError>> { Result.Success(it) }
-            .catch { emit(Result.Error(DataError.Location.CouldNotGetTheLocation)) }
+            .map<UserLocation, Result<UserLocation, DataError>> {
+                Timber.d("observeLocation: location received -> lat=${it.latitude}, lng=${it.longitude}")
+                Result.Success(it)
+            }
+            .catch {
+                Timber.e(it, "observeLocation: failed to get location")
+                emit(Result.Error(DataError.Location.CouldNotGetTheLocation))
+            }
     }
 
     override suspend fun getLastKnownLocation(): Result<UserLocation, DataError> {
         return runCatching { dataSource.getLastKnown() }
             .fold(
                 onSuccess = { location ->
-                    location?.let { Result.Success(it) }
-                        ?: Result.Error(DataError.Location.CouldNotGetTheLocation)
+                    if (location != null) {
+                        Timber.d("getLastKnownLocation: success -> lat=${location.latitude}, lng=${location.longitude}")
+                        Result.Success(location)
+                    } else {
+                        Timber.w("getLastKnownLocation: location is null, could not get location")
+                        Result.Error(DataError.Location.CouldNotGetTheLocation)
+                    }
                 },
-                onFailure = {
+                onFailure = { throwable ->
+                    Timber.e(
+                        throwable,
+                        "getLastKnownLocation: exception thrown, could not get location"
+                    )
                     Result.Error(DataError.Location.CouldNotGetTheLocation)
                 }
             )

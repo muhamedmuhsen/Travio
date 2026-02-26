@@ -29,7 +29,7 @@ class TokenManagerImpl @Inject constructor(private val secureTokenStorage: Secur
         } catch (_: DecodeException) {
             return Result.Error(DataError.TokenError.DecodingFailed)
         } catch (_: Exception) {
-            return Result.Error(DataError.Data.UnknownError)
+            return Result.Error(DataError.UnknownError)
         }
     }
 

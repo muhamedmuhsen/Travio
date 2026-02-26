@@ -37,7 +37,7 @@ class UserManagementRepositoryImpl @Inject constructor(
         } catch (e: IOException) {
             Result.Error(DataError.Network.NoInternetConnection)
         } catch (e: Exception) {
-            Result.Error(DataError.Data.UnknownError)
+            Result.Error(DataError.UnknownError)
         }
     }
 
@@ -56,7 +56,7 @@ class UserManagementRepositoryImpl @Inject constructor(
 
             return Result.Success(response.data.toDomain())
         } catch (e: Exception) {
-            return Result.Error(DataError.Data.UnknownError)
+            return Result.Error(DataError.UnknownError)
         }
     }
 
@@ -64,7 +64,7 @@ class UserManagementRepositoryImpl @Inject constructor(
         try {
             val uri = imageUri.toUri()
             val multipartBody =
-                uri.toMultipartBodyPart(context) ?: return Result.Error(DataError.Data.UnknownError)
+                uri.toMultipartBodyPart(context) ?: return Result.Error(DataError.UnknownError)
             val response = api.updateProfilePic(multipartBody)
             val absoluteUrl = "${BuildConfig.IMAGE_BASE_URL}${response.data}"
             return Result.Success(absoluteUrl)

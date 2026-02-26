@@ -2,5 +2,7 @@
 <resources>
     <!-- Location -->
     <string name="error_could_not_get_location">تعذّر الحصول على موقعك. يرجى المحاولة مجدداً.</string>
+    <string name="error_location_permission_denied">تم رفض إذن الوصول إلى الموقع.</string>
+    <string name="error_location_disabled">خدمات الموقع متوقفة.</string>
+    <string name="error_location_timeout">انتهت مهلة طلب الموقع.</string>
 </resources>
-

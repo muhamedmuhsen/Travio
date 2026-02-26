@@ -91,4 +91,7 @@ dependencies {
     // Location
     implementation(libs.play.services.location)
     implementation(libs.kotlinx.coroutines.play.services)
+
+    // Timber logging library
+    implementation(libs.timber)
 }

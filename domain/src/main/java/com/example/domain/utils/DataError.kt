@@ -1,6 +1,8 @@
 package com.example.domain.utils
 
 sealed interface DataError : Error {
+
+    object UnknownError : DataError
     enum class Network : DataError {
         BadRequest,
         NoInternetConnection,
@@ -22,8 +24,8 @@ sealed interface DataError : Error {
         ShortLastName,
         MustHaveAtLeastOneFieldToUpdate,
         InvalidUri,
-        EMPTY_FIRSTNAME,
-        EMPTY_LASTNAME,
+        EmptyFirstName,
+        EmptyLastName,
         ShortUsername
     }
 
@@ -62,7 +64,7 @@ sealed interface DataError : Error {
         InvalidData,
         NotFound,
         ParsingError,
-        UnknownError
+
     }
 
     enum class Local : DataError {
@@ -71,10 +73,13 @@ sealed interface DataError : Error {
         ConstraintViolation,
         RecordNotFound,
         DatabaseError,
-        UnkownError
+        UnknownError
     }
 
     enum class Location : DataError {
-        CouldNotGetTheLocation
+        CouldNotGetTheLocation,
+        PermissionDenied,
+        LocationDisabled,
+        Timeout
     }
 }

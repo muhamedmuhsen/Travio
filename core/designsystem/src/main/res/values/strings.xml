@@ -95,4 +95,7 @@
 
     <!-- Location -->
     <string name="error_could_not_get_location">Could not get your location. Please try again.</string>
+    <string name="error_location_permission_denied">Location permission denied.</string>
+    <string name="error_location_disabled">Location services are disabled.</string>
+    <string name="error_location_timeout">Location request timed out.</string>
 </resources>
