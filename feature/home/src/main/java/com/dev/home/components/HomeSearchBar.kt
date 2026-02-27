@@ -2,6 +2,8 @@ package com.dev.home.components
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -15,6 +17,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.designsystem.theme.TravioTheme
+import com.example.designsystem.theme.elevation
+import com.example.designsystem.theme.spacing
 import com.example.feature.home.R
 
 @Composable
@@ -26,8 +30,9 @@ fun HomeSearchBar(
     TextField(
         modifier = modifier
             .fillMaxWidth()
+            .height(MaterialTheme.spacing.xxxl + 4.dp)
             .border(
-                width = 1.dp,
+                width = MaterialTheme.elevation.xs,
                 color = MaterialTheme.colorScheme.outline,
                 shape = MaterialTheme.shapes.large
             ),
@@ -47,7 +52,8 @@ fun HomeSearchBar(
             Icon(
                 painter = painterResource(R.drawable.search_icon),
                 contentDescription = null,
-                tint = MaterialTheme.colorScheme.onSurfaceVariant
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.size(MaterialTheme.spacing.xs * 3)
             )
         },
         colors = TextFieldDefaults.colors(

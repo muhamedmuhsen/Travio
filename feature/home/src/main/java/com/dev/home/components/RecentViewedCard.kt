@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Card
@@ -32,6 +31,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.designsystem.components.shimmerEffect
 import com.example.designsystem.theme.TravioTheme
+import com.example.designsystem.theme.elevation
+import com.example.designsystem.theme.spacing
 import com.example.feature.home.R
 
 data class RecentViewedUiState(
@@ -52,7 +53,7 @@ fun RecentViewedCard(
             .fillMaxWidth()
             .height(IntrinsicSize.Min)
             .clickable(onClick = onClick)
-            .padding(8.dp),
+            .padding(MaterialTheme.spacing.xs),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Card(
@@ -61,8 +62,11 @@ fun RecentViewedCard(
             colors = CardDefaults.cardColors(
                 containerColor = MaterialTheme.colorScheme.surfaceVariant
             ),
-            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
-            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+            border = BorderStroke(
+                MaterialTheme.elevation.xs,
+                MaterialTheme.colorScheme.outlineVariant
+            ),
+            elevation = CardDefaults.cardElevation(defaultElevation = MaterialTheme.elevation.sm)
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -81,7 +85,7 @@ fun LoadingRecentViewedCard(modifier: Modifier = Modifier) {
         modifier = modifier
             .fillMaxWidth()
             .height(IntrinsicSize.Min)
-            .padding(8.dp),
+            .padding(MaterialTheme.spacing.xs),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Card(
@@ -90,8 +94,11 @@ fun LoadingRecentViewedCard(modifier: Modifier = Modifier) {
             colors = CardDefaults.cardColors(
                 containerColor = MaterialTheme.colorScheme.surfaceVariant
             ),
-            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
-            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+            border = BorderStroke(
+                MaterialTheme.elevation.xs,
+                MaterialTheme.colorScheme.outlineVariant
+            ),
+            elevation = CardDefaults.cardElevation(defaultElevation = MaterialTheme.elevation.sm)
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -104,32 +111,32 @@ fun LoadingRecentViewedCard(modifier: Modifier = Modifier) {
                 )
                 Column(
                     modifier = Modifier
-                        .padding(12.dp)
+                        .padding(MaterialTheme.spacing.sm)
                         .fillMaxWidth()
                 ) {
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(14.dp)
-                            .clip(RoundedCornerShape(4.dp))
+                            .clip(MaterialTheme.shapes.extraSmall)
                             .shimmerEffect()
                     )
-                    Spacer(modifier = Modifier.height(4.dp))
+                    Spacer(modifier = Modifier.height(MaterialTheme.spacing.xxs))
                     Box(
                         modifier = Modifier
                             .fillMaxWidth(0.7f)
                             .height(14.dp)
-                            .clip(RoundedCornerShape(4.dp))
+                            .clip(MaterialTheme.shapes.extraSmall)
                             .shimmerEffect()
                     )
 
-                    Spacer(modifier = Modifier.height(12.dp))
+                    Spacer(modifier = Modifier.height(MaterialTheme.spacing.sm))
 
                     Box(
                         modifier = Modifier
                             .width(80.dp)
                             .height(16.dp)
-                            .clip(RoundedCornerShape(4.dp))
+                            .clip(MaterialTheme.shapes.extraSmall)
                             .shimmerEffect()
                     )
                 }
@@ -137,7 +144,6 @@ fun LoadingRecentViewedCard(modifier: Modifier = Modifier) {
         }
     }
 }
-
 
 @Composable
 private fun CardThumbnail(imageRes: Int) {
@@ -155,7 +161,7 @@ private fun CardThumbnail(imageRes: Int) {
 private fun CardContent(state: RecentViewedUiState) {
     Column(
         modifier = Modifier
-            .padding(12.dp)
+            .padding(MaterialTheme.spacing.sm)
             .fillMaxWidth()
     ) {
         Text(
@@ -165,7 +171,7 @@ private fun CardContent(state: RecentViewedUiState) {
             maxLines = 3
         )
 
-        Spacer(modifier = Modifier.height(12.dp))
+        Spacer(modifier = Modifier.height(MaterialTheme.spacing.sm))
 
         Row(verticalAlignment = Alignment.CenterVertically) {
             Icon(
@@ -175,7 +181,7 @@ private fun CardContent(state: RecentViewedUiState) {
                 modifier = Modifier.size(18.dp)
             )
 
-            Spacer(modifier = Modifier.width(6.dp))
+            Spacer(modifier = Modifier.width(MaterialTheme.spacing.xs))
 
             Text(
                 text = "${state.rating} (${state.reviewCount})",

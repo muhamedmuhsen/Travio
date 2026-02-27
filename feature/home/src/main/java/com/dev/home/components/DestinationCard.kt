@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.FavoriteBorder
@@ -40,11 +39,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.designsystem.components.shimmerEffect
 import com.example.designsystem.theme.TravioTheme
+import com.example.designsystem.theme.elevation
 import com.example.designsystem.theme.spacing
 import com.example.feature.home.R
 
@@ -64,8 +63,8 @@ fun DestinationCard(
         modifier = modifier
             .width(320.dp)
             .clickable(onClick = onCardClicked),
-        shape = RoundedCornerShape(MaterialTheme.spacing.md),
-        elevation = CardDefaults.cardElevation(defaultElevation = MaterialTheme.spacing.xs),
+        shape = MaterialTheme.shapes.medium,
+        elevation = CardDefaults.cardElevation(defaultElevation = MaterialTheme.elevation.xs),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface
         )
@@ -91,8 +90,8 @@ fun LoadingDestinationCard(modifier: Modifier = Modifier) {
     Card(
         modifier = modifier
             .width(320.dp),
-        shape = RoundedCornerShape(MaterialTheme.spacing.md),
-        elevation = CardDefaults.cardElevation(defaultElevation = MaterialTheme.spacing.xs),
+        shape = MaterialTheme.shapes.medium,
+        elevation = CardDefaults.cardElevation(defaultElevation = MaterialTheme.elevation.xs),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface
         )
@@ -114,14 +113,14 @@ fun LoadingDestinationCard(modifier: Modifier = Modifier) {
                     modifier = Modifier
                         .fillMaxWidth(0.7f)
                         .height(20.dp)
-                        .clip(RoundedCornerShape(4.dp))
+                        .clip(MaterialTheme.shapes.extraSmall)
                         .shimmerEffect()
                 )
                 Box(
                     modifier = Modifier
                         .fillMaxWidth(0.5f)
                         .height(20.dp)
-                        .clip(RoundedCornerShape(4.dp))
+                        .clip(MaterialTheme.shapes.extraSmall)
                         .shimmerEffect()
                 )
                 Spacer(modifier = Modifier.height(MaterialTheme.spacing.sm))
@@ -129,7 +128,7 @@ fun LoadingDestinationCard(modifier: Modifier = Modifier) {
                     modifier = Modifier
                         .fillMaxWidth(0.4f)
                         .height(24.dp)
-                        .clip(RoundedCornerShape(4.dp))
+                        .clip(MaterialTheme.shapes.extraSmall)
                         .shimmerEffect()
                 )
             }
@@ -187,7 +186,7 @@ fun FavoriteButton(
         modifier = modifier.size(MaterialTheme.spacing.xxl),
         shape = CircleShape,
         color = MaterialTheme.colorScheme.surface,
-        shadowElevation = MaterialTheme.spacing.xxs
+        shadowElevation = MaterialTheme.elevation.xs
     ) {
         IconButton(onClick = onClick) {
             Icon(
@@ -212,7 +211,10 @@ fun ImageOverlay(
             .height(80.dp)
             .background(
                 Brush.verticalGradient(
-                    colors = listOf(Color.Transparent, Color.Black.copy(alpha = 0.8f))
+                    colors = listOf(
+                        Color.Transparent,
+                        MaterialTheme.colorScheme.scrim.copy(alpha = 0.8f)
+                    )
                 )
             )
     ) {
@@ -229,7 +231,7 @@ fun ImageOverlay(
             Text(
                 text = title,
                 color = Color.White,
-                fontSize = 24.sp,
+                style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.Bold
             )
 
@@ -256,7 +258,7 @@ fun RatingBadge(
         Text(
             text = "$rating ($reviewCount)",
             color = Color.White,
-            fontSize = 16.sp,
+            style = MaterialTheme.typography.bodyMedium,
             fontWeight = FontWeight.Medium
         )
     }
@@ -275,8 +277,7 @@ fun DestinationInfoSection(
         Text(
             text = description,
             color = MaterialTheme.colorScheme.onSurface,
-            fontSize = 16.sp,
-            lineHeight = 22.sp
+            style = MaterialTheme.typography.bodyMedium
         )
 
         Spacer(modifier = Modifier.height(MaterialTheme.spacing.md))
@@ -292,7 +293,7 @@ fun PriceText(price: String) {
             withStyle(
                 style = SpanStyle(
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    fontSize = 16.sp
+                    fontSize = MaterialTheme.typography.bodyMedium.fontSize
                 )
             ) {
                 append("From ")
@@ -301,7 +302,7 @@ fun PriceText(price: String) {
                 style = SpanStyle(
                     color = MaterialTheme.colorScheme.primary,
                     fontWeight = FontWeight.Bold,
-                    fontSize = 18.sp
+                    fontSize = MaterialTheme.typography.titleMedium.fontSize
                 )
             ) {
                 append(price)

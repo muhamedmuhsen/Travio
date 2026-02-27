@@ -6,13 +6,13 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.dev.favroite.FavoriteScreen
+import com.dev.home.presentation.HomeScreen
 import com.dev.profile.editProfile.EditProfileScreen
 import com.dev.profile.profile.ProfileScreen
 import com.example.common.navigation.Screen
 import com.example.feature.forgetpassword.ForgetPasswordScreen
 import com.example.feature.forgetpassword.code.CodeScreen
 import com.example.feature.forgetpassword.newpassword.NewPasswordScreen
-import com.example.feature.home.HomeScreen
 import com.example.feature.language.LanguageScreen
 import com.example.feature.login.LoginScreen
 import com.example.feature.onboarding.OnboardingScreen
@@ -124,10 +124,10 @@ fun TravioNavHost(
 
         composable(Screen.HomeScreen.route) {
             HomeScreen(
-                navigateToProfile = {
-                    navController.navigate(Screen.ProfileScreen.route)
-                },
-                navigateToFavorite = { navController.navigate(Screen.FavoriteScreen.route) }
+//                navigateToProfile = {
+//                    navController.navigate(Screen.ProfileScreen.route)
+//                },
+//                navigateToFavorite = { navController.navigate(Screen.FavoriteScreen.route) }
             )
         }
         composable(Screen.ProfileScreen.route) {
