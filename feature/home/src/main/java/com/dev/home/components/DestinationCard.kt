@@ -61,12 +61,14 @@ fun DestinationCard(
 ) {
     Card(
         modifier = modifier
-            .width(320.dp)
+            .width(250.dp)
             .clickable(onClick = onCardClicked),
         shape = MaterialTheme.shapes.medium,
-        elevation = CardDefaults.cardElevation(defaultElevation = MaterialTheme.elevation.xs),
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = MaterialTheme.elevation.xs
+        ),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface
+            containerColor = MaterialTheme.colorScheme.surfaceContainer
         )
     ) {
         Column {
@@ -147,7 +149,7 @@ fun DestinationImageSection(
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(260.dp)
+            .height(310.dp)
     ) {
         AsyncImage(
             model = ImageRequest.Builder(LocalContext.current)

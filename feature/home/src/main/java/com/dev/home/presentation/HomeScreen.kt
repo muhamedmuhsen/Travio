@@ -6,7 +6,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -35,24 +34,39 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import com.dev.home.components.CountryCard
 import com.dev.home.components.CountryItem
 import com.dev.home.components.DestinationCard
 import com.dev.home.components.HomeSearchBar
 import com.dev.home.components.RecentViewedCard
 import com.dev.home.components.RecentViewedUiState
+import com.example.designsystem.components.AppBottomBar
 import com.example.designsystem.theme.TravioTheme
 import com.example.designsystem.theme.spacing
 import com.example.feature.home.R
 
 @Composable
-fun HomeScreen(modifier: Modifier = Modifier) {
+fun HomeScreen(
+    modifier: Modifier = Modifier,
+    navigateToProfile: () -> Unit
+) {
     var searchQuery by remember { mutableStateOf("") }
     val scrollState = rememberScrollState()
 
     Scaffold(
         modifier = modifier,
-        containerColor = MaterialTheme.colorScheme.background
+        containerColor = MaterialTheme.colorScheme.background,
+        bottomBar = {
+            AppBottomBar(
+                selectedItem = 0,
+                onItemSelected = { index ->
+                    when (index) {
+                        4 -> navigateToProfile()
+                    }
+                }
+            )
+        }
     ) { paddingValues ->
         Column(
             modifier = Modifier
@@ -60,13 +74,11 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                 .verticalScroll(scrollState)
                 .padding(bottom = paddingValues.calculateBottomPadding())
         ) {
-            // --- HERO SECTION (Image + Search Bar) ---
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(MaterialTheme.spacing.xxxl * 4)
             ) {
-                // Background Image
                 Image(
                     painterResource(R.drawable.search_background),
                     contentDescription = null,
@@ -74,7 +86,6 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                     modifier = Modifier.fillMaxSize()
                 )
 
-                // Search Bar Overlay
                 HomeSearchBar(
                     value = searchQuery,
                     onValueChange = { searchQuery = it },
@@ -82,14 +93,13 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                         .align(Alignment.TopCenter)
                         .padding(
                             top = MaterialTheme.spacing.xxxl,
-                            start = MaterialTheme.spacing.lg,
-                            end = MaterialTheme.spacing.lg
+                            start = MaterialTheme.spacing.md,
+                            end = MaterialTheme.spacing.md
                         )
                         .fillMaxWidth()
                 )
             }
 
-            // --- CONTENT SHEET (Overlapping the Image) ---
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -102,6 +112,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                     )
                     .background(MaterialTheme.colorScheme.surface)
             ) {
+                Spacer(modifier = Modifier.height(MaterialTheme.spacing.sm))
                 HorizontalSection(title = "Famous places") {
                     items(mockCountries) { country ->
                         CountryCard(country = country)
@@ -146,8 +157,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                     }
                 }
 
-                // Bottom spacing to prevent cut-off
-                Spacer(modifier = Modifier.height(MaterialTheme.spacing.xxl))
+                Spacer(modifier = Modifier.height(4.dp))
             }
         }
     }
@@ -161,7 +171,7 @@ private fun HorizontalSection(
     title: String,
     content: LazyListScope.() -> Unit
 ) {
-    Column(modifier = Modifier.padding(bottom = MaterialTheme.spacing.lg)) {
+    Column {
         Text(
             text = title,
             style = MaterialTheme.typography.titleLarge.copy(
@@ -174,9 +184,9 @@ private fun HorizontalSection(
             )
         )
         LazyRow(
-            contentPadding = PaddingValues(horizontal = MaterialTheme.spacing.lg),
             horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.sm),
-            content = content
+            content = content,
+            modifier = Modifier.padding(horizontal = MaterialTheme.spacing.lg)
         )
     }
 }
@@ -231,11 +241,11 @@ private val mockRecommended = mockDestinations.map {
 @Preview(showBackground = true)
 @Composable
 fun HomeScreenPreview() {
-    TravioTheme { HomeScreen() }
+    TravioTheme { HomeScreen {} }
 }
 
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES, showBackground = true)
 @Composable
 fun HomeScreenDarkPreview() {
-    TravioTheme { HomeScreen() }
+    TravioTheme { HomeScreen {} }
 }

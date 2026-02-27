@@ -60,7 +60,7 @@ fun RecentViewedCard(
             modifier = Modifier.fillMaxWidth(),
             shape = MaterialTheme.shapes.medium,
             colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surfaceVariant
+                containerColor = MaterialTheme.colorScheme.surface
             ),
             border = BorderStroke(
                 MaterialTheme.elevation.xs,
@@ -92,7 +92,7 @@ fun LoadingRecentViewedCard(modifier: Modifier = Modifier) {
             modifier = Modifier.fillMaxWidth(),
             shape = MaterialTheme.shapes.medium,
             colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surfaceVariant
+                containerColor = MaterialTheme.colorScheme.surface
             ),
             border = BorderStroke(
                 MaterialTheme.elevation.xs,

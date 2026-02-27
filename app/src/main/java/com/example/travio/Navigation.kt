@@ -124,9 +124,9 @@ fun TravioNavHost(
 
         composable(Screen.HomeScreen.route) {
             HomeScreen(
-//                navigateToProfile = {
-//                    navController.navigate(Screen.ProfileScreen.route)
-//                },
+                navigateToProfile = {
+                    navController.navigate(Screen.ProfileScreen.route)
+                }
 //                navigateToFavorite = { navController.navigate(Screen.FavoriteScreen.route) }
             )
         }

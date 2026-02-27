@@ -37,7 +37,7 @@ fun CountryCard(
 ) {
     Box(
         modifier = modifier
-            .size(160.dp)
+            .size(140.dp)
             .clip(MaterialTheme.shapes.medium)
     ) {
         AsyncImage(
