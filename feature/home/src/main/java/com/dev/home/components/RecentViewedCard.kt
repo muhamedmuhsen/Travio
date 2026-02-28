@@ -1,7 +1,6 @@
 package com.dev.home.components
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -29,24 +28,21 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
 import com.example.designsystem.components.shimmerEffect
 import com.example.designsystem.theme.TravioTheme
 import com.example.designsystem.theme.elevation
 import com.example.designsystem.theme.spacing
 import com.example.feature.home.R
 
-data class RecentViewedUiState(
-    val description: String,
-    val rating: Float,
-    val reviewCount: Int,
-    val imageRes: Int = R.drawable.card_placeholder_preview
-)
-
 @Composable
 fun RecentViewedCard(
-    state: RecentViewedUiState,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    description: String,
+    rating: Double,
+    reviewCount: Int,
+    imageUrl: String,
+    onClick: () -> Unit
 ) {
     Row(
         modifier = modifier
@@ -72,8 +68,12 @@ fun RecentViewedCard(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                CardThumbnail(state.imageRes)
-                CardContent(state)
+                CardThumbnail(imageUrl)
+                CardContent(
+                    description = description,
+                    rating = rating,
+                    reviewCount = reviewCount
+                )
             }
         }
     }
@@ -146,11 +146,13 @@ fun LoadingRecentViewedCard(modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun CardThumbnail(imageRes: Int) {
-    Image(
-        painter = painterResource(id = imageRes),
+private fun CardThumbnail(imageUrl: String) {
+    AsyncImage(
+        model = imageUrl,
         contentDescription = null,
         contentScale = ContentScale.Crop,
+        placeholder = painterResource(id = R.drawable.error_place_icon),
+        error = painterResource(id = R.drawable.error_place_icon),
         modifier = Modifier
             .size(110.dp)
             .clip(MaterialTheme.shapes.medium)
@@ -158,14 +160,18 @@ private fun CardThumbnail(imageRes: Int) {
 }
 
 @Composable
-private fun CardContent(state: RecentViewedUiState) {
+private fun CardContent(
+    description: String,
+    rating: Double,
+    reviewCount: Int
+) {
     Column(
         modifier = Modifier
             .padding(MaterialTheme.spacing.sm)
             .fillMaxWidth()
     ) {
         Text(
-            text = state.description,
+            text = description,
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurface,
             maxLines = 3
@@ -184,7 +190,7 @@ private fun CardContent(state: RecentViewedUiState) {
             Spacer(modifier = Modifier.width(MaterialTheme.spacing.xs))
 
             Text(
-                text = "${state.rating} (${state.reviewCount})",
+                text = "$rating ($reviewCount)",
                 style = MaterialTheme.typography.labelLarge.copy(
                     fontWeight = FontWeight.SemiBold
                 ),
@@ -197,14 +203,12 @@ private fun CardContent(state: RecentViewedUiState) {
 @Preview(showBackground = true)
 @Composable
 private fun RecentViewedCardPreview() {
-    val mockState = RecentViewedUiState(
-        description = "The warm rays of the setting sun in Africa bathe the savanna in golden light.",
-        rating = 3.7f,
-        reviewCount = 40
-    )
     TravioTheme {
         RecentViewedCard(
-            state = mockState,
+            description = "The warm rays of the setting sun in Africa bathe the savanna in golden light.",
+            rating = 3.1,
+            reviewCount = 40,
+            imageUrl = "",
             onClick = { }
         )
     }

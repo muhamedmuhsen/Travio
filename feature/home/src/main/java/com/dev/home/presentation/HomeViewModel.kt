@@ -2,101 +2,114 @@ package com.dev.home.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.dev.home.components.CountryItem
-import com.dev.home.components.RecentViewedUiState
-import com.example.feature.home.R
+import com.example.domain.usecase.destinations.GetAllDestinationsUseCase
+import com.example.domain.usecase.destinations.GetNearbyDestinationsUseCase
+import com.example.domain.utils.Result
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import ui.state.UiState
+import ui.text.asUiText
 import javax.inject.Inject
 
 @HiltViewModel
-class HomeViewModel @Inject constructor() : ViewModel() {
+class HomeViewModel @Inject constructor(
+    private val getAllDestinationsUseCase: GetAllDestinationsUseCase,
+    private val getNearbyDestinationsUseCase: GetNearbyDestinationsUseCase
+) : ViewModel() {
 
-    private val _uiState = MutableStateFlow<HomeUiState>(HomeUiState.Loading)
+    private val _uiState = MutableStateFlow(HomeUiState())
     val uiState: StateFlow<HomeUiState> = _uiState.asStateFlow()
+
+    private val _event = Channel<HomeEvent>(Channel.BUFFERED)
+    val event = _event.receiveAsFlow()
 
     init {
         loadHomeData()
     }
 
-    private fun loadHomeData() {
-        viewModelScope.launch {
-            _uiState.value = HomeUiState.Loading
-            // Simulate network delay
-            delay(1500)
-            _uiState.value = HomeUiState.Success(
-                countries = mockCountries,
-                recentItems = mockRecentItems,
-                destinations = mockDestinations,
-                recommended = mockRecommended
-            )
+    fun onAction(action: HomeAction) {
+        when (action) {
+            is HomeAction.OnDestinationClicked -> navigateToDestination(action.id)
+            HomeAction.OnSearchClicked -> navigateToSearch()
+            is HomeAction.OnFavoriteClicked -> addToFavorite(action.id)
         }
     }
 
-    // Mock data moved from Composable
-    private val mockCountries = listOf(
-        CountryItem(
-            "Egypt",
-            "https://images.unsplash.com/photo-1503177119275-0aa32b3a9368?q=80&w=1000&auto=format&fit=crop"
-        ),
-        CountryItem(
-            "Saudi Arabia",
-            "https://images.unsplash.com/photo-1586724230021-4c3d3a91bfac?q=80&w=1000&auto=format&fit=crop"
-        ),
-        CountryItem(
-            "Japan",
-            "https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?q=80&w=1000&auto=format&fit=crop"
-        )
-    )
+    private fun addToFavorite(id: String) {
+        // TODO: save in local database
+    }
 
-    private val mockRecentItems = listOf(
-        RecentViewedUiState(
-            description = "The warm rays of the setting sun in Africa bathe the savanna in golden light.",
-            rating = 3.7f,
-            reviewCount = 418,
-            imageRes = R.drawable.card_placeholder_preview
-        )
-    )
+    private fun navigateToSearch() {
+        viewModelScope.launch { _event.send(HomeEvent.NavigateToSearch) }
+    }
 
-    private val mockDestinations = listOf(
-        DestinationMock(
-            title = "Egypt",
-            rating = 4.7,
-            reviewCount = 1121,
-            description = "Oasis Middle of the desert, with salt lakes, and Bedouin vibes.",
-            price = "EGP 1100/ adult",
-            imageUrl = "https://images.unsplash.com/photo-1503177119275-0aa32b3a9368?q=80&w=1000&auto=format&fit=crop"
-        ),
-        DestinationMock(
-            title = "Japan",
-            rating = 4.9,
-            reviewCount = 840,
-            description = "Historic temples, organized streets, and Japanese gardens.",
-            price = "EGP 2350/ adult",
-            imageUrl = "https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?q=80&w=1000&auto=format&fit=crop"
-        )
-    )
+    private fun navigateToDestination(id: String) {
+        viewModelScope.launch { _event.send(HomeEvent.NavigateToDestination(id)) }
+    }
 
-    private val mockRecommended = listOf(
-        DestinationMock(
-            title = "Egypt",
-            rating = 4.7,
-            reviewCount = 1121,
-            description = "Oasis Middle of the desert, with salt lakes, and Bedouin vibes.",
-            price = "EGP 1100/ adult",
-            imageUrl = "https://images.unsplash.com/photo-1503177119275-0aa32b3a9368?q=80&w=1000&auto=format&fit=crop"
-        ),
-        DestinationMock(
-            title = "Japan",
-            rating = 4.9,
-            reviewCount = 840,
-            description = "Historic temples, organized streets, and Japanese gardens.",
-            price = "EGP 2350/ adult",
-            imageUrl = "https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?q=80&w=1000&auto=format&fit=crop"
-        )
-    )
+    private fun loadHomeData() {
+        loadRecommendedDestinations()
+        loadNearbyDestinations()
+    }
+
+    private fun loadRecommendedDestinations() {
+        _uiState.update { state -> state.copy(recommendedDestinationsState = UiState.Loading) }
+
+        viewModelScope.launch {
+            when (
+                val result = getAllDestinationsUseCase(
+                    pageIndex = 1,
+                    pageSize = 10,
+                    cityId = 1,
+                    interestId = 1
+                )
+            ) {
+                is Result.Error -> {
+                    _uiState.update { state ->
+                        state.copy(recommendedDestinationsState = UiState.Error(result.error.asUiText()))
+                    }
+                }
+
+                is Result.Success -> {
+                    _uiState.update { state ->
+                        state.copy(recommendedDestinationsState = UiState.Success(result.data))
+                    }
+                }
+            }
+        }
+    }
+
+    private fun loadNearbyDestinations() {
+        _uiState.update { state -> state.copy(nearbyDestinationsState = UiState.Loading) }
+
+        viewModelScope.launch {
+            when (val result = getNearbyDestinationsUseCase()) {
+                is Result.Error -> {
+                    _uiState.update { state ->
+                        state.copy(
+                            nearbyDestinationsState = UiState.Error(
+                                result.error.asUiText()
+                            )
+                        )
+                    }
+                }
+
+                is Result.Success -> {
+                    _uiState.update { state ->
+                        state.copy(
+                            nearbyDestinationsState = UiState.Success(
+                                result.data
+                            )
+                        )
+                    }
+                }
+            }
+        }
+    }
 }

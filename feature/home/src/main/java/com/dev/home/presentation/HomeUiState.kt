@@ -1,26 +1,12 @@
 package com.dev.home.presentation
 
 import com.dev.home.components.CountryItem
-import com.dev.home.components.RecentViewedUiState
+import com.example.domain.model.destination.Destination
+import ui.state.UiState
 
-sealed interface HomeUiState {
-    object Loading : HomeUiState
-
-    data class Success(
-        val countries: List<CountryItem> = emptyList(),
-        val recentItems: List<RecentViewedUiState> = emptyList(),
-        val destinations: List<DestinationMock> = emptyList(),
-        val recommended: List<DestinationMock> = emptyList()
-    ) : HomeUiState
-
-    data class Error(val message: String) : HomeUiState
-}
-
-data class DestinationMock(
-    val title: String,
-    val rating: Double,
-    val reviewCount: Int,
-    val description: String,
-    val price: String,
-    val imageUrl: String
+data class HomeUiState(
+    val countriesState: UiState<List<CountryItem>> = UiState.Idle,
+    val recommendedDestinationsState: UiState<List<Destination>> = UiState.Idle,
+    val recentViewedDestinationsState: UiState<List<Destination>> = UiState.Idle,
+    val nearbyDestinationsState: UiState<List<Destination>> = UiState.Idle
 )

@@ -6,9 +6,9 @@ data class Destination(
     val destinationID: Int,
     val imageUrls: List<String>,
     val interests: List<Interest>,
-    val latitude: Int,
-    val longitude: Int,
+    val latitude: Double,
+    val longitude: Double,
     val name: String,
-    val rating: Int,
+    val rating: Double,
     val totalReviews: Int
 )
