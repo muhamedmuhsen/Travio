@@ -19,6 +19,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ErrorOutline
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -36,10 +38,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.dev.home.components.CountryCard
-import com.dev.home.components.CountryItem
 import com.dev.home.components.DestinationCard
 import com.dev.home.components.HomeSearchBar
 import com.dev.home.components.LoadingCountryCard
@@ -47,8 +49,10 @@ import com.dev.home.components.LoadingDestinationCard
 import com.dev.home.components.LoadingRecentViewedCard
 import com.dev.home.components.RecentViewedCard
 import com.example.designsystem.components.AppBottomBar
+import com.example.designsystem.components.ErrorSnackBar
 import com.example.designsystem.theme.TravioTheme
 import com.example.designsystem.theme.spacing
+import com.example.domain.model.destination.Country
 import com.example.domain.model.destination.Destination
 import com.example.feature.home.R
 import ui.state.UiState
@@ -68,7 +72,7 @@ fun HomeScreen(
                 is HomeEvent.NavigateToDestination -> TODO()
                 HomeEvent.NavigateToSearch -> TODO()
                 is HomeEvent.ShowErrorSnackbar -> {
-                    snackbarHostState.showSnackbar(event.message.asString(context))
+                    snackbarHostState.showSnackbar(message = event.message.asString(context))
                 }
             }
         }
@@ -88,21 +92,23 @@ private fun HomeContent(
     state: HomeUiState,
     snackbarHostState: SnackbarHostState
 ) {
-    Scaffold(
-        modifier = modifier,
-        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
-        containerColor = MaterialTheme.colorScheme.background,
-        bottomBar = {
-            AppBottomBar(
-                selectedItem = 0,
-                onItemSelected = { index ->
-                    when (index) {
-                        //  4 -> onAction(HomeAction)
-                    }
-                }
+    Scaffold(modifier = modifier, snackbarHost = {
+        SnackbarHost(hostState = snackbarHostState) { snackbarData ->
+            ErrorSnackBar(
+                text = snackbarData.visuals.message,
+                icon = Icons.Default.ErrorOutline
             )
         }
-    ) { paddingValues ->
+    }, containerColor = MaterialTheme.colorScheme.background, bottomBar = {
+        AppBottomBar(
+            selectedItem = 0,
+            onItemSelected = { index ->
+                when (index) {
+                    //  4 -> onAction(HomeAction)
+                }
+            }
+        )
+    }) { paddingValues ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -125,8 +131,14 @@ private fun HomeContent(
                 Spacer(modifier = Modifier.height(MaterialTheme.spacing.sm))
                 CountryStateHandling(state = state.countriesState)
                 RecentViewedStateHandling(state = state.recentViewedDestinationsState)
-                DestinationStateHandling(state = state.recommendedDestinationsState)
-                DestinationStateHandling(state = state.nearbyDestinationsState)
+                DestinationStateHandling(
+                    title = "Recommended Destinations",
+                    state = state.recommendedDestinationsState
+                )
+                DestinationStateHandling(
+                    title = "Nearby Destinations",
+                    state = state.nearbyDestinationsState
+                )
             }
             Spacer(modifier = Modifier.height(MaterialTheme.spacing.xl))
         }
@@ -163,11 +175,18 @@ private fun HomeTopSection() {
 }
 
 @Composable
-fun CountryStateHandling(state: UiState<List<CountryItem>>) {
+fun CountryStateHandling(state: UiState<List<Country>>) {
     when (state) {
         is UiState.Error -> CountryErrorView()
         UiState.Idle -> Unit
-        UiState.Loading -> LoadingCountryCard()
+        UiState.Loading -> {
+            HorizontalSection(title = "Famous Countries") {
+                items(3) {
+                    LoadingCountryCard()
+                }
+            }
+        }
+
         is UiState.Success -> {
             val countries = state.data ?: emptyList()
             if (countries.isNotEmpty()) {
@@ -183,7 +202,9 @@ fun CountryStateHandling(state: UiState<List<CountryItem>>) {
 
 @Composable
 fun CountryErrorView() {
-    TODO("Not yet implemented")
+    Box(modifier = Modifier
+        .fillMaxWidth()
+        .height(100.dp))
 }
 
 @Composable
@@ -214,19 +235,27 @@ fun RecentViewedStateHandling(state: UiState<List<Destination>>) {
 
 @Composable
 fun RecentViewedErrorView() {
-    TODO("Not yet implemented")
+    Box(modifier = Modifier
+        .fillMaxWidth()
+        .height(100.dp))
 }
 
 @Composable
-fun DestinationStateHandling(state: UiState<List<Destination>>) {
+fun DestinationStateHandling(
+    title: String,
+    state: UiState<List<Destination>>
+) {
     when (state) {
         is UiState.Error -> DestinationErrorView()
         UiState.Idle -> Unit
-        UiState.Loading -> LoadingDestinationCard()
+        UiState.Loading -> {
+            HorizontalSection(title) { items(3) { LoadingDestinationCard() } }
+        }
+
         is UiState.Success -> {
             val destinations = state.data ?: emptyList()
             if (destinations.isNotEmpty()) {
-                HorizontalSection(title = "Recommended") {
+                HorizontalSection(title = title) {
                     items(destinations) { destination ->
                         DestinationCard(
                             title = destination.name,
@@ -246,7 +275,9 @@ fun DestinationStateHandling(state: UiState<List<Destination>>) {
 
 @Composable
 fun DestinationErrorView() {
-    TODO("Not yet implemented")
+    Box(modifier = Modifier
+        .fillMaxWidth()
+        .height(100.dp))
 }
 
 @Composable

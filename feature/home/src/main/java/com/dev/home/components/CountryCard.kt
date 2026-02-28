@@ -23,16 +23,12 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.designsystem.components.shimmerEffect
 import com.example.designsystem.theme.TravioTheme
+import com.example.domain.model.destination.Country
 import com.example.feature.home.R
-
-data class CountryItem(
-    val name: String,
-    val imageUrl: String
-)
 
 @Composable
 fun CountryCard(
-    country: CountryItem,
+    country: Country,
     modifier: Modifier = Modifier
 ) {
     Box(
@@ -42,10 +38,10 @@ fun CountryCard(
     ) {
         AsyncImage(
             model = ImageRequest.Builder(LocalContext.current)
-                .data(country.imageUrl)
+                .data(country.flagURL)
                 .crossfade(true)
-                .placeholder(R.drawable.card_placeholder_preview)
-                .error(R.drawable.card_placeholder_preview)
+                .placeholder(R.drawable.error_place_icon)
+                .error(R.drawable.error_place_icon)
                 .build(),
             contentDescription = "${country.name} destination",
             contentScale = ContentScale.Crop,
@@ -69,7 +65,7 @@ fun CountryCard(
 fun LoadingCountryCard(modifier: Modifier = Modifier) {
     Box(
         modifier = modifier
-            .size(160.dp)
+            .size(140.dp)
             .clip(MaterialTheme.shapes.medium)
             .shimmerEffect()
     )
@@ -97,9 +93,10 @@ private fun GradientOverlay() {
 )
 @Composable
 private fun CountryCardPreview() {
-    val mockCountry = CountryItem(
+    val mockCountry = Country(
         name = "Egypt",
-        imageUrl = "https://example.com/image.jpg"
+        flagURL = "https://example.com/image.jpg",
+        countryID = 1
     )
 
     TravioTheme {

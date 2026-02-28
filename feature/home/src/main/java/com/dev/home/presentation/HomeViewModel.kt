@@ -3,6 +3,7 @@ package com.dev.home.presentation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.domain.usecase.destinations.GetAllDestinationsUseCase
+import com.example.domain.usecase.destinations.GetFamousCountriesUseCase
 import com.example.domain.usecase.destinations.GetNearbyDestinationsUseCase
 import com.example.domain.utils.Result
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -20,7 +21,8 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val getAllDestinationsUseCase: GetAllDestinationsUseCase,
-    private val getNearbyDestinationsUseCase: GetNearbyDestinationsUseCase
+    private val getNearbyDestinationsUseCase: GetNearbyDestinationsUseCase,
+    private val getFamousCountriesUseCase: GetFamousCountriesUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(HomeUiState())
@@ -56,6 +58,25 @@ class HomeViewModel @Inject constructor(
     private fun loadHomeData() {
         loadRecommendedDestinations()
         loadNearbyDestinations()
+        loadFamousCountries()
+    }
+
+    private fun loadFamousCountries() {
+        _uiState.update { state -> state.copy(countriesState = UiState.Loading) }
+        viewModelScope.launch {
+            when (val result = getFamousCountriesUseCase()) {
+                is Result.Error -> {
+                    _uiState.update { state ->
+                        state.copy(recommendedDestinationsState = UiState.Error(result.error.asUiText()))
+                    }
+                    _event.send(HomeEvent.ShowErrorSnackbar(result.error.asUiText()))
+                }
+
+                is Result.Success -> {
+                    _uiState.update { state -> state.copy(countriesState = UiState.Success(result.data)) }
+                }
+            }
+        }
     }
 
     private fun loadRecommendedDestinations() {
@@ -74,6 +95,7 @@ class HomeViewModel @Inject constructor(
                     _uiState.update { state ->
                         state.copy(recommendedDestinationsState = UiState.Error(result.error.asUiText()))
                     }
+                    _event.send(HomeEvent.ShowErrorSnackbar(result.error.asUiText()))
                 }
 
                 is Result.Success -> {
@@ -98,6 +120,7 @@ class HomeViewModel @Inject constructor(
                             )
                         )
                     }
+                    _event.send(HomeEvent.ShowErrorSnackbar(result.error.asUiText()))
                 }
 
                 is Result.Success -> {

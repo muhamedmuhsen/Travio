@@ -2,6 +2,7 @@ package com.example.data.repository.destinations
 
 import com.example.data.mapper.destination.toDomain
 import com.example.data.utils.safeApiCall
+import com.example.domain.model.destination.Country
 import com.example.domain.model.destination.Destination
 import com.example.domain.repository.destinations.DestinationsRepository
 import com.example.domain.utils.DataError
@@ -56,5 +57,11 @@ class DestinationsRepositoryImpl @Inject constructor(
             val response = api.searchForDestinations(keyword, pageIndex, pageSize)
             Timber.d("Search for a Destination: ${response.data}")
             response.data.map { it.toDomain() }
+        }
+
+    override suspend fun getFamousCountries(): Result<List<Country>, DataError> =
+        safeApiCall {
+            val response = api.getFamousCountries()
+            response.map { it.toDomain() }
         }
 }

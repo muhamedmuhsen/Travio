@@ -93,18 +93,20 @@ fun DestinationCard(
 fun LoadingDestinationCard(modifier: Modifier = Modifier) {
     Card(
         modifier = modifier
-            .width(320.dp),
+            .width(250.dp),
         shape = MaterialTheme.shapes.medium,
-        elevation = CardDefaults.cardElevation(defaultElevation = MaterialTheme.elevation.xs),
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = MaterialTheme.elevation.xs
+        ),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface
+            containerColor = MaterialTheme.colorScheme.surfaceContainer
         )
     ) {
         Column {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(260.dp)
+                    .height(310.dp)
                     .shimmerEffect()
             )
             Column(
@@ -157,8 +159,8 @@ fun DestinationImageSection(
             model = ImageRequest.Builder(LocalContext.current)
                 .data(imageUrl)
                 .crossfade(true)
-                .placeholder(R.drawable.card_placeholder_preview)
-                .error(R.drawable.card_placeholder_preview)
+                .placeholder(R.drawable.error_place_icon)
+                .error(R.drawable.error_place_icon)
                 .build(),
             contentDescription = null,
             contentScale = ContentScale.Crop,

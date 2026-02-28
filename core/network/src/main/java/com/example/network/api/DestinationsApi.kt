@@ -1,5 +1,6 @@
 package com.example.network.api
 
+import com.example.network.dto.destinations.Country
 import com.example.network.dto.destinations.Destination
 import com.example.network.dto.destinations.GetAllDestinationsResponse
 import retrofit2.http.GET
@@ -36,4 +37,7 @@ interface DestinationsApi {
         @Query("pageIndex") pageIndex: Int = 1,
         @Query("pageSize") pageSize: Int = 10
     ): GetAllDestinationsResponse
+
+    @GET("Destinations/famous-countries")
+    suspend fun getFamousCountries(): List<Country>
 }

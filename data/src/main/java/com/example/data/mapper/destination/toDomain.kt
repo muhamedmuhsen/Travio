@@ -1,5 +1,6 @@
 package com.example.data.mapper.destination
 
+import com.example.network.dto.destinations.Country
 import com.example.network.dto.destinations.Destination
 import com.example.network.dto.destinations.Interest
 
@@ -22,5 +23,13 @@ fun Interest.toDomain(): com.example.domain.model.destination.Interest {
     return com.example.domain.model.destination.Interest(
         interestID = this.interestID,
         interestName = this.interestName
+    )
+}
+
+fun Country.toDomain(): com.example.domain.model.destination.Country {
+    return com.example.domain.model.destination.Country(
+        countryID = this.countryID,
+        flagURL = this.flagURL,
+        name = this.name
     )
 }
