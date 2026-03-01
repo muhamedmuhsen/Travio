@@ -16,6 +16,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -43,7 +44,7 @@ fun CountryCard(
                 .placeholder(R.drawable.error_place_icon)
                 .error(R.drawable.error_place_icon)
                 .build(),
-            contentDescription = "${country.name} destination",
+            contentDescription = stringResource(R.string.country_destination_cd, country.name),
             contentScale = ContentScale.Crop,
             modifier = Modifier.fillMaxSize()
         )

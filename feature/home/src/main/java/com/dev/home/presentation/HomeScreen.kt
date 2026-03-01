@@ -38,6 +38,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -166,14 +167,14 @@ private fun HomeContent(
                     onRetry = { onAction(HomeAction.OnRetrySection(HomeSection.RecentlyViewed)) }
                 )
                 DestinationStateHandling(
-                    title = "Recommended Destinations",
+                    title = stringResource(R.string.section_recommended_destinations),
                     state = state.recommendedDestinationsState,
                     favoriteIds = state.favoriteIds,
                     onAction = onAction,
                     onRetry = { onAction(HomeAction.OnRetrySection(HomeSection.Recommended)) }
                 )
                 DestinationStateHandling(
-                    title = "Nearby Destinations",
+                    title = stringResource(R.string.section_nearby_destinations),
                     state = state.nearbyDestinationsState,
                     favoriteIds = state.favoriteIds,
                     onAction = onAction,
@@ -258,10 +259,13 @@ private fun CountryStateHandling(
     onRetry: () -> Unit
 ) {
     when (state) {
-        is UiState.Error -> ErrorSection(title = "Famous places", onRetry = onRetry)
+        is UiState.Error -> ErrorSection(
+            title = stringResource(R.string.section_famous_places),
+            onRetry = onRetry
+        )
         UiState.Idle -> Unit
         UiState.Loading -> {
-            HorizontalSection(title = "Famous Countries") {
+            HorizontalSection(title = stringResource(R.string.section_famous_countries)) {
                 items(3) { LoadingCountryCard() }
             }
         }
@@ -269,7 +273,7 @@ private fun CountryStateHandling(
         is UiState.Success -> {
             val countries = state.data ?: emptyList()
             if (countries.isNotEmpty()) {
-                HorizontalSection(title = "Famous places") {
+                HorizontalSection(title = stringResource(R.string.section_famous_places)) {
                     // key prevents unnecessary recompositions when the list is updated
                     items(countries, key = { it.countryID }) { country ->
                         CountryCard(country = country)
@@ -286,13 +290,16 @@ private fun RecentViewedStateHandling(
     onRetry: () -> Unit
 ) {
     when (state) {
-        is UiState.Error -> ErrorSection(title = "Recently viewed", onRetry = onRetry)
+        is UiState.Error -> ErrorSection(
+            title = stringResource(R.string.section_recently_viewed),
+            onRetry = onRetry
+        )
         UiState.Idle -> Unit
         UiState.Loading -> LoadingRecentViewedCard()
         is UiState.Success -> {
             val destinations = state.data ?: emptyList()
             if (destinations.isNotEmpty()) {
-                HorizontalSection(title = "Recently viewed") {
+                HorizontalSection(title = stringResource(R.string.section_recently_viewed)) {
                     items(destinations, key = { it.destinationID }) { destination ->
                         RecentViewedCard(
                             description = destination.description,

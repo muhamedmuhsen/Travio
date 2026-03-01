@@ -35,6 +35,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -203,7 +204,13 @@ private fun FavoriteButton(
         IconButton(onClick = onClick) {
             Icon(
                 imageVector = if (!isFavorite) Icons.Outlined.FavoriteBorder else Icons.Filled.Favorite,
-                contentDescription = if (isFavorite) "Remove from favorites" else "Add to favorites",
+                contentDescription = if (isFavorite) {
+                    stringResource(
+                        R.string.remove_from_favorites
+                    )
+                } else {
+                    stringResource(R.string.add_to_favorites)
+                },
                 tint = MaterialTheme.colorScheme.primary
             )
         }
@@ -309,6 +316,7 @@ private fun DestinationInfoSection(
 
 @Composable
 private fun PriceText(price: String) {
+    val fromPrefix = stringResource(R.string.price_from_prefix)
     Text(
         text = buildAnnotatedString {
             withStyle(
@@ -317,7 +325,7 @@ private fun PriceText(price: String) {
                     fontSize = MaterialTheme.typography.bodyMedium.fontSize
                 )
             ) {
-                append("From ")
+                append(fromPrefix)
             }
             withStyle(
                 style = SpanStyle(
