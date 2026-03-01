@@ -41,6 +41,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
@@ -49,6 +50,10 @@ import com.example.designsystem.theme.TravioTheme
 import com.example.designsystem.theme.elevation
 import com.example.designsystem.theme.spacing
 import com.example.feature.home.R
+
+// Single source of truth for the image height used by both the real card
+// and the shimmer loading placeholder — avoids silent drift between them.
+private val DESTINATION_IMAGE_HEIGHT: Dp = 310.dp
 
 @Composable
 fun DestinationCard(
@@ -95,21 +100,16 @@ fun DestinationCard(
 @Composable
 fun LoadingDestinationCard(modifier: Modifier = Modifier) {
     Card(
-        modifier = modifier
-            .width(250.dp),
+        modifier = modifier.width(250.dp),
         shape = MaterialTheme.shapes.medium,
-        elevation = CardDefaults.cardElevation(
-            defaultElevation = MaterialTheme.elevation.xs
-        ),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceContainer
-        )
+        elevation = CardDefaults.cardElevation(defaultElevation = MaterialTheme.elevation.xs),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer)
     ) {
         Column {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(310.dp)
+                    .height(DESTINATION_IMAGE_HEIGHT) // ← shared constant
                     .shimmerEffect()
             )
             Column(
@@ -146,7 +146,7 @@ fun LoadingDestinationCard(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun DestinationImageSection(
+private fun DestinationImageSection(
     title: String,
     rating: Double,
     reviewCount: Int,
@@ -157,7 +157,7 @@ fun DestinationImageSection(
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(310.dp)
+            .height(DESTINATION_IMAGE_HEIGHT)
     ) {
         AsyncImage(
             model = ImageRequest.Builder(LocalContext.current)
@@ -166,7 +166,7 @@ fun DestinationImageSection(
                 .placeholder(R.drawable.error_place_icon)
                 .error(R.drawable.error_place_icon)
                 .build(),
-            contentDescription = null,
+            contentDescription = title,
             contentScale = ContentScale.Crop,
             modifier = Modifier.fillMaxSize()
         )
@@ -189,7 +189,7 @@ fun DestinationImageSection(
 }
 
 @Composable
-fun FavoriteButton(
+private fun FavoriteButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     isFavorite: Boolean
@@ -211,12 +211,14 @@ fun FavoriteButton(
 }
 
 @Composable
-fun ImageOverlay(
+private fun ImageOverlay(
     title: String,
     rating: Double,
     reviewCount: Int,
     modifier: Modifier = Modifier
 ) {
+    // Text on a dark scrim — Color.White is intentional here, not a theming oversight.
+    val overlayContentColor = Color.White
     Box(
         modifier = modifier
             .fillMaxWidth()
@@ -242,7 +244,7 @@ fun ImageOverlay(
         ) {
             Text(
                 text = title,
-                color = Color.White,
+                color = overlayContentColor,
                 style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.weight(1f),
@@ -256,10 +258,11 @@ fun ImageOverlay(
 }
 
 @Composable
-fun RatingBadge(
+private fun RatingBadge(
     rating: Double,
     reviewCount: Int
 ) {
+    val overlayContentColor = Color.White
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.xxs)
@@ -272,7 +275,7 @@ fun RatingBadge(
         )
         Text(
             text = "$rating ($reviewCount)",
-            color = Color.White,
+            color = overlayContentColor,
             style = MaterialTheme.typography.bodyMedium,
             fontWeight = FontWeight.Medium
         )
@@ -280,7 +283,7 @@ fun RatingBadge(
 }
 
 @Composable
-fun DestinationInfoSection(
+private fun DestinationInfoSection(
     description: String,
     price: String
 ) {
@@ -305,7 +308,7 @@ fun DestinationInfoSection(
 }
 
 @Composable
-fun PriceText(price: String) {
+private fun PriceText(price: String) {
     Text(
         text = buildAnnotatedString {
             withStyle(

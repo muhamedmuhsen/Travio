@@ -62,10 +62,10 @@ fun AppButton(
 }
 
 @Composable
-fun LanguageButton(
+fun AppOutlinedButton(
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
-    language: String,
+    text: String,
     shape: Shape = MaterialTheme.shapes.extraLarge,
     buttonHeight: Int = 40,
     style: TextStyle = MaterialTheme.typography.titleMedium
@@ -79,7 +79,7 @@ fun LanguageButton(
         ),
         border = BorderStroke(width = 1.dp, color = MaterialTheme.colorScheme.primary)
     ) {
-        Text(text = language, style = style)
+        Text(text = text, style = style)
     }
 }
 
@@ -137,14 +137,14 @@ private fun SigninOptionsButtonPreview() {
 
 @Preview
 @Composable
-private fun LanguageButtonPreview() {
-    TravioTheme { LanguageButton(onClick = {}, language = "English") }
+private fun AppOutlinedButtonPreview() {
+    TravioTheme { AppOutlinedButton(onClick = {}, text = "English") }
 }
 
 @Preview(locale = "ar")
 @Composable
-private fun LanguageButtonPreviewArabic() {
-    TravioTheme { LanguageButton(onClick = {}, language = "اللغة العربية") }
+private fun AppOutlinedButtonPreviewArabic() {
+    TravioTheme { AppOutlinedButton(onClick = {}, text = "اللغة العربية") }
 }
 
 @Preview()

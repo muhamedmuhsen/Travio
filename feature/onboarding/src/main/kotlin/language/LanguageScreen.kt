@@ -30,7 +30,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.designsystem.components.AppButton
-import com.example.designsystem.components.LanguageButton
+import com.example.designsystem.components.AppOutlinedButton
 import com.example.designsystem.theme.TravioTheme
 import com.example.designsystem.theme.spacing
 import com.example.feature.onboarding.R
@@ -129,9 +129,9 @@ private fun LanguageSelectionSheet(
                     .fillMaxWidth()
                     .height(MaterialTheme.spacing.xxxl)
             )
-            LanguageButton(
+            AppOutlinedButton(
                 onClick = { onLanguageSelected(AppLanguage.ARABIC) },
-                language = stringResource(id = R.string.language_arabic),
+                text = stringResource(id = R.string.language_arabic),
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(MaterialTheme.spacing.xxxl)

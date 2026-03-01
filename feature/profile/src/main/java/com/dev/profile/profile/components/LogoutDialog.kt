@@ -27,7 +27,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
 import com.example.designsystem.components.AppButton
-import com.example.designsystem.components.LanguageButton
+import com.example.designsystem.components.AppOutlinedButton
 import com.example.feature.profile.R
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -67,9 +67,9 @@ fun LogoutDialog(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    LanguageButton(
+                    AppOutlinedButton(
                         onClick = onDismiss,
-                        language = stringResource(id = R.string.cancel),
+                        text = stringResource(id = R.string.cancel),
                         shape = MaterialTheme.shapes.medium,
                         style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold),
                         modifier = Modifier.weight(1f)

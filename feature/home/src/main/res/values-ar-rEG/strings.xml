@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="search_placeholder">استكشاف</string>
+    <string name="error_image_description">صورة توضيحية للخطأ</string>
+    <string name="failed_to_load">فشل التحميل</string>
+    <string name="tap_to_retry">حدث خطأ ما. يرجى المحاولة مرة أخرى.</string>
+    <string name="retry">إعادة المحاولة</string>
 </resources>

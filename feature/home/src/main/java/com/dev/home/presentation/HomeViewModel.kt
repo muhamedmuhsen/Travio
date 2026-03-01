@@ -9,6 +9,7 @@ import com.example.domain.usecase.destinations.GetFamousCountriesUseCase
 import com.example.domain.usecase.destinations.GetNearbyDestinationsUseCase
 import com.example.domain.usecase.favorite.place.FavoritePlaceUseCase
 import com.example.domain.usecase.favorite.place.GetAllPlacesUseCase
+import com.example.domain.utils.DataError
 import com.example.domain.utils.Result
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
@@ -19,10 +20,9 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
 import timber.log.Timber
 import ui.state.UiState
+import ui.text.UiText
 import ui.text.asUiText
 import javax.inject.Inject
 
@@ -38,11 +38,9 @@ class HomeViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(HomeUiState())
     val uiState: StateFlow<HomeUiState> = _uiState.asStateFlow()
 
+    // Channel.UNLIMITED prevents event loss when multiple errors arrive in quick succession.
     private val _event = Channel<HomeEvent>(Channel.UNLIMITED)
     val event = _event.receiveAsFlow()
-
-    // Prevents race conditions when the user taps the favourite button rapidly.
-    private val favoriteMutex = Mutex()
 
     init {
         loadHomeData()
@@ -55,10 +53,24 @@ class HomeViewModel @Inject constructor(
             HomeAction.OnSearchClicked -> navigateToSearch()
             is HomeAction.OnFavoriteClicked -> toggleFavorite(action.destination)
             is HomeAction.OnSearchQueryChanged -> _uiState.update { it.copy(searchQuery = action.query) }
+            is HomeAction.OnRetrySection -> retrySection(action.section)
         }
     }
 
+    private fun retrySection(section: HomeSection) {
+        when (section) {
+            HomeSection.Countries -> loadFamousCountries()
+            HomeSection.Recommended -> loadRecommendedDestinations()
+            HomeSection.Nearby -> loadNearbyDestinations()
+            HomeSection.RecentlyViewed -> { /* TODO: wire up when recently-viewed use case is ready */
+            }
+        }
+    }
 
+    /**
+     * Observes the local DB so that [HomeUiState.favoriteIds] always reflects the true
+     * persisted state, including changes made from other screens (e.g. FavoriteScreen).
+     */
     private fun observeFavoriteIds() {
         viewModelScope.launch {
             getAllPlacesUseCase()
@@ -72,25 +84,24 @@ class HomeViewModel @Inject constructor(
     }
 
     private fun toggleFavorite(destination: Destination) {
+        // The Mutex now lives inside FavoritePlaceUseCase — atomicity is enforced
+        // regardless of which screen calls the use case.
         viewModelScope.launch {
-            // The mutex ensures that concurrent taps are serialized — the second tap
-            // always sees the state written by the first tap before deciding to add/remove.
-            favoriteMutex.withLock {
-                val place = destination.toPlace()
-                when (val result = favoritePlaceUseCase(place)) {
-                    is Result.Success -> {
-                        Timber.d(
-                            "toggleFavorite: DB write succeeded for id=%d",
-                            destination.destinationID
-                        )
-                        // favoriteIds is driven by the live DB flow — no manual update needed.
-                        // TODO: sync toggle with remote backend favourite endpoint
-                    }
+            val place = destination.toPlace()
+            when (val result = favoritePlaceUseCase(place)) {
+                is Result.Success -> {
+                    Timber.d(
+                        "toggleFavorite: DB write succeeded for id=%d",
+                        destination.destinationID
+                    )
+                    // favoriteIds is driven by the live DB flow — no manual update needed.
+                    _event.send(HomeEvent.ShowSuccessSnackbar(UiText.DynamicString("Saved to favourites")))
+                    // TODO: sync toggle with remote backend favourite endpoint
+                }
 
-                    is Result.Error -> {
-                        Timber.e("toggleFavorite: DB write failed — %s", result.error.name)
-                        _event.send(HomeEvent.ShowErrorSnackbar(result.error.asUiText()))
-                    }
+                is Result.Error -> {
+                    Timber.e("toggleFavorite: DB write failed — %s", result.error.name)
+                    _event.send(HomeEvent.ShowErrorSnackbar(result.error.asUiText()))
                 }
             }
         }
@@ -111,29 +122,27 @@ class HomeViewModel @Inject constructor(
     }
 
     private fun loadFamousCountries() {
-        _uiState.update { state -> state.copy(countriesState = UiState.Loading) }
-        viewModelScope.launch {
-            when (val result = getFamousCountriesUseCase()) {
-                is Result.Error -> {
-                    _uiState.update { state ->
-                        state.copy(countriesState = UiState.Error(result.error.asUiText()))
-                    }
-                    _event.send(HomeEvent.ShowErrorSnackbar(result.error.asUiText()))
-                }
-
-                is Result.Success -> {
-                    _uiState.update { state -> state.copy(countriesState = UiState.Success(result.data)) }
-                }
-            }
-        }
+        launchLoad(
+            setLoading = { it.copy(countriesState = UiState.Loading) },
+            setError = { state, msg -> state.copy(countriesState = UiState.Error(msg)) },
+            setSuccess = { state, data -> state.copy(countriesState = UiState.Success(data)) },
+            load = { getFamousCountriesUseCase() }
+        )
     }
 
     private fun loadRecommendedDestinations() {
-        _uiState.update { state -> state.copy(recommendedDestinationsState = UiState.Loading) }
-
-        viewModelScope.launch {
-            when (
-                val result = getAllDestinationsUseCase(
+        launchLoad(
+            setLoading = { it.copy(recommendedDestinationsState = UiState.Loading) },
+            setError = { state, msg -> state.copy(recommendedDestinationsState = UiState.Error(msg)) },
+            setSuccess = { state, data ->
+                state.copy(
+                    recommendedDestinationsState = UiState.Success(
+                        data
+                    )
+                )
+            },
+            load = {
+                getAllDestinationsUseCase(
                     pageIndex = 1,
                     pageSize = 10,
                     // TODO: derive from user preferences
@@ -141,48 +150,44 @@ class HomeViewModel @Inject constructor(
                     // TODO: derive from user preferences
                     interestId = 1
                 )
-            ) {
-                is Result.Error -> {
-                    _uiState.update { state ->
-                        state.copy(recommendedDestinationsState = UiState.Error(result.error.asUiText()))
-                    }
-                    _event.send(HomeEvent.ShowErrorSnackbar(result.error.asUiText()))
-                }
-
-                is Result.Success -> {
-                    _uiState.update { state ->
-                        state.copy(recommendedDestinationsState = UiState.Success(result.data))
-                    }
-                }
             }
-        }
+        )
     }
 
     private fun loadNearbyDestinations() {
-        _uiState.update { state -> state.copy(nearbyDestinationsState = UiState.Loading) }
+        launchLoad(
+            setLoading = { it.copy(nearbyDestinationsState = UiState.Loading) },
+            setError = { state, msg -> state.copy(nearbyDestinationsState = UiState.Error(msg)) },
+            setSuccess = { state, data -> state.copy(nearbyDestinationsState = UiState.Success(data)) },
+            load = { getNearbyDestinationsUseCase() }
+        )
+    }
 
+    /**
+     * Generic loader that eliminates the boilerplate shared by all three section loaders:
+     * set Loading → launch → on Error set Error + send event → on Success set Success.
+     *
+     * @param setLoading  Produces a new state with the section in Loading.
+     * @param setError    Produces a new state with the section in Error.
+     * @param setSuccess  Produces a new state with the section in Success.
+     * @param load        The suspending network/DB call that returns a [Result].
+     */
+    private fun <T> launchLoad(
+        setLoading: (HomeUiState) -> HomeUiState,
+        setError: (HomeUiState, UiText) -> HomeUiState,
+        setSuccess: (HomeUiState, T) -> HomeUiState,
+        load: suspend () -> Result<T, DataError>
+    ) {
+        _uiState.update(setLoading)
         viewModelScope.launch {
-            when (val result = getNearbyDestinationsUseCase()) {
+            when (val result = load()) {
                 is Result.Error -> {
-                    _uiState.update { state ->
-                        state.copy(
-                            nearbyDestinationsState = UiState.Error(
-                                result.error.asUiText()
-                            )
-                        )
-                    }
-                    _event.send(HomeEvent.ShowErrorSnackbar(result.error.asUiText()))
+                    val msg = result.error.asUiText()
+                    _uiState.update { setError(it, msg) }
+                    _event.send(HomeEvent.ShowErrorSnackbar(msg))
                 }
 
-                is Result.Success -> {
-                    _uiState.update { state ->
-                        state.copy(
-                            nearbyDestinationsState = UiState.Success(
-                                result.data
-                            )
-                        )
-                    }
-                }
+                is Result.Success -> _uiState.update { setSuccess(it, result.data) }
             }
         }
     }

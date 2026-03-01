@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyRow
@@ -22,7 +21,6 @@ import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ErrorOutline
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -31,7 +29,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -40,11 +40,11 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.dev.home.components.CountryCard
 import com.dev.home.components.DestinationCard
+import com.dev.home.components.ErrorView
 import com.dev.home.components.HomeSearchBar
 import com.dev.home.components.LoadingCountryCard
 import com.dev.home.components.LoadingDestinationCard
@@ -52,6 +52,7 @@ import com.dev.home.components.LoadingRecentViewedCard
 import com.dev.home.components.RecentViewedCard
 import com.example.designsystem.components.AppBottomBar
 import com.example.designsystem.components.ErrorSnackBar
+import com.example.designsystem.components.SuccessSnackBar
 import com.example.designsystem.theme.TravioTheme
 import com.example.designsystem.theme.spacing
 import com.example.domain.model.destination.Country
@@ -67,6 +68,8 @@ fun HomeScreen(
     val context = LocalContext.current
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
+    // Tracks which visual style the SnackbarHost should render for the current message.
+    var isSuccessSnackbar by remember { mutableStateOf(false) }
 
     // Use Unit as the key — the effect should run for the entire lifetime of the composable,
     // not restart every time the Flow reference is read.
@@ -76,9 +79,14 @@ fun HomeScreen(
                 is HomeEvent.NavigateToDestination -> TODO()
                 HomeEvent.NavigateToSearch -> TODO()
                 is HomeEvent.ShowErrorSnackbar -> {
+                    isSuccessSnackbar = false
                     snackbarHostState.showSnackbar(message = event.message.asString(context))
                 }
-                is HomeEvent.ShowSuccessSnackbar -> TODO()
+
+                is HomeEvent.ShowSuccessSnackbar -> {
+                    isSuccessSnackbar = true
+                    snackbarHostState.showSnackbar(message = event.message.asString(context))
+                }
             }
         }
     }
@@ -86,7 +94,8 @@ fun HomeScreen(
         modifier = modifier,
         onAction = viewModel::onAction,
         state = state,
-        snackbarHostState = snackbarHostState
+        snackbarHostState = snackbarHostState,
+        isSuccessSnackbar = isSuccessSnackbar
     )
 }
 
@@ -95,25 +104,35 @@ private fun HomeContent(
     modifier: Modifier,
     onAction: (HomeAction) -> Unit,
     state: HomeUiState,
-    snackbarHostState: SnackbarHostState
+    snackbarHostState: SnackbarHostState,
+    isSuccessSnackbar: Boolean
 ) {
-    Scaffold(modifier = modifier, snackbarHost = {
-        SnackbarHost(hostState = snackbarHostState) { snackbarData ->
-            ErrorSnackBar(
-                text = snackbarData.visuals.message,
-                icon = Icons.Default.ErrorOutline
-            )
-        }
-    }, containerColor = MaterialTheme.colorScheme.background, bottomBar = {
-        AppBottomBar(
-            selectedItem = 0,
-            onItemSelected = { index ->
-                when (index) {
-                    //  4 -> onAction(HomeAction)
+    Scaffold(
+        modifier = modifier,
+        snackbarHost = {
+            SnackbarHost(hostState = snackbarHostState) { snackbarData ->
+                if (isSuccessSnackbar) {
+                    SuccessSnackBar(text = snackbarData.visuals.message)
+                } else {
+                    ErrorSnackBar(
+                        text = snackbarData.visuals.message,
+                        icon = Icons.Default.ErrorOutline
+                    )
                 }
             }
-        )
-    }) { paddingValues ->
+        },
+        containerColor = MaterialTheme.colorScheme.background,
+        bottomBar = {
+            AppBottomBar(
+                selectedItem = 0,
+                onItemSelected = { index ->
+                    when (index) {
+                        // TODO: wire bottom bar navigation
+                    }
+                }
+            )
+        }
+    ) { paddingValues ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -138,19 +157,27 @@ private fun HomeContent(
                     .background(MaterialTheme.colorScheme.surface)
             ) {
                 Spacer(modifier = Modifier.height(MaterialTheme.spacing.sm))
-                CountryStateHandling(state = state.countriesState)
-                RecentViewedStateHandling(state = state.recentViewedDestinationsState)
+                CountryStateHandling(
+                    state = state.countriesState,
+                    onRetry = { onAction(HomeAction.OnRetrySection(HomeSection.Countries)) }
+                )
+                RecentViewedStateHandling(
+                    state = state.recentViewedDestinationsState,
+                    onRetry = { onAction(HomeAction.OnRetrySection(HomeSection.RecentlyViewed)) }
+                )
                 DestinationStateHandling(
                     title = "Recommended Destinations",
                     state = state.recommendedDestinationsState,
                     favoriteIds = state.favoriteIds,
-                    onAction = onAction
+                    onAction = onAction,
+                    onRetry = { onAction(HomeAction.OnRetrySection(HomeSection.Recommended)) }
                 )
                 DestinationStateHandling(
                     title = "Nearby Destinations",
                     state = state.nearbyDestinationsState,
                     favoriteIds = state.favoriteIds,
-                    onAction = onAction
+                    onAction = onAction,
+                    onRetry = { onAction(HomeAction.OnRetrySection(HomeSection.Nearby)) }
                 )
             }
             Spacer(modifier = Modifier.height(MaterialTheme.spacing.xl))
@@ -179,6 +206,7 @@ private fun HomeTopSection(
         HomeSearchBar(
             value = searchQuery,
             onValueChange = onSearchQueryChanged,
+            onSearchClicked = onSearchClicked,
             modifier = Modifier
                 .align(Alignment.TopCenter)
                 .padding(
@@ -192,15 +220,16 @@ private fun HomeTopSection(
 }
 
 @Composable
-private fun CountryStateHandling(state: UiState<List<Country>>) {
+private fun CountryStateHandling(
+    state: UiState<List<Country>>,
+    onRetry: () -> Unit
+) {
     when (state) {
-        is UiState.Error -> SectionErrorView()
+        is UiState.Error -> ErrorView(onClick = onRetry)
         UiState.Idle -> Unit
         UiState.Loading -> {
             HorizontalSection(title = "Famous Countries") {
-                items(3) {
-                    LoadingCountryCard()
-                }
+                items(3) { LoadingCountryCard() }
             }
         }
 
@@ -219,9 +248,12 @@ private fun CountryStateHandling(state: UiState<List<Country>>) {
 }
 
 @Composable
-private fun RecentViewedStateHandling(state: UiState<List<Destination>>) {
+private fun RecentViewedStateHandling(
+    state: UiState<List<Destination>>,
+    onRetry: () -> Unit
+) {
     when (state) {
-        is UiState.Error -> SectionErrorView()
+        is UiState.Error -> ErrorView(onClick = onRetry)
         UiState.Idle -> Unit
         UiState.Loading -> LoadingRecentViewedCard()
         is UiState.Success -> {
@@ -249,10 +281,11 @@ private fun DestinationStateHandling(
     title: String,
     state: UiState<List<Destination>>,
     favoriteIds: Set<Int>,
-    onAction: (HomeAction) -> Unit
+    onAction: (HomeAction) -> Unit,
+    onRetry: () -> Unit
 ) {
     when (state) {
-        is UiState.Error -> SectionErrorView()
+        is UiState.Error -> ErrorView(onClick = onRetry)
         UiState.Idle -> Unit
         UiState.Loading -> {
             HorizontalSection(title) { items(3) { LoadingDestinationCard() } }
@@ -282,35 +315,6 @@ private fun DestinationStateHandling(
                 }
             }
         }
-    }
-}
-
-/**
- * Generic inline error placeholder shown when a section fails to load.
- * Shows an icon + message so the user knows something went wrong.
- */
-@Composable
-private fun SectionErrorView() {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(100.dp)
-            .padding(horizontal = MaterialTheme.spacing.lg),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Icon(
-            imageVector = Icons.Default.ErrorOutline,
-            contentDescription = null,
-            tint = MaterialTheme.colorScheme.error,
-            modifier = Modifier.size(24.dp)
-        )
-        Spacer(modifier = Modifier.height(MaterialTheme.spacing.xxs))
-        Text(
-            text = "Couldn't load this section",
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
     }
 }
 
