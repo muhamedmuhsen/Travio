@@ -11,6 +11,7 @@ import com.example.domain.usecase.favorite.place.FavoritePlaceUseCase
 import com.example.domain.usecase.favorite.place.GetAllPlacesUseCase
 import com.example.domain.utils.DataError
 import com.example.domain.utils.Result
+import com.example.feature.home.R
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -85,10 +86,9 @@ class HomeViewModel @Inject constructor(
     }
 
     private fun toggleFavorite(destination: Destination) {
-        // The Mutex now lives inside FavoritePlaceUseCase — atomicity is enforced
-        // regardless of which screen calls the use case.
         viewModelScope.launch {
             val place = destination.toPlace()
+            val isCurrentlyFavorite = destination.destinationID in _uiState.value.favoriteIds
             when (val result = favoritePlaceUseCase(place)) {
                 is Result.Success -> {
                     Timber.d(
@@ -96,7 +96,12 @@ class HomeViewModel @Inject constructor(
                         destination.destinationID
                     )
                     // favoriteIds is driven by the live DB flow — no manual update needed.
-                    _event.send(HomeEvent.ShowSuccessSnackbar(UiText.DynamicString("Saved to favourites")))
+                    val message = if (isCurrentlyFavorite) {
+                        UiText.StringResource(R.string.removed_from_favourites)
+                    } else {
+                        UiText.StringResource(R.string.saved_to_favourites)
+                    }
+                    _event.send(HomeEvent.ShowSuccessSnackbar(message))
                     // TODO: sync toggle with remote backend favourite endpoint
                 }
 

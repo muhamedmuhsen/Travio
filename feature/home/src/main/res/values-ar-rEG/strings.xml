@@ -13,6 +13,10 @@
     <string name="section_recommended_destinations">الوجهات الموصى بها</string>
     <string name="section_nearby_destinations">الوجهات القريبة</string>
 
+    <!-- Snackbar Messages -->
+    <string name="saved_to_favourites">تم الحفظ في المفضلة</string>
+    <string name="removed_from_favourites">تمت الإزالة من المفضلة</string>
+
     <!-- Destination Card -->
     <string name="add_to_favorites">إضافة إلى المفضلة</string>
     <string name="remove_from_favorites">إزالة من المفضلة</string>
