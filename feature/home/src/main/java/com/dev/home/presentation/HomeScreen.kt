@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyRow
@@ -21,6 +22,7 @@ import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ErrorOutline
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -66,7 +68,9 @@ fun HomeScreen(
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
 
-    LaunchedEffect(viewModel.event) {
+    // Use Unit as the key — the effect should run for the entire lifetime of the composable,
+    // not restart every time the Flow reference is read.
+    LaunchedEffect(Unit) {
         viewModel.event.collect { event ->
             when (event) {
                 is HomeEvent.NavigateToDestination -> TODO()
@@ -74,6 +78,7 @@ fun HomeScreen(
                 is HomeEvent.ShowErrorSnackbar -> {
                     snackbarHostState.showSnackbar(message = event.message.asString(context))
                 }
+                is HomeEvent.ShowSuccessSnackbar -> TODO()
             }
         }
     }
@@ -115,7 +120,11 @@ private fun HomeContent(
                 .verticalScroll(rememberScrollState())
                 .padding(bottom = paddingValues.calculateBottomPadding())
         ) {
-            HomeTopSection()
+            HomeTopSection(
+                searchQuery = state.searchQuery,
+                onSearchQueryChanged = { onAction(HomeAction.OnSearchQueryChanged(it)) },
+                onSearchClicked = { onAction(HomeAction.OnSearchClicked) }
+            )
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -150,7 +159,11 @@ private fun HomeContent(
 }
 
 @Composable
-private fun HomeTopSection() {
+private fun HomeTopSection(
+    searchQuery: String,
+    onSearchQueryChanged: (String) -> Unit,
+    onSearchClicked: () -> Unit
+) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -164,8 +177,8 @@ private fun HomeTopSection() {
         )
 
         HomeSearchBar(
-            value = "searchQuery",
-            onValueChange = { },
+            value = searchQuery,
+            onValueChange = onSearchQueryChanged,
             modifier = Modifier
                 .align(Alignment.TopCenter)
                 .padding(
@@ -179,9 +192,9 @@ private fun HomeTopSection() {
 }
 
 @Composable
-fun CountryStateHandling(state: UiState<List<Country>>) {
+private fun CountryStateHandling(state: UiState<List<Country>>) {
     when (state) {
-        is UiState.Error -> CountryErrorView()
+        is UiState.Error -> SectionErrorView()
         UiState.Idle -> Unit
         UiState.Loading -> {
             HorizontalSection(title = "Famous Countries") {
@@ -195,7 +208,8 @@ fun CountryStateHandling(state: UiState<List<Country>>) {
             val countries = state.data ?: emptyList()
             if (countries.isNotEmpty()) {
                 HorizontalSection(title = "Famous places") {
-                    items(countries) { country ->
+                    // key prevents unnecessary recompositions when the list is updated
+                    items(countries, key = { it.countryID }) { country ->
                         CountryCard(country = country)
                     }
                 }
@@ -205,25 +219,16 @@ fun CountryStateHandling(state: UiState<List<Country>>) {
 }
 
 @Composable
-fun CountryErrorView() {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(100.dp)
-    )
-}
-
-@Composable
-fun RecentViewedStateHandling(state: UiState<List<Destination>>) {
+private fun RecentViewedStateHandling(state: UiState<List<Destination>>) {
     when (state) {
-        is UiState.Error -> RecentViewedErrorView()
+        is UiState.Error -> SectionErrorView()
         UiState.Idle -> Unit
         UiState.Loading -> LoadingRecentViewedCard()
         is UiState.Success -> {
             val destinations = state.data ?: emptyList()
             if (destinations.isNotEmpty()) {
                 HorizontalSection(title = "Recently viewed") {
-                    items(destinations) { destination ->
+                    items(destinations, key = { it.destinationID }) { destination ->
                         RecentViewedCard(
                             description = destination.description,
                             rating = destination.rating,
@@ -240,23 +245,14 @@ fun RecentViewedStateHandling(state: UiState<List<Destination>>) {
 }
 
 @Composable
-fun RecentViewedErrorView() {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(100.dp)
-    )
-}
-
-@Composable
-fun DestinationStateHandling(
+private fun DestinationStateHandling(
     title: String,
     state: UiState<List<Destination>>,
     favoriteIds: Set<Int>,
     onAction: (HomeAction) -> Unit
 ) {
     when (state) {
-        is UiState.Error -> DestinationErrorView()
+        is UiState.Error -> SectionErrorView()
         UiState.Idle -> Unit
         UiState.Loading -> {
             HorizontalSection(title) { items(3) { LoadingDestinationCard() } }
@@ -266,7 +262,7 @@ fun DestinationStateHandling(
             val destinations = state.data ?: emptyList()
             if (destinations.isNotEmpty()) {
                 HorizontalSection(title = title) {
-                    items(destinations) { destination ->
+                    items(destinations, key = { it.destinationID }) { destination ->
                         DestinationCard(
                             title = destination.name,
                             rating = destination.rating,
@@ -276,9 +272,10 @@ fun DestinationStateHandling(
                             imageUrl = destination.imageUrls.firstOrNull().orEmpty(),
                             isFavorite = favoriteIds.contains(destination.destinationID),
                             onFavoriteClicked = {
-                                onAction(
-                                    HomeAction.OnFavoriteClicked(destination)
-                                )
+                                onAction(HomeAction.OnFavoriteClicked(destination))
+                            },
+                            onCardClicked = {
+                                onAction(HomeAction.OnDestinationClicked(destination.destinationID.toString()))
                             }
                         )
                     }
@@ -288,13 +285,33 @@ fun DestinationStateHandling(
     }
 }
 
+/**
+ * Generic inline error placeholder shown when a section fails to load.
+ * Shows an icon + message so the user knows something went wrong.
+ */
 @Composable
-fun DestinationErrorView() {
-    Box(
+private fun SectionErrorView() {
+    Column(
         modifier = Modifier
             .fillMaxWidth()
             .height(100.dp)
-    )
+            .padding(horizontal = MaterialTheme.spacing.lg),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Icon(
+            imageVector = Icons.Default.ErrorOutline,
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.error,
+            modifier = Modifier.size(24.dp)
+        )
+        Spacer(modifier = Modifier.height(MaterialTheme.spacing.xxs))
+        Text(
+            text = "Couldn't load this section",
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+    }
 }
 
 @Composable

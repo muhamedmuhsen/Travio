@@ -8,7 +8,7 @@ import javax.inject.Inject
 class GetAllPlacesUseCase @Inject constructor(
     private val repository: FavoritePlaceRepository
 ) {
-    suspend operator fun invoke(): Flow<List<Place>> {
+    operator fun invoke(): Flow<List<Place>> {
         return repository.getFavoritePlaces()
     }
 }

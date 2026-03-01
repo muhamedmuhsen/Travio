@@ -1,6 +1,5 @@
 package com.dev.home.presentation
 
-import android.annotation.SuppressLint
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.data.mapper.place.toPlace
@@ -9,15 +8,19 @@ import com.example.domain.usecase.destinations.GetAllDestinationsUseCase
 import com.example.domain.usecase.destinations.GetFamousCountriesUseCase
 import com.example.domain.usecase.destinations.GetNearbyDestinationsUseCase
 import com.example.domain.usecase.favorite.place.FavoritePlaceUseCase
+import com.example.domain.usecase.favorite.place.GetAllPlacesUseCase
 import com.example.domain.utils.Result
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import timber.log.Timber
 import ui.state.UiState
 import ui.text.asUiText
@@ -28,17 +31,22 @@ class HomeViewModel @Inject constructor(
     private val getAllDestinationsUseCase: GetAllDestinationsUseCase,
     private val getNearbyDestinationsUseCase: GetNearbyDestinationsUseCase,
     private val getFamousCountriesUseCase: GetFamousCountriesUseCase,
-    private val favoritePlaceUseCase: FavoritePlaceUseCase
+    private val favoritePlaceUseCase: FavoritePlaceUseCase,
+    private val getAllPlacesUseCase: GetAllPlacesUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(HomeUiState())
     val uiState: StateFlow<HomeUiState> = _uiState.asStateFlow()
 
-    private val _event = Channel<HomeEvent>(Channel.BUFFERED)
+    private val _event = Channel<HomeEvent>(Channel.UNLIMITED)
     val event = _event.receiveAsFlow()
+
+    // Prevents race conditions when the user taps the favourite button rapidly.
+    private val favoriteMutex = Mutex()
 
     init {
         loadHomeData()
+        observeFavoriteIds()
     }
 
     fun onAction(action: HomeAction) {
@@ -46,32 +54,43 @@ class HomeViewModel @Inject constructor(
             is HomeAction.OnDestinationClicked -> navigateToDestination(action.id)
             HomeAction.OnSearchClicked -> navigateToSearch()
             is HomeAction.OnFavoriteClicked -> toggleFavorite(action.destination)
+            is HomeAction.OnSearchQueryChanged -> _uiState.update { it.copy(searchQuery = action.query) }
+        }
+    }
+
+
+    private fun observeFavoriteIds() {
+        viewModelScope.launch {
+            getAllPlacesUseCase()
+                .catch { e -> Timber.e(e, "observeFavoriteIds: failed to observe favorites") }
+                .collect { places ->
+                    _uiState.update { state ->
+                        state.copy(favoriteIds = places.map { it.id }.toSet())
+                    }
+                }
         }
     }
 
     private fun toggleFavorite(destination: Destination) {
         viewModelScope.launch {
-            val place = destination.toPlace()
-            when (val result = favoritePlaceUseCase(place)) {
-                is Result.Success -> {
-                    Timber.d("Saved successfully to the database")
-
-                    _uiState.update { state ->
-                        val updatedIds = state.favoriteIds.toMutableSet()
-                        if (updatedIds.contains(destination.destinationID)) {
-                            updatedIds.remove(destination.destinationID)
-                        } else {
-                            updatedIds.add(destination.destinationID)
-                        }
-                        state.copy(favoriteIds = updatedIds)
+            // The mutex ensures that concurrent taps are serialized — the second tap
+            // always sees the state written by the first tap before deciding to add/remove.
+            favoriteMutex.withLock {
+                val place = destination.toPlace()
+                when (val result = favoritePlaceUseCase(place)) {
+                    is Result.Success -> {
+                        Timber.d(
+                            "toggleFavorite: DB write succeeded for id=%d",
+                            destination.destinationID
+                        )
+                        // favoriteIds is driven by the live DB flow — no manual update needed.
+                        // TODO: sync toggle with remote backend favourite endpoint
                     }
-                    // _event.send(HomeEvent.ShowSuccessSnackbar("Added to favorites"))
-                    // TODO: send to the backend favorite
-                }
 
-                is Result.Error -> {
-                    Timber.e("Error saving favorite: %s", result.error)
-                    _event.send(HomeEvent.ShowErrorSnackbar(result.error.asUiText()))
+                    is Result.Error -> {
+                        Timber.e("toggleFavorite: DB write failed — %s", result.error.name)
+                        _event.send(HomeEvent.ShowErrorSnackbar(result.error.asUiText()))
+                    }
                 }
             }
         }
@@ -117,7 +136,9 @@ class HomeViewModel @Inject constructor(
                 val result = getAllDestinationsUseCase(
                     pageIndex = 1,
                     pageSize = 10,
+                    // TODO: derive from user preferences
                     cityId = 1,
+                    // TODO: derive from user preferences
                     interestId = 1
                 )
             ) {

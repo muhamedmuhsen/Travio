@@ -195,7 +195,7 @@ fun FavoriteButton(
     isFavorite: Boolean
 ) {
     Surface(
-        modifier = modifier.size(MaterialTheme.spacing.xxl),
+        modifier = modifier.size(48.dp),
         shape = CircleShape,
         color = MaterialTheme.colorScheme.surface,
         shadowElevation = MaterialTheme.elevation.xs
@@ -203,7 +203,7 @@ fun FavoriteButton(
         IconButton(onClick = onClick) {
             Icon(
                 imageVector = if (!isFavorite) Icons.Outlined.FavoriteBorder else Icons.Filled.Favorite,
-                contentDescription = null,
+                contentDescription = if (isFavorite) "Remove from favorites" else "Add to favorites",
                 tint = MaterialTheme.colorScheme.primary
             )
         }
