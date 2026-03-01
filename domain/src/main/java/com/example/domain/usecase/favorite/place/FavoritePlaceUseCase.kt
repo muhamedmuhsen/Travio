@@ -9,7 +9,7 @@ import javax.inject.Inject
 class FavoritePlaceUseCase @Inject constructor(
     private val repository: FavoritePlaceRepository
 ) {
-    suspend operator fun invoke(place: Place): Result<Unit, DataError.Local> {
-        return repository.addPlaceToFavorite(place)
+    suspend operator fun invoke(Place: Place): Result<Unit, DataError.Local> {
+        return repository.addPlaceToFavorite(Place)
     }
 }

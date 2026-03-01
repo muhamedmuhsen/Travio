@@ -124,7 +124,7 @@ private fun FavoriteContent(
                     isLoading -> FavoriteLoadingState()
                     state.isEmpty -> FavoriteEmptyState()
                     else -> FavoriteList(
-                        places = state.displayedPlaces,
+                        Places = state.displayedPlaces,
                         posts = state.displayedPosts,
                         onDeletePlace = onDeletePlace,
                         onDeletePost = onDeletePost
@@ -182,7 +182,7 @@ private fun FavoriteHeaderIcon() {
 @Composable
 private fun FavoriteList(
     modifier: Modifier = Modifier,
-    places: List<Place>,
+    Places: List<Place>,
     posts: List<Post>,
     onDeletePlace: (String) -> Unit,
     onDeletePost: (String) -> Unit
@@ -193,13 +193,13 @@ private fun FavoriteList(
         contentPadding = PaddingValues(bottom = MaterialTheme.spacing.md)
     ) {
         items(
-            items = places,
+            items = Places,
             key = { place -> "place_${place.id}" }
         ) { place ->
             PlaceCard(
                 country = place.name,
                 city = place.description,
-                imageUrl = place.imageUrl,
+                imageUrl = place.imageUrls,
                 isFavorite = true,
                 onFavoriteClick = { onDeletePlace(place.id.toString()) },
                 onClick = {}
@@ -301,19 +301,19 @@ private fun FavoriteScreenWithDataPreview() {
             state = FavoriteState(
                 placesUiState = UiState.Success(),
                 postsUiState = UiState.Success(),
-                places = listOf(
+                Places = listOf(
                     Place(
                         id = 1,
                         name = "Eiffel Tower",
                         description = "Paris, France",
-                        imageUrl = "",
+                        imageUrls = "",
                         rating = 4.8f
                     ),
                     Place(
                         id = 2,
                         name = "Colosseum",
                         description = "Rome, Italy",
-                        imageUrl = "",
+                        imageUrls = "",
                         rating = 4.7f
                     )
                 ),

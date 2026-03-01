@@ -54,6 +54,7 @@ import com.example.designsystem.theme.TravioTheme
 import com.example.designsystem.theme.spacing
 import com.example.domain.model.destination.Country
 import com.example.domain.model.destination.Destination
+import com.example.domain.model.favorite.Place
 import com.example.feature.home.R
 import ui.state.UiState
 
@@ -133,11 +134,13 @@ private fun HomeContent(
                 RecentViewedStateHandling(state = state.recentViewedDestinationsState)
                 DestinationStateHandling(
                     title = "Recommended Destinations",
-                    state = state.recommendedDestinationsState
+                    state = state.recommendedDestinationsState,
+                    onAction = onAction
                 )
                 DestinationStateHandling(
                     title = "Nearby Destinations",
-                    state = state.nearbyDestinationsState
+                    state = state.nearbyDestinationsState,
+                    onAction = onAction
                 )
             }
             Spacer(modifier = Modifier.height(MaterialTheme.spacing.xl))
@@ -202,9 +205,11 @@ fun CountryStateHandling(state: UiState<List<Country>>) {
 
 @Composable
 fun CountryErrorView() {
-    Box(modifier = Modifier
-        .fillMaxWidth()
-        .height(100.dp))
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(100.dp)
+    )
 }
 
 @Composable
@@ -235,15 +240,18 @@ fun RecentViewedStateHandling(state: UiState<List<Destination>>) {
 
 @Composable
 fun RecentViewedErrorView() {
-    Box(modifier = Modifier
-        .fillMaxWidth()
-        .height(100.dp))
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(100.dp)
+    )
 }
 
 @Composable
 fun DestinationStateHandling(
     title: String,
-    state: UiState<List<Destination>>
+    state: UiState<List<Destination>>,
+    onAction: (HomeAction) -> Unit,
 ) {
     when (state) {
         is UiState.Error -> DestinationErrorView()
@@ -264,7 +272,11 @@ fun DestinationStateHandling(
                             description = destination.description,
                             price = "1250/ adult",
                             imageUrl = destination.imageUrls[0],
-                            onFavoriteClicked = { }
+                            onFavoriteClicked = {
+                                onAction(
+                                    HomeAction.OnFavoriteClicked(destination)
+                                )
+                            }
                         )
                     }
                 }
@@ -275,9 +287,11 @@ fun DestinationStateHandling(
 
 @Composable
 fun DestinationErrorView() {
-    Box(modifier = Modifier
-        .fillMaxWidth()
-        .height(100.dp))
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(100.dp)
+    )
 }
 
 @Composable

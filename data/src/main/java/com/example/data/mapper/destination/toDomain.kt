@@ -1,5 +1,6 @@
 package com.example.data.mapper.destination
 
+import com.example.domain.model.favorite.Place
 import com.example.network.dto.destinations.Country
 import com.example.network.dto.destinations.Destination
 import com.example.network.dto.destinations.Interest
@@ -31,5 +32,13 @@ fun Country.toDomain(): com.example.domain.model.destination.Country {
         countryID = this.countryID,
         flagURL = this.flagURL,
         name = this.name
+    )
+}
+
+fun com.example.domain.model.destination.Destination.toEntity(): Place {
+    return Place(
+        name = name,
+        description = description,
+        imageUrls = imageUrls
     )
 }

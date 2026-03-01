@@ -34,10 +34,10 @@ class FavoritePlaceRepositoryImpl @Inject constructor(
         return favoritePlaceDao.isPlaceFavorite(placeId).flowOn(ioDispatcher)
     }
 
-    override suspend fun addPlaceToFavorite(place: Place): Result<Unit, DataError.Local> {
+    override suspend fun addPlaceToFavorite(Place: Place): Result<Unit, DataError.Local> {
         return withContext(ioDispatcher) {
             try {
-                favoritePlaceDao.addPlaceToFavorite(place.toEntity())
+                favoritePlaceDao.addPlaceToFavorite(Place.toEntity())
                 Result.Success(Unit)
             } catch (_: SQLiteConstraintException) {
                 Result.Error(DataError.Local.ConstraintViolation)

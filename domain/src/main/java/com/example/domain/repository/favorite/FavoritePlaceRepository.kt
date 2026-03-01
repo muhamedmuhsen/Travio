@@ -8,6 +8,6 @@ import kotlinx.coroutines.flow.Flow
 interface FavoritePlaceRepository {
     fun getFavoritePlaces(): Flow<List<Place>>
     fun isPlaceFavorite(placeId: String): Flow<Boolean>
-    suspend fun addPlaceToFavorite(place: Place): Result<Unit, DataError.Local>
+    suspend fun addPlaceToFavorite(Place: Place): Result<Unit, DataError.Local>
     suspend fun deletePlaceFromFavorite(placeId: String): Result<Unit, DataError.Local>
 }

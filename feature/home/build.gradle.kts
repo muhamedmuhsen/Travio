@@ -62,4 +62,6 @@ dependencies {
     ksp(libs.hilt.compiler)
     // Coil
     implementation(libs.coil.compose)
+    // Timber logging library
+    implementation(libs.timber)
 }
