@@ -8,5 +8,6 @@ data class HomeUiState(
     val countriesState: UiState<List<Country>> = UiState.Idle,
     val recommendedDestinationsState: UiState<List<Destination>> = UiState.Idle,
     val recentViewedDestinationsState: UiState<List<Destination>> = UiState.Idle,
-    val nearbyDestinationsState: UiState<List<Destination>> = UiState.Idle
+    val nearbyDestinationsState: UiState<List<Destination>> = UiState.Idle,
+    val favoriteIds: Set<Int> = emptySet()
 )

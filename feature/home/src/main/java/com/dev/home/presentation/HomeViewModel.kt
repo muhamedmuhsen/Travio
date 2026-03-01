@@ -3,7 +3,7 @@ package com.dev.home.presentation
 import android.annotation.SuppressLint
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.data.mapper.destination.toEntity
+import com.example.data.mapper.place.toPlace
 import com.example.domain.model.destination.Destination
 import com.example.domain.usecase.destinations.GetAllDestinationsUseCase
 import com.example.domain.usecase.destinations.GetFamousCountriesUseCase
@@ -28,7 +28,7 @@ class HomeViewModel @Inject constructor(
     private val getAllDestinationsUseCase: GetAllDestinationsUseCase,
     private val getNearbyDestinationsUseCase: GetNearbyDestinationsUseCase,
     private val getFamousCountriesUseCase: GetFamousCountriesUseCase,
-    private val addToFavoriteUseCase: FavoritePlaceUseCase
+    private val favoritePlaceUseCase: FavoritePlaceUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(HomeUiState())
@@ -45,23 +45,32 @@ class HomeViewModel @Inject constructor(
         when (action) {
             is HomeAction.OnDestinationClicked -> navigateToDestination(action.id)
             HomeAction.OnSearchClicked -> navigateToSearch()
-            is HomeAction.OnFavoriteClicked -> addToFavorite(action.destination)
+            is HomeAction.OnFavoriteClicked -> toggleFavorite(action.destination)
         }
     }
 
-    @SuppressLint("TimberArgCount")
-    private fun addToFavorite(destination: Destination) {
+    private fun toggleFavorite(destination: Destination) {
         viewModelScope.launch {
-            val entity = destination.toEntity()
-            when (val result = addToFavoriteUseCase(entity)) {
+            val place = destination.toPlace()
+            when (val result = favoritePlaceUseCase(place)) {
                 is Result.Success -> {
                     Timber.d("Saved successfully to the database")
+
+                    _uiState.update { state ->
+                        val updatedIds = state.favoriteIds.toMutableSet()
+                        if (updatedIds.contains(destination.destinationID)) {
+                            updatedIds.remove(destination.destinationID)
+                        } else {
+                            updatedIds.add(destination.destinationID)
+                        }
+                        state.copy(favoriteIds = updatedIds)
+                    }
                     // _event.send(HomeEvent.ShowSuccessSnackbar("Added to favorites"))
                     // TODO: send to the backend favorite
                 }
 
                 is Result.Error -> {
-                    Timber.e("error happened while save destination to favorite", result.error)
+                    Timber.e("Error saving favorite: %s", result.error)
                     _event.send(HomeEvent.ShowErrorSnackbar(result.error.asUiText()))
                 }
             }
@@ -88,7 +97,7 @@ class HomeViewModel @Inject constructor(
             when (val result = getFamousCountriesUseCase()) {
                 is Result.Error -> {
                     _uiState.update { state ->
-                        state.copy(recommendedDestinationsState = UiState.Error(result.error.asUiText()))
+                        state.copy(countriesState = UiState.Error(result.error.asUiText()))
                     }
                     _event.send(HomeEvent.ShowErrorSnackbar(result.error.asUiText()))
                 }

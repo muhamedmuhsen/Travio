@@ -134,11 +134,13 @@ private fun HomeContent(
                 DestinationStateHandling(
                     title = "Recommended Destinations",
                     state = state.recommendedDestinationsState,
+                    favoriteIds = state.favoriteIds,
                     onAction = onAction
                 )
                 DestinationStateHandling(
                     title = "Nearby Destinations",
                     state = state.nearbyDestinationsState,
+                    favoriteIds = state.favoriteIds,
                     onAction = onAction
                 )
             }
@@ -226,7 +228,7 @@ fun RecentViewedStateHandling(state: UiState<List<Destination>>) {
                             description = destination.description,
                             rating = destination.rating,
                             reviewCount = destination.totalReviews,
-                            imageUrl = destination.imageUrls[0],
+                            imageUrl = destination.imageUrls.firstOrNull().orEmpty(),
                             onClick = { },
                             modifier = Modifier.width(MaterialTheme.spacing.xxxl * 6)
                         )
@@ -250,6 +252,7 @@ fun RecentViewedErrorView() {
 fun DestinationStateHandling(
     title: String,
     state: UiState<List<Destination>>,
+    favoriteIds: Set<Int>,
     onAction: (HomeAction) -> Unit
 ) {
     when (state) {
@@ -270,7 +273,8 @@ fun DestinationStateHandling(
                             reviewCount = destination.totalReviews,
                             description = destination.description,
                             price = "1250/ adult",
-                            imageUrl = destination.imageUrls[0],
+                            imageUrl = destination.imageUrls.firstOrNull().orEmpty(),
+                            isFavorite = favoriteIds.contains(destination.destinationID),
                             onFavoriteClicked = {
                                 onAction(
                                     HomeAction.OnFavoriteClicked(destination)

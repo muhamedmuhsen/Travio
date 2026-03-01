@@ -8,7 +8,6 @@ import com.example.domain.repository.destinations.DestinationsRepository
 import com.example.domain.utils.DataError
 import com.example.domain.utils.Result
 import com.example.network.api.DestinationsApi
-import timber.log.Timber
 import javax.inject.Inject
 
 class DestinationsRepositoryImpl @Inject constructor(
@@ -55,7 +54,6 @@ class DestinationsRepositoryImpl @Inject constructor(
     ): Result<List<Destination>, DataError> =
         safeApiCall {
             val response = api.searchForDestinations(keyword, pageIndex, pageSize)
-            Timber.d("Search for a Destination: ${response.data}")
             response.data.map { it.toDomain() }
         }
 

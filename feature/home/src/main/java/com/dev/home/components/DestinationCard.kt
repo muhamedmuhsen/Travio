@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material3.Card
@@ -58,6 +59,7 @@ fun DestinationCard(
     description: String,
     price: String,
     imageUrl: String,
+    isFavorite: Boolean,
     onFavoriteClicked: () -> Unit,
     onCardClicked: () -> Unit = {}
 ) {
@@ -79,6 +81,7 @@ fun DestinationCard(
                 rating = rating,
                 reviewCount = reviewCount,
                 imageUrl = imageUrl,
+                isFavorite = isFavorite,
                 onFavoriteClicked = onFavoriteClicked
             )
             DestinationInfoSection(
@@ -148,6 +151,7 @@ fun DestinationImageSection(
     rating: Double,
     reviewCount: Int,
     imageUrl: String,
+    isFavorite: Boolean,
     onFavoriteClicked: () -> Unit
 ) {
     Box(
@@ -169,6 +173,7 @@ fun DestinationImageSection(
 
         FavoriteButton(
             onClick = onFavoriteClicked,
+            isFavorite = isFavorite,
             modifier = Modifier
                 .align(Alignment.TopEnd)
                 .padding(MaterialTheme.spacing.md)
@@ -186,7 +191,8 @@ fun DestinationImageSection(
 @Composable
 fun FavoriteButton(
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    isFavorite: Boolean
 ) {
     Surface(
         modifier = modifier.size(MaterialTheme.spacing.xxl),
@@ -196,7 +202,7 @@ fun FavoriteButton(
     ) {
         IconButton(onClick = onClick) {
             Icon(
-                imageVector = Icons.Outlined.FavoriteBorder,
+                imageVector = if (!isFavorite) Icons.Outlined.FavoriteBorder else Icons.Filled.Favorite,
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.primary
             )
@@ -335,6 +341,7 @@ fun DestinationCardLightTheme() {
                 description = "Oasis Middle of the desert, with salt lakes , and Bedouin vibes.",
                 price = "EGP 1100/ adult",
                 imageUrl = "https://example.com/image.jpg",
+                isFavorite = false,
                 onFavoriteClicked = {}
             )
         }
@@ -367,6 +374,7 @@ fun DestinationCardDarkTheme() {
                 description = "Oasis Middle of the desert, with salt lakes , and Bedouin vibes.",
                 price = "EGP 1100/ adult",
                 imageUrl = "https://example.com/image.jpg",
+                isFavorite = true,
                 onFavoriteClicked = {}
             )
         }
