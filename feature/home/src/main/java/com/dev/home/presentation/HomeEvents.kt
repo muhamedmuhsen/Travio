@@ -1,7 +1,6 @@
 package com.dev.home.presentation
 
 import com.example.domain.model.destination.Destination
-import com.example.domain.model.favorite.Place
 import ui.text.UiText
 
 sealed interface HomeEvent {

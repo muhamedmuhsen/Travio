@@ -54,7 +54,6 @@ import com.example.designsystem.theme.TravioTheme
 import com.example.designsystem.theme.spacing
 import com.example.domain.model.destination.Country
 import com.example.domain.model.destination.Destination
-import com.example.domain.model.favorite.Place
 import com.example.feature.home.R
 import ui.state.UiState
 
@@ -251,7 +250,7 @@ fun RecentViewedErrorView() {
 fun DestinationStateHandling(
     title: String,
     state: UiState<List<Destination>>,
-    onAction: (HomeAction) -> Unit,
+    onAction: (HomeAction) -> Unit
 ) {
     when (state) {
         is UiState.Error -> DestinationErrorView()

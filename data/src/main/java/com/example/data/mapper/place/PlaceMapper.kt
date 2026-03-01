@@ -9,7 +9,7 @@ fun Place.toEntity(): DatabasePlace {
         id = id,
         name = name,
         description = description,
-        imageUrls = imageUrls,
+        imageUrls = imageUrls
     )
 }
 
@@ -18,6 +18,6 @@ fun DatabasePlace.toDomain(): Place {
         id = id,
         name = name,
         description = description,
-        imageUrls = imageUrls,
+        imageUrls = imageUrls
     )
 }

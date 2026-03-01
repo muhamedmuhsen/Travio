@@ -199,7 +199,7 @@ private fun FavoriteList(
             PlaceCard(
                 country = place.name,
                 city = place.description,
-                imageUrl = place.imageUrls,
+                imageUrl = place.imageUrls[0],
                 isFavorite = true,
                 onFavoriteClick = { onDeletePlace(place.id.toString()) },
                 onClick = {}
@@ -306,15 +306,15 @@ private fun FavoriteScreenWithDataPreview() {
                         id = 1,
                         name = "Eiffel Tower",
                         description = "Paris, France",
-                        imageUrls = "",
-                        rating = 4.8f
+                        imageUrls = listOf("")
+
                     ),
                     Place(
                         id = 2,
                         name = "Colosseum",
                         description = "Rome, Italy",
-                        imageUrls = "",
-                        rating = 4.7f
+                        imageUrls = listOf("")
+
                     )
                 ),
                 posts = listOf(
