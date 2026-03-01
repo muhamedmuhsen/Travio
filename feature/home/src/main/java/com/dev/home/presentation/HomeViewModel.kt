@@ -11,7 +11,6 @@ import com.example.domain.usecase.destinations.GetNearbyDestinationsUseCase
 import com.example.domain.usecase.favorite.place.FavoritePlaceUseCase
 import com.example.domain.utils.Result
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -57,7 +56,7 @@ class HomeViewModel @Inject constructor(
             when (val result = addToFavoriteUseCase(entity)) {
                 is Result.Success -> {
                     Timber.d("Saved successfully to the database")
-                    //_event.send(HomeEvent.ShowSuccessSnackbar("Added to favorites"))
+                    // _event.send(HomeEvent.ShowSuccessSnackbar("Added to favorites"))
                     // TODO: send to the backend favorite
                 }
 
@@ -68,7 +67,6 @@ class HomeViewModel @Inject constructor(
             }
         }
     }
-
 
     private fun navigateToSearch() {
         viewModelScope.launch { _event.send(HomeEvent.NavigateToSearch) }
