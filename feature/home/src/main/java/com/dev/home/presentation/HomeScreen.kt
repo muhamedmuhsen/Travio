@@ -219,13 +219,46 @@ private fun HomeTopSection(
     }
 }
 
+/**
+ * Renders the section title and a horizontally centred [ErrorView] inside a full-width
+ * container. Used instead of placing [ErrorView] in a [LazyRow] item, which would only
+ * give it intrinsic (wrap-content) width and prevent centering.
+ */
+@Composable
+private fun ErrorSection(
+    title: String,
+    onRetry: () -> Unit
+) {
+    Column {
+        Text(
+            text = title,
+            style = MaterialTheme.typography.titleLarge.copy(
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onSurface
+            ),
+            modifier = Modifier.padding(
+                horizontal = MaterialTheme.spacing.lg,
+                vertical = MaterialTheme.spacing.sm
+            )
+        )
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = MaterialTheme.spacing.lg),
+            contentAlignment = Alignment.Center
+        ) {
+            ErrorView(onClick = onRetry)
+        }
+    }
+}
+
 @Composable
 private fun CountryStateHandling(
     state: UiState<List<Country>>,
     onRetry: () -> Unit
 ) {
     when (state) {
-        is UiState.Error -> ErrorView(onClick = onRetry)
+        is UiState.Error -> ErrorSection(title = "Famous places", onRetry = onRetry)
         UiState.Idle -> Unit
         UiState.Loading -> {
             HorizontalSection(title = "Famous Countries") {
@@ -253,7 +286,7 @@ private fun RecentViewedStateHandling(
     onRetry: () -> Unit
 ) {
     when (state) {
-        is UiState.Error -> ErrorView(onClick = onRetry)
+        is UiState.Error -> ErrorSection(title = "Recently viewed", onRetry = onRetry)
         UiState.Idle -> Unit
         UiState.Loading -> LoadingRecentViewedCard()
         is UiState.Success -> {
@@ -285,7 +318,7 @@ private fun DestinationStateHandling(
     onRetry: () -> Unit
 ) {
     when (state) {
-        is UiState.Error -> ErrorView(onClick = onRetry)
+        is UiState.Error -> ErrorSection(title = title, onRetry = onRetry)
         UiState.Idle -> Unit
         UiState.Loading -> {
             HorizontalSection(title) { items(3) { LoadingDestinationCard() } }

@@ -4,7 +4,6 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -37,9 +36,7 @@ fun ErrorView(
     onClick: () -> Unit
 ) {
     Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(vertical = MaterialTheme.spacing.md),
+        modifier = modifier.padding(vertical = MaterialTheme.spacing.md),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
@@ -55,14 +52,18 @@ fun ErrorView(
             text = stringResource(R.string.failed_to_load),
             style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold),
             color = MaterialTheme.colorScheme.onSurface,
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Center,
+            modifier = Modifier.fillMaxWidth()
         )
+
         Spacer(modifier = Modifier.height(MaterialTheme.spacing.sm))
+
         Text(
             text = stringResource(R.string.tap_to_retry),
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Center,
+            modifier = Modifier.fillMaxWidth()
         )
 
         Spacer(modifier = Modifier.height(MaterialTheme.spacing.sm))
@@ -76,21 +77,16 @@ fun ErrorView(
                 containerColor = MaterialTheme.colorScheme.errorContainer
             )
         ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center
-            ) {
-                Icon(
-                    imageVector = Icons.Outlined.Refresh,
-                    contentDescription = null,
-                    modifier = Modifier.size(16.dp)
-                )
-                Spacer(modifier = Modifier.width(MaterialTheme.spacing.xxs))
-                Text(
-                    text = stringResource(R.string.retry),
-                    style = MaterialTheme.typography.labelLarge
-                )
-            }
+            Icon(
+                imageVector = Icons.Outlined.Refresh,
+                contentDescription = null,
+                modifier = Modifier.size(16.dp)
+            )
+            Spacer(modifier = Modifier.width(MaterialTheme.spacing.xxs))
+            Text(
+                text = stringResource(R.string.retry),
+                style = MaterialTheme.typography.labelLarge
+            )
         }
     }
 }

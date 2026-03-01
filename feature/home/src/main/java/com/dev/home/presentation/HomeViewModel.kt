@@ -62,7 +62,8 @@ class HomeViewModel @Inject constructor(
             HomeSection.Countries -> loadFamousCountries()
             HomeSection.Recommended -> loadRecommendedDestinations()
             HomeSection.Nearby -> loadNearbyDestinations()
-            HomeSection.RecentlyViewed -> { /* TODO: wire up when recently-viewed use case is ready */
+            HomeSection.RecentlyViewed -> {
+                /* TODO: wire up when recently-viewed use case is ready */
             }
         }
     }
