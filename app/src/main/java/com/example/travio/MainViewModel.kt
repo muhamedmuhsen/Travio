@@ -3,28 +3,22 @@ package com.example.travio
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.domain.repository.prefernces.PreferencesManager
+import com.example.domain.session.SessionEvent
+import com.example.domain.session.SessionEventBus
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class MainViewModel @Inject constructor(private val preferencesManager: PreferencesManager) :
-    ViewModel() {
-    fun onPermissionResult(
-        permission: String,
-        isGranted: Boolean
-    ) {
-    }
+class MainViewModel @Inject constructor(
+    private val preferencesManager: PreferencesManager,
+    private val sessionEventBus: SessionEventBus
+) : ViewModel() {
 
-    val requiresLocationPermission = MutableStateFlow(false)
-
-    fun checkLocationPermissionRequired() {
-        requiresLocationPermission.value = true
-    }
     val isDarkMode: StateFlow<Boolean?> =
         preferencesManager.observeDarkModeNullable().stateIn(
             scope = viewModelScope,
@@ -55,4 +49,18 @@ class MainViewModel @Inject constructor(private val preferencesManager: Preferen
         started = SharingStarted.WhileSubscribed(5000),
         initialValue = null
     )
+
+    init {
+        observeSessionEvents()
+    }
+
+    private fun observeSessionEvents() {
+        viewModelScope.launch {
+            sessionEventBus.events.collect { event ->
+                when (event) {
+                    SessionEvent.SessionExpired -> preferencesManager.setLoggedIn(false)
+                }
+            }
+        }
+    }
 }

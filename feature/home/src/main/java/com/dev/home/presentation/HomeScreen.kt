@@ -167,7 +167,8 @@ private fun HomeContent(
                 selectedItem = 0,
                 onItemSelected = { index ->
                     when (index) {
-                        0 -> { /* already on Home, no-op */
+                        0 -> {
+                            /* already on Home, no-op */
                         }
 
                         1 -> navigateToFavorite()

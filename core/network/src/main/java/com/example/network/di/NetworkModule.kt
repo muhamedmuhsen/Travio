@@ -1,6 +1,7 @@
 package com.example.network.di
 
 import com.example.domain.repository.auth.TokenProvider
+import com.example.domain.session.SessionEventBus
 import com.example.network.BuildConfig
 import com.example.network.api.AuthApi
 import com.example.network.api.DestinationsApi
@@ -77,11 +78,13 @@ object NetworkModule {
     @Singleton
     fun provideTokenAuthenticator(
         tokenProvider: TokenProvider,
-        authApi: javax.inject.Provider<AuthApi>
+        authApi: javax.inject.Provider<AuthApi>,
+        sessionEventBus: SessionEventBus
     ): TokenAuthenticator {
         return TokenAuthenticator(
             tokenProvider = tokenProvider,
-            authApi = authApi
+            authApi = authApi,
+            sessionEventBus = sessionEventBus
         )
     }
 

@@ -5,7 +5,6 @@ import android.content.pm.PackageManager
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.ManagedActivityResultLauncher
-import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
@@ -35,17 +34,6 @@ class MainActivity : ComponentActivity() {
             val isDarkModePreference by viewModel.isDarkMode.collectAsStateWithLifecycle()
             val isDarkMode = isDarkModePreference ?: isSystemInDarkTheme()
             TravioTheme(darkTheme = isDarkMode) {
-                val locationPermissionResultLauncher =
-                    rememberLauncherForActivityResult(
-                        contract = ActivityResultContracts.RequestPermission(),
-                        onResult = { isGranted ->
-                            viewModel.onPermissionResult(
-                                permission = Manifest.permission.ACCESS_FINE_LOCATION,
-                                isGranted = isGranted
-                            )
-                        }
-                    )
-
                 if (startDestination != null) {
                     val destination = when (startDestination) {
                         MainViewModel.StartDestination.Home -> Screen.HomeScreen.route
@@ -54,10 +42,7 @@ class MainActivity : ComponentActivity() {
                         MainViewModel.StartDestination.Language -> Screen.LanguageScreen.route
                         else -> Screen.StarterLoginScreen.route
                     }
-                    launchLocationRequestPermissionOnHomeScreen(
-                        destination,
-                        locationPermissionResultLauncher
-                    )
+
                     TravioNavHost(
                         navController = rememberNavController(),
                         startDestination = destination

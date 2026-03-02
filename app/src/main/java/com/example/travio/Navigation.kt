@@ -32,7 +32,6 @@ fun TravioNavHost(
     navController: NavHostController,
     startDestination: String
 ) {
-    /* TODO: review every what should be in the back stack and what should not */
     NavHost(
         modifier = modifier,
         navController = navController,
@@ -128,10 +127,26 @@ fun TravioNavHost(
 
         composable(Screen.HomeScreen.route) {
             HomeScreen(
-                navigateToProfile = { navController.navigate(Screen.ProfileScreen.route) },
-                navigateToFavorite = { navController.navigate(Screen.FavoriteScreen.route) },
-                navigateToCommunity = { navController.navigate(Screen.CommunityScreen.route) },
-                navigateToAi = { navController.navigate(Screen.AiChatScreen.route) },
+                navigateToProfile = {
+                    navController.navigate(Screen.ProfileScreen.route) {
+                        launchSingleTop = true
+                    }
+                },
+                navigateToFavorite = {
+                    navController.navigate(Screen.FavoriteScreen.route) {
+                        launchSingleTop = true
+                    }
+                },
+                navigateToCommunity = {
+                    navController.navigate(Screen.CommunityScreen.route) {
+                        launchSingleTop = true
+                    }
+                },
+                navigateToAi = {
+                    navController.navigate(Screen.AiChatScreen.route) {
+                        launchSingleTop = true
+                    }
+                },
                 navigateToSearch = { navController.navigate(Screen.SearchScreen.route) },
                 navigateToDestination = { id ->
                     navController.navigate(Screen.DestinationDetailScreen.route + "/$id")
@@ -147,7 +162,25 @@ fun TravioNavHost(
                     )
                 },
                 navigateToHome = {
-                    navController.popBackStack(Screen.HomeScreen.route, inclusive = false)
+                    navController.navigate(Screen.HomeScreen.route) {
+                        popUpTo(Screen.HomeScreen.route) { inclusive = false }
+                        launchSingleTop = true
+                    }
+                },
+                navigateToFavorite = {
+                    navController.navigate(Screen.FavoriteScreen.route) {
+                        launchSingleTop = true
+                    }
+                },
+                navigateToCommunity = {
+                    navController.navigate(Screen.CommunityScreen.route) {
+                        launchSingleTop = true
+                    }
+                },
+                navigateToAi = {
+                    navController.navigate(Screen.AiChatScreen.route) {
+                        launchSingleTop = true
+                    }
                 },
                 navController = navController
             )
@@ -183,10 +216,27 @@ fun TravioNavHost(
 
         composable(Screen.FavoriteScreen.route) {
             FavoriteScreen(
-                navigateToProfile = {
-                    navController.navigate(Screen.ProfileScreen.route)
+                navigateToHome = {
+                    navController.navigate(Screen.HomeScreen.route) {
+                        popUpTo(Screen.HomeScreen.route) { inclusive = false }
+                        launchSingleTop = true
+                    }
                 },
-                navigateToHome = { navController.navigate(Screen.HomeScreen.route) }
+                navigateToProfile = {
+                    navController.navigate(Screen.ProfileScreen.route) {
+                        launchSingleTop = true
+                    }
+                },
+                navigateToCommunity = {
+                    navController.navigate(Screen.CommunityScreen.route) {
+                        launchSingleTop = true
+                    }
+                },
+                navigateToAi = {
+                    navController.navigate(Screen.AiChatScreen.route) {
+                        launchSingleTop = true
+                    }
+                }
             )
         }
 

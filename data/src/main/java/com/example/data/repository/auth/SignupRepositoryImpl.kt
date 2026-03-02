@@ -34,8 +34,9 @@ class SignupRepositoryImpl @Inject constructor(
             )
 
             tokenProvider.saveTokens(
-                response.token,
-                response.refreshToken
+                accessToken = response.token,
+                refreshToken = response.refreshToken,
+                refreshTokenExpiryEpochMs = response.refreshTokenExpiration.toLongOrNull()
             )
         }
 }

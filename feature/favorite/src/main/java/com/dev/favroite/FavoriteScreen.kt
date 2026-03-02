@@ -51,7 +51,8 @@ fun FavoriteScreen(
     viewModel: FavoriteViewModel = hiltViewModel(),
     navigateToProfile: () -> Unit,
     navigateToHome: () -> Unit,
-    navigateToCommunity: () -> Unit = {}
+    navigateToCommunity: () -> Unit = {},
+    navigateToAi: () -> Unit = {}
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
@@ -65,6 +66,7 @@ fun FavoriteScreen(
             when (index) {
                 0 -> navigateToHome()
                 2 -> navigateToCommunity()
+                3 -> navigateToAi()
                 4 -> navigateToProfile()
             }
         }
