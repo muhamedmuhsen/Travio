@@ -136,7 +136,8 @@ fun ProfileScreen(
                         1 -> navigateToFavorite()
                         2 -> navigateToCommunity()
                         3 -> navigateToAi()
-                        4 -> { /* already on Profile */
+                        4 -> {
+                            /* already on Profile */
                         }
                     }
                 }

@@ -115,7 +115,7 @@ private fun FavoriteContent(
             Spacer(modifier = Modifier.height(MaterialTheme.spacing.md))
 
             val isLoading = state.placesUiState is UiState.Loading ||
-                    state.postsUiState is UiState.Loading
+                state.postsUiState is UiState.Loading
 
             Box(
                 modifier = Modifier

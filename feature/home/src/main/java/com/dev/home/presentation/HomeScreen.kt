@@ -94,7 +94,7 @@ fun HomeScreen(
         )
     ) { permissionsResult ->
         val granted = permissionsResult[Manifest.permission.ACCESS_FINE_LOCATION] == true ||
-                permissionsResult[Manifest.permission.ACCESS_COARSE_LOCATION] == true
+            permissionsResult[Manifest.permission.ACCESS_COARSE_LOCATION] == true
         viewModel.onAction(HomeAction.OnLocationPermissionResult(granted))
     }
 

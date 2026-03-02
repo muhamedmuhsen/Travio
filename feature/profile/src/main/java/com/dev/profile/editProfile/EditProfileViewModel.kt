@@ -44,11 +44,11 @@ class EditProfileViewModel @Inject constructor(
         if (currentState.profileUiState is UiState.Loading) return
 
         val picChanged = currentState.profileImageUri != null &&
-                currentState.profileImageUri != currentState.originalProfileImageUri
+            currentState.profileImageUri != currentState.originalProfileImageUri
 
         val dataChanged = currentState.firstName != currentState.originalFirstName ||
-                currentState.lastName != currentState.originalLastName ||
-                currentState.username != currentState.originalUsername
+            currentState.lastName != currentState.originalLastName ||
+            currentState.username != currentState.originalUsername
 
         // Nothing to do — just go back
         if (!picChanged && !dataChanged) {

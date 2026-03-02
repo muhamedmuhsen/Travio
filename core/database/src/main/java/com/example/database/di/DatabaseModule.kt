@@ -38,6 +38,5 @@ object DatabaseModule {
 
     @Provides
     @Singleton
-    fun provideRecentlyViewedDao(database: TravioDatabase): RecentlyViewedDao =
-        database.recentlyViewedDao()
+    fun provideRecentlyViewedDao(database: TravioDatabase): RecentlyViewedDao = database.recentlyViewedDao()
 }

@@ -14,6 +14,5 @@ import javax.inject.Singleton
 object LocationModule {
     @Provides
     @Singleton
-    fun provideLocationDatasource(@ApplicationContext context: Context): LocationDataSource =
-        LocationDataSource(context)
+    fun provideLocationDatasource(@ApplicationContext context: Context): LocationDataSource = LocationDataSource(context)
 }
