@@ -35,7 +35,9 @@ class TokenAuthenticator(
         Log.d(TAG, "authenticate() called | code=${response.code}")
 
         // Check if we've already tried to refresh for this specific request
-        if (response.request.tag(Boolean::class.java) == true) {
+        // OkHttp's tag() is generic over the exact Class token; we must use the boxed type.
+        @Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
+        if (response.request.tag(java.lang.Boolean::class.java) == true) {
             Log.d(TAG, "Already retried this request, giving up")
             return null
         }
@@ -117,7 +119,8 @@ class TokenAuthenticator(
         retry: Boolean = false
     ): Request {
         val builder = request.newBuilder().header("Authorization", "Bearer $token")
-        if (retry) builder.tag(Boolean::class.java, true)
+        @Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
+        if (retry) builder.tag(java.lang.Boolean::class.java, true as java.lang.Boolean)
         return builder.build()
     }
 }
