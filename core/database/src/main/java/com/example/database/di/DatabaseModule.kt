@@ -5,6 +5,7 @@ import androidx.room.Room
 import com.example.database.TravioDatabase
 import com.example.database.place.FavoritePlaceDao
 import com.example.database.post.FavoritePostDao
+import com.example.database.recentlyviewed.RecentlyViewedDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -34,4 +35,9 @@ object DatabaseModule {
     @Provides
     @Singleton
     fun providePlaceDao(database: TravioDatabase): FavoritePlaceDao = database.placeDao()
+
+    @Provides
+    @Singleton
+    fun provideRecentlyViewedDao(database: TravioDatabase): RecentlyViewedDao =
+        database.recentlyViewedDao()
 }

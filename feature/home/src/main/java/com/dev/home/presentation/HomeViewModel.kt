@@ -4,9 +4,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.data.mapper.place.toPlace
 import com.example.domain.model.destination.Destination
+import com.example.domain.usecase.destinations.AddToRecentlyViewedUseCase
 import com.example.domain.usecase.destinations.GetAllDestinationsUseCase
 import com.example.domain.usecase.destinations.GetFamousCountriesUseCase
 import com.example.domain.usecase.destinations.GetNearbyDestinationsUseCase
+import com.example.domain.usecase.destinations.GetRecentlyViewedUseCase
 import com.example.domain.usecase.favorite.place.FavoritePlaceUseCase
 import com.example.domain.usecase.favorite.place.GetAllPlacesUseCase
 import com.example.domain.utils.DataError
@@ -34,7 +36,9 @@ class HomeViewModel @Inject constructor(
     private val getNearbyDestinationsUseCase: GetNearbyDestinationsUseCase,
     private val getFamousCountriesUseCase: GetFamousCountriesUseCase,
     private val favoritePlaceUseCase: FavoritePlaceUseCase,
-    private val getAllPlacesUseCase: GetAllPlacesUseCase
+    private val getAllPlacesUseCase: GetAllPlacesUseCase,
+    private val getRecentlyViewedUseCase: GetRecentlyViewedUseCase,
+    private val addToRecentlyViewedUseCase: AddToRecentlyViewedUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(HomeUiState())
@@ -47,6 +51,7 @@ class HomeViewModel @Inject constructor(
     init {
         loadHomeData()
         observeFavoriteIds()
+        observeRecentlyViewed()
         requestLocationPermission()
     }
 
@@ -86,9 +91,7 @@ class HomeViewModel @Inject constructor(
             HomeSection.Countries -> loadFamousCountries()
             HomeSection.Recommended -> loadRecommendedDestinations()
             HomeSection.Nearby -> requestLocationPermission()
-            HomeSection.RecentlyViewed -> {
-                /* TODO: wire up when recently-viewed use case is ready */
-            }
+            HomeSection.RecentlyViewed -> observeRecentlyViewed()
         }
     }
 
@@ -137,7 +140,47 @@ class HomeViewModel @Inject constructor(
     }
 
     private fun navigateToDestination(id: String) {
-        viewModelScope.launch { _event.send(HomeEvent.NavigateToDestination(id)) }
+        viewModelScope.launch {
+            // Record the view using the destination already loaded in state.
+            val destination = findDestinationById(id)
+            if (destination != null) {
+                addToRecentlyViewedUseCase(destination)
+            }
+            _event.send(HomeEvent.NavigateToDestination(id))
+        }
+    }
+
+    /** Searches all loaded destination lists for a matching ID. */
+    private fun findDestinationById(id: String): Destination? {
+        val intId = id.toIntOrNull() ?: return null
+        val s = _uiState.value
+        val recommended =
+            (s.recommendedDestinationsState as? UiState.Success)?.data.orEmpty()
+        val nearby =
+            (s.nearbyDestinationsState as? UiState.Success)?.data.orEmpty()
+        return (recommended + nearby).firstOrNull { it.destinationID == intId }
+    }
+
+    private fun observeRecentlyViewed() {
+        _uiState.update { it.copy(recentViewedDestinationsState = UiState.Loading) }
+        viewModelScope.launch {
+            getRecentlyViewedUseCase()
+                .catch { e ->
+                    Timber.e(e, "observeRecentlyViewed: failed")
+                    _uiState.update {
+                        it.copy(
+                            recentViewedDestinationsState = UiState.Error(
+                                UiText.StringResource(DesignSystemR.string.error_unknown)
+                            )
+                        )
+                    }
+                }
+                .collect { destinations ->
+                    _uiState.update {
+                        it.copy(recentViewedDestinationsState = UiState.Success(destinations))
+                    }
+                }
+        }
     }
 
     private fun loadHomeData() {
@@ -166,9 +209,9 @@ class HomeViewModel @Inject constructor(
                     pageIndex = 1,
                     pageSize = 10,
                     // TODO: derive from user preferences
-                    cityId = 10,
+                    cityId = 1,
                     // TODO: derive from user preferences
-                    interestId = 2
+                    interestId = 1
                 )
             }
         )

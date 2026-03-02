@@ -190,6 +190,7 @@ private fun HomeContent(
                 )
                 RecentViewedStateHandling(
                     state = state.recentViewedDestinationsState,
+                    onAction = onAction,
                     onRetry = { onAction(HomeAction.OnRetrySection(HomeSection.RecentlyViewed)) }
                 )
                 DestinationStateHandling(
@@ -364,6 +365,7 @@ private fun CountryStateHandling(
 @Composable
 private fun RecentViewedStateHandling(
     state: UiState<List<Destination>>,
+    onAction: (HomeAction) -> Unit,
     onRetry: () -> Unit
 ) {
     when (state) {
@@ -389,8 +391,10 @@ private fun RecentViewedStateHandling(
                             rating = destination.rating,
                             reviewCount = destination.totalReviews,
                             imageUrl = destination.imageUrls.firstOrNull().orEmpty(),
-                            onClick = { },
-                            modifier = Modifier.width(MaterialTheme.spacing.xxxl * 6)
+                            onClick = {
+                                onAction(HomeAction.OnDestinationClicked(destination.destinationID.toString()))
+                            },
+                            modifier = Modifier.width(MaterialTheme.spacing.xxxl * 8)
                         )
                     }
                 }
