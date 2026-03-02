@@ -1,6 +1,5 @@
 package com.dev.profile.editProfile
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.domain.usecase.usermanagement.UpdateProfilePicUseCase
@@ -15,6 +14,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import ui.state.UiState
 import ui.text.asUiText
 import javax.inject.Inject
@@ -75,7 +75,7 @@ class EditProfileViewModel @Inject constructor(
                         // Store the remote URL returned by the server so the profile screen
                         // receives it via NavigateToProfile(state.profileImageUri)
                         _uiState.update { it.copy(profileImageUri = result.data) }
-                        Log.d("EditProfileViewModel", "Profile pic updated: ${result.data}")
+                        Timber.d("Profile pic updated: ${result.data}")
                     }
                 }
             }
@@ -94,7 +94,7 @@ class EditProfileViewModel @Inject constructor(
                         return@launch
                     }
 
-                    is Result.Success -> Log.d("EditProfileViewModel", "Profile data updated")
+                    is Result.Success -> Timber.d("Profile data updated")
                 }
             }
 

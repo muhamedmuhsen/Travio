@@ -1,7 +1,6 @@
 package com.example.feature.login
 
 import android.content.res.Configuration
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -54,6 +53,7 @@ import com.example.feature.auth.R
 import com.example.feature.login.components.ByLoggingSection
 import com.example.feature.login.components.OrSignInWithText
 import com.example.feature.login.components.RememberMeAndForgetPasswordSection
+import timber.log.Timber
 import com.example.designsystem.R as DesignSystemR
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -205,7 +205,7 @@ fun LoginScreen(
 
             SigninOptionsButton(
                 onClick = {
-                    Log.d("GoogleSignIn", "Google sign-in button clicked")
+                    Timber.d("Google sign-in button clicked")
                     viewModel.onGoogleSignInClicked(context, webClientId)
                 },
                 text = stringResource(id = R.string.continue_with_google),

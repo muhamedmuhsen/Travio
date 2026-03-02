@@ -1,6 +1,5 @@
 package com.example.network.clients
 
-import android.util.Log
 import com.example.domain.repository.auth.TokenProvider
 import com.example.domain.session.SessionEventBus
 import com.example.network.api.AuthApi
@@ -12,6 +11,7 @@ import okhttp3.Authenticator
 import okhttp3.Request
 import okhttp3.Response
 import okhttp3.Route
+import timber.log.Timber
 import javax.inject.Provider
 import javax.inject.Singleton
 
@@ -24,61 +24,53 @@ class TokenAuthenticator(
 
     private val mutex = Mutex()
 
-    companion object {
-        private const val TAG = "TokenAuthenticator"
-    }
-
     override fun authenticate(
         route: Route?,
         response: Response
     ): Request? {
-        Log.d(TAG, "authenticate() called | code=${response.code}")
+        Timber.d("authenticate() called | code=${response.code}")
 
-        // Check if we've already tried to refresh for this specific request
-        // OkHttp's tag() is generic over the exact Class token; we must use the boxed type.
         @Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
         if (response.request.tag(java.lang.Boolean::class.java) == true) {
-            Log.d(TAG, "Already retried this request, giving up")
+            Timber.d("Already retried this request, giving up")
             return null
         }
 
-        // Only handle 401 Unauthorized
         if (response.code != 401) return null
 
         return runBlocking {
             mutex.withLock {
                 try {
-                    // Double-check: another coroutine may have already refreshed the token
                     val currentToken = tokenProvider.getAccessTokenSync()
                     val requestToken = response.request.header("Authorization")
                         ?.removePrefix("Bearer ")
 
                     if (currentToken != null && currentToken != requestToken) {
-                        Log.d(TAG, "Using token already refreshed by another request")
+                        Timber.d("Using token already refreshed by another request")
                         return@runBlocking newRequestWithToken(response.request, currentToken)
                     }
 
                     val refreshToken = tokenProvider.getRefreshToken()
                     if (refreshToken == null) {
-                        Log.w(TAG, "No refresh token available — expiring session")
+                        Timber.w("No refresh token available — expiring session")
                         invalidateSession()
                         return@runBlocking null
                     }
 
-                    Log.d(TAG, "Attempting to refresh token...")
+                    Timber.d("Attempting to refresh token...")
 
                     val refreshResponse = try {
                         authApi.get()
                             .refreshTokenSync(RefreshTokenRequest(refreshToken))
                             .execute()
                     } catch (e: Exception) {
-                        Log.e(TAG, "Refresh network request failed", e)
+                        Timber.e(e, "Refresh network request failed")
                         invalidateSession()
                         return@runBlocking null
                     }
 
                     if (!refreshResponse.isSuccessful) {
-                        Log.e(TAG, "Refresh failed | code=${refreshResponse.code()}")
+                        Timber.e("Refresh failed | code=${refreshResponse.code()}")
                         if (refreshResponse.code() in listOf(401, 403)) {
                             invalidateSession()
                         }
@@ -87,7 +79,7 @@ class TokenAuthenticator(
 
                     val session = refreshResponse.body()
                     if (session == null) {
-                        Log.e(TAG, "Empty refresh response body")
+                        Timber.e("Empty refresh response body")
                         invalidateSession()
                         return@runBlocking null
                     }
@@ -97,11 +89,11 @@ class TokenAuthenticator(
                         refreshToken = session.refreshToken,
                         refreshTokenExpiryEpochMs = session.refreshTokenExpiration.toLongOrNull()
                     )
-                    Log.d(TAG, "Token refreshed successfully")
+                    Timber.d("Token refreshed successfully")
 
                     newRequestWithToken(response.request, session.token, retry = true)
                 } catch (e: Exception) {
-                    Log.e(TAG, "Unexpected error during token refresh", e)
+                    Timber.e(e, "Unexpected error during token refresh")
                     null
                 }
             }

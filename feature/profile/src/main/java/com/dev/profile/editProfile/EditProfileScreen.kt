@@ -2,7 +2,6 @@ package com.dev.profile.editProfile
 
 import android.content.Intent
 import android.net.Uri
-import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
@@ -56,6 +55,7 @@ import com.example.designsystem.components.TextFieldType
 import com.example.designsystem.theme.TravioTheme
 import com.example.designsystem.theme.spacing
 import com.example.feature.profile.R
+import timber.log.Timber
 import ui.text.UiText
 
 @Composable
@@ -81,7 +81,7 @@ fun EditProfileScreen(
                 it,
                 Intent.FLAG_GRANT_READ_URI_PERMISSION
             )
-            Log.d("EditProfileScreen", "Image URI selected: $it")
+            Timber.d("Image URI selected: $it")
         }
     }
 
@@ -225,7 +225,7 @@ fun ChangeProfilePictureBox(
     onClick: () -> Unit,
     onImageSuccess: (String?) -> Unit
 ) {
-    Log.d("imageUri", imageUri ?: "null")
+    Timber.d("imageUri: ${imageUri ?: "null"}")
     Box(
         modifier = Modifier.size(96.dp),
         contentAlignment = Alignment.Center
@@ -251,7 +251,7 @@ fun ChangeProfilePictureBox(
                     .data(imageUri ?: R.drawable.ic_default_profile)
                     .error(R.drawable.ic_default_profile).placeholder(R.drawable.ic_default_profile)
                     .crossfade(true).listener(onError = { _, result ->
-                        Log.e("AsyncImage", "Failed to load image", result.throwable)
+                        Timber.e(result.throwable, "Failed to load image")
                     }, onSuccess = { _, _ ->
                         imageUri?.let { onImageSuccess(it) }
                     }).build(),
