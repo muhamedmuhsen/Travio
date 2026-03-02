@@ -16,6 +16,8 @@ sealed class Screen(val route: String) {
     data object FavoriteScreen : Screen(Screens.FAVORITE.name)
     data object CommunityScreen : Screen(Screens.COMMUNITY.name)
     data object AiChatScreen : Screen(Screens.AI_CHAT.name)
+    data object DestinationDetailScreen : Screen(Screens.DESTINATION_DETAIL.name)
+    data object SearchScreen : Screen(Screens.SEARCH.name)
 }
 
 enum class Screens {
@@ -33,5 +35,7 @@ enum class Screens {
     EDIT_PROFILE,
     FAVORITE,
     COMMUNITY,
-    AI_CHAT
+    AI_CHAT,
+    DESTINATION_DETAIL,
+    SEARCH
 }

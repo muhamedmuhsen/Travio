@@ -74,6 +74,12 @@ import ui.state.UiState
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
+    navigateToDestination: (String) -> Unit = {},
+    navigateToSearch: () -> Unit = {},
+    navigateToProfile: () -> Unit = {},
+    navigateToFavorite: () -> Unit = {},
+    navigateToCommunity: () -> Unit = {},
+    navigateToAi: () -> Unit = {},
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
@@ -81,7 +87,6 @@ fun HomeScreen(
     val snackbarHostState = remember { SnackbarHostState() }
     var isSuccessSnackbar by remember { mutableStateOf(false) }
 
-    // Request both fine & coarse; fine is preferred, coarse is the fallback.
     val locationPermissions = rememberMultiplePermissionsState(
         permissions = listOf(
             Manifest.permission.ACCESS_FINE_LOCATION,
@@ -96,8 +101,8 @@ fun HomeScreen(
     LaunchedEffect(Unit) {
         viewModel.event.collect { event ->
             when (event) {
-                is HomeEvent.NavigateToDestination -> TODO()
-                HomeEvent.NavigateToSearch -> TODO()
+                is HomeEvent.NavigateToDestination -> navigateToDestination(event.id)
+                HomeEvent.NavigateToSearch -> navigateToSearch()
                 is HomeEvent.ShowErrorSnackbar -> {
                     isSuccessSnackbar = false
                     snackbarHostState.showSnackbar(message = event.message.asString(context))
@@ -122,7 +127,11 @@ fun HomeScreen(
         onAction = viewModel::onAction,
         state = state,
         snackbarHostState = snackbarHostState,
-        isSuccessSnackbar = isSuccessSnackbar
+        isSuccessSnackbar = isSuccessSnackbar,
+        navigateToProfile = navigateToProfile,
+        navigateToFavorite = navigateToFavorite,
+        navigateToCommunity = navigateToCommunity,
+        navigateToAi = navigateToAi
     )
 }
 
@@ -132,7 +141,11 @@ private fun HomeContent(
     onAction: (HomeAction) -> Unit,
     state: HomeUiState,
     snackbarHostState: SnackbarHostState,
-    isSuccessSnackbar: Boolean
+    isSuccessSnackbar: Boolean,
+    navigateToProfile: () -> Unit,
+    navigateToFavorite: () -> Unit,
+    navigateToCommunity: () -> Unit,
+    navigateToAi: () -> Unit
 ) {
     Scaffold(
         modifier = modifier,
@@ -154,7 +167,13 @@ private fun HomeContent(
                 selectedItem = 0,
                 onItemSelected = { index ->
                     when (index) {
-                        // TODO: wire bottom bar navigation
+                        0 -> { /* already on Home, no-op */
+                        }
+
+                        1 -> navigateToFavorite()
+                        2 -> navigateToCommunity()
+                        3 -> navigateToAi()
+                        4 -> navigateToProfile()
                     }
                 }
             )

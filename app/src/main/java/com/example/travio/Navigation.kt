@@ -1,6 +1,10 @@
 package com.example.travio
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -124,8 +128,14 @@ fun TravioNavHost(
 
         composable(Screen.HomeScreen.route) {
             HomeScreen(
-
-//                navigateToFavorite = { navController.navigate(Screen.FavoriteScreen.route) }
+                navigateToProfile = { navController.navigate(Screen.ProfileScreen.route) },
+                navigateToFavorite = { navController.navigate(Screen.FavoriteScreen.route) },
+                navigateToCommunity = { navController.navigate(Screen.CommunityScreen.route) },
+                navigateToAi = { navController.navigate(Screen.AiChatScreen.route) },
+                navigateToSearch = { navController.navigate(Screen.SearchScreen.route) },
+                navigateToDestination = { id ->
+                    navController.navigate(Screen.DestinationDetailScreen.route + "/$id")
+                }
             )
         }
         composable(Screen.ProfileScreen.route) {
@@ -178,6 +188,35 @@ fun TravioNavHost(
                 },
                 navigateToHome = { navController.navigate(Screen.HomeScreen.route) }
             )
+        }
+
+        composable(Screen.SearchScreen.route) {
+            // TODO: replace with real SearchScreen composable once feature is built
+            Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                Text("Search – coming soon")
+            }
+        }
+
+        composable(Screen.DestinationDetailScreen.route + "/{id}") { backStackEntry ->
+            val id = backStackEntry.arguments?.getString("id").orEmpty()
+            // TODO: replace with real DestinationDetailScreen composable once feature is built
+            Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                Text("Destination $id – coming soon")
+            }
+        }
+
+        composable(Screen.CommunityScreen.route) {
+            // TODO: replace with real CommunityScreen composable once feature is built
+            Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                Text("Community – coming soon")
+            }
+        }
+
+        composable(Screen.AiChatScreen.route) {
+            // TODO: replace with real AiChatScreen composable once feature is built
+            Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                Text("AI Chat – coming soon")
+            }
         }
     }
 }
