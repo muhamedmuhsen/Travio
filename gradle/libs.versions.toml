@@ -1,5 +1,6 @@
 [versions]
 # SDK & Build Tools
+accompanist = "0.36.0"
 agp = "8.13.0"
 credentials = "1.6.0-beta03"
 credentialsPlayServicesAuth = "1.6.0-beta03"
@@ -63,6 +64,7 @@ googleGmsGoogleServices = "4.4.4"
 
 [libraries]
 # AndroidX Core
+accompanist-permissions = { group = "com.google.accompanist", name = "accompanist-permissions", version.ref = "accompanist" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-core-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "coreSplashscreen" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }

@@ -26,6 +26,7 @@ import ui.state.UiState
 import ui.text.UiText
 import ui.text.asUiText
 import javax.inject.Inject
+import com.example.designsystem.R as DesignSystemR
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
@@ -46,6 +47,7 @@ class HomeViewModel @Inject constructor(
     init {
         loadHomeData()
         observeFavoriteIds()
+        requestLocationPermission()
     }
 
     fun onAction(action: HomeAction) {
@@ -55,6 +57,27 @@ class HomeViewModel @Inject constructor(
             is HomeAction.OnFavoriteClicked -> toggleFavorite(action.destination)
             is HomeAction.OnSearchQueryChanged -> _uiState.update { it.copy(searchQuery = action.query) }
             is HomeAction.OnRetrySection -> retrySection(action.section)
+            is HomeAction.OnLocationPermissionResult -> onLocationPermissionResult(action.granted)
+        }
+    }
+
+    private fun requestLocationPermission() {
+        viewModelScope.launch {
+            _event.send(HomeEvent.RequestLocationPermission)
+        }
+    }
+
+    private fun onLocationPermissionResult(granted: Boolean) {
+        if (granted) {
+            loadNearbyDestinations()
+        } else {
+            _uiState.update {
+                it.copy(
+                    nearbyDestinationsState = UiState.Error(
+                        UiText.StringResource(DesignSystemR.string.error_location_permission_denied)
+                    )
+                )
+            }
         }
     }
 
@@ -62,17 +85,13 @@ class HomeViewModel @Inject constructor(
         when (section) {
             HomeSection.Countries -> loadFamousCountries()
             HomeSection.Recommended -> loadRecommendedDestinations()
-            HomeSection.Nearby -> loadNearbyDestinations()
+            HomeSection.Nearby -> requestLocationPermission()
             HomeSection.RecentlyViewed -> {
                 /* TODO: wire up when recently-viewed use case is ready */
             }
         }
     }
 
-    /**
-     * Observes the local DB so that [HomeUiState.favoriteIds] always reflects the true
-     * persisted state, including changes made from other screens (e.g. FavoriteScreen).
-     */
     private fun observeFavoriteIds() {
         viewModelScope.launch {
             getAllPlacesUseCase()
@@ -123,7 +142,6 @@ class HomeViewModel @Inject constructor(
 
     private fun loadHomeData() {
         loadRecommendedDestinations()
-        loadNearbyDestinations()
         loadFamousCountries()
     }
 
@@ -141,18 +159,14 @@ class HomeViewModel @Inject constructor(
             setLoading = { it.copy(recommendedDestinationsState = UiState.Loading) },
             setError = { state, msg -> state.copy(recommendedDestinationsState = UiState.Error(msg)) },
             setSuccess = { state, data ->
-                state.copy(
-                    recommendedDestinationsState = UiState.Success(
-                        data
-                    )
-                )
+                state.copy(recommendedDestinationsState = UiState.Success(data))
             },
             load = {
                 getAllDestinationsUseCase(
                     pageIndex = 1,
                     pageSize = 10,
                     // TODO: derive from user preferences
-                    cityId = 1,
+                    cityId = 3,
                     // TODO: derive from user preferences
                     interestId = 1
                 )
@@ -188,6 +202,7 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             when (val result = load()) {
                 is Result.Error -> {
+                    Timber.e("error occurred: %s", result.error)
                     val msg = result.error.asUiText()
                     _uiState.update { setError(it, msg) }
                     _event.send(HomeEvent.ShowErrorSnackbar(msg))

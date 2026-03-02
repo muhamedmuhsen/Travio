@@ -1,5 +1,6 @@
 package com.dev.home.presentation
 
+import android.Manifest
 import android.content.res.Configuration
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyRow
@@ -21,6 +23,9 @@ import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ErrorOutline
+import androidx.compose.material.icons.outlined.LocationOff
+import androidx.compose.material.icons.outlined.SearchOff
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -40,7 +45,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.dev.home.components.CountryCard
@@ -59,8 +66,11 @@ import com.example.designsystem.theme.spacing
 import com.example.domain.model.destination.Country
 import com.example.domain.model.destination.Destination
 import com.example.feature.home.R
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import ui.state.UiState
 
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
@@ -69,11 +79,20 @@ fun HomeScreen(
     val context = LocalContext.current
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
-    // Tracks which visual style the SnackbarHost should render for the current message.
     var isSuccessSnackbar by remember { mutableStateOf(false) }
 
-    // Use Unit as the key — the effect should run for the entire lifetime of the composable,
-    // not restart every time the Flow reference is read.
+    // Request both fine & coarse; fine is preferred, coarse is the fallback.
+    val locationPermissions = rememberMultiplePermissionsState(
+        permissions = listOf(
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION
+        )
+    ) { permissionsResult ->
+        val granted = permissionsResult[Manifest.permission.ACCESS_FINE_LOCATION] == true ||
+                permissionsResult[Manifest.permission.ACCESS_COARSE_LOCATION] == true
+        viewModel.onAction(HomeAction.OnLocationPermissionResult(granted))
+    }
+
     LaunchedEffect(Unit) {
         viewModel.event.collect { event ->
             when (event) {
@@ -83,10 +102,17 @@ fun HomeScreen(
                     isSuccessSnackbar = false
                     snackbarHostState.showSnackbar(message = event.message.asString(context))
                 }
-
                 is HomeEvent.ShowSuccessSnackbar -> {
                     isSuccessSnackbar = true
                     snackbarHostState.showSnackbar(message = event.message.asString(context))
+                }
+                HomeEvent.RequestLocationPermission -> {
+                    if (locationPermissions.allPermissionsGranted) {
+                        // Permission is already granted — inform the ViewModel directly.
+                        viewModel.onAction(HomeAction.OnLocationPermissionResult(granted = true))
+                    } else {
+                        locationPermissions.launchMultiplePermissionRequest()
+                    }
                 }
             }
         }
@@ -178,7 +204,8 @@ private fun HomeContent(
                     state = state.nearbyDestinationsState,
                     favoriteIds = state.favoriteIds,
                     onAction = onAction,
-                    onRetry = { onAction(HomeAction.OnRetrySection(HomeSection.Nearby)) }
+                    onRetry = { onAction(HomeAction.OnRetrySection(HomeSection.Nearby)) },
+                    isNearby = true
                 )
             }
             Spacer(modifier = Modifier.height(MaterialTheme.spacing.xl))
@@ -253,6 +280,56 @@ private fun ErrorSection(
     }
 }
 
+/**
+ * Renders a section header with an icon + message when there is no data to display.
+ * [icon] defaults to a magnifying-glass-with-slash to signal "nothing found".
+ * For location-permission denied, pass [Icons.Outlined.LocationOff] instead.
+ */
+@Composable
+private fun EmptySection(
+    title: String,
+    message: String,
+    icon: androidx.compose.ui.graphics.vector.ImageVector = Icons.Outlined.SearchOff
+) {
+    Column {
+        Text(
+            text = title,
+            style = MaterialTheme.typography.titleLarge.copy(
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onSurface
+            ),
+            modifier = Modifier.padding(
+                horizontal = MaterialTheme.spacing.lg,
+                vertical = MaterialTheme.spacing.sm
+            )
+        )
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(
+                    horizontal = MaterialTheme.spacing.lg,
+                    vertical = MaterialTheme.spacing.md
+                ),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Icon(
+                imageVector = icon,
+                contentDescription = null,
+                modifier = Modifier.size(48.dp),
+                tint = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            Spacer(modifier = Modifier.height(MaterialTheme.spacing.xs))
+            Text(
+                text = message,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                textAlign = TextAlign.Center
+            )
+        }
+    }
+}
+
 @Composable
 private fun CountryStateHandling(
     state: UiState<List<Country>>,
@@ -322,18 +399,42 @@ private fun DestinationStateHandling(
     state: UiState<List<Destination>>,
     favoriteIds: Set<Int>,
     onAction: (HomeAction) -> Unit,
-    onRetry: () -> Unit
+    onRetry: () -> Unit,
+    isNearby: Boolean = false
 ) {
+    val context = LocalContext.current
     when (state) {
-        is UiState.Error -> ErrorSection(title = title, onRetry = onRetry)
+        is UiState.Error -> {
+            val errorMsg = state.message.asString(context)
+            val permissionDeniedMsg = stringResource(
+                com.example.designsystem.R.string.error_location_permission_denied
+            )
+            if (isNearby && errorMsg == permissionDeniedMsg) {
+                EmptySection(
+                    title = title,
+                    message = stringResource(R.string.nearby_location_permission_rationale),
+                    icon = Icons.Outlined.LocationOff
+                )
+            } else {
+                ErrorSection(title = title, onRetry = onRetry)
+            }
+        }
         UiState.Idle -> Unit
         UiState.Loading -> {
             HorizontalSection(title) { items(3) { LoadingDestinationCard() } }
         }
-
         is UiState.Success -> {
             val destinations = state.data ?: emptyList()
-            if (destinations.isNotEmpty()) {
+            if (destinations.isEmpty()) {
+                EmptySection(
+                    title = title,
+                    message = if (isNearby) {
+                        stringResource(R.string.nearby_no_destinations_found)
+                    } else {
+                        stringResource(R.string.no_destinations_found)
+                    }
+                )
+            } else {
                 HorizontalSection(title = title) {
                     items(destinations, key = { it.destinationID }) { destination ->
                         DestinationCard(

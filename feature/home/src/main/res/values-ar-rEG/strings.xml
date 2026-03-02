@@ -22,4 +22,9 @@
     <string name="remove_from_favorites">إزالة من المفضلة</string>
     <string name="price_from_prefix">ابتداءً من </string>
     <string name="country_destination_cd">وجهة %s</string>
+
+    <!-- Empty States -->
+    <string name="no_destinations_found">لا توجد وجهات.</string>
+    <string name="nearby_no_destinations_found">لا توجد وجهات قريبة من موقعك.</string>
+    <string name="nearby_location_permission_rationale">اسمح بالوصول إلى موقعك لعرض الوجهات القريبة منك.</string>
 </resources>

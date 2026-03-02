@@ -62,6 +62,8 @@ dependencies {
     ksp(libs.hilt.compiler)
     // Coil
     implementation(libs.coil.compose)
+    // Accompanist permissions
+    implementation(libs.accompanist.permissions)
     // Timber logging library
     implementation(libs.timber)
 }

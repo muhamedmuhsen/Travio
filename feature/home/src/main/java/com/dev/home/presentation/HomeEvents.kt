@@ -8,6 +8,7 @@ sealed interface HomeEvent {
     data class ShowSuccessSnackbar(val message: UiText) : HomeEvent
     data class NavigateToDestination(val id: String) : HomeEvent
     data object NavigateToSearch : HomeEvent
+    data object RequestLocationPermission : HomeEvent
 }
 
 sealed interface HomeSection {
@@ -23,4 +24,5 @@ sealed interface HomeAction {
     data class OnDestinationClicked(val id: String) : HomeAction
     data class OnFavoriteClicked(val destination: Destination) : HomeAction
     data class OnRetrySection(val section: HomeSection) : HomeAction
+    data class OnLocationPermissionResult(val granted: Boolean) : HomeAction
 }
