@@ -371,11 +371,17 @@ private fun RecentViewedStateHandling(
             title = stringResource(R.string.section_recently_viewed),
             onRetry = onRetry
         )
+        // Not yet wired up — hide the section entirely until the use-case is ready.
         UiState.Idle -> Unit
         UiState.Loading -> LoadingRecentViewedCard()
         is UiState.Success -> {
             val destinations = state.data ?: emptyList()
-            if (destinations.isNotEmpty()) {
+            if (destinations.isEmpty()) {
+                EmptySection(
+                    title = stringResource(R.string.section_recently_viewed),
+                    message = stringResource(R.string.recently_viewed_empty)
+                )
+            } else {
                 HorizontalSection(title = stringResource(R.string.section_recently_viewed)) {
                     items(destinations, key = { it.destinationID }) { destination ->
                         RecentViewedCard(

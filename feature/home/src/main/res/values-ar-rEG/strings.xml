@@ -27,4 +27,5 @@
     <string name="no_destinations_found">لا توجد وجهات.</string>
     <string name="nearby_no_destinations_found">لا توجد وجهات قريبة من موقعك.</string>
     <string name="nearby_location_permission_rationale">اسمح بالوصول إلى موقعك لعرض الوجهات القريبة منك.</string>
+    <string name="recently_viewed_empty">لم تشاهد أي وجهات بعد. ابدأ الاستكشاف!</string>
 </resources>

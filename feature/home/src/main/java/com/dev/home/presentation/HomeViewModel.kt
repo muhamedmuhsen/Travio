@@ -166,9 +166,9 @@ class HomeViewModel @Inject constructor(
                     pageIndex = 1,
                     pageSize = 10,
                     // TODO: derive from user preferences
-                    cityId = 3,
+                    cityId = 10,
                     // TODO: derive from user preferences
-                    interestId = 1
+                    interestId = 2
                 )
             }
         )

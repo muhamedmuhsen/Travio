@@ -27,4 +27,5 @@
     <string name="no_destinations_found">No destinations found.</string>
     <string name="nearby_no_destinations_found">No destinations found near your location.</string>
     <string name="nearby_location_permission_rationale">Allow location access so we can show destinations near you.</string>
+    <string name="recently_viewed_empty">No destinations viewed yet. Start exploring!</string>
 </resources>
