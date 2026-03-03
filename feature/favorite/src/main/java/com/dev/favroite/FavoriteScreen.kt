@@ -40,8 +40,8 @@ import com.dev.favroite.components.SectionTab
 import com.example.designsystem.components.AppBottomBar
 import com.example.designsystem.theme.TravioTheme
 import com.example.designsystem.theme.spacing
-import com.example.domain.model.Place
-import com.example.domain.model.Post
+import com.example.domain.model.favorite.Place
+import com.example.domain.model.favorite.Post
 import com.example.feature.favorite.R
 import ui.state.UiState
 
@@ -51,7 +51,8 @@ fun FavoriteScreen(
     viewModel: FavoriteViewModel = hiltViewModel(),
     navigateToProfile: () -> Unit,
     navigateToHome: () -> Unit,
-    navigateToCommunity: () -> Unit = {}
+    navigateToCommunity: () -> Unit = {},
+    navigateToAi: () -> Unit = {}
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
@@ -65,6 +66,7 @@ fun FavoriteScreen(
             when (index) {
                 0 -> navigateToHome()
                 2 -> navigateToCommunity()
+                3 -> navigateToAi()
                 4 -> navigateToProfile()
             }
         }
@@ -113,7 +115,7 @@ private fun FavoriteContent(
             Spacer(modifier = Modifier.height(MaterialTheme.spacing.md))
 
             val isLoading = state.placesUiState is UiState.Loading ||
-                    state.postsUiState is UiState.Loading
+                state.postsUiState is UiState.Loading
 
             Box(
                 modifier = Modifier
@@ -124,7 +126,7 @@ private fun FavoriteContent(
                     isLoading -> FavoriteLoadingState()
                     state.isEmpty -> FavoriteEmptyState()
                     else -> FavoriteList(
-                        places = state.displayedPlaces,
+                        Places = state.displayedPlaces,
                         posts = state.displayedPosts,
                         onDeletePlace = onDeletePlace,
                         onDeletePost = onDeletePost
@@ -182,7 +184,7 @@ private fun FavoriteHeaderIcon() {
 @Composable
 private fun FavoriteList(
     modifier: Modifier = Modifier,
-    places: List<Place>,
+    Places: List<Place>,
     posts: List<Post>,
     onDeletePlace: (String) -> Unit,
     onDeletePost: (String) -> Unit
@@ -193,13 +195,13 @@ private fun FavoriteList(
         contentPadding = PaddingValues(bottom = MaterialTheme.spacing.md)
     ) {
         items(
-            items = places,
+            items = Places,
             key = { place -> "place_${place.id}" }
         ) { place ->
             PlaceCard(
                 country = place.name,
                 city = place.description,
-                imageUrl = place.imageUrl,
+                imageUrl = place.imageUrls[0],
                 isFavorite = true,
                 onFavoriteClick = { onDeletePlace(place.id.toString()) },
                 onClick = {}
@@ -301,20 +303,20 @@ private fun FavoriteScreenWithDataPreview() {
             state = FavoriteState(
                 placesUiState = UiState.Success(),
                 postsUiState = UiState.Success(),
-                places = listOf(
+                Places = listOf(
                     Place(
                         id = 1,
                         name = "Eiffel Tower",
                         description = "Paris, France",
-                        imageUrl = "",
-                        rating = 4.8f
+                        imageUrls = listOf("")
+
                     ),
                     Place(
                         id = 2,
                         name = "Colosseum",
                         description = "Rome, Italy",
-                        imageUrl = "",
-                        rating = 4.7f
+                        imageUrls = listOf("")
+
                     )
                 ),
                 posts = listOf(

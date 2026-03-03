@@ -7,7 +7,7 @@ import com.example.data.mapper.post.toDomain
 import com.example.data.mapper.post.toEntity
 import com.example.database.di.IoDispatcher
 import com.example.database.post.FavoritePostDao
-import com.example.domain.model.Post
+import com.example.domain.model.favorite.Post
 import com.example.domain.repository.favorite.FavoritePostRepository
 import com.example.domain.utils.DataError
 import com.example.domain.utils.Result
@@ -45,7 +45,7 @@ class FavoritePostRepositoryImpl @Inject constructor(
             } catch (_: SQLiteException) {
                 Result.Error(DataError.Local.DatabaseError)
             } catch (_: Exception) {
-                Result.Error(DataError.Local.UnkownError)
+                Result.Error(DataError.Local.UnknownError)
             }
         }
     }
@@ -59,7 +59,7 @@ class FavoritePostRepositoryImpl @Inject constructor(
             } catch (_: SQLiteException) {
                 Result.Error(DataError.Local.DatabaseError)
             } catch (_: Exception) {
-                Result.Error(DataError.Local.UnkownError)
+                Result.Error(DataError.Local.UnknownError)
             }
         }
     }

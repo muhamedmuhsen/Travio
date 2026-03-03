@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="search_placeholder">استكشاف</string>
+    <string name="error_image_description">صورة توضيحية للخطأ</string>
+    <string name="failed_to_load">فشل التحميل</string>
+    <string name="tap_to_retry">حدث خطأ ما. يرجى المحاولة مرة أخرى.</string>
+    <string name="retry">إعادة المحاولة</string>
+
+    <!-- Section Titles -->
+    <string name="section_famous_places">الأماكن الشهيرة</string>
+    <string name="section_famous_countries">الدول الشهيرة</string>
+    <string name="section_recently_viewed">المشاهدة مؤخراً</string>
+    <string name="section_recommended_destinations">الوجهات الموصى بها</string>
+    <string name="section_nearby_destinations">الوجهات القريبة</string>
+
+    <!-- Snackbar Messages -->
+    <string name="saved_to_favourites">تم الحفظ في المفضلة</string>
+    <string name="removed_from_favourites">تمت الإزالة من المفضلة</string>
+
+    <!-- Destination Card -->
+    <string name="add_to_favorites">إضافة إلى المفضلة</string>
+    <string name="remove_from_favorites">إزالة من المفضلة</string>
+    <string name="price_from_prefix">ابتداءً من </string>
+    <string name="country_destination_cd">وجهة %s</string>
+
+    <!-- Empty States -->
+    <string name="no_destinations_found">لا توجد وجهات.</string>
+    <string name="nearby_no_destinations_found">لا توجد وجهات قريبة من موقعك.</string>
+    <string name="nearby_location_permission_rationale">اسمح بالوصول إلى موقعك لعرض الوجهات القريبة منك.</string>
+    <string name="recently_viewed_empty">لم تشاهد أي وجهات بعد. ابدأ الاستكشاف!</string>
+</resources>

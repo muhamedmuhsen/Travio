@@ -11,6 +11,7 @@ import com.example.network.dto.auth.forgetpassword.VerificationCodeRequest
 import com.example.network.dto.auth.forgetpassword.VerificationCodeResponse
 import com.example.network.dto.auth.login.LoginRequest
 import com.example.network.dto.auth.logout.LogoutRequest
+import com.example.network.dto.auth.refresh.RefreshTokenRequest
 import com.example.network.dto.auth.signup.SignupRequest
 import com.example.network.dto.auth.social.GoogleLoginRequest
 import retrofit2.Call
@@ -30,8 +31,18 @@ interface AuthApi {
     @POST("Auth/Logout")
     suspend fun logout(@Body request: LogoutRequest)
 
+    /**
+     * Synchronous variant used by [com.example.network.clients.TokenAuthenticator] which runs
+     * inside OkHttp's blocking [okhttp3.Authenticator] callback.
+     */
     @POST("Auth/refreshToken")
-    fun refreshToken(@Body refreshToken: String): Call<AuthApiResponseDto>
+    fun refreshTokenSync(@Body request: RefreshTokenRequest): Call<AuthApiResponseDto>
+
+    /**
+     * Coroutine-friendly variant used by the data layer (e.g. SessionRepositoryImpl).
+     */
+    @POST("Auth/refreshToken")
+    suspend fun refreshToken(@Body request: RefreshTokenRequest): AuthApiResponseDto
 
     @POST("Auth/forgot-password")
     suspend fun forgetPassword(@Body request: ForgetPasswordRequest)

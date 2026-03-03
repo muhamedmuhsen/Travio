@@ -1,6 +1,6 @@
 package com.example.data.mapper.post
 
-import com.example.domain.model.Post
+import com.example.domain.model.favorite.Post
 
 typealias DatabasePost = com.example.database.post.Post
 

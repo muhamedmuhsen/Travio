@@ -64,4 +64,7 @@ dependencies {
 
     // Image Loading - Coil
     implementation(libs.coil.compose)
+
+    // Logging
+    implementation(libs.timber)
 }

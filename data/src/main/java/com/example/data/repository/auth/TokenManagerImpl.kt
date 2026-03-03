@@ -3,7 +3,7 @@ package com.example.data.repository.auth
 import com.auth0.android.jwt.DecodeException
 import com.auth0.android.jwt.JWT
 import com.example.data.local.security.SecureTokenStorage
-import com.example.domain.model.DecodedToken
+import com.example.domain.model.auth.DecodedToken
 import com.example.domain.repository.auth.TokenManager
 import com.example.domain.utils.DataError
 import com.example.domain.utils.Result
@@ -29,7 +29,7 @@ class TokenManagerImpl @Inject constructor(private val secureTokenStorage: Secur
         } catch (_: DecodeException) {
             return Result.Error(DataError.TokenError.DecodingFailed)
         } catch (_: Exception) {
-            return Result.Error(DataError.Data.UnknownError)
+            return Result.Error(DataError.UnknownError)
         }
     }
 

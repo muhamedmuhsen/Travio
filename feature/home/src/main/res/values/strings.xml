@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="search_placeholder">Exploration</string>
+    <string name="error_image_description">Error illustration</string>
+    <string name="failed_to_load">Failed to load</string>
+    <string name="tap_to_retry">Something went wrong. Please try again.</string>
+    <string name="retry">Retry</string>
+
+    <!-- Section Titles -->
+    <string name="section_famous_places">Famous Places</string>
+    <string name="section_famous_countries">Famous Countries</string>
+    <string name="section_recently_viewed">Recently Viewed</string>
+    <string name="section_recommended_destinations">Recommended Destinations</string>
+    <string name="section_nearby_destinations">Nearby Destinations</string>
+
+    <!-- Snackbar Messages -->
+    <string name="saved_to_favourites">Saved to favourites</string>
+    <string name="removed_from_favourites">Removed from favourites</string>
+
+    <!-- Destination Card -->
+    <string name="add_to_favorites">Add to favorites</string>
+    <string name="remove_from_favorites">Remove from favorites</string>
+    <string name="price_from_prefix">From </string>
+    <string name="country_destination_cd">%s destination</string>
+
+    <!-- Empty States -->
+    <string name="no_destinations_found">No destinations found.</string>
+    <string name="nearby_no_destinations_found">No destinations found near your location.</string>
+    <string name="nearby_location_permission_rationale">Allow location access so we can show destinations near you.</string>
+    <string name="recently_viewed_empty">No destinations viewed yet. Start exploring!</string>
+</resources>

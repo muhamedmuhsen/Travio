@@ -7,7 +7,7 @@ import com.example.data.mapper.place.toDomain
 import com.example.data.mapper.place.toEntity
 import com.example.database.di.IoDispatcher
 import com.example.database.place.FavoritePlaceDao
-import com.example.domain.model.Place
+import com.example.domain.model.favorite.Place
 import com.example.domain.repository.favorite.FavoritePlaceRepository
 import com.example.domain.utils.DataError
 import com.example.domain.utils.Result
@@ -46,7 +46,7 @@ class FavoritePlaceRepositoryImpl @Inject constructor(
             } catch (_: SQLiteException) {
                 Result.Error(DataError.Local.DatabaseError)
             } catch (_: Exception) {
-                Result.Error(DataError.Local.UnkownError)
+                Result.Error(DataError.Local.UnknownError)
             }
         }
     }
@@ -59,7 +59,7 @@ class FavoritePlaceRepositoryImpl @Inject constructor(
             } catch (_: SQLiteException) {
                 Result.Error(DataError.Local.DatabaseError)
             } catch (_: Exception) {
-                Result.Error(DataError.Local.UnkownError)
+                Result.Error(DataError.Local.UnknownError)
             }
         }
     }

@@ -1,6 +1,7 @@
 package com.example.data.mapper.place
 
-import com.example.domain.model.Place
+import com.example.domain.model.destination.Destination
+import com.example.domain.model.favorite.Place
 
 typealias DatabasePlace = com.example.database.place.Place
 
@@ -9,8 +10,7 @@ fun Place.toEntity(): DatabasePlace {
         id = id,
         name = name,
         description = description,
-        imageUrl = imageUrl,
-        rating = rating
+        imageUrls = imageUrls
     )
 }
 
@@ -19,7 +19,15 @@ fun DatabasePlace.toDomain(): Place {
         id = id,
         name = name,
         description = description,
-        imageUrl = imageUrl,
-        rating = rating
+        imageUrls = imageUrls
+    )
+}
+
+fun Destination.toPlace(): Place {
+    return Place(
+        id = destinationID,
+        name = name,
+        description = description,
+        imageUrls = imageUrls
     )
 }

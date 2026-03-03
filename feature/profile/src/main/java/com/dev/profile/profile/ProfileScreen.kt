@@ -58,6 +58,9 @@ fun ProfileScreen(
     navController: NavController,
     onNavigateToDetail: (NavigationData) -> Unit,
     navigateToHome: () -> Unit = {},
+    navigateToFavorite: () -> Unit = {},
+    navigateToCommunity: () -> Unit = {},
+    navigateToAi: () -> Unit = {},
     viewModel: ProfileViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -130,6 +133,12 @@ fun ProfileScreen(
                 onItemSelected = { index ->
                     when (index) {
                         0 -> navigateToHome()
+                        1 -> navigateToFavorite()
+                        2 -> navigateToCommunity()
+                        3 -> navigateToAi()
+                        4 -> {
+                            /* already on Profile */
+                        }
                     }
                 }
             )

@@ -1,18 +1,22 @@
 package com.example.travio
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.dev.favroite.FavoriteScreen
+import com.dev.home.presentation.HomeScreen
 import com.dev.profile.editProfile.EditProfileScreen
 import com.dev.profile.profile.ProfileScreen
 import com.example.common.navigation.Screen
 import com.example.feature.forgetpassword.ForgetPasswordScreen
 import com.example.feature.forgetpassword.code.CodeScreen
 import com.example.feature.forgetpassword.newpassword.NewPasswordScreen
-import com.example.feature.home.HomeScreen
 import com.example.feature.language.LanguageScreen
 import com.example.feature.login.LoginScreen
 import com.example.feature.onboarding.OnboardingScreen
@@ -28,7 +32,6 @@ fun TravioNavHost(
     navController: NavHostController,
     startDestination: String
 ) {
-    /* TODO: review every what should be in the back stack and what should not */
     NavHost(
         modifier = modifier,
         navController = navController,
@@ -125,9 +128,29 @@ fun TravioNavHost(
         composable(Screen.HomeScreen.route) {
             HomeScreen(
                 navigateToProfile = {
-                    navController.navigate(Screen.ProfileScreen.route)
+                    navController.navigate(Screen.ProfileScreen.route) {
+                        launchSingleTop = true
+                    }
                 },
-                navigateToFavorite = { navController.navigate(Screen.FavoriteScreen.route) }
+                navigateToFavorite = {
+                    navController.navigate(Screen.FavoriteScreen.route) {
+                        launchSingleTop = true
+                    }
+                },
+                navigateToCommunity = {
+                    navController.navigate(Screen.CommunityScreen.route) {
+                        launchSingleTop = true
+                    }
+                },
+                navigateToAi = {
+                    navController.navigate(Screen.AiChatScreen.route) {
+                        launchSingleTop = true
+                    }
+                },
+                navigateToSearch = { navController.navigate(Screen.SearchScreen.route) },
+                navigateToDestination = { id ->
+                    navController.navigate(Screen.DestinationDetailScreen.route + "/$id")
+                }
             )
         }
         composable(Screen.ProfileScreen.route) {
@@ -139,7 +162,25 @@ fun TravioNavHost(
                     )
                 },
                 navigateToHome = {
-                    navController.popBackStack(Screen.HomeScreen.route, inclusive = false)
+                    navController.navigate(Screen.HomeScreen.route) {
+                        popUpTo(Screen.HomeScreen.route) { inclusive = false }
+                        launchSingleTop = true
+                    }
+                },
+                navigateToFavorite = {
+                    navController.navigate(Screen.FavoriteScreen.route) {
+                        launchSingleTop = true
+                    }
+                },
+                navigateToCommunity = {
+                    navController.navigate(Screen.CommunityScreen.route) {
+                        launchSingleTop = true
+                    }
+                },
+                navigateToAi = {
+                    navController.navigate(Screen.AiChatScreen.route) {
+                        launchSingleTop = true
+                    }
                 },
                 navController = navController
             )
@@ -175,11 +216,57 @@ fun TravioNavHost(
 
         composable(Screen.FavoriteScreen.route) {
             FavoriteScreen(
-                navigateToProfile = {
-                    navController.navigate(Screen.ProfileScreen.route)
+                navigateToHome = {
+                    navController.navigate(Screen.HomeScreen.route) {
+                        popUpTo(Screen.HomeScreen.route) { inclusive = false }
+                        launchSingleTop = true
+                    }
                 },
-                navigateToHome = { navController.navigate(Screen.HomeScreen.route) }
+                navigateToProfile = {
+                    navController.navigate(Screen.ProfileScreen.route) {
+                        launchSingleTop = true
+                    }
+                },
+                navigateToCommunity = {
+                    navController.navigate(Screen.CommunityScreen.route) {
+                        launchSingleTop = true
+                    }
+                },
+                navigateToAi = {
+                    navController.navigate(Screen.AiChatScreen.route) {
+                        launchSingleTop = true
+                    }
+                }
             )
+        }
+
+        composable(Screen.SearchScreen.route) {
+            // TODO: replace with real SearchScreen composable once feature is built
+            Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                Text("Search – coming soon")
+            }
+        }
+
+        composable(Screen.DestinationDetailScreen.route + "/{id}") { backStackEntry ->
+            val id = backStackEntry.arguments?.getString("id").orEmpty()
+            // TODO: replace with real DestinationDetailScreen composable once feature is built
+            Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                Text("Destination $id – coming soon")
+            }
+        }
+
+        composable(Screen.CommunityScreen.route) {
+            // TODO: replace with real CommunityScreen composable once feature is built
+            Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                Text("Community – coming soon")
+            }
+        }
+
+        composable(Screen.AiChatScreen.route) {
+            // TODO: replace with real AiChatScreen composable once feature is built
+            Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                Text("AI Chat – coming soon")
+            }
         }
     }
 }

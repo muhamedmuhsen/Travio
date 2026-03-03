@@ -1,6 +1,6 @@
 package com.example.feature.login
 
-import com.example.domain.model.User
+import com.example.domain.model.auth.User
 import ui.state.UiState
 
 data class LoginUiState(

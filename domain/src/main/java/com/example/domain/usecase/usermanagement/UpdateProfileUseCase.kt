@@ -1,6 +1,6 @@
 package com.example.domain.usecase.usermanagement
 
-import com.example.domain.model.User
+import com.example.domain.model.auth.User
 import com.example.domain.repository.usermanagement.UserManagementRepository
 import com.example.domain.utils.DataError
 import com.example.domain.utils.Result

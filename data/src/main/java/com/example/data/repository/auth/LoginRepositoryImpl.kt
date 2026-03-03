@@ -27,16 +27,13 @@ class LoginRepositoryImpl @Inject constructor(
         safeApiCall {
             val response = api.login(LoginRequest(email, password))
             tokenProvider.saveTokens(
-                response.token,
-                response.refreshToken
+                accessToken = response.token,
+                refreshToken = response.refreshToken,
+                refreshTokenExpiryEpochMs = response.refreshTokenExpiration.toLongOrNull()
             )
             preferencesManager.setLoggedIn(true)
             if (isRememberMeChecked) {
-                credentialsManager.saveCredentials(
-                    email,
-                    password,
-                    true
-                )
+                credentialsManager.saveCredentials(email, password, true)
             } else {
                 credentialsManager.clearCredentials()
             }
@@ -46,10 +43,10 @@ class LoginRepositoryImpl @Inject constructor(
         safeApiCall {
             val request = GoogleLoginRequest(idToken)
             val response = api.googleLogin(request)
-
             tokenProvider.saveTokens(
-                response.token,
-                response.refreshToken
+                accessToken = response.token,
+                refreshToken = response.refreshToken,
+                refreshTokenExpiryEpochMs = response.refreshTokenExpiration.toLongOrNull()
             )
             preferencesManager.setLoggedIn(true)
         }

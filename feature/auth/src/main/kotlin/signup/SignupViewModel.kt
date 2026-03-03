@@ -1,7 +1,6 @@
 package com.example.feature.signup
 
 import android.content.Context
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.data.repository.auth.GoogleCredentialDataSourceImpl
@@ -17,6 +16,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import ui.state.UiState
 import ui.text.asUiText
 import javax.inject.Inject
@@ -106,25 +106,16 @@ class SignupViewModel @Inject constructor(
                 }
 
                 is Result.Success -> {
-                    Log.d(
-                        "SignupViewModel",
-                        "Signup successful, sending OTP to: ${_state.value.email}"
-                    )
+                    Timber.d("Signup successful, sending OTP to: ${_state.value.email}")
                     when (val otpResult = sendVerifyEmailOtpUseCase(_state.value.email)) {
                         is Result.Success -> {
-                            Log.d(
-                                "SignupViewModel",
-                                "OTP sent successfully. Expires: ${otpResult.data}"
-                            )
+                            Timber.d("OTP sent successfully. Expires: ${otpResult.data}")
                             _state.update { it.copy(signupState = UiState.Success()) }
                             _event.send(SignupEvent.NavigateToVerifyEmail)
                         }
 
                         is Result.Error -> {
-                            Log.e(
-                                "SignupViewModel",
-                                "Failed to send OTP. Error: ${otpResult.error}"
-                            )
+                            Timber.e("Failed to send OTP. Error: ${otpResult.error}")
                             _state.update { it.copy(signupState = UiState.Error(otpResult.error.asUiText())) }
                             sendEvent(SignupEvent.ShowAuthError(otpResult.error.asUiText()))
                         }

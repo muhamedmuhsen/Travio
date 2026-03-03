@@ -51,7 +51,7 @@ class FavoriteViewModel @Inject constructor(
                 .collect { places ->
                     _state.update {
                         it.copy(
-                            places = places,
+                            Places = places,
                             placesUiState = UiState.Success()
                         )
                     }

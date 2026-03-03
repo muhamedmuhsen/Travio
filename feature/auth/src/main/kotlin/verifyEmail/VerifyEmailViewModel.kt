@@ -1,6 +1,5 @@
 package com.example.feature.verifyEmail
 
-import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -17,6 +16,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import ui.state.UiState
 import ui.text.asUiText
 import java.time.Duration
@@ -31,7 +31,6 @@ class VerifyEmailViewModel @Inject constructor(
 ) : ViewModel() {
 
     private companion object {
-        const val TAG = "VerifyEmailViewModel"
         const val DEFAULT_COUNTDOWN_SECONDS = 600 // 10 minutes
         const val COUNTDOWN_INTERVAL_MS = 1000L
         const val OTP_LENGTH = 6
@@ -85,17 +84,17 @@ class VerifyEmailViewModel @Inject constructor(
         clearErrors()
         _state.update { it.copy(verificationState = UiState.Loading) }
 
-        Log.d(TAG, "Verifying email OTP for: $email")
+        Timber.d("Verifying email OTP for: $email")
 
         viewModelScope.launch {
             when (val result = verifyEmailUseCase(email = email, otp = _state.value.code)) {
                 is Result.Error -> {
-                    Log.e(TAG, "Email verification failed: ${result.error}")
+                    Timber.e("Email verification failed: ${result.error}")
                     handleVerificationError(result.error)
                 }
 
                 is Result.Success -> {
-                    Log.d(TAG, "Email verification successful! Navigating to home...")
+                    Timber.d("Email verification successful! Navigating to home...")
                     _state.update { it.copy(verificationState = UiState.Success(Unit)) }
                     sendEvent(VerifyEmailEvent.NavigateToSuccess)
                 }
@@ -104,7 +103,7 @@ class VerifyEmailViewModel @Inject constructor(
     }
 
     private fun handleVerificationError(error: DataError) {
-        Log.w(TAG, "Handling verification error: $error")
+        Timber.w("Handling verification error: $error")
 
         val shouldShowFieldError = when (error) {
             DataError.Validation.MissingFields,
@@ -175,10 +174,10 @@ class VerifyEmailViewModel @Inject constructor(
             val expiry = Instant.parse(expiresOn)
             val now = Instant.now()
             val seconds = Duration.between(now, expiry).seconds.toInt().coerceAtLeast(0)
-            Log.d(TAG, "Parsed expiry: $expiresOn -> $seconds seconds remaining")
+            Timber.d("Parsed expiry: $expiresOn -> $seconds seconds remaining")
             seconds
         } catch (e: Exception) {
-            Log.w(TAG, "Failed to parse expiry time: $expiresOn, using default", e)
+            Timber.w(e, "Failed to parse expiry time: $expiresOn, using default")
             DEFAULT_COUNTDOWN_SECONDS
         }
     }

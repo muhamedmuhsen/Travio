@@ -1,8 +1,10 @@
 package com.example.network.di
 
 import com.example.domain.repository.auth.TokenProvider
+import com.example.domain.session.SessionEventBus
 import com.example.network.BuildConfig
 import com.example.network.api.AuthApi
+import com.example.network.api.DestinationsApi
 import com.example.network.api.UserManagementApi
 import com.example.network.clients.AuthInterceptor
 import com.example.network.clients.TokenAuthenticator
@@ -76,11 +78,13 @@ object NetworkModule {
     @Singleton
     fun provideTokenAuthenticator(
         tokenProvider: TokenProvider,
-        authApi: javax.inject.Provider<AuthApi>
+        authApi: javax.inject.Provider<AuthApi>,
+        sessionEventBus: SessionEventBus
     ): TokenAuthenticator {
         return TokenAuthenticator(
             tokenProvider = tokenProvider,
-            authApi = authApi
+            authApi = authApi,
+            sessionEventBus = sessionEventBus
         )
     }
 
@@ -117,6 +121,12 @@ object NetworkModule {
     @Singleton
     fun provideAuthApi(retrofit: Retrofit): AuthApi {
         return retrofit.create(AuthApi::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideDestinationApi(retrofit: Retrofit): DestinationsApi {
+        return retrofit.create(DestinationsApi::class.java)
     }
 
     @Provides

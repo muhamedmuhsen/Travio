@@ -2,6 +2,7 @@ package com.example.data.local.security
 
 import android.content.Context
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.example.data.local.preferences.dataStore
 import com.example.domain.repository.auth.TokenProvider
@@ -26,6 +27,7 @@ class SecureTokenStorage @Inject constructor(
         private val KEY_ACCESS_TOKEN = stringPreferencesKey("auth_token")
         private val KEY_REFRESH_TOKEN = stringPreferencesKey("auth_refresh_token")
         private val KEY_RESET_TOKEN = stringPreferencesKey("auth_reset_token")
+        private val KEY_REFRESH_TOKEN_EXPIRY = longPreferencesKey("auth_refresh_token_expiry")
     }
 
     override suspend fun saveResetToken(token: String) {
@@ -60,12 +62,20 @@ class SecureTokenStorage @Inject constructor(
 
     override suspend fun saveTokens(
         accessToken: String,
-        refreshToken: String
+        refreshToken: String,
+        refreshTokenExpiryEpochMs: Long?
     ) {
         dataStore.edit { preferences ->
             preferences[KEY_ACCESS_TOKEN] = encryptionManager.encrypt(accessToken)
             preferences[KEY_REFRESH_TOKEN] = encryptionManager.encrypt(refreshToken)
+            if (refreshTokenExpiryEpochMs != null) {
+                preferences[KEY_REFRESH_TOKEN_EXPIRY] = refreshTokenExpiryEpochMs
+            }
         }
+    }
+
+    override suspend fun getRefreshTokenExpiry(): Long? {
+        return dataStore.data.first()[KEY_REFRESH_TOKEN_EXPIRY]
     }
 
     override suspend fun clearTokens() {
@@ -73,6 +83,7 @@ class SecureTokenStorage @Inject constructor(
             preferences.remove(KEY_ACCESS_TOKEN)
             preferences.remove(KEY_REFRESH_TOKEN)
             preferences.remove(KEY_RESET_TOKEN)
+            preferences.remove(KEY_REFRESH_TOKEN_EXPIRY)
         }
     }
 
