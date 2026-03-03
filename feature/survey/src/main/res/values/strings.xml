@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Survey question strings -->
+    <string name="survey_question_travel_type">What type of travel do you prefer?</string>
+    <string name="survey_question_travel_with">How do you prefer to travel?</string>
+    <string name="survey_question_activities">What do you prefer to do on trips?</string>
+    <string name="survey_question_budget">What\'s your budget preference?</string>
+
+    <!-- Category labels — Step 1 -->
+    <string name="survey_beaches">Beaches</string>
+    <string name="survey_city_life">City Life</string>
+    <string name="survey_hotels">Hotels</string>
+    <string name="survey_safari_desert">Safari Desert</string>
+    <string name="survey_nature">Nature</string>
+    <string name="survey_shopping_malls">Shopping malls</string>
+
+    <!-- Category labels — Step 2 -->
+    <string name="survey_solo_travel">Solo Travel</string>
+    <string name="survey_with_partner">With Partner</string>
+    <string name="survey_family_trip">Family Trip</string>
+    <string name="survey_with_friends">With Friends</string>
+
+    <!-- Category labels — Step 3 -->
+    <string name="survey_relaxed">Relaxed</string>
+    <string name="survey_diving">diving</string>
+    <string name="survey_adventurous">Adventurous</string>
+    <string name="survey_photography">Photography</string>
+
+    <!-- Category labels — Step 4 -->
+    <string name="survey_budget_traveler">Budget Traveler</string>
+    <string name="survey_mid_range">Mid-Range</string>
+    <string name="survey_premium">Premium</string>
+    <string name="survey_ultra_luxury">Ultra Luxury</string>
+
+    <!-- Buttons -->
+    <string name="survey_next">Next</string>
+    <string name="survey_enjoy">Enjoy</string>
+
+    <!-- Step indicator -->
+    <string name="survey_step_indicator">Step %1$d of %2$d</string>
+</resources>

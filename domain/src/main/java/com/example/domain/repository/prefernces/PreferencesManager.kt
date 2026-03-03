@@ -20,4 +20,8 @@ interface PreferencesManager {
     fun observeDarkMode(): Flow<Boolean>
 
     fun observeDarkModeNullable(): Flow<Boolean?>
+
+    suspend fun setSurveyComplete(complete: Boolean)
+    suspend fun isSurveyComplete(): Boolean
+    fun observeSurveyComplete(): Flow<Boolean>
 }

@@ -84,6 +84,7 @@ dependencies {
     implementation(project(":feature:favorite"))
     implementation(project(":feature:profile"))
     implementation(project(":feature:community"))
+    implementation(project(":feature:survey"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)

@@ -13,6 +13,7 @@ import com.dev.favroite.FavoriteScreen
 import com.dev.home.presentation.HomeScreen
 import com.dev.profile.editProfile.EditProfileScreen
 import com.dev.profile.profile.ProfileScreen
+import com.dev.survey.presentation.SurveyScreen
 import com.example.common.navigation.Screen
 import com.example.feature.forgetpassword.ForgetPasswordScreen
 import com.example.feature.forgetpassword.code.CodeScreen
@@ -47,13 +48,26 @@ fun TravioNavHost(
                 onCloseClicked = { navController.navigate(Screen.StarterLoginScreen.route) },
                 navigateToSignUp = { navController.navigate(Screen.SignupScreen.route) },
                 navigateToForgetPassword = { navController.navigate(Screen.ForgetPasswordScreen.route) },
-                navigateToHome = { navController.navigate(Screen.HomeScreen.route) }
+                navigateToHome = { navController.navigate(Screen.HomeScreen.route) },
+                navigateToSurvey = {
+                    navController.navigate(Screen.SurveyScreen.route) {
+                        popUpTo(Screen.StarterLoginScreen.route) { inclusive = true }
+                        launchSingleTop = true
+                    }
+                }
             )
         }
         composable(Screen.StarterLoginScreen.route) {
             StarterLogin(
                 navigateToLogin = { navController.navigate(Screen.LoginScreen.route) },
-                navigateToSignup = { navController.navigate(Screen.SignupScreen.route) }
+                navigateToSignup = { navController.navigate(Screen.SignupScreen.route) },
+                navigateToHome = { navController.navigate(Screen.HomeScreen.route) },
+                navigateToSurvey = {
+                    navController.navigate(Screen.SurveyScreen.route) {
+                        popUpTo(Screen.StarterLoginScreen.route) { inclusive = true }
+                        launchSingleTop = true
+                    }
+                }
             )
         }
         composable(Screen.LanguageScreen.route) {
@@ -103,8 +117,9 @@ fun TravioNavHost(
                     navController.navigate(Screen.LoginScreen.route)
                 },
                 navigateToHome = {
-                    navController.navigate(Screen.HomeScreen.route) {
-                        popUpTo(Screen.LoginScreen.route) { inclusive = true }
+                    navController.navigate(Screen.SurveyScreen.route) {
+                        popUpTo(Screen.StarterLoginScreen.route) { inclusive = true }
+                        launchSingleTop = true
                     }
                 },
                 navigateToVerifyEmail = {
@@ -117,8 +132,9 @@ fun TravioNavHost(
         composable(Screen.VerifyEmailScreen.route + "/{email}") {
             VerifyEmailScreen(
                 navigateToHome = {
-                    navController.navigate(Screen.HomeScreen.route) {
+                    navController.navigate(Screen.SurveyScreen.route) {
                         popUpTo(Screen.StarterLoginScreen.route) { inclusive = true }
+                        launchSingleTop = true
                     }
                 },
                 onBackClicked = { navController.popBackStack() }
@@ -267,6 +283,17 @@ fun TravioNavHost(
             Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 Text("AI Chat – coming soon")
             }
+        }
+
+        composable(Screen.SurveyScreen.route) {
+            SurveyScreen(
+                navigateToHome = {
+                    navController.navigate(Screen.HomeScreen.route) {
+                        popUpTo(0) { inclusive = true }
+                        launchSingleTop = true
+                    }
+                }
+            )
         }
     }
 }
