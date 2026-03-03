@@ -44,7 +44,9 @@ fun StarterLogin(
     modifier: Modifier = Modifier,
     viewModel: StarterLoginViewModel = hiltViewModel(),
     navigateToLogin: () -> Unit,
-    navigateToSignup: () -> Unit
+    navigateToSignup: () -> Unit,
+    navigateToHome: () -> Unit = {},
+    navigateToSurvey: () -> Unit = {}
 ) {
     val webClientId = BuildConfig.GOOGLE_WEB_CLIENT_ID
     val context = LocalContext.current
@@ -70,7 +72,8 @@ fun StarterLogin(
 
                 StarterLoginEvent.GoogleSignIn -> TODO()
                 StarterLoginEvent.FacebookSignIn -> TODO()
-                StarterLoginEvent.NavigateToHome -> {}
+                StarterLoginEvent.NavigateToHome -> navigateToHome()
+                StarterLoginEvent.NavigateToSurvey -> navigateToSurvey()
                 is StarterLoginEvent.ShowAuthError -> {
                     errorMessage = event.message.asString(context)
                 }
@@ -180,5 +183,5 @@ fun StarterLogin(
 @Preview(showSystemUi = true, showBackground = true)
 @Composable
 private fun StarterLoginPreview() {
-    TravioTheme { StarterLogin(navigateToLogin = {}) {} }
+    TravioTheme { StarterLogin(navigateToLogin = {}, navigateToSignup = {}) }
 }

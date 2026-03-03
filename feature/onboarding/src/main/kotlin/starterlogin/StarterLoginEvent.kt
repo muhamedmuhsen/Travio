@@ -9,4 +9,5 @@ interface StarterLoginEvent {
     data object GoogleSignIn : StarterLoginEvent
     data object FacebookSignIn : StarterLoginEvent
     data object NavigateToHome : StarterLoginEvent
+    data object NavigateToSurvey : StarterLoginEvent
 }

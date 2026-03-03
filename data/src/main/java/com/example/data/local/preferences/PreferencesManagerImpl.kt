@@ -12,8 +12,9 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class PreferencesManagerImpl @Inject constructor(@ApplicationContext private val context: Context) :
-    PreferencesManager {
+class PreferencesManagerImpl @Inject constructor(
+    @ApplicationContext private val context: Context
+) : PreferencesManager {
 
     private val dataStore = context.dataStore
 
@@ -22,6 +23,7 @@ class PreferencesManagerImpl @Inject constructor(@ApplicationContext private val
         private val KEY_LOGGED_IN = booleanPreferencesKey("is_logged_in")
         private val KEY_CHOOSE_LANGUAGE = booleanPreferencesKey("choose_language")
         private val KEY_DARK_MODE = booleanPreferencesKey("dark_mode")
+        private val KEY_SURVEY_COMPLETE = booleanPreferencesKey("survey_complete")
     }
 
     override suspend fun setOnboardingComplete(complete: Boolean) {
@@ -70,5 +72,17 @@ class PreferencesManagerImpl @Inject constructor(@ApplicationContext private val
 
     override fun observeLoggedIn(): Flow<Boolean> {
         return dataStore.data.map { it[KEY_LOGGED_IN] ?: false }
+    }
+
+    override suspend fun setSurveyComplete(complete: Boolean) {
+        dataStore.edit { it[KEY_SURVEY_COMPLETE] = complete }
+    }
+
+    override suspend fun isSurveyComplete(): Boolean {
+        return dataStore.data.first()[KEY_SURVEY_COMPLETE] ?: false
+    }
+
+    override fun observeSurveyComplete(): Flow<Boolean> {
+        return dataStore.data.map { it[KEY_SURVEY_COMPLETE] ?: false }
     }
 }

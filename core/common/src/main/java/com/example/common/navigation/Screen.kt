@@ -18,6 +18,7 @@ sealed class Screen(val route: String) {
     data object AiChatScreen : Screen(Screens.AI_CHAT.name)
     data object DestinationDetailScreen : Screen(Screens.DESTINATION_DETAIL.name)
     data object SearchScreen : Screen(Screens.SEARCH.name)
+    data object SurveyScreen : Screen(Screens.SURVEY.name)
 }
 
 enum class Screens {
@@ -37,5 +38,6 @@ enum class Screens {
     COMMUNITY,
     AI_CHAT,
     DESTINATION_DETAIL,
-    SEARCH
+    SEARCH,
+    SURVEY
 }

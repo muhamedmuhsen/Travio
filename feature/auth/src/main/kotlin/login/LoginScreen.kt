@@ -64,6 +64,7 @@ fun LoginScreen(
     onCloseClicked: () -> Unit,
     navigateToSignUp: () -> Unit,
     navigateToHome: () -> Unit,
+    navigateToSurvey: () -> Unit = {},
     navigateToForgetPassword: () -> Unit
 ) {
     val uiState = viewModel.state.collectAsStateWithLifecycle()
@@ -83,6 +84,7 @@ fun LoginScreen(
             when (event) {
                 LoginEvent.NavigateToForgotPassword -> navigateToForgetPassword()
                 LoginEvent.NavigateToHome -> navigateToHome()
+                LoginEvent.NavigateToSurvey -> navigateToSurvey()
                 LoginEvent.NavigateToSignup -> navigateToSignUp()
                 is LoginEvent.ShowAuthError -> {
                     errorMessage = event.message.asString(context)

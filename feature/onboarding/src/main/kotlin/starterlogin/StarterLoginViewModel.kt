@@ -78,7 +78,11 @@ class StarterLoginViewModel
 
                 is Result.Success -> {
                     preferencesManager.setLoggedIn(true)
-                    sendEvent(StarterLoginEvent.NavigateToHome)
+                    if (preferencesManager.isSurveyComplete()) {
+                        sendEvent(StarterLoginEvent.NavigateToHome)
+                    } else {
+                        sendEvent(StarterLoginEvent.NavigateToSurvey)
+                    }
                 }
             }
         }

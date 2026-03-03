@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.data.repository.auth.GoogleCredentialDataSourceImpl
 import com.example.domain.repository.prefernces.CredentialsManager
+import com.example.domain.repository.prefernces.PreferencesManager
 import com.example.domain.usecase.auth.login.GoogleSignInUseCase
 import com.example.domain.usecase.auth.login.LoginUseCase
 import com.example.domain.utils.DataError
@@ -25,7 +26,8 @@ class LoginViewModel @Inject constructor(
     private val loginUseCase: LoginUseCase,
     private val googleSignInUseCase: GoogleSignInUseCase,
     private val googleCredentialDataSource: GoogleCredentialDataSourceImpl,
-    private val credentialsManager: CredentialsManager
+    private val credentialsManager: CredentialsManager,
+    private val preferencesManager: PreferencesManager
 ) : ViewModel() {
     private val _state = MutableStateFlow(LoginUiState())
     val state = _state.asStateFlow()
@@ -57,6 +59,14 @@ class LoginViewModel @Inject constructor(
     private fun sendEvent(event: LoginEvent) {
         viewModelScope.launch {
             _event.send(event)
+        }
+    }
+
+    private suspend fun navigateAfterLogin() {
+        if (preferencesManager.isSurveyComplete()) {
+            sendEvent(LoginEvent.NavigateToHome)
+        } else {
+            sendEvent(LoginEvent.NavigateToSurvey)
         }
     }
 
@@ -92,7 +102,7 @@ class LoginViewModel @Inject constructor(
                             emailError = null
                         )
                     }
-                    sendEvent(LoginEvent.NavigateToHome)
+                    navigateAfterLogin()
                 }
             }
         }
@@ -132,7 +142,7 @@ class LoginViewModel @Inject constructor(
                 }
 
                 is Result.Success -> {
-                    sendEvent(LoginEvent.NavigateToHome)
+                    navigateAfterLogin()
                 }
             }
         }

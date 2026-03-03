@@ -40,6 +40,7 @@ class MainActivity : ComponentActivity() {
                         MainViewModel.StartDestination.Login -> Screen.StarterLoginScreen.route
                         MainViewModel.StartDestination.Onboarding -> Screen.OnboardingScreen.route
                         MainViewModel.StartDestination.Language -> Screen.LanguageScreen.route
+                        MainViewModel.StartDestination.Survey -> Screen.SurveyScreen.route
                         else -> Screen.StarterLoginScreen.route
                     }
 

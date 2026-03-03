@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- survey string resources -->
+    <string name="survey_question_travel_type">ما نوع السفر الذي تفضله؟</string>
+    <string name="survey_question_travel_with">كيف تفضل السفر؟</string>
+    <string name="survey_question_activities">ماذا تفضل أن تفعل في رحلاتك؟</string>
+    <string name="survey_question_budget">ما هو تفضيلك للميزانية؟</string>
+
+    <!-- Category labels -->
+    <string name="survey_beaches">الشواطئ</string>
+    <string name="survey_city_life">حياة المدينة</string>
+    <string name="survey_hotels">الفنادق</string>
+    <string name="survey_safari_desert">سفاري الصحراء</string>
+    <string name="survey_nature">الطبيعة</string>
+    <string name="survey_shopping_malls">مراكز التسوق</string>
+
+    <string name="survey_solo_travel">السفر منفرداً</string>
+    <string name="survey_with_partner">مع الشريك</string>
+    <string name="survey_family_trip">رحلة عائلية</string>
+    <string name="survey_with_friends">مع الأصدقاء</string>
+
+    <string name="survey_relaxed">استرخاء</string>
+    <string name="survey_diving">الغوص</string>
+    <string name="survey_adventurous">المغامرة</string>
+    <string name="survey_photography">التصوير</string>
+
+    <string name="survey_budget_traveler">مسافر اقتصادي</string>
+    <string name="survey_mid_range">متوسط</string>
+    <string name="survey_premium">مميز</string>
+    <string name="survey_ultra_luxury">فاخر جداً</string>
+
+    <!-- Buttons -->
+    <string name="survey_next">التالي</string>
+    <string name="survey_enjoy">استمتع</string>
+</resources>
