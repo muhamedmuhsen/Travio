@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Top bar -->
+    <string name="search_navigate_back">Navigate back</string>
+    <string name="search_clear_query">Clear search</string>
+    <string name="search_placeholder">Exploration</string>
+
+    <!-- Section titles -->
+    <string name="search_section_recent">Recent</string>
+    <string name="search_section_suggestions">Suggestions</string>
+    <string name="search_see_all">See all</string>
+
+    <!-- Empty / error states -->
+    <string name="search_no_results_title">No results found</string>
+    <string name="search_no_results_message">We couldn\'t find anything for "%1$s". Try a different keyword.</string>
+    <string name="search_empty_recent">No recent destinations yet. Start exploring!</string>
+
+    <!-- Content descriptions -->
+    <string name="search_destination_image_cd">%s destination image</string>
+    <string name="search_location_pin_cd">Location pin</string>
+</resources>
+

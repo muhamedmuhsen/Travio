@@ -37,6 +37,7 @@ include(":feature:onboarding")
 include(":feature:profile")
 include(":feature:survey")
 include(":feature:utils")
+include(":feature:search")
 include(":feature")
 include(":core:database")
 

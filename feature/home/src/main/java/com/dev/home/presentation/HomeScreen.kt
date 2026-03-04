@@ -256,6 +256,8 @@ private fun HomeTopSection(
             value = searchQuery,
             onValueChange = onSearchQueryChanged,
             onSearchClicked = onSearchClicked,
+            // Tapping anywhere on the bar navigates directly to the Search screen
+            onClick = onSearchClicked,
             modifier = Modifier
                 .align(Alignment.TopCenter)
                 .padding(
@@ -268,11 +270,6 @@ private fun HomeTopSection(
     }
 }
 
-/**
- * Renders the section title and a horizontally centred [ErrorView] inside a full-width
- * container. Used instead of placing [ErrorView] in a [LazyRow] item, which would only
- * give it intrinsic (wrap-content) width and prevent centering.
- */
 @Composable
 private fun ErrorSection(
     title: String,

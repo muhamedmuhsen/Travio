@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Top bar -->
+    <string name="search_navigate_back">رجوع</string>
+    <string name="search_clear_query">مسح البحث</string>
+    <string name="search_placeholder">استكشاف</string>
+
+    <!-- Section titles -->
+    <string name="search_section_recent">الأخيرة</string>
+    <string name="search_section_suggestions">اقتراحات</string>
+    <string name="search_see_all">عرض الكل</string>
+
+    <!-- Empty / error states -->
+    <string name="search_no_results_title">لا توجد نتائج</string>
+    <string name="search_no_results_message">لم نعثر على أي شيء لـ "%1$s". جرّب كلمة مختلفة.</string>
+    <string name="search_empty_recent">لا توجد وجهات حديثة بعد. ابدأ الاستكشاف!</string>
+
+    <!-- Content descriptions -->
+    <string name="search_destination_image_cd">صورة وجهة %s</string>
+    <string name="search_location_pin_cd">دبوس الموقع</string>
+</resources>
+
