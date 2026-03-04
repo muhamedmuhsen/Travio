@@ -9,8 +9,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.LocationOn
+import androidx.compose.material.icons.outlined.Close
+import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -27,9 +29,9 @@ import com.example.feature.search.R
 @Composable
 fun RecentSearchItem(
     modifier: Modifier = Modifier,
-    name: String,
-    cityName: String,
-    onClick: () -> Unit
+    query: String,
+    onClick: () -> Unit,
+    onDelete: () -> Unit
 ) {
     Row(
         modifier = modifier
@@ -37,25 +39,37 @@ fun RecentSearchItem(
             .fillMaxWidth()
             .defaultMinSize(minHeight = 48.dp)
             .padding(
-                horizontal = MaterialTheme.spacing.md,
-                vertical = MaterialTheme.spacing.xs
+                start = MaterialTheme.spacing.md,
+                end = MaterialTheme.spacing.xs,
+                top = MaterialTheme.spacing.xs,
+                bottom = MaterialTheme.spacing.xs
             ),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(
-            imageVector = Icons.Outlined.LocationOn,
-            contentDescription = stringResource(R.string.search_location_pin_cd),
-            tint = MaterialTheme.colorScheme.primary,
+            imageVector = Icons.Outlined.Search,
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.size(20.dp)
         )
 
         Spacer(Modifier.width(MaterialTheme.spacing.sm))
 
         Text(
-            text = "$name, $cityName",
+            text = query,
             style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Medium),
-            color = MaterialTheme.colorScheme.onSurface
+            color = MaterialTheme.colorScheme.onSurface,
+            modifier = Modifier.weight(1f)
         )
+
+        IconButton(onClick = onDelete) {
+            Icon(
+                imageVector = Icons.Outlined.Close,
+                contentDescription = stringResource(R.string.search_delete_recent_cd),
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.size(18.dp)
+            )
+        }
     }
 }
 
@@ -64,9 +78,9 @@ fun RecentSearchItem(
 private fun RecentSearchItemPreview() {
     TravioTheme {
         RecentSearchItem(
-            name = "Egypt",
-            cityName = "Fayoum",
-            onClick = {}
+            query = "Egypt",
+            onClick = {},
+            onDelete = {}
         )
     }
 }

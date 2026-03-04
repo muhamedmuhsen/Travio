@@ -5,6 +5,10 @@ import androidx.lifecycle.viewModelScope
 import com.example.domain.model.destination.Destination
 import com.example.domain.usecase.destinations.AddToRecentlyViewedUseCase
 import com.example.domain.usecase.destinations.SearchForDestinationsUseCase
+import com.example.domain.usecase.search.ClearRecentSearchesUseCase
+import com.example.domain.usecase.search.DeleteRecentSearchUseCase
+import com.example.domain.usecase.search.GetRecentSearchesUseCase
+import com.example.domain.usecase.search.SaveRecentSearchUseCase
 import com.example.domain.utils.Result
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.FlowPreview
@@ -12,6 +16,7 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -28,7 +33,11 @@ import javax.inject.Inject
 @HiltViewModel
 class SearchViewModel @Inject constructor(
     private val searchForDestinationsUseCase: SearchForDestinationsUseCase,
-    private val addToRecentlyViewedUseCase: AddToRecentlyViewedUseCase
+    private val addToRecentlyViewedUseCase: AddToRecentlyViewedUseCase,
+    private val getRecentSearchesUseCase: GetRecentSearchesUseCase,
+    private val saveRecentSearchUseCase: SaveRecentSearchUseCase,
+    private val deleteRecentSearchUseCase: DeleteRecentSearchUseCase,
+    private val clearRecentSearchesUseCase: ClearRecentSearchesUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(SearchUiState())
@@ -38,6 +47,7 @@ class SearchViewModel @Inject constructor(
     val event = _event.receiveAsFlow()
 
     init {
+        observeRecentSearches()
         observeQueryForSearch()
     }
 
@@ -45,15 +55,32 @@ class SearchViewModel @Inject constructor(
         when (action) {
             is SearchAction.OnQueryChanged -> _uiState.update { it.copy(query = action.query) }
             is SearchAction.OnDestinationClicked -> onDestinationClicked(action.destination)
+            is SearchAction.OnRecentSearchClicked -> _uiState.update { it.copy(query = action.query) }
+            is SearchAction.OnDeleteRecentSearch -> viewModelScope.launch {
+                deleteRecentSearchUseCase(action.query)
+            }
+
+            SearchAction.OnClearRecentSearches -> viewModelScope.launch {
+                clearRecentSearchesUseCase()
+            }
             SearchAction.OnBackClicked -> viewModelScope.launch { _event.send(SearchEvent.NavigateBack) }
             SearchAction.OnClearQuery -> _uiState.update {
                 it.copy(query = "", searchResultsState = UiState.Idle)
             }
-
             SearchAction.OnRetrySearch -> {
                 val query = _uiState.value.query
                 if (query.isNotBlank()) viewModelScope.launch { performSearch(query) }
             }
+        }
+    }
+
+    private fun observeRecentSearches() {
+        viewModelScope.launch {
+            getRecentSearchesUseCase()
+                .catch { e -> Timber.e(e, "observeRecentSearches failed") }
+                .collect { searches ->
+                    _uiState.update { it.copy(recentSearches = searches) }
+                }
         }
     }
 
@@ -92,10 +119,10 @@ class SearchViewModel @Inject constructor(
 
             is Result.Success -> {
                 _uiState.update { it.copy(searchResultsState = UiState.Success(result.data)) }
+                saveRecentSearchUseCase(query)
             }
         }
     }
-
 
     private fun onDestinationClicked(destination: Destination) {
         viewModelScope.launch {

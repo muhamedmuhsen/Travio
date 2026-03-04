@@ -120,7 +120,6 @@ private fun InterestChip(label: String) {
     }
 }
 
-
 @Composable
 fun LoadingSearchResultItem(modifier: Modifier = Modifier) {
     Row(

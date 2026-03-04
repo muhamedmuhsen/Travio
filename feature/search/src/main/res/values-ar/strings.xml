@@ -18,5 +18,10 @@
     <!-- Content descriptions -->
     <string name="search_destination_image_cd">صورة وجهة %s</string>
     <string name="search_location_pin_cd">دبوس الموقع</string>
+    <string name="search_delete_recent_cd">حذف البحث الأخير</string>
+
+    <!-- Recent searches -->
+    <string name="search_clear_all">مسح الكل</string>
+    <string name="search_empty_recent_searches">لا توجد عمليات بحث حديثة. ابدأ الاستكشاف!</string>
 </resources>
 

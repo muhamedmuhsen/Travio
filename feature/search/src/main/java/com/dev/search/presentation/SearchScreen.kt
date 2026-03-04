@@ -4,8 +4,10 @@ import android.content.res.Configuration
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -21,6 +23,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
@@ -38,12 +41,14 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.dev.home.components.ErrorView
 import com.dev.search.components.LoadingSearchResultItem
+import com.dev.search.components.RecentSearchItem
 import com.dev.search.components.SearchResultItem
 import com.dev.search.components.SearchTopBar
 import com.example.designsystem.components.ErrorSnackBar
 import com.example.designsystem.theme.TravioTheme
 import com.example.designsystem.theme.spacing
 import com.example.domain.model.destination.Destination
+import com.example.domain.model.search.RecentSearch
 import com.example.feature.search.R
 import ui.state.UiState
 
@@ -120,29 +125,82 @@ internal fun SearchContent(
                     onRetry = { onAction(SearchAction.OnRetrySearch) }
                 )
             } else {
-                EmptyQueryHint()
+                RecentSearchesSection(
+                    recentSearches = state.recentSearches,
+                    onItemClicked = { query -> onAction(SearchAction.OnRecentSearchClicked(query)) },
+                    onItemDeleted = { query -> onAction(SearchAction.OnDeleteRecentSearch(query)) },
+                    onClearAll = { onAction(SearchAction.OnClearRecentSearches) }
+                )
             }
         }
     }
 }
 
-// ── Empty query hint ──────────────────────────────────────────────────────────
+// ── Recent searches section ───────────────────────────────────────────────────
 
 @Composable
-private fun EmptyQueryHint() {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(MaterialTheme.spacing.xl),
-        contentAlignment = Alignment.TopCenter
-    ) {
-        Text(
-            text = stringResource(R.string.search_empty_recent),
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            textAlign = TextAlign.Center,
-            modifier = Modifier.padding(top = MaterialTheme.spacing.lg)
-        )
+private fun RecentSearchesSection(
+    recentSearches: List<RecentSearch>,
+    onItemClicked: (String) -> Unit,
+    onItemDeleted: (String) -> Unit,
+    onClearAll: () -> Unit
+) {
+    if (recentSearches.isEmpty()) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(MaterialTheme.spacing.xl),
+            contentAlignment = Alignment.TopCenter
+        ) {
+            Text(
+                text = stringResource(R.string.search_empty_recent_searches),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.padding(top = MaterialTheme.spacing.lg)
+            )
+        }
+    } else {
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            contentPadding = PaddingValues(bottom = MaterialTheme.spacing.md)
+        ) {
+            item(key = "recent_header") {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(
+                            start = MaterialTheme.spacing.md,
+                            end = MaterialTheme.spacing.xs,
+                            top = MaterialTheme.spacing.sm,
+                            bottom = MaterialTheme.spacing.xs
+                        ),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = stringResource(R.string.search_section_recent),
+                        style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.SemiBold),
+                        color = MaterialTheme.colorScheme.onSurface,
+                        modifier = Modifier.weight(1f)
+                    )
+                    TextButton(onClick = onClearAll) {
+                        Text(
+                            text = stringResource(R.string.search_clear_all),
+                            style = MaterialTheme.typography.labelMedium,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                    }
+                }
+            }
+
+            items(recentSearches, key = { it.query }) { item ->
+                RecentSearchItem(
+                    query = item.query,
+                    onClick = { onItemClicked(item.query) },
+                    onDelete = { onItemDeleted(item.query) }
+                )
+            }
+        }
     }
 }
 
@@ -198,7 +256,6 @@ private fun SearchResultsSection(
     }
 }
 
-
 @Composable
 private fun EmptyResultsState() {
     Column(
@@ -224,13 +281,30 @@ private fun EmptyResultsState() {
     }
 }
 
-
 @Preview(showBackground = true)
 @Composable
 private fun SearchScreenIdlePreview() {
     TravioTheme {
         SearchContent(
             state = SearchUiState(),
+            snackbarHostState = remember { SnackbarHostState() },
+            onAction = {}
+        )
+    }
+}
+
+@Preview(showBackground = true, name = "Recent Searches")
+@Composable
+private fun SearchScreenRecentPreview() {
+    TravioTheme {
+        SearchContent(
+            state = SearchUiState(
+                recentSearches = listOf(
+                    RecentSearch("Egypt", 0L),
+                    RecentSearch("Santorini", 0L),
+                    RecentSearch("Maldives", 0L)
+                )
+            ),
             snackbarHostState = remember { SnackbarHostState() },
             onAction = {}
         )
@@ -258,7 +332,12 @@ private fun SearchScreenLoadingPreview() {
 private fun SearchScreenDarkPreview() {
     TravioTheme(darkTheme = true) {
         SearchContent(
-            state = SearchUiState(),
+            state = SearchUiState(
+                recentSearches = listOf(
+                    RecentSearch("Egypt", 0L),
+                    RecentSearch("Santorini", 0L)
+                )
+            ),
             snackbarHostState = remember { SnackbarHostState() },
             onAction = {}
         )

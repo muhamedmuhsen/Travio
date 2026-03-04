@@ -18,5 +18,10 @@
     <!-- Content descriptions -->
     <string name="search_destination_image_cd">%s destination image</string>
     <string name="search_location_pin_cd">Location pin</string>
+    <string name="search_delete_recent_cd">Delete recent search</string>
+
+    <!-- Recent searches -->
+    <string name="search_clear_all">Clear all</string>
+    <string name="search_empty_recent_searches">No recent searches yet. Start exploring!</string>
 </resources>
 
