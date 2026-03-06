@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.feature.community"
+    namespace = "com.dev.feature.community"
     compileSdk = 36
 
     defaultConfig {
@@ -49,4 +49,14 @@ dependencies {
     implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.compose.material.icons.extended)
     debugImplementation(libs.androidx.compose.ui.tooling)
+
+    // Design system
+    implementation(project(":core:designsystem"))
+
+    // Image loading
+    implementation(libs.coil.compose)
+
+    // Lifecycle
+    implementation(libs.androidx.lifecycle.runtime.compose)
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
 }
