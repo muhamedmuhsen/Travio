@@ -8,5 +8,14 @@
     <!-- Community Post Card -->
     <string name="community_like_cd">إعجاب</string>
     <string name="community_comment_cd">تعليق</string>
+
+    <!-- Post Detail Screen -->
+    <string name="post_detail_bookmark_cd">حفظ المنشور</string>
+    <string name="post_detail_close_cd">إغلاق</string>
+    <string name="post_detail_comments_header">التعليقات</string>
+    <string name="post_detail_no_comments">لا توجد تعليقات بعد. كن أول من يعلّق!</string>
+    <string name="post_detail_comment_hint">أضف تعليقاً…</string>
+    <string name="post_detail_send_cd">إرسال التعليق</string>
+    <string name="post_detail_not_found">المنشور غير موجود.</string>
 </resources>
 

@@ -12,8 +12,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.dev.community.components.CommunityPostCard
 import com.dev.community.components.CommunityTopBar
 import com.example.designsystem.components.AppBottomBar
@@ -23,11 +23,12 @@ import com.example.designsystem.theme.spacing
 @Composable
 fun CommunityScreen(
     modifier: Modifier = Modifier,
-    viewModel: CommunityViewModel = viewModel(),
+    viewModel: CommunityViewModel = hiltViewModel(),
     navigateToHome: () -> Unit = {},
     navigateToFavorite: () -> Unit = {},
     navigateToAi: () -> Unit = {},
-    navigateToProfile: () -> Unit = {}
+    navigateToProfile: () -> Unit = {},
+    navigateToPostDetail: (Int) -> Unit = {}
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
 
@@ -38,6 +39,7 @@ fun CommunityScreen(
         navigateToFavorite = navigateToFavorite,
         navigateToAi = navigateToAi,
         navigateToProfile = navigateToProfile,
+        navigateToPostDetail = navigateToPostDetail,
         modifier = modifier
     )
 }
@@ -50,7 +52,8 @@ fun CommunityScreenContent(
     navigateToFavorite: () -> Unit,
     navigateToAi: () -> Unit,
     navigateToProfile: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    navigateToPostDetail: (Int) -> Unit = {}
 ) {
     Scaffold(
         modifier = modifier,
@@ -63,10 +66,8 @@ fun CommunityScreenContent(
                     when (index) {
                         0 -> navigateToHome()
                         1 -> navigateToFavorite()
-                        2 -> {
-                            /* already on Community */
+                        2 -> {/* already on Community */
                         }
-
                         3 -> navigateToAi()
                         4 -> navigateToProfile()
                     }
@@ -87,7 +88,8 @@ fun CommunityScreenContent(
             items(items = state.posts, key = { it.id }) { post ->
                 CommunityPostCard(
                     post = post,
-                    onLikeClicked = { onLikeClicked(post.id) }
+                    onLikeClicked = { onLikeClicked(post.id) },
+                    onCardClicked = { navigateToPostDetail(post.id) }
                 )
             }
         }

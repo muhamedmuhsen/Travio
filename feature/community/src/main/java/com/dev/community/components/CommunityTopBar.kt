@@ -51,7 +51,6 @@ fun CommunityTopBar(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.md)
         ) {
-            // Left: grey circle with teal border + community people icon
             Box(
                 modifier = Modifier
                     .size(52.dp)
@@ -76,7 +75,6 @@ fun CommunityTopBar(
                 )
             }
 
-            // Center: "Community" bold + "Travel • Explore • Share" subtitle
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = stringResource(R.string.community_title),
@@ -90,7 +88,6 @@ fun CommunityTopBar(
                 )
             }
 
-            // Right: filled teal circle with send/share arrow
             IconButton(
                 onClick = onShareClicked,
                 modifier = Modifier

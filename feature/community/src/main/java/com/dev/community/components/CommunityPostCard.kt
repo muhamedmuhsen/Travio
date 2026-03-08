@@ -1,6 +1,7 @@
 package com.dev.community.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,8 +18,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.LocationOn
-import androidx.compose.material.icons.filled.ModeComment
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material.icons.outlined.LocationOn
@@ -51,10 +50,13 @@ fun CommunityPostCard(
     modifier: Modifier = Modifier,
     post: CommunityPost,
     onLikeClicked: () -> Unit = {},
-    onCommentClicked: () -> Unit = {}
+    onCommentClicked: () -> Unit = {},
+    onCardClicked: () -> Unit = {}
 ) {
     Card(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier
+            .fillMaxWidth()
+            .clickable(onClick = onCardClicked),
         shape = RoundedCornerShape(16.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
         colors = CardDefaults.cardColors(
@@ -62,7 +64,6 @@ fun CommunityPostCard(
         )
     ) {
         Column {
-            // ── Author row ───────────────────────────────────────────────
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -102,18 +103,15 @@ fun CommunityPostCard(
                     }
                 }
 
-                // Star rating badge (top-right)
                 if (post.rating > 0f) {
                     StarBadge(rating = post.rating)
                 }
             }
 
-            // ── Swipeable image pager ────────────────────────────────────
             if (post.imageUrls.isNotEmpty()) {
                 PostImagePager(imageUrls = post.imageUrls)
             }
 
-            // ── Post text ────────────────────────────────────────────────
             Text(
                 text = post.content,
                 style = MaterialTheme.typography.bodyMedium,
@@ -129,7 +127,6 @@ fun CommunityPostCard(
                     .fillMaxWidth()
                     .padding(horizontal = MaterialTheme.spacing.sm)
             )
-            // ── Like / Comment / Timestamp ───────────────────────────────
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -190,9 +187,6 @@ fun CommunityPostCard(
         }
     }
 }
-
-// ── Star badge ────────────────────────────────────────────────────────────────
-
 @Composable
 private fun StarBadge(rating: Float) {
     Row(
@@ -222,7 +216,6 @@ private fun StarBadge(rating: Float) {
     }
 }
 
-// ── Author avatar ─────────────────────────────────────────────────────────────
 
 @Composable
 private fun AuthorAvatar(
@@ -259,7 +252,6 @@ private fun AuthorAvatar(
     }
 }
 
-// ── Image pager with counter badge ───────────────────────────────────────────
 
 @Composable
 private fun PostImagePager(imageUrls: List<String>) {
@@ -297,7 +289,6 @@ private fun PostImagePager(imageUrls: List<String>) {
     }
 }
 
-// ── Preview ───────────────────────────────────────────────────────────────────
 
 @Preview(showBackground = true, backgroundColor = 0xFFF7FAFA)
 @Composable
