@@ -35,12 +35,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.dev.community.presentation.CommunityPost
+import com.dev.feature.community.R
 import com.example.designsystem.theme.TravioTheme
 import com.example.designsystem.theme.spacing
 
@@ -145,7 +147,7 @@ fun CommunityPostCard(
                         } else {
                             Icons.Outlined.FavoriteBorder
                         },
-                        contentDescription = "Like",
+                        contentDescription = stringResource(R.string.community_like_cd),
                         tint = if (post.isLiked) {
                             MaterialTheme.colorScheme.error
                         } else {
@@ -165,7 +167,7 @@ fun CommunityPostCard(
                 IconButton(onClick = onCommentClicked, modifier = Modifier.size(36.dp)) {
                     Icon(
                         imageVector = Icons.Outlined.ModeComment,
-                        contentDescription = "Comment",
+                        contentDescription = stringResource(R.string.community_comment_cd),
                         tint = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.size(18.dp)
                     )

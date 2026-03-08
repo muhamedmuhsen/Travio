@@ -63,7 +63,8 @@ fun CommunityScreenContent(
                     when (index) {
                         0 -> navigateToHome()
                         1 -> navigateToFavorite()
-                        2 -> { /* already on Community */
+                        2 -> {
+                            /* already on Community */
                         }
 
                         3 -> navigateToAi()

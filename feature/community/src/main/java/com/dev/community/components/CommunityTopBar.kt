@@ -21,9 +21,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Brush.Companion.linearGradient
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -79,12 +79,12 @@ fun CommunityTopBar(
             // Center: "Community" bold + "Travel • Explore • Share" subtitle
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = "Community",
+                    text = stringResource(R.string.community_title),
                     style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
                     color = MaterialTheme.colorScheme.onSurface
                 )
                 Text(
-                    text = "Travel \u2022 Explore \u2022 Share",
+                    text = stringResource(R.string.community_subtitle),
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -100,7 +100,7 @@ fun CommunityTopBar(
             ) {
                 Icon(
                     painter = painterResource(id = R.drawable.share_icon),
-                    contentDescription = "Share",
+                    contentDescription = stringResource(R.string.community_share_cd),
                     tint = MaterialTheme.colorScheme.onPrimary,
                     modifier = Modifier.size(20.dp)
                 )

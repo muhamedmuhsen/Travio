@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Community Top Bar -->
+    <string name="community_title">Community</string>
+    <string name="community_subtitle">Travel &#x2022; Explore &#x2022; Share</string>
+    <string name="community_share_cd">Share</string>
+
+    <!-- Community Post Card -->
+    <string name="community_like_cd">Like</string>
+    <string name="community_comment_cd">Comment</string>
+</resources>
+

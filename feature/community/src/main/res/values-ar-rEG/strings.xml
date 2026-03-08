@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Community Top Bar -->
+    <string name="community_title">المجتمع</string>
+    <string name="community_subtitle">سفر &#x2022; استكشاف &#x2022; مشاركة</string>
+    <string name="community_share_cd">مشاركة</string>
+
+    <!-- Community Post Card -->
+    <string name="community_like_cd">إعجاب</string>
+    <string name="community_comment_cd">تعليق</string>
+</resources>
+
