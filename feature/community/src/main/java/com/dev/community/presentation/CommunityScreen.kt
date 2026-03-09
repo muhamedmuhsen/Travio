@@ -1,24 +1,31 @@
 package com.dev.community.presentation
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.dev.community.components.CommunityPostCard
 import com.dev.community.components.CommunityTopBar
+import com.dev.feature.community.R
 import com.example.designsystem.components.AppBottomBar
 import com.example.designsystem.theme.TravioTheme
 import com.example.designsystem.theme.spacing
+import com.example.domain.model.community.CommunityPost
 
 @Composable
 fun CommunityScreen(
@@ -28,7 +35,8 @@ fun CommunityScreen(
     navigateToFavorite: () -> Unit = {},
     navigateToAi: () -> Unit = {},
     navigateToProfile: () -> Unit = {},
-    navigateToPostDetail: (Int) -> Unit = {}
+    navigateToPostDetail: (Int) -> Unit = {},
+    navigateToShareMoment: () -> Unit = {}
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
 
@@ -40,6 +48,7 @@ fun CommunityScreen(
         navigateToAi = navigateToAi,
         navigateToProfile = navigateToProfile,
         navigateToPostDetail = navigateToPostDetail,
+        navigateToShareMoment = navigateToShareMoment,
         modifier = modifier
     )
 }
@@ -52,13 +61,14 @@ fun CommunityScreenContent(
     navigateToFavorite: () -> Unit,
     navigateToAi: () -> Unit,
     navigateToProfile: () -> Unit,
+    navigateToPostDetail: (Int) -> Unit,
     modifier: Modifier = Modifier,
-    navigateToPostDetail: (Int) -> Unit = {}
+    navigateToShareMoment: () -> Unit = {}
 ) {
     Scaffold(
         modifier = modifier,
         containerColor = MaterialTheme.colorScheme.background,
-        topBar = { CommunityTopBar(onShareClicked = {}) },
+        topBar = { CommunityTopBar(onShareClicked = navigateToShareMoment) },
         bottomBar = {
             AppBottomBar(
                 selectedItem = 2,
@@ -66,7 +76,8 @@ fun CommunityScreenContent(
                     when (index) {
                         0 -> navigateToHome()
                         1 -> navigateToFavorite()
-                        2 -> {/* already on Community */
+                        2 -> {
+                            /* already on Community */
                         }
                         3 -> navigateToAi()
                         4 -> navigateToProfile()
@@ -75,22 +86,53 @@ fun CommunityScreenContent(
             )
         }
     ) { paddingValues ->
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues),
-            contentPadding = PaddingValues(
-                horizontal = MaterialTheme.spacing.md,
-                vertical = MaterialTheme.spacing.md
-            ),
-            verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.md)
-        ) {
-            items(items = state.posts, key = { it.id }) { post ->
-                CommunityPostCard(
-                    post = post,
-                    onLikeClicked = { onLikeClicked(post.id) },
-                    onCardClicked = { navigateToPostDetail(post.id) }
-                )
+        when {
+            state.isLoading -> {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(paddingValues),
+                    contentAlignment = Alignment.Center
+                ) {
+                    // TODO: add shimmer effect
+                    CircularProgressIndicator()
+                }
+            }
+
+            state.posts.isEmpty() -> {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(paddingValues),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = stringResource(R.string.community_empty_state),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            }
+
+            else -> {
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(paddingValues),
+                    contentPadding = PaddingValues(
+                        horizontal = MaterialTheme.spacing.md,
+                        vertical = MaterialTheme.spacing.md
+                    ),
+                    verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.md)
+                ) {
+                    items(items = state.posts, key = { it.id }) { post ->
+                        CommunityPostCard(
+                            post = post,
+                            onLikeClicked = { onLikeClicked(post.id) },
+                            onCardClicked = { navigateToPostDetail(post.id) }
+                        )
+                    }
+                }
             }
         }
     }
@@ -140,7 +182,8 @@ private fun CommunityScreenPreview() {
             navigateToHome = {},
             navigateToFavorite = {},
             navigateToAi = {},
-            navigateToProfile = {}
+            navigateToProfile = {},
+            navigateToPostDetail = {}
         )
     }
 }

@@ -1,7 +1,7 @@
 package com.dev.profile.editProfile
 
-import ui.state.UiState
-import ui.text.UiText
+import com.dev.utils.uistate.UiState
+import com.dev.utils.uitext.UiText
 
 data class EditProfileUiState(
     val firstName: String = "",

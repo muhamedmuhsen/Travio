@@ -3,6 +3,8 @@ package com.example.feature.signup
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.dev.utils.uistate.UiState
+import com.dev.utils.uitext.asUiText
 import com.example.data.repository.auth.GoogleCredentialDataSourceImpl
 import com.example.domain.repository.prefernces.PreferencesManager
 import com.example.domain.usecase.auth.emailverification.SendVerifyEmailOtpUseCase
@@ -17,8 +19,6 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import ui.state.UiState
-import ui.text.asUiText
 import javax.inject.Inject
 
 @HiltViewModel

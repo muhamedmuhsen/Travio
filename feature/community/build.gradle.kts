@@ -38,6 +38,10 @@ android {
 }
 
 dependencies {
+    implementation(project(":core:designsystem"))
+    implementation(project(":feature:utils"))
+    implementation(project(":domain"))
+    testImplementation(project(":feature:utils"))
     // Core Android
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
@@ -51,9 +55,6 @@ dependencies {
     implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.compose.material.icons.extended)
     debugImplementation(libs.androidx.compose.ui.tooling)
-
-    // Design system
-    implementation(project(":core:designsystem"))
 
     // Image loading
     implementation(libs.coil.compose)

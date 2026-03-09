@@ -1,6 +1,6 @@
 package com.example.feature.newpassword
 
-import ui.state.UiState
+import com.dev.utils.uistate.UiState
 
 data class NewPasswordState(
     val newPassword: String = "",

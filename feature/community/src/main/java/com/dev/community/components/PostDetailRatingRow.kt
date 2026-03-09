@@ -12,7 +12,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.example.designsystem.R
+import com.dev.feature.community.R
 import com.example.designsystem.theme.TravioTheme
 
 @Composable
@@ -42,11 +42,10 @@ fun PostDetailRatingRow(
     }
 }
 
-
 @Preview(showBackground = true)
 @Composable
 private fun PostDetailRatingRowPreview() {
     TravioTheme {
-        PostDetailRatingRow(rating = 3f)
+        PostDetailRatingRow(rating = 3.5f)
     }
 }

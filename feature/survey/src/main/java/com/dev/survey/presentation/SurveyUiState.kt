@@ -1,7 +1,7 @@
 package com.dev.survey.presentation
 
 import com.dev.survey.components.TravelCategory
-import ui.state.UiState
+import com.dev.utils.uistate.UiState
 
 data class SurveyUiState(
     val currentStep: Int = 0,

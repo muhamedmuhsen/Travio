@@ -19,17 +19,20 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.dev.community.components.CommentInputBar
 import com.dev.community.components.CommentItem
 import com.dev.community.components.PostDetailActions
 import com.dev.community.components.PostDetailHeader
-import com.dev.community.components.PostDetailImagePager
 import com.dev.community.components.PostDetailRatingRow
+import com.dev.community.components.SharedImagePager
 import com.dev.feature.community.R
 import com.example.designsystem.theme.TravioTheme
 import com.example.designsystem.theme.spacing
+import com.example.domain.model.community.Comment
+import com.example.domain.model.community.CommunityPost
 
 @Composable
 fun PostDetailScreen(
@@ -38,9 +41,11 @@ fun PostDetailScreen(
     viewModel: PostDetailViewModel = hiltViewModel()
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
+    val commentText by viewModel.commentText.collectAsStateWithLifecycle()
 
     PostDetailScreenContent(
         state = state,
+        commentText = commentText,
         onLikeClicked = viewModel::onLikeClicked,
         onBookmarkClicked = viewModel::onBookmarkClicked,
         onCommentTextChanged = viewModel::onCommentTextChanged,
@@ -53,6 +58,7 @@ fun PostDetailScreen(
 @Composable
 fun PostDetailScreenContent(
     state: PostDetailUiState,
+    commentText: String,
     onLikeClicked: () -> Unit,
     onBookmarkClicked: () -> Unit,
     onCommentTextChanged: (String) -> Unit,
@@ -97,7 +103,11 @@ fun PostDetailScreenContent(
 
             if (post.imageUrls.isNotEmpty()) {
                 item {
-                    PostDetailImagePager(imageUrls = post.imageUrls)
+                    SharedImagePager(
+                        imageUrls = post.imageUrls,
+                        height = 240.dp,
+                        showArrows = true
+                    )
                 }
             }
 
@@ -171,14 +181,13 @@ fun PostDetailScreenContent(
         }
 
         CommentInputBar(
-            value = state.newCommentText,
+            value = commentText,
             onValueChange = onCommentTextChanged,
             onSendClicked = onCommentSubmitted,
             modifier = Modifier.align(Alignment.BottomCenter)
         )
     }
 }
-
 
 @Preview(showBackground = true, backgroundColor = 0xFFF7FAFA, showSystemUi = true)
 @Composable
@@ -217,9 +226,9 @@ private fun PostDetailScreenPreview() {
                             timeAgo = "6h ago"
                         )
                     )
-                ),
-                newCommentText = ""
+                )
             ),
+            commentText = "",
             onLikeClicked = {},
             onBookmarkClicked = {},
             onCommentTextChanged = {},

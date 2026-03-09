@@ -1,4 +1,4 @@
-package ui.localization
+package com.dev.utils.localization
 
 enum class AppLanguage(val code: String) {
     ARABIC("ar"),

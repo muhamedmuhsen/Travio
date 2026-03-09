@@ -38,11 +38,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.dev.utils.localization.AppLanguage
 import com.example.designsystem.R
 import com.example.designsystem.theme.TravioTheme
 import com.example.designsystem.theme.spacing
 import kotlinx.coroutines.launch
-import ui.localization.AppLanguage
 
 @Composable
 fun OnboardingScreen(

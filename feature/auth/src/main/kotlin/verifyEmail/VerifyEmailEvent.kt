@@ -1,6 +1,6 @@
 package com.example.feature.verifyEmail
 
-import ui.text.UiText
+import com.dev.utils.uitext.UiText
 
 sealed interface VerifyEmailEvent {
     data object OnBackClicked : VerifyEmailEvent

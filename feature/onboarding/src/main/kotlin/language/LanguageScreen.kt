@@ -29,12 +29,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.dev.utils.localization.AppLanguage
 import com.example.designsystem.components.AppButton
 import com.example.designsystem.components.AppOutlinedButton
 import com.example.designsystem.theme.TravioTheme
 import com.example.designsystem.theme.spacing
 import com.example.feature.onboarding.R
-import ui.localization.AppLanguage
 
 @Composable
 fun LanguageScreen(

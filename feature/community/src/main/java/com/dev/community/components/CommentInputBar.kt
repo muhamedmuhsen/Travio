@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Icon
@@ -28,7 +27,6 @@ import androidx.compose.ui.unit.dp
 import com.dev.feature.community.R
 import com.example.designsystem.theme.TravioTheme
 import com.example.designsystem.theme.spacing
-
 
 @Composable
 fun CommentInputBar(
@@ -65,7 +63,7 @@ fun CommentInputBar(
                     .weight(1f)
                     .padding(end = MaterialTheme.spacing.sm)
                     .heightIn(max = 48.dp),
-                shape = RoundedCornerShape(24.dp),
+                shape = MaterialTheme.shapes.extraLarge,
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Send),
                 keyboardActions = KeyboardActions(onSend = { onSendClicked() }),
@@ -93,7 +91,6 @@ fun CommentInputBar(
         }
     }
 }
-
 
 @Preview(showBackground = true)
 @Composable

@@ -25,14 +25,14 @@ import com.dev.feature.community.R
 import com.example.designsystem.theme.TravioTheme
 import com.example.designsystem.theme.spacing
 
-
 @Composable
 fun PostDetailActions(
+    modifier: Modifier = Modifier,
     likesCount: Int,
     commentsCount: Int,
     isLiked: Boolean,
     onLikeClicked: () -> Unit,
-    modifier: Modifier = Modifier
+    onCommentClicked: () -> Unit = {}
 ) {
     Row(
         modifier = modifier
@@ -66,14 +66,16 @@ fun PostDetailActions(
 
         Spacer(modifier = Modifier.width(MaterialTheme.spacing.sm))
 
-        Icon(
-            painter = painterResource(R.drawable.comment_icon),
-            contentDescription = stringResource(R.string.community_comment_cd),
-            tint = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier
-                .padding(start = 4.dp)
-                .size(18.dp)
-        )
+        IconButton(onClick = onCommentClicked, modifier = Modifier.size(36.dp)) {
+            Icon(
+                painter = painterResource(R.drawable.comment_icon),
+                contentDescription = stringResource(R.string.community_comment_cd),
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier
+                    .padding(start = 4.dp)
+                    .size(18.dp)
+            )
+        }
         Spacer(modifier = Modifier.width(4.dp))
         Text(
             text = commentsCount.toString(),

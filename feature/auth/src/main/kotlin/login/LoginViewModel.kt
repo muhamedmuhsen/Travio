@@ -3,6 +3,8 @@ package com.example.feature.login
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.dev.utils.uistate.UiState
+import com.dev.utils.uitext.asUiText
 import com.example.data.repository.auth.GoogleCredentialDataSourceImpl
 import com.example.domain.repository.prefernces.CredentialsManager
 import com.example.domain.repository.prefernces.PreferencesManager
@@ -17,8 +19,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import ui.state.UiState
-import ui.text.asUiText
 import javax.inject.Inject
 
 @HiltViewModel

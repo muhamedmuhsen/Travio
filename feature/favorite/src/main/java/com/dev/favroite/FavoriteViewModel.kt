@@ -3,6 +3,8 @@ package com.dev.favroite
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dev.favroite.components.SectionTab
+import com.dev.utils.uistate.UiState
+import com.dev.utils.uitext.UiText
 import com.example.domain.usecase.favorite.place.DeletePlaceUseCase
 import com.example.domain.usecase.favorite.place.GetAllPlacesUseCase
 import com.example.domain.usecase.favorite.post.DeletePostUseCase
@@ -13,8 +15,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import ui.state.UiState
-import ui.text.UiText
 import javax.inject.Inject
 
 @HiltViewModel

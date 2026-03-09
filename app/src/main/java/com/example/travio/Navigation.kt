@@ -11,6 +11,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.dev.community.presentation.CommunityScreen
 import com.dev.community.presentation.PostDetailScreen
+import com.dev.community.presentation.ShareMomentScreen
 import com.dev.favroite.FavoriteScreen
 import com.dev.home.presentation.HomeScreen
 import com.dev.profile.editProfile.EditProfileScreen
@@ -298,7 +299,16 @@ fun TravioNavHost(
                 },
                 navigateToPostDetail = { postId ->
                     navController.navigate(Screen.PostDetailScreen.route + "/$postId")
+                },
+                navigateToShareMoment = {
+                    navController.navigate(Screen.ShareMomentScreen.route)
                 }
+            )
+        }
+
+        composable(Screen.ShareMomentScreen.route) {
+            ShareMomentScreen(
+                onNavigateBack = { navController.popBackStack() }
             )
         }
 

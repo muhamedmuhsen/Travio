@@ -36,10 +36,10 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.dev.feature.survey.R
 import com.dev.survey.components.SurveyStepProgressBar
 import com.dev.survey.components.TravelCategoryCard
+import com.dev.utils.uistate.UiState
 import com.example.designsystem.components.AppButton
 import com.example.designsystem.theme.TravioTheme
 import com.example.designsystem.theme.spacing
-import ui.state.UiState
 
 @Composable
 fun SurveyScreen(

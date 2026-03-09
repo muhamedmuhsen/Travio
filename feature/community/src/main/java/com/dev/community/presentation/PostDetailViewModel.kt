@@ -2,52 +2,53 @@ package com.dev.community.presentation
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.domain.usecase.community.AddCommentUseCase
+import com.example.domain.usecase.community.GetCommunityPostsUseCase
+import com.example.domain.usecase.community.ToggleBookmarkUseCase
+import com.example.domain.usecase.community.ToggleLikeUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
-
+import javax.inject.Named
 
 @HiltViewModel
 class PostDetailViewModel @Inject constructor(
-    private val communityViewModel: CommunityViewModel,
-    savedStateHandle: SavedStateHandle
+    @Named("comment_author_you") private val commentAuthorName: String,
+    private val getCommunityPosts: GetCommunityPostsUseCase,
+    private val toggleLike: ToggleLikeUseCase,
+    private val toggleBookmark: ToggleBookmarkUseCase,
+    private val addComment: AddCommentUseCase,
+    private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
     private val postId: Int = checkNotNull(savedStateHandle["postId"])
 
-    private val _uiState = MutableStateFlow(
-        PostDetailUiState(post = communityViewModel.getPostById(postId))
-    )
-    val uiState: StateFlow<PostDetailUiState> = _uiState.asStateFlow()
+    val uiState: StateFlow<PostDetailUiState> = getCommunityPosts()
+        .map { posts -> PostDetailUiState(post = posts.firstOrNull { it.id == postId }) }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = PostDetailUiState(post = getCommunityPosts().value.firstOrNull { it.id == postId })
+        )
 
-    // ── Event handlers ────────────────────────────────────────────────────────
+    val commentText: StateFlow<String> = savedStateHandle.getStateFlow("commentText", "")
 
-    fun onLikeClicked() {
-        communityViewModel.onLikeClicked(postId)
-        refreshPost()
-    }
+    fun onLikeClicked() = toggleLike(postId)
 
-    fun onBookmarkClicked() {
-        communityViewModel.onBookmarkClicked(postId)
-        refreshPost()
-    }
+    fun onBookmarkClicked() = toggleBookmark(postId)
 
     fun onCommentTextChanged(text: String) {
-        _uiState.update { it.copy(newCommentText = text) }
+        savedStateHandle["commentText"] = text
     }
 
     fun onCommentSubmitted() {
-        val text = _uiState.value.newCommentText
+        val text = commentText.value
         if (text.isBlank()) return
-        communityViewModel.onCommentSubmitted(postId, text)
-        _uiState.update { it.copy(newCommentText = "") }
-        refreshPost()
-    }
-
-    private fun refreshPost() {
-        _uiState.update { it.copy(post = communityViewModel.getPostById(postId)) }
+        addComment(postId, text, commentAuthorName)
+        savedStateHandle["commentText"] = ""
     }
 }
