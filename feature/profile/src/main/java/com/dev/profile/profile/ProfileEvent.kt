@@ -1,6 +1,6 @@
 package com.dev.profile.profile
 
-import ui.text.UiText
+import com.dev.utils.uitext.UiText
 
 sealed interface ProfileEvent {
     data object NavigateToEditProfile : ProfileEvent

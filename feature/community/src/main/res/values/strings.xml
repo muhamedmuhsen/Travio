@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Community Top Bar -->
+    <string name="community_title">Community</string>
+    <string name="community_subtitle">Travel &#x2022; Explore &#x2022; Share</string>
+    <string name="community_share_cd">Share</string>
+    <string name="community_empty_state">No posts yet. Be the first to share your journey!</string>
+
+    <!-- Community Post Card -->
+    <string name="community_like_cd">Like</string>
+    <string name="community_comment_cd">Comment</string>
+
+    <!-- Post Detail Screen -->
+    <string name="post_detail_bookmark_cd">Bookmark post</string>
+    <string name="post_detail_close_cd">Close</string>
+    <string name="post_detail_comments_header">Comments</string>
+    <string name="post_detail_no_comments">No comments yet. Be the first!</string>
+    <string name="post_detail_comment_hint">Add a comment…</string>
+    <string name="post_detail_send_cd">Send comment</string>
+    <string name="post_detail_not_found">Post not found.</string>
+
+    <!-- Image Pager -->
+    <string name="image_n_of_m">Image %1$d of %2$d</string>
+    <string name="pager_previous_cd">Previous image</string>
+    <string name="pager_next_cd">Next image</string>
+
+    <!-- Comment author (current user) -->
+    <string name="comment_author_you">You</string>
+
+    <!-- Share Moment Screen -->
+    <string name="share_moment_title">Share Moment</string>
+    <string name="share_moment_subtitle">Capture and share your adventure</string>
+    <string name="share_moment_close_cd">Close</string>
+    <string name="share_moment_add_photo_title">Add Photo</string>
+    <string name="share_moment_add_photo_subtitle">Click to upload your travel photo</string>
+    <string name="share_moment_add_photo_cd">Add photo</string>
+    <string name="share_moment_selected_photo_cd">Selected photo</string>
+    <string name="share_moment_location_label">Location</string>
+    <string name="share_moment_location_hint">Where is this place?</string>
+    <string name="share_moment_description_label">Description</string>
+    <string name="share_moment_description_hint">Tell us about your experience…</string>
+    <string name="share_moment_post_button">Post Now</string>
+    <string name="share_moment_error_photo_required">Please add a photo before posting.</string>
+    <string name="share_moment_error_location_required">Please enter a location before posting.</string>
+</resources>

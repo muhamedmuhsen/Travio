@@ -1,6 +1,6 @@
 package com.example.feature.code
 
-import ui.text.UiText
+import com.dev.utils.uitext.UiText
 
 sealed interface CodeEvent {
     data object OnBackClicked : CodeEvent

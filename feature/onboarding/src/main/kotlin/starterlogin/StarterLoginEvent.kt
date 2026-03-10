@@ -1,6 +1,6 @@
 package com.example.feature.starterlogin
 
-import ui.text.UiText
+import com.dev.utils.uitext.UiText
 
 interface StarterLoginEvent {
     data class ShowAuthError(val message: UiText) : StarterLoginEvent

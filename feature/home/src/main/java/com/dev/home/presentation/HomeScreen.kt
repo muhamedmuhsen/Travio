@@ -58,6 +58,7 @@ import com.dev.home.components.LoadingCountryCard
 import com.dev.home.components.LoadingDestinationCard
 import com.dev.home.components.LoadingRecentViewedCard
 import com.dev.home.components.RecentViewedCard
+import com.dev.utils.uistate.UiState
 import com.example.designsystem.components.AppBottomBar
 import com.example.designsystem.components.ErrorSnackBar
 import com.example.designsystem.components.SuccessSnackBar
@@ -68,7 +69,6 @@ import com.example.domain.model.destination.Destination
 import com.example.feature.home.R
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
-import ui.state.UiState
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable

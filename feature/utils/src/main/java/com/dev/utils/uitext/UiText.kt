@@ -1,4 +1,4 @@
-package ui.text
+package com.dev.utils.uitext
 
 import android.content.Context
 import androidx.annotation.StringRes

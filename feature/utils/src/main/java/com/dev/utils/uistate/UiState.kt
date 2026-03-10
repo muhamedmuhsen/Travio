@@ -1,6 +1,6 @@
-package ui.state
+package com.dev.utils.uistate
 
-import ui.text.UiText
+import com.dev.utils.uitext.UiText
 
 sealed interface UiState<out T> {
     data object Idle : UiState<Nothing>

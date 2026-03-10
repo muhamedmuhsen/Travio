@@ -2,10 +2,12 @@ plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.hilt)
+    alias(libs.plugins.ksp)
 }
 
 android {
-    namespace = "com.example.feature.community"
+    namespace = "com.dev.feature.community"
     compileSdk = 36
 
     defaultConfig {
@@ -36,6 +38,10 @@ android {
 }
 
 dependencies {
+    implementation(project(":core:designsystem"))
+    implementation(project(":feature:utils"))
+    implementation(project(":domain"))
+    testImplementation(project(":feature:utils"))
     // Core Android
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
@@ -49,4 +55,16 @@ dependencies {
     implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.compose.material.icons.extended)
     debugImplementation(libs.androidx.compose.ui.tooling)
+
+    // Image loading
+    implementation(libs.coil.compose)
+
+    // Lifecycle
+    implementation(libs.androidx.lifecycle.runtime.compose)
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
+
+    // Hilt
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.compiler)
+    implementation(libs.androidx.hilt.navigation.compose)
 }

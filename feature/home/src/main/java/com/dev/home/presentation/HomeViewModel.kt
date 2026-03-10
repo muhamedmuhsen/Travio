@@ -2,6 +2,9 @@ package com.dev.home.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.dev.utils.uistate.UiState
+import com.dev.utils.uitext.UiText
+import com.dev.utils.uitext.asUiText
 import com.example.data.mapper.place.toPlace
 import com.example.domain.model.destination.Destination
 import com.example.domain.usecase.destinations.AddToRecentlyViewedUseCase
@@ -24,9 +27,6 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import ui.state.UiState
-import ui.text.UiText
-import ui.text.asUiText
 import javax.inject.Inject
 import com.example.designsystem.R as DesignSystemR
 

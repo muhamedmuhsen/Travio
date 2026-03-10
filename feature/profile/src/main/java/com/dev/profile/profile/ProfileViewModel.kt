@@ -2,6 +2,9 @@ package com.dev.profile.profile
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.dev.utils.localization.AppLanguage
+import com.dev.utils.uistate.UiState
+import com.dev.utils.uitext.asUiText
 import com.example.domain.repository.prefernces.PreferencesManager
 import com.example.domain.usecase.auth.session.LogoutUseCase
 import com.example.domain.usecase.preferences.ToggleDarkModeUseCase
@@ -16,9 +19,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import ui.localization.AppLanguage
-import ui.state.UiState
-import ui.text.asUiText
 import java.util.Locale
 import javax.inject.Inject
 

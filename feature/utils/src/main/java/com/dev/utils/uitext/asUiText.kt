@@ -1,9 +1,9 @@
-package ui.text
+package com.dev.utils.uitext
 
+import com.dev.utils.uitext.UiText.StringResource
 import com.example.designsystem.R
 import com.example.domain.utils.DataError
 import com.example.domain.utils.Result
-import ui.text.UiText.StringResource
 
 fun DataError.asUiText(): UiText {
     return when (this) {

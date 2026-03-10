@@ -48,6 +48,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.dev.utils.uitext.UiText
 import com.example.designsystem.components.AppButton
 import com.example.designsystem.components.AppTextField
 import com.example.designsystem.components.ErrorSnackBar
@@ -56,7 +57,6 @@ import com.example.designsystem.theme.TravioTheme
 import com.example.designsystem.theme.spacing
 import com.example.feature.profile.R
 import timber.log.Timber
-import ui.text.UiText
 
 @Composable
 fun EditProfileScreen(

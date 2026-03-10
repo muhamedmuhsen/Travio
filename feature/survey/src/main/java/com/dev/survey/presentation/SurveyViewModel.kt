@@ -3,6 +3,8 @@ package com.dev.survey.presentation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dev.survey.components.TravelCategory
+import com.dev.utils.uistate.UiState
+import com.dev.utils.uitext.UiText
 import com.example.domain.repository.prefernces.PreferencesManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
@@ -13,7 +15,6 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import ui.state.UiState
 import javax.inject.Inject
 
 @HiltViewModel
@@ -74,7 +75,7 @@ class SurveyViewModel @Inject constructor(
                 _uiState.update {
                     it.copy(
                         submitState = UiState.Error(
-                            ui.text.UiText.DynamicString(e.message ?: "An error occurred")
+                            UiText.DynamicString(e.message ?: "An error occurred")
                         )
                     )
                 }

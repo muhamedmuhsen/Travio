@@ -6,9 +6,9 @@ import android.os.Build
 import android.os.LocaleList
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.os.LocaleListCompat
+import com.dev.utils.localization.AppLanguage
 import dagger.hilt.android.qualifiers.ApplicationContext
 import timber.log.Timber
-import ui.localization.AppLanguage
 import javax.inject.Inject
 
 class AppLocaleManager @Inject constructor(

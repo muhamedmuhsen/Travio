@@ -2,6 +2,8 @@ package com.example.feature.forgetpassword.forgetpassword
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.dev.utils.uitext.UiText
+import com.dev.utils.uitext.asUiText
 import com.example.common.extensions.isValidEmail
 import com.example.domain.usecase.auth.passwordreset.ForgetPasswordUseCase
 import com.example.domain.utils.Result
@@ -14,8 +16,6 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import ui.text.UiText
-import ui.text.asUiText
 import javax.inject.Inject
 
 @HiltViewModel

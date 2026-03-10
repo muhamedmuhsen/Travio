@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Community Top Bar -->
+    <string name="community_title">المجتمع</string>
+    <string name="community_subtitle">سفر &#x2022; استكشاف &#x2022; مشاركة</string>
+    <string name="community_share_cd">مشاركة</string>
+    <string name="community_empty_state">لا توجد منشورات بعد. كن أول من يشارك رحلته!</string>
+
+    <!-- Community Post Card -->
+    <string name="community_like_cd">إعجاب</string>
+    <string name="community_comment_cd">تعليق</string>
+
+    <!-- Post Detail Screen -->
+    <string name="post_detail_bookmark_cd">حفظ المنشور</string>
+    <string name="post_detail_close_cd">إغلاق</string>
+    <string name="post_detail_comments_header">التعليقات</string>
+    <string name="post_detail_no_comments">لا توجد تعليقات بعد. كن أول من يعلّق!</string>
+    <string name="post_detail_comment_hint">أضف تعليقاً…</string>
+    <string name="post_detail_send_cd">إرسال التعليق</string>
+    <string name="post_detail_not_found">المنشور غير موجود.</string>
+
+    <!-- Image Pager -->
+    <string name="image_n_of_m">صورة %1$d من %2$d</string>
+    <string name="pager_previous_cd">الصورة السابقة</string>
+    <string name="pager_next_cd">الصورة التالية</string>
+
+    <!-- Comment author (current user) -->
+    <string name="comment_author_you">أنت</string>
+
+    <!-- Share Moment Screen -->
+    <string name="share_moment_title">شارك لحظة</string>
+    <string name="share_moment_subtitle">التقط مغامرتك وشاركها</string>
+    <string name="share_moment_close_cd">إغلاق</string>
+    <string name="share_moment_add_photo_title">إضافة صورة</string>
+    <string name="share_moment_add_photo_subtitle">انقر لرفع صورة سفرك</string>
+    <string name="share_moment_add_photo_cd">إضافة صورة</string>
+    <string name="share_moment_selected_photo_cd">الصورة المختارة</string>
+    <string name="share_moment_location_label">الموقع</string>
+    <string name="share_moment_location_hint">أين هذا المكان؟</string>
+    <string name="share_moment_description_label">الوصف</string>
+    <string name="share_moment_description_hint">أخبرنا عن تجربتك…</string>
+    <string name="share_moment_post_button">نشر الآن</string>
+    <string name="share_moment_error_photo_required">يرجى إضافة صورة قبل النشر.</string>
+    <string name="share_moment_error_location_required">يرجى إدخال الموقع قبل النشر.</string>
+</resources>
+

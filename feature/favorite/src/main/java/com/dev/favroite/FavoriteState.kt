@@ -1,9 +1,9 @@
 package com.dev.favroite
 
 import com.dev.favroite.components.SectionTab
+import com.dev.utils.uistate.UiState
 import com.example.domain.model.favorite.Place
 import com.example.domain.model.favorite.Post
-import ui.state.UiState
 
 data class FavoriteState(
     val selectedItem: Int = 1,

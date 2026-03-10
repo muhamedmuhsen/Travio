@@ -9,6 +9,9 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.dev.community.presentation.CommunityScreen
+import com.dev.community.presentation.PostDetailScreen
+import com.dev.community.presentation.ShareMomentScreen
 import com.dev.favroite.FavoriteScreen
 import com.dev.home.presentation.HomeScreen
 import com.dev.profile.editProfile.EditProfileScreen
@@ -272,10 +275,48 @@ fun TravioNavHost(
         }
 
         composable(Screen.CommunityScreen.route) {
-            // TODO: replace with real CommunityScreen composable once feature is built
-            Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                Text("Community – coming soon")
-            }
+            CommunityScreen(
+                navigateToHome = {
+                    navController.navigate(Screen.HomeScreen.route) {
+                        popUpTo(Screen.HomeScreen.route) { inclusive = false }
+                        launchSingleTop = true
+                    }
+                },
+                navigateToFavorite = {
+                    navController.navigate(Screen.FavoriteScreen.route) {
+                        launchSingleTop = true
+                    }
+                },
+                navigateToAi = {
+                    navController.navigate(Screen.AiChatScreen.route) {
+                        launchSingleTop = true
+                    }
+                },
+                navigateToProfile = {
+                    navController.navigate(Screen.ProfileScreen.route) {
+                        launchSingleTop = true
+                    }
+                },
+                navigateToPostDetail = { postId ->
+                    navController.navigate(Screen.PostDetailScreen.route + "/$postId")
+                },
+                navigateToShareMoment = {
+                    navController.navigate(Screen.ShareMomentScreen.route)
+                }
+            )
+        }
+
+        composable(Screen.ShareMomentScreen.route) {
+            ShareMomentScreen(
+                onNavigateBack = { navController.popBackStack() }
+            )
+        }
+
+        composable(Screen.PostDetailScreen.route + "/{postId}") {
+            // postId is automatically injected into PostDetailViewModel via SavedStateHandle by Hilt
+            PostDetailScreen(
+                onNavigateBack = { navController.popBackStack() }
+            )
         }
 
         composable(Screen.AiChatScreen.route) {

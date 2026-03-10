@@ -16,6 +16,7 @@ import retrofit2.HttpException
 import java.io.IOException
 import javax.inject.Inject
 
+// TODO: refactor to use safeApiCall
 class UserManagementRepositoryImpl @Inject constructor(
     private val api: UserManagementApi,
     @ApplicationContext private val context: Context

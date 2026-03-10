@@ -1,7 +1,7 @@
 package com.example.feature.login
 
+import com.dev.utils.uistate.UiState
 import com.example.domain.model.auth.User
-import ui.state.UiState
 
 data class LoginUiState(
     val email: String = "",

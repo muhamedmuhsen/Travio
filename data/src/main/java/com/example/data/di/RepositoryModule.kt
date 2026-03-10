@@ -6,6 +6,7 @@ import com.example.data.repository.auth.PasswordResetRepositoryImpl
 import com.example.data.repository.auth.SessionRepositoryImpl
 import com.example.data.repository.auth.SignupRepositoryImpl
 import com.example.data.repository.auth.TokenManagerImpl
+import com.example.data.repository.community.CommunityRepositoryImpl
 import com.example.data.repository.destinations.DestinationsRepositoryImpl
 import com.example.data.repository.destinations.LocationRepositoryImpl
 import com.example.data.repository.destinations.RecentlyViewedRepositoryImpl
@@ -17,6 +18,7 @@ import com.example.domain.repository.auth.PasswordResetRepository
 import com.example.domain.repository.auth.SessionRepository
 import com.example.domain.repository.auth.SignupRepository
 import com.example.domain.repository.auth.TokenManager
+import com.example.domain.repository.community.CommunityRepository
 import com.example.domain.repository.destinations.DestinationsRepository
 import com.example.domain.repository.destinations.LocationRepository
 import com.example.domain.repository.destinations.RecentlyViewedRepository
@@ -77,4 +79,8 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindRecentlyViewedRepository(recentlyViewedRepositoryImpl: RecentlyViewedRepositoryImpl): RecentlyViewedRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindCommunityRepository(communityRepositoryImpl: CommunityRepositoryImpl): CommunityRepository
 }

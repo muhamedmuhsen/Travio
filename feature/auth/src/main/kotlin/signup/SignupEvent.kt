@@ -1,6 +1,6 @@
 package com.example.feature.signup
 
-import ui.text.UiText
+import com.dev.utils.uitext.UiText
 
 sealed interface SignupEvent {
     data object NavigateToLogin : SignupEvent
