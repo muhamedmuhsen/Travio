@@ -514,14 +514,59 @@ private fun HorizontalSection(
     }
 }
 
-@Preview(showBackground = true)
+@Preview(name = "Light — loading", showBackground = true)
 @Composable
 fun HomeScreenPreview() {
     TravioTheme { HomeScreen() }
 }
 
-@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES, showBackground = true)
+@Preview(name = "Dark — loading", uiMode = Configuration.UI_MODE_NIGHT_YES, showBackground = true)
 @Composable
 fun HomeScreenDarkPreview() {
     TravioTheme { HomeScreen() }
+}
+
+@Preview(name = "Loaded", showBackground = true)
+@Composable
+private fun HomeScreenLoadedPreview() {
+    TravioTheme {
+        HomeContent(
+            modifier = Modifier,
+            onAction = {},
+            state = HomeUiState(
+                countriesState = UiState.Success(emptyList()),
+                recommendedDestinationsState = UiState.Success(emptyList()),
+                recentViewedDestinationsState = UiState.Success(emptyList()),
+                nearbyDestinationsState = UiState.Success(emptyList())
+            ),
+            snackbarHostState = SnackbarHostState(),
+            isSuccessSnackbar = false,
+            navigateToProfile = {},
+            navigateToFavorite = {},
+            navigateToCommunity = {},
+            navigateToAi = {}
+        )
+    }
+}
+
+@Preview(name = "Error", showBackground = true)
+@Composable
+private fun HomeScreenErrorPreview() {
+    TravioTheme {
+        HomeContent(
+            modifier = Modifier,
+            onAction = {},
+            state = HomeUiState(
+                recommendedDestinationsState = UiState.Error(
+                    com.dev.utils.uitext.UiText.DynamicString("Failed to load destinations")
+                )
+            ),
+            snackbarHostState = SnackbarHostState(),
+            isSuccessSnackbar = false,
+            navigateToProfile = {},
+            navigateToFavorite = {},
+            navigateToCommunity = {},
+            navigateToAi = {}
+        )
+    }
 }

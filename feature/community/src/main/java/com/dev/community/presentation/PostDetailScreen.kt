@@ -189,7 +189,12 @@ fun PostDetailScreenContent(
     }
 }
 
-@Preview(showBackground = true, backgroundColor = 0xFFF7FAFA, showSystemUi = true)
+@Preview(
+    name = "Success — with post",
+    showBackground = true,
+    backgroundColor = 0xFFF7FAFA,
+    showSystemUi = true
+)
 @Composable
 private fun PostDetailScreenPreview() {
     TravioTheme {
@@ -228,6 +233,38 @@ private fun PostDetailScreenPreview() {
                     )
                 )
             ),
+            commentText = "",
+            onLikeClicked = {},
+            onBookmarkClicked = {},
+            onCommentTextChanged = {},
+            onCommentSubmitted = {},
+            onNavigateBack = {}
+        )
+    }
+}
+
+@Preview(name = "Loading", showBackground = true, showSystemUi = true)
+@Composable
+private fun PostDetailScreenLoadingPreview() {
+    TravioTheme {
+        PostDetailScreenContent(
+            state = PostDetailUiState(post = null, isLoading = true),
+            commentText = "",
+            onLikeClicked = {},
+            onBookmarkClicked = {},
+            onCommentTextChanged = {},
+            onCommentSubmitted = {},
+            onNavigateBack = {}
+        )
+    }
+}
+
+@Preview(name = "Not Found", showBackground = true, showSystemUi = true)
+@Composable
+private fun PostDetailScreenNotFoundPreview() {
+    TravioTheme {
+        PostDetailScreenContent(
+            state = PostDetailUiState(post = null, isLoading = false),
             commentText = "",
             onLikeClicked = {},
             onBookmarkClicked = {},

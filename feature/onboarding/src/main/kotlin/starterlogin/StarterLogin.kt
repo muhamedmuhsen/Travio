@@ -17,6 +17,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -43,6 +44,7 @@ import com.example.domain.utils.Result
 import com.example.feature.onboarding.BuildConfig
 import com.example.feature.onboarding.R
 import kotlinx.coroutines.launch
+
 @Composable
 fun StarterLogin(
     modifier: Modifier = Modifier,
@@ -56,6 +58,7 @@ fun StarterLogin(
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     var errorMessage by remember { mutableStateOf<String?>(null) }
+    val state by viewModel.state.collectAsState()
 
     LaunchedEffect(errorMessage) {
         errorMessage?.let {
@@ -67,29 +70,50 @@ fun StarterLogin(
     LaunchedEffect(Unit) {
         viewModel.event.collect { event ->
             when (event) {
-                StarterLoginEvent.NavigateToLogin -> {
-                    navigateToLogin()
+                StarterLoginEvent.NavigateToLogin -> navigateToLogin()
+                StarterLoginEvent.NavigateToSignup -> navigateToSignup()
+                StarterLoginEvent.GoogleSignIn -> { /* handled via onClick */
                 }
 
-                StarterLoginEvent.NavigateToSignup -> {
-                    navigateToSignup()
-                }
-
-                StarterLoginEvent.GoogleSignIn -> {
-                    /* handled via onClick */
-                }
-
-                StarterLoginEvent.FacebookSignIn -> {
-                    /* TODO: facebook login */
+                StarterLoginEvent.FacebookSignIn -> { /* TODO: facebook login */
                 }
                 StarterLoginEvent.NavigateToHome -> navigateToHome()
                 StarterLoginEvent.NavigateToSurvey -> navigateToSurvey()
-                is StarterLoginEvent.ShowAuthError -> {
-                    errorMessage = event.message.asString(context)
-                }
+                is StarterLoginEvent.ShowAuthError -> errorMessage = event.message.asString(context)
             }
         }
     }
+
+    StarterLoginContent(
+        state = state,
+        errorMessage = errorMessage,
+        onCreateAccountClicked = viewModel::onCreateAccountClicked,
+        onGoogleSignInClicked = {
+            viewModel.onGoogleSignInStarted()
+            scope.launch {
+                when (
+                    val result =
+                        GoogleCredentialHelper.getGoogleIdToken(context, webClientId)
+                ) {
+                    is Result.Success -> viewModel.onGoogleSignInResult(result.data)
+                    is Result.Error -> viewModel.onGoogleSignInError(result.error)
+                }
+            }
+        },
+        onLoginClicked = viewModel::onLoginClicked,
+        modifier = modifier
+    )
+}
+
+@Composable
+fun StarterLoginContent(
+    @Suppress("UNUSED_PARAMETER") state: StarterLoginUiState,
+    errorMessage: String?,
+    onCreateAccountClicked: () -> Unit,
+    onGoogleSignInClicked: () -> Unit,
+    onLoginClicked: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     Scaffold(
         snackbarHost = {
             errorMessage?.let { message ->
@@ -109,7 +133,6 @@ fun StarterLogin(
                     .fillMaxWidth()
                     .weight(1f)
             ) {
-                // Placeholder for the image collage as requested
                 Image(
                     painter = painterResource(id = com.example.designsystem.R.drawable.starter_login),
                     contentDescription = null,
@@ -140,7 +163,7 @@ fun StarterLogin(
             Spacer(modifier = Modifier.height(MaterialTheme.spacing.sm))
 
             AppButton(
-                onClick = { viewModel.onCreateAccountClicked() },
+                onClick = onCreateAccountClicked,
                 text = stringResource(id = R.string.create_an_account),
                 modifier = Modifier
                     .fillMaxWidth()
@@ -149,18 +172,7 @@ fun StarterLogin(
             Spacer(modifier = Modifier.height(MaterialTheme.spacing.md))
 
             SigninOptionsButton(
-                onClick = {
-                    viewModel.onGoogleSignInStarted()
-                    scope.launch {
-                        when (
-                            val result =
-                                GoogleCredentialHelper.getGoogleIdToken(context, webClientId)
-                        ) {
-                            is Result.Success -> viewModel.onGoogleSignInResult(result.data)
-                            is Result.Error -> viewModel.onGoogleSignInError(result.error)
-                        }
-                    }
-                },
+                onClick = onGoogleSignInClicked,
                 text = stringResource(id = R.string.continue_with_google),
                 icon = com.example.designsystem.R.drawable.google_icon,
                 modifier = Modifier.fillMaxWidth()
@@ -189,7 +201,7 @@ fun StarterLogin(
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.SemiBold,
                     color = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.clickable { viewModel.onLoginClicked() }
+                    modifier = Modifier.clickable { onLoginClicked() }
                 )
             }
             Spacer(modifier = Modifier.height(MaterialTheme.spacing.md))
@@ -201,8 +213,30 @@ fun StarterLogin(
     }
 }
 
-@Preview(showSystemUi = true, showBackground = true)
+@Preview(name = "Default", showSystemUi = true, showBackground = true)
 @Composable
 private fun StarterLoginPreview() {
-    TravioTheme { StarterLogin(navigateToLogin = {}, navigateToSignup = {}) }
+    TravioTheme {
+        StarterLoginContent(
+            state = StarterLoginUiState(),
+            errorMessage = null,
+            onCreateAccountClicked = {},
+            onGoogleSignInClicked = {},
+            onLoginClicked = {}
+        )
+    }
+}
+
+@Preview(name = "Error — sign-in failed", showSystemUi = true, showBackground = true)
+@Composable
+private fun StarterLoginErrorPreview() {
+    TravioTheme {
+        StarterLoginContent(
+            state = StarterLoginUiState(),
+            errorMessage = "Sign-in failed. Please try again.",
+            onCreateAccountClicked = {},
+            onGoogleSignInClicked = {},
+            onLoginClicked = {}
+        )
+    }
 }

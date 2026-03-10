@@ -89,14 +89,54 @@ fun SignupScreen(
             when (event) {
                 SignupEvent.NavigateToLogin -> navigateToLogin()
                 SignupEvent.NavigateToHome -> navigateToHome()
-                is SignupEvent.ShowAuthError -> {
-                    errorMessage = event.message.asString(context)
-                }
+                is SignupEvent.ShowAuthError -> errorMessage = event.message.asString(context)
                 SignupEvent.NavigateToVerifyEmail -> navigateToVerifyEmail(uiState.value.email)
             }
         }
     }
 
+    SignupScreenContent(
+        state = uiState.value,
+        errorMessage = errorMessage,
+        onCloseClicked = onCloseClicked,
+        onFirstNameChange = viewModel::onFirstNameChange,
+        onLastNameChange = viewModel::onLastNameChange,
+        onUsernameChange = viewModel::onUsernameChange,
+        onEmailChange = viewModel::onEmailChange,
+        onPasswordChange = viewModel::onPasswordChange,
+        onPasswordVisibilityCheck = viewModel::onPasswordVisibilityCheck,
+        onSignupClicked = viewModel::onSignupClicked,
+        onGoogleSignInClicked = {
+            viewModel.onGoogleSignInStarted()
+            scope.launch {
+                when (val result = GoogleCredentialHelper.getGoogleIdToken(context, webClientId)) {
+                    is Result.Success -> viewModel.onGoogleSignInResult(result.data)
+                    is Result.Error -> viewModel.onGoogleSignInError(result.error)
+                }
+            }
+        },
+        onNavigateToLogin = navigateToLogin,
+        modifier = modifier
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun SignupScreenContent(
+    state: SignupUiState,
+    errorMessage: String?,
+    onCloseClicked: () -> Unit,
+    onFirstNameChange: (String) -> Unit,
+    onLastNameChange: (String) -> Unit,
+    onUsernameChange: (String) -> Unit,
+    onEmailChange: (String) -> Unit,
+    onPasswordChange: (String) -> Unit,
+    onPasswordVisibilityCheck: () -> Unit,
+    onSignupClicked: () -> Unit,
+    onGoogleSignInClicked: () -> Unit,
+    onNavigateToLogin: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     Scaffold(
         snackbarHost = {
             errorMessage?.let { message ->
@@ -143,7 +183,7 @@ fun SignupScreen(
         }
     ) { innerPadding ->
         Column(
-            modifier = Modifier
+            modifier = modifier
                 .fillMaxSize()
                 .padding(innerPadding)
                 .verticalScroll(rememberScrollState())
@@ -153,47 +193,51 @@ fun SignupScreen(
             Spacer(modifier = Modifier.height(MaterialTheme.spacing.lg))
 
             AppTextField(
-                value = uiState.value.firstname,
-                onValueChange = { viewModel.onFirstNameChange(it) },
+                value = state.firstname,
+                onValueChange = onFirstNameChange,
                 placeholder = stringResource(id = R.string.first_name),
+                isError = state.isFirstNameError,
                 modifier = Modifier.fillMaxWidth()
             )
 
             Spacer(modifier = Modifier.height(MaterialTheme.spacing.md))
 
             AppTextField(
-                value = uiState.value.lastname,
-                onValueChange = { viewModel.onLastNameChange(it) },
+                value = state.lastname,
+                onValueChange = onLastNameChange,
                 placeholder = stringResource(id = R.string.last_name),
+                isError = state.isLastNameError,
                 modifier = Modifier.fillMaxWidth()
             )
 
             Spacer(modifier = Modifier.height(MaterialTheme.spacing.md))
 
             AppTextField(
-                value = uiState.value.username,
-                onValueChange = { viewModel.onUsernameChange(it) },
+                value = state.username,
+                onValueChange = onUsernameChange,
                 placeholder = stringResource(id = R.string.username),
+                isError = state.isUsernameError,
                 modifier = Modifier.fillMaxWidth()
             )
 
             Spacer(modifier = Modifier.height(MaterialTheme.spacing.md))
             AppTextField(
-                value = uiState.value.email,
-                onValueChange = { viewModel.onEmailChange(it) },
+                value = state.email,
+                onValueChange = onEmailChange,
                 placeholder = stringResource(id = R.string.email),
+                isError = state.isEmailError,
                 modifier = Modifier.fillMaxWidth()
             )
 
             Spacer(modifier = Modifier.height(MaterialTheme.spacing.md))
 
             AppTextField(
-                value = uiState.value.password,
-                onValueChange = { viewModel.onPasswordChange(it) },
+                value = state.password,
+                onValueChange = onPasswordChange,
                 placeholder = stringResource(id = R.string.password),
                 fieldType = TextFieldType.PASSWORD,
-                isPasswordVisible = uiState.value.isPasswordVisible,
-                onPasswordVisibilityChecked = { viewModel.onPasswordVisibilityCheck() },
+                isPasswordVisible = state.isPasswordVisible,
+                onPasswordVisibilityChecked = onPasswordVisibilityCheck,
                 modifier = Modifier.fillMaxWidth()
             )
             Spacer(modifier = Modifier.height(MaterialTheme.spacing.md))
@@ -205,9 +249,7 @@ fun SignupScreen(
             Spacer(modifier = Modifier.height(MaterialTheme.spacing.md))
 
             AppButton(
-                onClick = {
-                    viewModel.onSignupClicked()
-                },
+                onClick = onSignupClicked,
                 text = stringResource(id = R.string.create_an_account),
                 modifier = Modifier.fillMaxWidth()
             )
@@ -219,18 +261,7 @@ fun SignupScreen(
             Spacer(modifier = Modifier.height(MaterialTheme.spacing.lg))
 
             SigninOptionsButton(
-                onClick = {
-                    viewModel.onGoogleSignInStarted()
-                    scope.launch {
-                        when (
-                            val result =
-                                GoogleCredentialHelper.getGoogleIdToken(context, webClientId)
-                        ) {
-                            is Result.Success -> viewModel.onGoogleSignInResult(result.data)
-                            is Result.Error -> viewModel.onGoogleSignInError(result.error)
-                        }
-                    }
-                },
+                onClick = onGoogleSignInClicked,
                 text = stringResource(id = R.string.continue_with_google),
                 icon = DesignSystemR.drawable.google_icon,
                 modifier = Modifier.fillMaxWidth()
@@ -239,7 +270,7 @@ fun SignupScreen(
             Spacer(modifier = Modifier.height(MaterialTheme.spacing.sm))
 
             SigninOptionsButton(
-                onClick = { /* viewModel.onFacebookSigninClicked()*/ },
+                onClick = { /* viewModel.onFacebookSigninClicked() */ },
                 text = stringResource(id = R.string.continue_with_facebook),
                 icon = DesignSystemR.drawable.facebook_icon,
                 modifier = Modifier.fillMaxWidth()
@@ -261,18 +292,21 @@ fun SignupScreen(
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.SemiBold,
                     color = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.clickable { navigateToLogin() }
+                    modifier = Modifier.clickable { onNavigateToLogin() }
                 )
             }
 
             Spacer(modifier = Modifier.height(MaterialTheme.spacing.md))
-            AcknowledgementSection()
+
+            ByCreatingAccountSection()
+
+            Spacer(modifier = Modifier.height(MaterialTheme.spacing.lg))
         }
     }
 }
 
 @Composable
-fun AcknowledgementSection(modifier: Modifier = Modifier) {
+fun ByCreatingAccountSection(modifier: Modifier = Modifier) {
     val annotatedString = buildAnnotatedString {
         val regularStyle = SpanStyle(
             color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -344,10 +378,50 @@ fun PasswordRulesText(
     }
 }
 
-@Preview
+@Preview(name = "Default", showBackground = true, showSystemUi = true)
 @Composable
 private fun SignupScreenPreview() {
     TravioTheme {
-        SignupScreen(onCloseClicked = {}, navigateToLogin = {}, navigateToHome = {}) {}
+        SignupScreenContent(
+            state = SignupUiState(),
+            errorMessage = null,
+            onCloseClicked = {},
+            onFirstNameChange = {},
+            onLastNameChange = {},
+            onUsernameChange = {},
+            onEmailChange = {},
+            onPasswordChange = {},
+            onPasswordVisibilityCheck = {},
+            onSignupClicked = {},
+            onGoogleSignInClicked = {},
+            onNavigateToLogin = {}
+        )
+    }
+}
+
+@Preview(name = "Validation errors", showBackground = true, showSystemUi = true)
+@Composable
+private fun SignupScreenErrorPreview() {
+    TravioTheme {
+        SignupScreenContent(
+            state = SignupUiState(
+                firstname = "",
+                email = "bad-email",
+                isFirstNameError = true,
+                isEmailError = true,
+                isPasswordMismatch = true
+            ),
+            errorMessage = "Please fix the highlighted fields.",
+            onCloseClicked = {},
+            onFirstNameChange = {},
+            onLastNameChange = {},
+            onUsernameChange = {},
+            onEmailChange = {},
+            onPasswordChange = {},
+            onPasswordVisibilityCheck = {},
+            onSignupClicked = {},
+            onGoogleSignInClicked = {},
+            onNavigateToLogin = {}
+        )
     }
 }

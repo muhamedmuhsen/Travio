@@ -57,7 +57,6 @@ import com.example.feature.login.components.ByLoggingSection
 import com.example.feature.login.components.OrSignInWithText
 import com.example.feature.login.components.RememberMeAndForgetPasswordSection
 import kotlinx.coroutines.launch
-import timber.log.Timber
 import com.example.designsystem.R as DesignSystemR
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -101,21 +100,48 @@ fun LoginScreen(
                 LoginEvent.NavigateToHome -> navigateToHome()
                 LoginEvent.NavigateToSurvey -> navigateToSurvey()
                 LoginEvent.NavigateToSignup -> navigateToSignUp()
-                is LoginEvent.ShowAuthError -> {
-                    errorMessage = event.message.asString(context)
+                is LoginEvent.ShowAuthError -> errorMessage = event.message.asString(context)
+                LoginEvent.ContinueWithFacebook -> { /* TODO */
                 }
 
-                LoginEvent.ContinueWithFacebook -> {
-                    // performLogin()
-                }
-
-                LoginEvent.ContinueWithGoogle -> {
-                    /* handled via onClick directly */
+                LoginEvent.ContinueWithGoogle -> { /* handled via onClick directly */
                 }
             }
         }
     }
 
+    LoginScreenContent(
+        state = uiState.value,
+        errorMessage = errorMessage,
+        onCloseClicked = onCloseClicked,
+        onEmailChange = viewModel::onEmailChange,
+        onPasswordChange = viewModel::onPasswordChange,
+        onPasswordVisibilityCheck = viewModel::onPasswordVisibilityCheck,
+        onRememberMeChecked = { viewModel.onRememberMeChecked() },
+        onForgotPasswordClicked = viewModel::onForgotPasswordClicked,
+        onLoginClicked = viewModel::onLoginClicked,
+        onGoogleSignIn = onGoogleSignIn,
+        onCreateAccountClicked = viewModel::onCreateAccountClicked,
+        modifier = modifier
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun LoginScreenContent(
+    state: LoginUiState,
+    errorMessage: String?,
+    onCloseClicked: () -> Unit,
+    onEmailChange: (String) -> Unit,
+    onPasswordChange: (String) -> Unit,
+    onPasswordVisibilityCheck: () -> Unit,
+    onRememberMeChecked: (Boolean) -> Unit,
+    onForgotPasswordClicked: () -> Unit,
+    onLoginClicked: () -> Unit,
+    onGoogleSignIn: () -> Unit,
+    onCreateAccountClicked: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     Scaffold(
         snackbarHost = {
             errorMessage?.let { message ->
@@ -162,7 +188,7 @@ fun LoginScreen(
         }
     ) { innerPadding ->
         Column(
-            modifier = Modifier
+            modifier = modifier
                 .fillMaxSize()
                 .padding(innerPadding)
                 .verticalScroll(rememberScrollState())
@@ -180,9 +206,9 @@ fun LoginScreen(
             Spacer(modifier = Modifier.height(20.dp))
 
             AppTextField(
-                value = uiState.value.email,
-                onValueChange = { viewModel.onEmailChange(it) },
-                isError = uiState.value.isEmailError,
+                value = state.email,
+                onValueChange = onEmailChange,
+                isError = state.isEmailError,
                 placeholder = stringResource(id = R.string.email),
                 modifier = Modifier.fillMaxWidth()
             )
@@ -190,26 +216,24 @@ fun LoginScreen(
             Spacer(modifier = Modifier.height(MaterialTheme.spacing.md))
 
             AppTextField(
-                value = uiState.value.password,
-                onValueChange = { viewModel.onPasswordChange(it) },
+                value = state.password,
+                onValueChange = onPasswordChange,
                 placeholder = stringResource(id = R.string.password),
                 fieldType = TextFieldType.PASSWORD,
-                isPasswordVisible = uiState.value.isPasswordVisible,
-                isError = uiState.value.isPasswordError,
-                onPasswordVisibilityChecked = { viewModel.onPasswordVisibilityCheck() },
+                isPasswordVisible = state.isPasswordVisible,
+                isError = state.isPasswordError,
+                onPasswordVisibilityChecked = onPasswordVisibilityCheck,
                 modifier = Modifier.fillMaxWidth()
             )
 
             RememberMeAndForgetPasswordSection(
-                checked = uiState.value.isRememberMeChecked,
-                onRememberMeCheckedChange = { viewModel.onRememberMeChecked() },
-                onForgetPasswordClicked = { viewModel.onForgotPasswordClicked() }
+                checked = state.isRememberMeChecked,
+                onRememberMeCheckedChange = onRememberMeChecked,
+                onForgetPasswordClicked = onForgotPasswordClicked
             )
 
             AppButton(
-                onClick = {
-                    viewModel.onLoginClicked()
-                },
+                onClick = onLoginClicked,
                 text = stringResource(id = R.string.log_in),
                 modifier = Modifier.fillMaxWidth()
             )
@@ -221,10 +245,7 @@ fun LoginScreen(
             Spacer(modifier = Modifier.height(MaterialTheme.spacing.lg))
 
             SigninOptionsButton(
-                onClick = {
-                    Timber.d("Google sign-in button clicked")
-                    onGoogleSignIn()
-                },
+                onClick = onGoogleSignIn,
                 text = stringResource(id = R.string.continue_with_google),
                 icon = DesignSystemR.drawable.google_icon,
                 modifier = Modifier.fillMaxWidth()
@@ -257,7 +278,7 @@ fun LoginScreen(
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.SemiBold,
                     color = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.clickable { viewModel.onCreateAccountClicked() }
+                    modifier = Modifier.clickable { onCreateAccountClicked() }
                 )
             }
 
@@ -282,11 +303,19 @@ fun LoginScreen(
 @Composable
 private fun LoginScreenPreview() {
     TravioTheme {
-        LoginScreen(
+        LoginScreenContent(
+            state = LoginUiState(),
+            errorMessage = null,
             onCloseClicked = {},
-            navigateToSignUp = { },
-            navigateToHome = {}
-        ) {}
+            onEmailChange = {},
+            onPasswordChange = {},
+            onPasswordVisibilityCheck = {},
+            onRememberMeChecked = {},
+            onForgotPasswordClicked = {},
+            onLoginClicked = {},
+            onGoogleSignIn = {},
+            onCreateAccountClicked = {}
+        )
     }
 }
 
@@ -308,10 +337,48 @@ private fun LoginScreenPreview() {
 @Composable
 private fun LoginScreenPreviewArabic() {
     TravioTheme {
-        LoginScreen(
+        LoginScreenContent(
+            state = LoginUiState(),
+            errorMessage = null,
             onCloseClicked = {},
-            navigateToSignUp = { },
-            navigateToHome = {}
-        ) {}
+            onEmailChange = {},
+            onPasswordChange = {},
+            onPasswordVisibilityCheck = {},
+            onRememberMeChecked = {},
+            onForgotPasswordClicked = {},
+            onLoginClicked = {},
+            onGoogleSignIn = {},
+            onCreateAccountClicked = {}
+        )
+    }
+}
+
+@Preview(
+    name = "Validation errors",
+    group = "Login Screen",
+    device = "id:pixel_9",
+    showSystemUi = true
+)
+@Composable
+private fun LoginScreenErrorPreview() {
+    TravioTheme {
+        LoginScreenContent(
+            state = LoginUiState(
+                email = "bad-email",
+                password = "short",
+                isEmailError = true,
+                isPasswordError = true
+            ),
+            errorMessage = "Invalid email or password.",
+            onCloseClicked = {},
+            onEmailChange = {},
+            onPasswordChange = {},
+            onPasswordVisibilityCheck = {},
+            onRememberMeChecked = {},
+            onForgotPasswordClicked = {},
+            onLoginClicked = {},
+            onGoogleSignIn = {},
+            onCreateAccountClicked = {}
+        )
     }
 }

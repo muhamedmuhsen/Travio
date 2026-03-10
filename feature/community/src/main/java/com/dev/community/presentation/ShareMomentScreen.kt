@@ -229,7 +229,7 @@ private fun shareMomentFieldColors() =
         cursorColor = MaterialTheme.colorScheme.primary
     )
 
-@Preview(showBackground = true)
+@Preview(name = "Empty", showBackground = true)
 @Composable
 private fun ShareMomentScreenEmptyPreview() {
     TravioTheme {
@@ -244,7 +244,7 @@ private fun ShareMomentScreenEmptyPreview() {
     }
 }
 
-@Preview(showBackground = true)
+@Preview(name = "Filled", showBackground = true)
 @Composable
 private fun ShareMomentScreenFilledPreview() {
     TravioTheme {
@@ -253,6 +253,26 @@ private fun ShareMomentScreenFilledPreview() {
                 photoUri = "https://images.unsplash.com/photo-1533105079780-92b9be482077?w=800",
                 location = "Santorini, Greece",
                 description = "The sunset views from Oia are breathtaking!"
+            ),
+            onPhotoClicked = {},
+            onLocationChanged = {},
+            onDescriptionChanged = {},
+            onPostClicked = {},
+            onCloseClicked = {}
+        )
+    }
+}
+
+@Preview(name = "Submitting", showBackground = true)
+@Composable
+private fun ShareMomentScreenSubmittingPreview() {
+    TravioTheme {
+        ShareMomentScreenContent(
+            state = ShareMomentUiState(
+                photoUri = "https://images.unsplash.com/photo-1533105079780-92b9be482077?w=800",
+                location = "Santorini, Greece",
+                description = "The sunset views from Oia are breathtaking!",
+                submitState = UiState.Loading
             ),
             onPhotoClicked = {},
             onLocationChanged = {},

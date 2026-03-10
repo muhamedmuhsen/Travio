@@ -43,7 +43,7 @@ fun TravelCategoryCard(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val borderColor = if (isSelected) SelectedColor else Color.Transparent
+    val borderColor = if (isSelected) MaterialTheme.colorScheme.primary else Color.Transparent
 
     Box(
         modifier = modifier

@@ -201,12 +201,34 @@ fun SurveyScreenContent(
     }
 }
 
-@Preview(showBackground = true)
+@Preview(name = "Default — Step 1", showBackground = true)
 @Composable
 fun SurveyScreenPreview() {
     TravioTheme {
         SurveyScreenContent(
             state = SurveyUiState(),
+            onAction = {}
+        )
+    }
+}
+
+@Preview(name = "Last Step", showBackground = true)
+@Composable
+private fun SurveyScreenLastStepPreview() {
+    TravioTheme {
+        SurveyScreenContent(
+            state = SurveyUiState(currentStep = 3, totalSteps = 4),
+            onAction = {}
+        )
+    }
+}
+
+@Preview(name = "Submitting", showBackground = true)
+@Composable
+private fun SurveyScreenLoadingPreview() {
+    TravioTheme {
+        SurveyScreenContent(
+            state = SurveyUiState(currentStep = 3, totalSteps = 4, submitState = UiState.Loading),
             onAction = {}
         )
     }

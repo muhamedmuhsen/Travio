@@ -32,14 +32,17 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.designsystem.components.AppButton
 import com.example.designsystem.components.AppTextField
 import com.example.designsystem.components.ErrorSnackBar
 import com.example.designsystem.components.TextFieldType
+import com.example.designsystem.theme.TravioTheme
 import com.example.designsystem.theme.spacing
 import com.example.feature.auth.R
+import com.example.feature.newpassword.NewPasswordState
 import com.example.feature.signup.PasswordRulesText
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -72,6 +75,33 @@ fun NewPasswordScreen(
             }
         }
     }
+
+    NewPasswordScreenContent(
+        state = uiState.value,
+        errorMessage = errorMessage,
+        onPasswordChange = viewModel::onPasswordChange,
+        onConfirmPasswordChange = viewModel::onConfirmPasswordChange,
+        onPasswordVisibilityCheck = viewModel::onPasswordVisibilityCheck,
+        onConfirmPasswordVisibilityChanged = viewModel::onConfirmPasswordVisibilityChanged,
+        onResetPasswordClicked = { viewModel.onResetPasswordClicked(email) },
+        onCloseClicked = onCloseClicked,
+        modifier = modifier
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun NewPasswordScreenContent(
+    state: NewPasswordState,
+    errorMessage: String?,
+    onPasswordChange: (String) -> Unit,
+    onConfirmPasswordChange: (String) -> Unit,
+    onPasswordVisibilityCheck: () -> Unit,
+    onConfirmPasswordVisibilityChanged: () -> Unit,
+    onResetPasswordClicked: () -> Unit,
+    onCloseClicked: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     Scaffold(
         snackbarHost = {
             errorMessage?.let { message ->
@@ -125,13 +155,13 @@ fun NewPasswordScreen(
         ) {
             Spacer(modifier = Modifier.height(MaterialTheme.spacing.lg))
             AppTextField(
-                value = uiState.value.newPassword,
-                onValueChange = { viewModel.onPasswordChange(it) },
+                value = state.newPassword,
+                onValueChange = onPasswordChange,
                 placeholder = stringResource(R.string.new_password),
                 fieldType = TextFieldType.PASSWORD,
-                isError = uiState.value.isPasswordsDoesnotMatch,
-                isPasswordVisible = uiState.value.isPasswordVisible,
-                onPasswordVisibilityChecked = { viewModel.onPasswordVisibilityCheck() },
+                isError = state.isPasswordsDoesnotMatch,
+                isPasswordVisible = state.isPasswordVisible,
+                onPasswordVisibilityChecked = onPasswordVisibilityCheck,
                 modifier = Modifier.fillMaxWidth()
             )
             Spacer(modifier = Modifier.height(MaterialTheme.spacing.lg))
@@ -142,22 +172,60 @@ fun NewPasswordScreen(
             Spacer(modifier = Modifier.height(MaterialTheme.spacing.lg))
 
             AppTextField(
-                value = uiState.value.confirmNewPassword,
-                onValueChange = { viewModel.onConfirmPasswordChange(it) },
+                value = state.confirmNewPassword,
+                onValueChange = onConfirmPasswordChange,
                 placeholder = stringResource(R.string.confirm_new_password),
                 fieldType = TextFieldType.PASSWORD,
-                isPasswordVisible = uiState.value.isConfirmPasswordVisible,
-                isError = uiState.value.isPasswordsDoesnotMatch,
-                onPasswordVisibilityChecked = { viewModel.onConfirmPasswordVisibilityChanged() },
+                isPasswordVisible = state.isConfirmPasswordVisible,
+                isError = state.isPasswordsDoesnotMatch,
+                onPasswordVisibilityChecked = onConfirmPasswordVisibilityChanged,
                 modifier = Modifier.fillMaxWidth()
             )
             Spacer(modifier = Modifier.height(MaterialTheme.spacing.lg))
 
             AppButton(
-                onClick = { viewModel.onResetPasswordClicked(email) },
+                onClick = onResetPasswordClicked,
                 text = stringResource(id = R.string.reset_your_password_button),
                 modifier = Modifier.fillMaxWidth()
             )
         }
+    }
+}
+
+@Preview(name = "Default", showBackground = true, showSystemUi = true)
+@Composable
+private fun NewPasswordScreenPreview() {
+    TravioTheme {
+        NewPasswordScreenContent(
+            state = NewPasswordState(),
+            errorMessage = null,
+            onPasswordChange = {},
+            onConfirmPasswordChange = {},
+            onPasswordVisibilityCheck = {},
+            onConfirmPasswordVisibilityChanged = {},
+            onResetPasswordClicked = {},
+            onCloseClicked = {}
+        )
+    }
+}
+
+@Preview(name = "Error — passwords do not match", showBackground = true, showSystemUi = true)
+@Composable
+private fun NewPasswordScreenErrorPreview() {
+    TravioTheme {
+        NewPasswordScreenContent(
+            state = NewPasswordState(
+                newPassword = "Password1!",
+                confirmNewPassword = "Password2!",
+                isPasswordsDoesnotMatch = true
+            ),
+            errorMessage = "Passwords do not match.",
+            onPasswordChange = {},
+            onConfirmPasswordChange = {},
+            onPasswordVisibilityCheck = {},
+            onConfirmPasswordVisibilityChanged = {},
+            onResetPasswordClicked = {},
+            onCloseClicked = {}
+        )
     }
 }

@@ -157,7 +157,7 @@ fun CommunityScreenContent(
     }
 }
 
-@Preview(showBackground = true)
+@Preview(name = "Success — with posts", showBackground = true)
 @Composable
 private fun CommunityScreenPreview() {
     TravioTheme {
@@ -199,6 +199,38 @@ private fun CommunityScreenPreview() {
                     )
                 )
             ),
+            onLikeClicked = {},
+            navigateToHome = {},
+            navigateToFavorite = {},
+            navigateToAi = {},
+            navigateToProfile = {},
+            navigateToPostDetail = {}
+        )
+    }
+}
+
+@Preview(name = "Loading", showBackground = true)
+@Composable
+private fun CommunityScreenLoadingPreview() {
+    TravioTheme {
+        CommunityScreenContent(
+            state = CommunityUiState(postsState = UiState.Loading),
+            onLikeClicked = {},
+            navigateToHome = {},
+            navigateToFavorite = {},
+            navigateToAi = {},
+            navigateToProfile = {},
+            navigateToPostDetail = {}
+        )
+    }
+}
+
+@Preview(name = "Empty", showBackground = true)
+@Composable
+private fun CommunityScreenEmptyPreview() {
+    TravioTheme {
+        CommunityScreenContent(
+            state = CommunityUiState(postsState = UiState.Success(emptyList())),
             onLikeClicked = {},
             navigateToHome = {},
             navigateToFavorite = {},
