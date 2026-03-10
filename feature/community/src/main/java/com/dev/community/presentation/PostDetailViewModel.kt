@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.domain.usecase.community.AddCommentUseCase
 import com.example.domain.usecase.community.GetCommunityPostsUseCase
+import com.example.domain.usecase.community.GetPostByIdUseCase
 import com.example.domain.usecase.community.ToggleBookmarkUseCase
 import com.example.domain.usecase.community.ToggleLikeUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -18,7 +19,8 @@ import javax.inject.Named
 @HiltViewModel
 class PostDetailViewModel @Inject constructor(
     @Named("comment_author_you") private val commentAuthorName: String,
-    private val getCommunityPosts: GetCommunityPostsUseCase,
+    getCommunityPosts: GetCommunityPostsUseCase,
+    getPostById: GetPostByIdUseCase,
     private val toggleLike: ToggleLikeUseCase,
     private val toggleBookmark: ToggleBookmarkUseCase,
     private val addComment: AddCommentUseCase,
@@ -32,7 +34,7 @@ class PostDetailViewModel @Inject constructor(
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000),
-            initialValue = PostDetailUiState(post = getCommunityPosts().value.firstOrNull { it.id == postId })
+            initialValue = PostDetailUiState(post = getPostById(postId))
         )
 
     val commentText: StateFlow<String> = savedStateHandle.getStateFlow("commentText", "")

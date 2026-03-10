@@ -90,6 +90,9 @@ class CommunityRepositoryImpl @Inject constructor() : CommunityRepository {
         }
     }
 
+    // TODO(V6): Replace with real API + local cache (Room) once the community backend endpoint
+    //  is available. This in-memory seed data is a temporary stand-in only — it must not ship
+    //  to production. Tracked in the V6 clean-architecture violation in the audit doc.
     private fun samplePosts(): List<CommunityPost> =
         listOf(
             CommunityPost(
