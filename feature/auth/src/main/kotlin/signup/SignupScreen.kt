@@ -222,8 +222,10 @@ fun SignupScreen(
                 onClick = {
                     viewModel.onGoogleSignInStarted()
                     scope.launch {
-                        when (val result =
-                            GoogleCredentialHelper.getGoogleIdToken(context, webClientId)) {
+                        when (
+                            val result =
+                                GoogleCredentialHelper.getGoogleIdToken(context, webClientId)
+                        ) {
                             is Result.Success -> viewModel.onGoogleSignInResult(result.data)
                             is Result.Error -> viewModel.onGoogleSignInError(result.error)
                         }

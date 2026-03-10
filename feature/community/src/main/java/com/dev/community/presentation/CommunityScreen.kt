@@ -22,6 +22,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.dev.community.components.CommunityPostCard
 import com.dev.community.components.CommunityTopBar
 import com.dev.feature.community.R
+import com.dev.utils.uistate.UiState
 import com.example.designsystem.components.AppBottomBar
 import com.example.designsystem.theme.TravioTheme
 import com.example.designsystem.theme.spacing
@@ -86,8 +87,8 @@ fun CommunityScreenContent(
             )
         }
     ) { paddingValues ->
-        when {
-            state.isLoading -> {
+        when (val postsState = state.postsState) {
+            is UiState.Loading -> {
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
@@ -99,7 +100,7 @@ fun CommunityScreenContent(
                 }
             }
 
-            state.posts.isEmpty() -> {
+            is UiState.Error -> {
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
@@ -107,33 +108,51 @@ fun CommunityScreenContent(
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = stringResource(R.string.community_empty_state),
+                        text = postsState.message.asString(),
                         style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        color = MaterialTheme.colorScheme.error
                     )
                 }
             }
 
-            else -> {
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(paddingValues),
-                    contentPadding = PaddingValues(
-                        horizontal = MaterialTheme.spacing.md,
-                        vertical = MaterialTheme.spacing.md
-                    ),
-                    verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.md)
-                ) {
-                    items(items = state.posts, key = { it.id }) { post ->
-                        CommunityPostCard(
-                            post = post,
-                            onLikeClicked = { onLikeClicked(post.id) },
-                            onCardClicked = { navigateToPostDetail(post.id) }
+            is UiState.Success -> {
+                val posts = postsState.data.orEmpty()
+                if (posts.isEmpty()) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(paddingValues),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = stringResource(R.string.community_empty_state),
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
+                    }
+                } else {
+                    LazyColumn(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(paddingValues),
+                        contentPadding = PaddingValues(
+                            horizontal = MaterialTheme.spacing.md,
+                            vertical = MaterialTheme.spacing.md
+                        ),
+                        verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.md)
+                    ) {
+                        items(items = posts, key = { it.id }) { post ->
+                            CommunityPostCard(
+                                post = post,
+                                onLikeClicked = { onLikeClicked(post.id) },
+                                onCardClicked = { navigateToPostDetail(post.id) }
+                            )
+                        }
                     }
                 }
             }
+
+            is UiState.Idle -> Unit
         }
     }
 }
@@ -144,37 +163,39 @@ private fun CommunityScreenPreview() {
     TravioTheme {
         CommunityScreenContent(
             state = CommunityUiState(
-                posts = listOf(
-                    CommunityPost(
-                        id = 1,
-                        author = "Ahmed Ali",
-                        avatarUrl = "",
-                        location = "Santorini, Greece",
-                        timeAgo = "2 hours ago",
-                        content = "The sunset views from Oia are absolutely breathtaking. " +
+                postsState = UiState.Success(
+                    listOf(
+                        CommunityPost(
+                            id = 1,
+                            author = "Ahmed Ali",
+                            avatarUrl = "",
+                            location = "Santorini, Greece",
+                            timeAgo = "2 hours ago",
+                            content = "The sunset views from Oia are absolutely breathtaking. " +
                                 "The blue domes against the golden hour light are magical.",
-                        imageUrls = listOf(
-                            "https://images.unsplash.com/" +
+                            imageUrls = listOf(
+                                "https://images.unsplash.com/" +
                                     "photo-1533105079780-92b9be482077?w=800"
+                            ),
+                            likesCount = 245,
+                            commentsCount = 2,
+                            rating = 5f
                         ),
-                        likesCount = 245,
-                        commentsCount = 2,
-                        rating = 5f
-                    ),
-                    CommunityPost(
-                        id = 2,
-                        author = "Marcus Rodriguez",
-                        avatarUrl = "",
-                        location = "Bali, Indonesia",
-                        timeAgo = "5 hours ago",
-                        content = "Exploring the Tegallalang Rice Terraces at sunrise was like" +
+                        CommunityPost(
+                            id = 2,
+                            author = "Marcus Rodriguez",
+                            avatarUrl = "",
+                            location = "Bali, Indonesia",
+                            timeAgo = "5 hours ago",
+                            content = "Exploring the Tegallalang Rice Terraces at sunrise was like" +
                                 " seeing the light of Bali for the first time.",
-                        imageUrls = listOf(
-                            "https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=800"
-                        ),
-                        likesCount = 95,
-                        commentsCount = 17,
-                        rating = 4.5f
+                            imageUrls = listOf(
+                                "https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=800"
+                            ),
+                            likesCount = 95,
+                            commentsCount = 17,
+                            rating = 4.5f
+                        )
                     )
                 )
             ),

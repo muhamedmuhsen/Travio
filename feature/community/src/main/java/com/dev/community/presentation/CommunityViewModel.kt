@@ -2,6 +2,7 @@ package com.dev.community.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.dev.utils.uistate.UiState
 import com.example.domain.usecase.community.GetCommunityPostsUseCase
 import com.example.domain.usecase.community.ToggleLikeUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -13,16 +14,16 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CommunityViewModel @Inject constructor(
-    private val getCommunityPosts: GetCommunityPostsUseCase,
+    getCommunityPosts: GetCommunityPostsUseCase,
     private val toggleLike: ToggleLikeUseCase
 ) : ViewModel() {
 
     val uiState: StateFlow<CommunityUiState> = getCommunityPosts()
-        .map { posts -> CommunityUiState(posts = posts) }
+        .map { posts -> CommunityUiState(postsState = UiState.Success(posts)) }
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000),
-            initialValue = CommunityUiState(posts = getCommunityPosts().value)
+            initialValue = CommunityUiState(postsState = UiState.Loading)
         )
 
     fun onLikeClicked(postId: Int) = toggleLike(postId)
