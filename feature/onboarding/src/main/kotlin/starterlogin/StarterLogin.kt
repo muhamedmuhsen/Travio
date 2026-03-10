@@ -75,10 +75,12 @@ fun StarterLogin(
                     navigateToSignup()
                 }
 
-                StarterLoginEvent.GoogleSignIn -> { /* handled via onClick */
+                StarterLoginEvent.GoogleSignIn -> {
+                    /* handled via onClick */
                 }
 
-                StarterLoginEvent.FacebookSignIn -> { /* TODO: facebook login */
+                StarterLoginEvent.FacebookSignIn -> {
+                    /* TODO: facebook login */
                 }
                 StarterLoginEvent.NavigateToHome -> navigateToHome()
                 StarterLoginEvent.NavigateToSurvey -> navigateToSurvey()
@@ -150,8 +152,10 @@ fun StarterLogin(
                 onClick = {
                     viewModel.onGoogleSignInStarted()
                     scope.launch {
-                        when (val result =
-                            GoogleCredentialHelper.getGoogleIdToken(context, webClientId)) {
+                        when (
+                            val result =
+                                GoogleCredentialHelper.getGoogleIdToken(context, webClientId)
+                        ) {
                             is Result.Success -> viewModel.onGoogleSignInResult(result.data)
                             is Result.Error -> viewModel.onGoogleSignInError(result.error)
                         }

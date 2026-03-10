@@ -109,7 +109,8 @@ fun LoginScreen(
                     // performLogin()
                 }
 
-                LoginEvent.ContinueWithGoogle -> { /* handled via onClick directly */
+                LoginEvent.ContinueWithGoogle -> {
+                    /* handled via onClick directly */
                 }
             }
         }
