@@ -1,13 +1,12 @@
 package com.example.feature.starterlogin
 
-import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dev.utils.uistate.UiState
 import com.dev.utils.uitext.asUiText
-import com.example.data.repository.auth.GoogleCredentialDataSourceImpl
 import com.example.domain.repository.prefernces.PreferencesManager
 import com.example.domain.usecase.auth.login.GoogleSignInUseCase
+import com.example.domain.utils.DataError
 import com.example.domain.utils.Result
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
@@ -21,7 +20,6 @@ import javax.inject.Inject
 @HiltViewModel
 class StarterLoginViewModel
 @Inject constructor(
-    private val googleCredentialDataSource: GoogleCredentialDataSourceImpl,
     private val googleSignInUseCase: GoogleSignInUseCase,
     private val preferencesManager: PreferencesManager
 ) : ViewModel() {
@@ -43,35 +41,22 @@ class StarterLoginViewModel
         sendEvent(StarterLoginEvent.NavigateToSignup)
     }
 
-    fun onGoogleSignInClicked(
-        context: Context,
-        webClientId: String
-    ) {
+    fun onGoogleSignInStarted() {
         if (_state.value.loginState is UiState.Loading) return
-
         _state.update { it.copy(loginState = UiState.Loading) }
-
-        viewModelScope.launch {
-            when (val result = googleCredentialDataSource.getGoogleIdToken(context, webClientId)) {
-                is Result.Error -> {
-                    val message = result.error.asUiText()
-                    _state.update { it.copy(loginState = UiState.Error(message)) }
-                    sendEvent(StarterLoginEvent.ShowAuthError(message))
-                }
-
-                is Result.Success -> {
-                    val idToken = result.data
-                    onGoogleSignInResult(idToken)
-                }
-            }
-        }
     }
 
-    private fun onGoogleSignInResult(idToken: String) {
+    fun onGoogleSignInError(error: DataError) {
+        val message = error.asUiText()
+        _state.update { it.copy(loginState = UiState.Error(message)) }
+        sendEvent(StarterLoginEvent.ShowAuthError(message))
+    }
+
+    fun onGoogleSignInResult(idToken: String) {
         viewModelScope.launch {
-            when (val shouldNavigateToHome = googleSignInUseCase(idToken)) {
+            when (val result = googleSignInUseCase(idToken)) {
                 is Result.Error -> {
-                    val message = shouldNavigateToHome.error.asUiText()
+                    val message = result.error.asUiText()
                     _state.update { it.copy(loginState = UiState.Error(message)) }
                     sendEvent(StarterLoginEvent.ShowAuthError(message))
                 }

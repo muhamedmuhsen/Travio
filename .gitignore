@@ -51,5 +51,7 @@ authWithGoogle.md
 /.junie
 /.junie/
 /app/google-services.json
-/.env
 /verify_email_code_review.md
+engineering_rules_revised.md
+plan-rulesComplianceAudit.prompt.md
+.env
