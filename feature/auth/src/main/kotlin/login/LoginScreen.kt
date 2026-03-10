@@ -30,6 +30,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -41,6 +42,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.dev.utils.auth.GoogleCredentialHelper
 import com.example.designsystem.components.AppButton
 import com.example.designsystem.components.AppTextField
 import com.example.designsystem.components.ErrorSnackBar
@@ -48,11 +50,13 @@ import com.example.designsystem.components.SigninOptionsButton
 import com.example.designsystem.components.TextFieldType
 import com.example.designsystem.theme.TravioTheme
 import com.example.designsystem.theme.spacing
+import com.example.domain.utils.Result
 import com.example.feature.auth.BuildConfig
 import com.example.feature.auth.R
 import com.example.feature.login.components.ByLoggingSection
 import com.example.feature.login.components.OrSignInWithText
 import com.example.feature.login.components.RememberMeAndForgetPasswordSection
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import com.example.designsystem.R as DesignSystemR
 
@@ -70,7 +74,18 @@ fun LoginScreen(
     val uiState = viewModel.state.collectAsStateWithLifecycle()
     val webClientId = BuildConfig.GOOGLE_WEB_CLIENT_ID
     val context = LocalContext.current
+    val scope = rememberCoroutineScope()
     var errorMessage by remember { mutableStateOf<String?>(null) }
+
+    val onGoogleSignIn: () -> Unit = {
+        viewModel.onGoogleSignInStarted()
+        scope.launch {
+            when (val result = GoogleCredentialHelper.getGoogleIdToken(context, webClientId)) {
+                is Result.Success -> viewModel.onGoogleSignInResult(result.data)
+                is Result.Error -> viewModel.onGoogleSignInError(result.error)
+            }
+        }
+    }
 
     LaunchedEffect(errorMessage) {
         errorMessage?.let {
@@ -94,8 +109,7 @@ fun LoginScreen(
                     // performLogin()
                 }
 
-                LoginEvent.ContinueWithGoogle -> {
-                    viewModel.onGoogleSignInClicked(context, webClientId)
+                LoginEvent.ContinueWithGoogle -> { /* handled via onClick directly */
                 }
             }
         }
@@ -208,7 +222,7 @@ fun LoginScreen(
             SigninOptionsButton(
                 onClick = {
                     Timber.d("Google sign-in button clicked")
-                    viewModel.onGoogleSignInClicked(context, webClientId)
+                    onGoogleSignIn()
                 },
                 text = stringResource(id = R.string.continue_with_google),
                 icon = DesignSystemR.drawable.google_icon,

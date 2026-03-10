@@ -20,6 +20,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -32,13 +33,16 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.dev.utils.auth.GoogleCredentialHelper
 import com.example.designsystem.components.AppButton
 import com.example.designsystem.components.ErrorSnackBar
 import com.example.designsystem.components.SigninOptionsButton
 import com.example.designsystem.theme.TravioTheme
 import com.example.designsystem.theme.spacing
+import com.example.domain.utils.Result
 import com.example.feature.onboarding.BuildConfig
 import com.example.feature.onboarding.R
+import kotlinx.coroutines.launch
 @Composable
 fun StarterLogin(
     modifier: Modifier = Modifier,
@@ -50,6 +54,7 @@ fun StarterLogin(
 ) {
     val webClientId = BuildConfig.GOOGLE_WEB_CLIENT_ID
     val context = LocalContext.current
+    val scope = rememberCoroutineScope()
     var errorMessage by remember { mutableStateOf<String?>(null) }
 
     LaunchedEffect(errorMessage) {
@@ -70,8 +75,11 @@ fun StarterLogin(
                     navigateToSignup()
                 }
 
-                StarterLoginEvent.GoogleSignIn -> TODO()
-                StarterLoginEvent.FacebookSignIn -> TODO()
+                StarterLoginEvent.GoogleSignIn -> { /* handled via onClick */
+                }
+
+                StarterLoginEvent.FacebookSignIn -> { /* TODO: facebook login */
+                }
                 StarterLoginEvent.NavigateToHome -> navigateToHome()
                 StarterLoginEvent.NavigateToSurvey -> navigateToSurvey()
                 is StarterLoginEvent.ShowAuthError -> {
@@ -139,7 +147,16 @@ fun StarterLogin(
             Spacer(modifier = Modifier.height(MaterialTheme.spacing.md))
 
             SigninOptionsButton(
-                onClick = { viewModel.onGoogleSignInClicked(context, webClientId) },
+                onClick = {
+                    viewModel.onGoogleSignInStarted()
+                    scope.launch {
+                        when (val result =
+                            GoogleCredentialHelper.getGoogleIdToken(context, webClientId)) {
+                            is Result.Success -> viewModel.onGoogleSignInResult(result.data)
+                            is Result.Error -> viewModel.onGoogleSignInError(result.error)
+                        }
+                    }
+                },
                 text = stringResource(id = R.string.continue_with_google),
                 icon = com.example.designsystem.R.drawable.google_icon,
                 modifier = Modifier.fillMaxWidth()

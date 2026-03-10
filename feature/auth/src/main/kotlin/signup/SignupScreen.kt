@@ -46,6 +46,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.dev.utils.auth.GoogleCredentialHelper
 import com.example.designsystem.components.AppButton
 import com.example.designsystem.components.AppTextField
 import com.example.designsystem.components.ErrorSnackBar
@@ -53,9 +54,11 @@ import com.example.designsystem.components.SigninOptionsButton
 import com.example.designsystem.components.TextFieldType
 import com.example.designsystem.theme.TravioTheme
 import com.example.designsystem.theme.spacing
+import com.example.domain.utils.Result
 import com.example.feature.auth.BuildConfig
 import com.example.feature.auth.R
 import com.example.feature.login.components.OrSignInWithText
+import kotlinx.coroutines.launch
 import com.example.designsystem.R as DesignSystemR
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -216,7 +219,16 @@ fun SignupScreen(
             Spacer(modifier = Modifier.height(MaterialTheme.spacing.lg))
 
             SigninOptionsButton(
-                onClick = { viewModel.onGoogleSignInClicked(context, webClientId) },
+                onClick = {
+                    viewModel.onGoogleSignInStarted()
+                    scope.launch {
+                        when (val result =
+                            GoogleCredentialHelper.getGoogleIdToken(context, webClientId)) {
+                            is Result.Success -> viewModel.onGoogleSignInResult(result.data)
+                            is Result.Error -> viewModel.onGoogleSignInError(result.error)
+                        }
+                    }
+                },
                 text = stringResource(id = R.string.continue_with_google),
                 icon = DesignSystemR.drawable.google_icon,
                 modifier = Modifier.fillMaxWidth()

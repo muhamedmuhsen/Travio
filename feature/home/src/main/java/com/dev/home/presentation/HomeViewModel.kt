@@ -5,8 +5,8 @@ import androidx.lifecycle.viewModelScope
 import com.dev.utils.uistate.UiState
 import com.dev.utils.uitext.UiText
 import com.dev.utils.uitext.asUiText
-import com.example.data.mapper.place.toPlace
 import com.example.domain.model.destination.Destination
+import com.example.domain.model.favorite.toPlace
 import com.example.domain.usecase.destinations.AddToRecentlyViewedUseCase
 import com.example.domain.usecase.destinations.GetAllDestinationsUseCase
 import com.example.domain.usecase.destinations.GetFamousCountriesUseCase

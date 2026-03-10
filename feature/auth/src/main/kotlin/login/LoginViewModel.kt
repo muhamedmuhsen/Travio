@@ -1,11 +1,9 @@
 package com.example.feature.login
 
-import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dev.utils.uistate.UiState
 import com.dev.utils.uitext.asUiText
-import com.example.data.repository.auth.GoogleCredentialDataSourceImpl
 import com.example.domain.repository.prefernces.CredentialsManager
 import com.example.domain.repository.prefernces.PreferencesManager
 import com.example.domain.usecase.auth.login.GoogleSignInUseCase
@@ -25,7 +23,6 @@ import javax.inject.Inject
 class LoginViewModel @Inject constructor(
     private val loginUseCase: LoginUseCase,
     private val googleSignInUseCase: GoogleSignInUseCase,
-    private val googleCredentialDataSource: GoogleCredentialDataSourceImpl,
     private val credentialsManager: CredentialsManager,
     private val preferencesManager: PreferencesManager
 ) : ViewModel() {
@@ -108,37 +105,24 @@ class LoginViewModel @Inject constructor(
         }
     }
 
-    fun onGoogleSignInClicked(
-        context: Context,
-        webClientId: String
-    ) {
+    fun onGoogleSignInStarted() {
         _state.update { it.copy(loginState = UiState.Loading) }
-
-        viewModelScope.launch {
-            when (val result = googleCredentialDataSource.getGoogleIdToken(context, webClientId)) {
-                is Result.Error -> {
-                    val message = result.error.asUiText()
-                    _state.update { it.copy(loginState = UiState.Error(message)) }
-                    sendEvent(LoginEvent.ShowAuthError(message))
-                    _state.update { it.copy(loginState = UiState.Idle) }
-                }
-
-                is Result.Success -> {
-                    val idToken = result.data
-                    onGoogleSignInResult(idToken)
-                }
-            }
-        }
     }
 
-    private fun onGoogleSignInResult(idToken: String) {
+    fun onGoogleSignInError(error: DataError) {
+        val message = error.asUiText()
+        _state.update { it.copy(loginState = UiState.Error(message)) }
+        sendEvent(LoginEvent.ShowAuthError(message))
+        _state.update { it.copy(loginState = UiState.Idle) }
+    }
+
+    fun onGoogleSignInResult(idToken: String) {
         viewModelScope.launch {
             when (val shouldNavigateToHome = googleSignInUseCase(idToken)) {
                 is Result.Error -> {
                     val message = shouldNavigateToHome.error.asUiText()
                     _state.update { it.copy(loginState = UiState.Error(message)) }
                     sendEvent(LoginEvent.ShowAuthError(message))
-                    _state.update { it.copy(loginState = UiState.Idle) }
                 }
 
                 is Result.Success -> {
@@ -155,7 +139,8 @@ class LoginViewModel @Inject constructor(
                 isEmailError = false,
                 passwordError = null,
                 emailError = null,
-                errorMessage = null
+                errorMessage = null,
+                loginState = UiState.Idle
             )
         }
     }
