@@ -4,6 +4,7 @@ import com.example.domain.repository.auth.TokenProvider
 import com.example.domain.session.SessionEventBus
 import com.example.network.BuildConfig
 import com.example.network.api.AuthApi
+import com.example.network.api.CommunityApi
 import com.example.network.api.DestinationsApi
 import com.example.network.api.UserManagementApi
 import com.example.network.clients.AuthInterceptor
@@ -121,6 +122,12 @@ object NetworkModule {
     @Singleton
     fun provideAuthApi(retrofit: Retrofit): AuthApi {
         return retrofit.create(AuthApi::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideCommunityApi(retrofit: Retrofit): CommunityApi {
+        return retrofit.create(CommunityApi::class.java)
     }
 
     @Provides

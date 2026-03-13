@@ -69,7 +69,6 @@ dependencies {
     implementation(libs.timber)
 
     // Testing
-    testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 }

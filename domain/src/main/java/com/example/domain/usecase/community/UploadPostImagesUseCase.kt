@@ -5,11 +5,11 @@ import com.example.domain.utils.DataError
 import com.example.domain.utils.Result
 import javax.inject.Inject
 
-class AddCommunityPostUseCase @Inject constructor(
+class UploadPostImagesUseCase @Inject constructor(
     private val repository: CommunityRepository
 ) {
     suspend operator fun invoke(
-        location: String,
-        description: String
-    ): Result<Unit, DataError> = repository.addPost(location, description)
+        postId: Int,
+        imageUris: List<String>
+    ): Result<Unit, DataError> = repository.uploadPostImages(postId, imageUris)
 }

@@ -14,6 +14,9 @@ import com.dev.community.presentation.PostDetailScreen
 import com.dev.community.presentation.ShareMomentScreen
 import com.dev.favroite.FavoriteScreen
 import com.dev.home.presentation.HomeScreen
+import com.dev.onboarding.language.LanguageScreen
+import com.dev.onboarding.onboarding.OnboardingScreen
+import com.dev.onboarding.starterlogin.StarterLogin
 import com.dev.profile.editProfile.EditProfileScreen
 import com.dev.profile.profile.ProfileScreen
 import com.dev.survey.presentation.SurveyScreen
@@ -21,11 +24,8 @@ import com.example.common.navigation.Screen
 import com.example.feature.forgetpassword.ForgetPasswordScreen
 import com.example.feature.forgetpassword.code.CodeScreen
 import com.example.feature.forgetpassword.newpassword.NewPasswordScreen
-import com.example.feature.language.LanguageScreen
 import com.example.feature.login.LoginScreen
-import com.example.feature.onboarding.OnboardingScreen
 import com.example.feature.signup.SignupScreen
-import com.example.feature.starterlogin.StarterLogin
 import com.example.feature.verifyEmail.VerifyEmailScreen
 import java.net.URLDecoder
 import java.net.URLEncoder

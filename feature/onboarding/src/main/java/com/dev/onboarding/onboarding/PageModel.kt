@@ -1,4 +1,4 @@
-package com.example.feature.onboarding
+package com.dev.onboarding.onboarding
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes

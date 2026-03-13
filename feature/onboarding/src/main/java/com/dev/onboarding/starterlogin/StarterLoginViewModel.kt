@@ -1,4 +1,4 @@
-package com.example.feature.starterlogin
+package com.dev.onboarding.starterlogin
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

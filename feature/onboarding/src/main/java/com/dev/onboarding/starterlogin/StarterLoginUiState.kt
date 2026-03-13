@@ -1,4 +1,4 @@
-package com.example.feature.starterlogin
+package com.dev.onboarding.starterlogin
 
 import com.dev.utils.uistate.UiState
 

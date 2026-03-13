@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.outlined.BookmarkBorder
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -35,6 +36,7 @@ fun PostDetailHeader(
     location: String,
     isBookmarked: Boolean,
     onBookmarkClicked: () -> Unit,
+    onDeleteClicked: () -> Unit,
     onCloseClicked: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -88,6 +90,15 @@ fun PostDetailHeader(
             )
         }
 
+        IconButton(onClick = onDeleteClicked) {
+            Icon(
+                imageVector = Icons.Filled.Delete,
+                contentDescription = stringResource(R.string.post_detail_delete_cd),
+                tint = MaterialTheme.colorScheme.error,
+                modifier = Modifier.size(22.dp)
+            )
+        }
+
         IconButton(onClick = onCloseClicked) {
             Icon(
                 imageVector = Icons.Filled.Close,
@@ -117,7 +128,8 @@ private fun PostDetailHeaderPreview() {
             location = "Santorini, Greece",
             isBookmarked = false,
             onBookmarkClicked = {},
-            onCloseClicked = {}
+            onCloseClicked = {},
+            onDeleteClicked = { }
         )
     }
 }

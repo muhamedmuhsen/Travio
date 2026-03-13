@@ -1,4 +1,4 @@
-package com.example.feature.starterlogin
+package com.dev.onboarding.starterlogin
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -43,6 +43,7 @@ import com.example.designsystem.theme.spacing
 import com.example.domain.utils.Result
 import com.example.feature.onboarding.BuildConfig
 import com.example.feature.onboarding.R
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Composable
@@ -62,7 +63,7 @@ fun StarterLogin(
 
     LaunchedEffect(errorMessage) {
         errorMessage?.let {
-            kotlinx.coroutines.delay(3000)
+            delay(3000)
             errorMessage = null
         }
     }
@@ -72,10 +73,12 @@ fun StarterLogin(
             when (event) {
                 StarterLoginEvent.NavigateToLogin -> navigateToLogin()
                 StarterLoginEvent.NavigateToSignup -> navigateToSignup()
-                StarterLoginEvent.GoogleSignIn -> { /* handled via onClick */
+                StarterLoginEvent.GoogleSignIn -> {
+                    /* handled via onClick */
                 }
 
-                StarterLoginEvent.FacebookSignIn -> { /* TODO: facebook login */
+                StarterLoginEvent.FacebookSignIn -> {
+                    /* TODO: facebook login */
                 }
                 StarterLoginEvent.NavigateToHome -> navigateToHome()
                 StarterLoginEvent.NavigateToSurvey -> navigateToSurvey()

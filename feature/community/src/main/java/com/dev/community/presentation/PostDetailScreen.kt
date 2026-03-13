@@ -8,14 +8,21 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -29,6 +36,7 @@ import com.dev.community.components.PostDetailHeader
 import com.dev.community.components.PostDetailRatingRow
 import com.dev.community.components.SharedImagePager
 import com.dev.feature.community.R
+import com.dev.utils.uistate.UiState
 import com.example.designsystem.theme.TravioTheme
 import com.example.designsystem.theme.spacing
 import com.example.domain.model.community.Comment
@@ -42,17 +50,37 @@ fun PostDetailScreen(
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val commentText by viewModel.commentText.collectAsStateWithLifecycle()
+    val snackbarHostState = remember { SnackbarHostState() }
+    val context = LocalContext.current
 
-    PostDetailScreenContent(
-        state = state,
-        commentText = commentText,
-        onLikeClicked = viewModel::onLikeClicked,
-        onBookmarkClicked = viewModel::onBookmarkClicked,
-        onCommentTextChanged = viewModel::onCommentTextChanged,
-        onCommentSubmitted = viewModel::onCommentSubmitted,
-        onNavigateBack = onNavigateBack,
-        modifier = modifier
-    )
+    LaunchedEffect(Unit) {
+        viewModel.event.collect { event ->
+            when (event) {
+                PostDetailEvent.PostDeleted -> onNavigateBack()
+                is PostDetailEvent.DeleteFailed ->
+                    snackbarHostState.showSnackbar(event.message.asString(context))
+            }
+        }
+    }
+
+    Box(modifier = modifier.fillMaxSize()) {
+        PostDetailScreenContent(
+            state = state,
+            commentText = commentText,
+            onLikeClicked = viewModel::onLikeClicked,
+            onBookmarkClicked = viewModel::onBookmarkClicked,
+            onCommentTextChanged = viewModel::onCommentTextChanged,
+            onCommentSubmitted = viewModel::onCommentSubmitted,
+            onDeleteClicked = viewModel::onDeleteClicked,
+            onDeleteConfirmed = viewModel::onDeleteConfirmed,
+            onDeleteDismissed = viewModel::onDeleteDismissed,
+            onNavigateBack = onNavigateBack
+        )
+        SnackbarHost(
+            hostState = snackbarHostState,
+            modifier = Modifier.align(Alignment.BottomCenter)
+        )
+    }
 }
 
 @Composable
@@ -63,28 +91,84 @@ fun PostDetailScreenContent(
     onBookmarkClicked: () -> Unit,
     onCommentTextChanged: (String) -> Unit,
     onCommentSubmitted: () -> Unit,
+    onDeleteClicked: () -> Unit,
+    onDeleteConfirmed: () -> Unit,
+    onDeleteDismissed: () -> Unit,
     onNavigateBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val post = state.post
-
-    if (post == null) {
-        Box(
-            modifier = modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
-        ) {
-            if (state.isLoading) {
-                CircularProgressIndicator()
-            } else {
-                Text(text = stringResource(R.string.post_detail_not_found))
+    if (state.showDeleteConfirmation) {
+        AlertDialog(
+            onDismissRequest = onDeleteDismissed,
+            title = { Text(stringResource(R.string.post_detail_delete_confirm_title)) },
+            text = { Text(stringResource(R.string.post_detail_delete_confirm_body)) },
+            confirmButton = {
+                TextButton(onClick = onDeleteConfirmed) {
+                    Text(
+                        text = stringResource(R.string.post_detail_delete_confirm_button),
+                        color = MaterialTheme.colorScheme.error
+                    )
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = onDeleteDismissed) {
+                    Text(stringResource(R.string.post_detail_delete_cancel_button))
+                }
             }
-        }
-        return
+        )
     }
 
-    // Main layout: scrollable content + sticky input bar pinned at the bottom
+    when (val postState = state.postState) {
+        is UiState.Loading, is UiState.Idle -> {
+            Box(
+                modifier = modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) { CircularProgressIndicator() }
+        }
+
+        is UiState.Error -> {
+            Box(
+                modifier = modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = postState.message.asString(),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.error
+                )
+            }
+        }
+
+        is UiState.Success -> {
+            val post = postState.data ?: return
+            PostDetailBody(
+                post = post,
+                commentText = commentText,
+                onLikeClicked = onLikeClicked,
+                onBookmarkClicked = onBookmarkClicked,
+                onCommentTextChanged = onCommentTextChanged,
+                onCommentSubmitted = onCommentSubmitted,
+                onDeleteClicked = onDeleteClicked,
+                onNavigateBack = onNavigateBack,
+                modifier = modifier
+            )
+        }
+    }
+}
+
+@Composable
+private fun PostDetailBody(
+    post: CommunityPost,
+    commentText: String,
+    onLikeClicked: () -> Unit,
+    onBookmarkClicked: () -> Unit,
+    onCommentTextChanged: (String) -> Unit,
+    onCommentSubmitted: () -> Unit,
+    onDeleteClicked: () -> Unit,
+    onNavigateBack: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     Box(modifier = modifier.fillMaxSize()) {
-        // ── Scrollable body ───────────────────────────────────────────────────
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
@@ -97,6 +181,7 @@ fun PostDetailScreenContent(
                     location = post.location,
                     isBookmarked = post.isBookmarked,
                     onBookmarkClicked = onBookmarkClicked,
+                    onDeleteClicked = onDeleteClicked,
                     onCloseClicked = onNavigateBack
                 )
             }
@@ -142,10 +227,7 @@ fun PostDetailScreenContent(
                     isLiked = post.isLiked,
                     onLikeClicked = onLikeClicked
                 )
-                HorizontalDivider(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                )
+                HorizontalDivider(modifier = Modifier.fillMaxWidth())
             }
 
             item {
@@ -189,46 +271,38 @@ fun PostDetailScreenContent(
     }
 }
 
-@Preview(
-    name = "Success — with post",
-    showBackground = true,
-    backgroundColor = 0xFFF7FAFA,
-    showSystemUi = true
-)
+@Preview(name = "Success", showBackground = true, showSystemUi = true)
 @Composable
 private fun PostDetailScreenPreview() {
     TravioTheme {
         PostDetailScreenContent(
             state = PostDetailUiState(
-                post = CommunityPost(
-                    id = 1,
-                    author = "Ahmed Ali",
-                    avatarUrl = "",
-                    location = "Santorini, Greece",
-                    timeAgo = "2 hours ago",
-                    content = "The sunset views from Oia are absolutely breathtaking! " +
-                            "The blue domes against the golden hour light are magical.",
-                    imageUrls = listOf(
-                        "https://images.unsplash.com/photo-1533105079780-92b9be482077?w=800",
-                        "https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?w=800",
-                        "https://images.unsplash.com/photo-1601581975053-7c199b540f7e?w=800"
-                    ),
-                    likesCount = 245,
-                    commentsCount = 2,
-                    rating = 2f,
-                    isBookmarked = false,
-                    comments = listOf(
-                        Comment(
-                            id = 1,
-                            authorName = "Alex John",
-                            text = "This is absolutely stunning! Adding Santorini to my bucket list \uD83D\uDE0D",
-                            timeAgo = "1h ago"
-                        ),
-                        Comment(
-                            id = 2,
-                            authorName = "Thomas Shelby",
-                            text = "I was there last summer! The sunsets are magical \u2728",
-                            timeAgo = "6h ago"
+                postState = UiState.Success(
+                    CommunityPost(
+                        id = 1,
+                        author = "Ahmed Ali",
+                        avatarUrl = "",
+                        location = "Santorini, Greece",
+                        timeAgo = "2 hours ago",
+                        content = "The sunset views from Oia are absolutely breathtaking!",
+                        imageUrls = listOf("https://images.unsplash.com/photo-1533105079780-92b9be482077?w=800"),
+                        likesCount = 245,
+                        commentsCount = 2,
+                        rating = 2f,
+                        isBookmarked = false,
+                        comments = listOf(
+                            Comment(
+                                id = 1,
+                                authorName = "Alex",
+                                text = "Stunning!",
+                                timeAgo = "1h ago"
+                            ),
+                            Comment(
+                                id = 2,
+                                authorName = "Thomas",
+                                text = "I was there last summer!",
+                                timeAgo = "6h ago"
+                            )
                         )
                     )
                 )
@@ -238,6 +312,9 @@ private fun PostDetailScreenPreview() {
             onBookmarkClicked = {},
             onCommentTextChanged = {},
             onCommentSubmitted = {},
+            onDeleteClicked = {},
+            onDeleteConfirmed = {},
+            onDeleteDismissed = {},
             onNavigateBack = {}
         )
     }
@@ -248,28 +325,48 @@ private fun PostDetailScreenPreview() {
 private fun PostDetailScreenLoadingPreview() {
     TravioTheme {
         PostDetailScreenContent(
-            state = PostDetailUiState(post = null, isLoading = true),
+            state = PostDetailUiState(postState = UiState.Loading),
             commentText = "",
             onLikeClicked = {},
             onBookmarkClicked = {},
             onCommentTextChanged = {},
             onCommentSubmitted = {},
+            onDeleteClicked = {},
+            onDeleteConfirmed = {},
+            onDeleteDismissed = {},
             onNavigateBack = {}
         )
     }
 }
 
-@Preview(name = "Not Found", showBackground = true, showSystemUi = true)
+@Preview(name = "Delete Confirmation", showBackground = true, showSystemUi = true)
 @Composable
-private fun PostDetailScreenNotFoundPreview() {
+private fun PostDetailDeleteDialogPreview() {
     TravioTheme {
         PostDetailScreenContent(
-            state = PostDetailUiState(post = null, isLoading = false),
+            state = PostDetailUiState(
+                postState = UiState.Success(
+                    CommunityPost(
+                        id = 1,
+                        author = "Ahmed",
+                        avatarUrl = "",
+                        location = "Cairo",
+                        timeAgo = "Now",
+                        content = "Hello!",
+                        likesCount = 0,
+                        commentsCount = 0
+                    )
+                ),
+                showDeleteConfirmation = true
+            ),
             commentText = "",
             onLikeClicked = {},
             onBookmarkClicked = {},
             onCommentTextChanged = {},
             onCommentSubmitted = {},
+            onDeleteClicked = {},
+            onDeleteConfirmed = {},
+            onDeleteDismissed = {},
             onNavigateBack = {}
         )
     }

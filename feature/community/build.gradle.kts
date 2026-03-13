@@ -41,7 +41,6 @@ dependencies {
     implementation(project(":core:designsystem"))
     implementation(project(":feature:utils"))
     implementation(project(":domain"))
-    testImplementation(project(":feature:utils"))
     // Core Android
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)

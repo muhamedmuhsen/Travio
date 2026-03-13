@@ -2,6 +2,7 @@ package com.dev.profile.profile
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.dev.onboarding.language.AppLocaleManager
 import com.dev.utils.localization.AppLanguage
 import com.dev.utils.uistate.UiState
 import com.dev.utils.uitext.asUiText
@@ -10,7 +11,6 @@ import com.example.domain.usecase.auth.session.LogoutUseCase
 import com.example.domain.usecase.preferences.ToggleDarkModeUseCase
 import com.example.domain.usecase.usermanagement.GetUserUseCase
 import com.example.domain.utils.Result
-import com.example.feature.language.AppLocaleManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow

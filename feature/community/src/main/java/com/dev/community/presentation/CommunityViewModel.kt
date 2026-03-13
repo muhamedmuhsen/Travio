@@ -3,28 +3,61 @@ package com.dev.community.presentation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dev.utils.uistate.UiState
+import com.dev.utils.uitext.asUiText
 import com.example.domain.usecase.community.GetCommunityPostsUseCase
 import com.example.domain.usecase.community.ToggleLikeUseCase
+import com.example.domain.utils.Result
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class CommunityViewModel @Inject constructor(
-    getCommunityPosts: GetCommunityPostsUseCase,
+    private val getCommunityPosts: GetCommunityPostsUseCase,
     private val toggleLike: ToggleLikeUseCase
 ) : ViewModel() {
 
-    val uiState: StateFlow<CommunityUiState> = getCommunityPosts()
-        .map { posts -> CommunityUiState(postsState = UiState.Success(posts)) }
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5_000),
-            initialValue = CommunityUiState(postsState = UiState.Loading)
-        )
+    private val _uiState = MutableStateFlow(CommunityUiState())
+    val uiState: StateFlow<CommunityUiState> = _uiState.asStateFlow()
 
-    fun onLikeClicked(postId: Int) = toggleLike(postId)
+    init {
+        loadPosts()
+    }
+
+    private fun loadPosts() {
+        viewModelScope.launch {
+            getCommunityPosts().collect { result ->
+                _uiState.update {
+                    when (result) {
+                        is Result.Success -> it.copy(postsState = UiState.Success(result.data))
+                        is Result.Error -> it.copy(postsState = UiState.Error(result.error.asUiText()))
+                    }
+                }
+            }
+        }
+    }
+
+    fun onLikeClicked(postId: Int) {
+        val currentPosts = (_uiState.value.postsState as? UiState.Success)?.data ?: return
+        val post = currentPosts.firstOrNull { it.id == postId } ?: return
+        // Optimistic update
+        _uiState.update { state ->
+            val updated = currentPosts.map { p ->
+                if (p.id == postId) {
+                    p.copy(
+                        isLiked = !p.isLiked,
+                        likesCount = if (p.isLiked) p.likesCount - 1 else p.likesCount + 1
+                    )
+                } else {
+                    p
+                }
+            }
+            state.copy(postsState = UiState.Success(updated))
+        }
+        viewModelScope.launch { toggleLike(postId, post.isLiked) }
+    }
 }

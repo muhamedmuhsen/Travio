@@ -1,4 +1,4 @@
-package com.example.feature.language
+package com.dev.onboarding.language
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background

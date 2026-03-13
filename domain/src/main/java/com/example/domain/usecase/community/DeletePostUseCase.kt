@@ -5,11 +5,9 @@ import com.example.domain.utils.DataError
 import com.example.domain.utils.Result
 import javax.inject.Inject
 
-class AddCommunityPostUseCase @Inject constructor(
+class DeletePostUseCase @Inject constructor(
     private val repository: CommunityRepository
 ) {
-    suspend operator fun invoke(
-        location: String,
-        description: String
-    ): Result<Unit, DataError> = repository.addPost(location, description)
+    suspend operator fun invoke(postId: Int): Result<Unit, DataError> =
+        repository.deletePost(postId)
 }

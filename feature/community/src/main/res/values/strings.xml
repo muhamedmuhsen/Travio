@@ -13,6 +13,12 @@
     <!-- Post Detail Screen -->
     <string name="post_detail_bookmark_cd">Bookmark post</string>
     <string name="post_detail_close_cd">Close</string>
+    <string name="post_detail_delete_cd">Delete post</string>
+    <string name="post_detail_delete_confirm_title">Delete post?</string>
+    <string name="post_detail_delete_confirm_body">This action cannot be undone.</string>
+    <string name="post_detail_delete_confirm_button">Delete</string>
+    <string name="post_detail_delete_cancel_button">Cancel</string>
+    <string name="post_detail_delete_error">Failed to delete post. Please try again.</string>
     <string name="post_detail_comments_header">Comments</string>
     <string name="post_detail_no_comments">No comments yet. Be the first!</string>
     <string name="post_detail_comment_hint">Add a comment…</string>
@@ -35,6 +41,7 @@
     <string name="share_moment_add_photo_subtitle">Click to upload your travel photo</string>
     <string name="share_moment_add_photo_cd">Add photo</string>
     <string name="share_moment_selected_photo_cd">Selected photo</string>
+    <string name="share_moment_remove_photo_cd">Remove photo</string>
     <string name="share_moment_location_label">Location</string>
     <string name="share_moment_location_hint">Where is this place?</string>
     <string name="share_moment_description_label">Description</string>

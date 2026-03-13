@@ -1,4 +1,4 @@
-package com.example.feature.language
+package com.dev.onboarding.language
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

@@ -1,4 +1,4 @@
-package com.example.feature.starterlogin
+package com.dev.onboarding.starterlogin
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme

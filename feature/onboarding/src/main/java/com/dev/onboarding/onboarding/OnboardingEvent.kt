@@ -1,4 +1,4 @@
-package com.example.feature.onboarding
+package com.dev.onboarding.onboarding
 
 interface OnboardingEvent {
     data object NavigateToStarterLogin : OnboardingEvent

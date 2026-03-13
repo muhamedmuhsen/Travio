@@ -52,21 +52,19 @@ fun ShareMomentScreen(
     val snackbarHostState = remember { SnackbarHostState() }
 
     val photoPickerLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.GetContent()
-    ) { uri: Uri? ->
-        uri?.let { viewModel.onPhotoSelected(it.toString()) }
+        contract = ActivityResultContracts.GetMultipleContents()
+    ) { uris: List<Uri> ->
+        if (uris.isNotEmpty()) {
+            viewModel.onPhotosSelected(uris.map { it.toString() })
+        }
     }
 
-    val photoRequiredMessage = stringResource(R.string.share_moment_error_photo_required)
     val locationRequiredMessage = stringResource(R.string.share_moment_error_location_required)
 
     LaunchedEffect(Unit) {
         viewModel.event.collect { event ->
             when (event) {
                 ShareMomentEvent.PostCreated -> onNavigateBack()
-                ShareMomentEvent.ShowPhotoRequired ->
-                    snackbarHostState.showSnackbar(photoRequiredMessage)
-
                 ShareMomentEvent.ShowLocationRequired ->
                     snackbarHostState.showSnackbar(locationRequiredMessage)
             }
@@ -77,6 +75,7 @@ fun ShareMomentScreen(
         state = state,
         snackbarHostState = snackbarHostState,
         onPhotoClicked = { photoPickerLauncher.launch("image/*") },
+        onPhotoRemoved = viewModel::onPhotoRemoved,
         onLocationChanged = viewModel::onLocationChanged,
         onDescriptionChanged = viewModel::onDescriptionChanged,
         onPostClicked = viewModel::onPostClicked,
@@ -89,6 +88,7 @@ fun ShareMomentScreen(
 fun ShareMomentScreenContent(
     state: ShareMomentUiState,
     onPhotoClicked: () -> Unit,
+    onPhotoRemoved: (String) -> Unit,
     onLocationChanged: (String) -> Unit,
     onDescriptionChanged: (String) -> Unit,
     onPostClicked: () -> Unit,
@@ -113,8 +113,9 @@ fun ShareMomentScreenContent(
             verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.lg)
         ) {
             AddPhotoBox(
-                photoUri = state.photoUri,
+                photoUris = state.photoUris,
                 onClick = onPhotoClicked,
+                onPhotoRemoved = onPhotoRemoved,
                 modifier = Modifier.fillMaxWidth()
             )
 
@@ -236,6 +237,7 @@ private fun ShareMomentScreenEmptyPreview() {
         ShareMomentScreenContent(
             state = ShareMomentUiState(),
             onPhotoClicked = {},
+            onPhotoRemoved = {},
             onLocationChanged = {},
             onDescriptionChanged = {},
             onPostClicked = {},
@@ -244,17 +246,21 @@ private fun ShareMomentScreenEmptyPreview() {
     }
 }
 
-@Preview(name = "Filled", showBackground = true)
+@Preview(name = "With Photos", showBackground = true)
 @Composable
-private fun ShareMomentScreenFilledPreview() {
+private fun ShareMomentScreenWithPhotosPreview() {
     TravioTheme {
         ShareMomentScreenContent(
             state = ShareMomentUiState(
-                photoUri = "https://images.unsplash.com/photo-1533105079780-92b9be482077?w=800",
+                photoUris = listOf(
+                    "https://images.unsplash.com/photo-1533105079780-92b9be482077?w=400",
+                    "https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=400"
+                ),
                 location = "Santorini, Greece",
                 description = "The sunset views from Oia are breathtaking!"
             ),
             onPhotoClicked = {},
+            onPhotoRemoved = {},
             onLocationChanged = {},
             onDescriptionChanged = {},
             onPostClicked = {},
@@ -269,12 +275,13 @@ private fun ShareMomentScreenSubmittingPreview() {
     TravioTheme {
         ShareMomentScreenContent(
             state = ShareMomentUiState(
-                photoUri = "https://images.unsplash.com/photo-1533105079780-92b9be482077?w=800",
+                photoUris = listOf("https://images.unsplash.com/photo-1533105079780-92b9be482077?w=400"),
                 location = "Santorini, Greece",
                 description = "The sunset views from Oia are breathtaking!",
                 submitState = UiState.Loading
             ),
             onPhotoClicked = {},
+            onPhotoRemoved = {},
             onLocationChanged = {},
             onDescriptionChanged = {},
             onPostClicked = {},

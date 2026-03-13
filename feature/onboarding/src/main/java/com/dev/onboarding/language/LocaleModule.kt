@@ -1,4 +1,4 @@
-package com.example.feature.language
+package com.dev.onboarding.language
 
 import android.content.Context
 import dagger.Module

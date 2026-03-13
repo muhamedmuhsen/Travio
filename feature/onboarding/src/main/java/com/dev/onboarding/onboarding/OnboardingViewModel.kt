@@ -1,4 +1,4 @@
-package com.example.feature.onboarding
+package com.dev.onboarding.onboarding
 
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel

@@ -1,4 +1,4 @@
-package com.example.feature.language
+package com.dev.onboarding.language
 
 import android.app.LocaleManager
 import android.content.Context

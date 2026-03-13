@@ -1,207 +1,99 @@
 package com.example.data.repository.community
 
-import com.example.domain.model.community.Comment
+import com.example.data.mapper.community.toCommunityPost
+import com.example.data.utils.safeApiCall
 import com.example.domain.model.community.CommunityPost
 import com.example.domain.repository.community.CommunityRepository
+import com.example.domain.utils.DataError
+import com.example.domain.utils.Result
+import com.example.network.api.CommunityApi
+import com.example.network.dto.community.CommentContentRequest
+import com.example.network.dto.community.PostContentRequest
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.update
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.asRequestBody
+import java.io.File
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class CommunityRepositoryImpl @Inject constructor() : CommunityRepository {
+class CommunityRepositoryImpl @Inject constructor(
+    private val api: CommunityApi
+) : CommunityRepository {
 
-    private val _posts = MutableStateFlow(samplePosts())
-    override val posts: StateFlow<List<CommunityPost>> = _posts.asStateFlow()
+    // No bookmark endpoint yet — track locally until the backend is ready.
+    // TODO: persist bookmarks via Room once the community DB table is added.
+    private val bookmarkedIds = MutableStateFlow<Set<Int>>(emptySet())
 
-    override fun getPostById(id: Int): CommunityPost? = _posts.value.firstOrNull { it.id == id }
-
-    override fun toggleLike(postId: Int) {
-        _posts.update { posts ->
-            posts.map { post ->
-                if (post.id == postId) {
-                    post.copy(
-                        isLiked = !post.isLiked,
-                        likesCount = if (post.isLiked) post.likesCount - 1 else post.likesCount + 1
-                    )
-                } else {
-                    post
+    override fun getAllPost(): Flow<Result<List<CommunityPost>, DataError>> =
+        flow {
+            emit(
+                safeApiCall {
+                    api.getAllPosts().map { dto ->
+                        dto.toCommunityPost().copy(isBookmarked = dto.postId in bookmarkedIds.value)
+                    }
                 }
-            }
+            )
         }
-    }
 
-    override fun toggleBookmark(postId: Int) {
-        _posts.update { posts ->
-            posts.map { post ->
-                if (post.id == postId) post.copy(isBookmarked = !post.isBookmarked) else post
-            }
+    override suspend fun getPostById(postId: Int): Result<CommunityPost, DataError> =
+        safeApiCall {
+            api.getPostById(postId).toCommunityPost()
+                .copy(isBookmarked = postId in bookmarkedIds.value)
         }
-    }
 
-    override fun addPost(
-        photoUri: String,
+    override suspend fun addPost(
         location: String,
         description: String
-    ) {
-        _posts.update { currentPosts ->
-            val newId = (currentPosts.maxOfOrNull { it.id } ?: 0) + 1
-            val newPost = CommunityPost(
-                id = newId,
-                author = "You",
-                avatarUrl = "",
-                location = location,
-                timeAgo = "Just now",
-                content = description,
-                imageUrls = listOf(photoUri),
-                likesCount = 0,
-                commentsCount = 0
+    ): Result<Unit, DataError> =
+        safeApiCall {
+            api.createPost(
+                PostContentRequest(
+                    content = description,
+                    location = location
+                )
             )
-            listOf(newPost) + currentPosts
         }
-    }
 
-    override fun addComment(
+    override suspend fun uploadPostImages(
         postId: Int,
-        commentText: String,
-        authorName: String
-    ) {
-        if (commentText.isBlank()) return
-        _posts.update { posts ->
-            posts.map { post ->
-                if (post.id == postId) {
-                    val newComment = Comment(
-                        id = (post.comments.maxOfOrNull { it.id } ?: 0) + 1,
-                        authorName = authorName,
-                        avatarUrl = "",
-                        text = commentText,
-                        timeAgo = "Just now"
-                    )
-                    post.copy(
-                        comments = post.comments + newComment,
-                        commentsCount = post.comments.size + 1
-                    )
-                } else {
-                    post
-                }
+        imageUris: List<String>
+    ): Result<Unit, DataError> =
+        safeApiCall {
+            val parts = imageUris.mapIndexed { index, uri ->
+                val file = File(uri)
+                val requestBody = file.asRequestBody("image/*".toMediaTypeOrNull())
+                MultipartBody.Part.createFormData("images[$index]", file.name, requestBody)
             }
+            api.uploadPostImages(postId, parts)
         }
-    }
 
-    // TODO(V6): Replace with real API + local cache (Room) once the community backend endpoint
-    //  is available. This in-memory seed data is a temporary stand-in only — it must not ship
-    //  to production. Tracked in the V6 clean-architecture violation in the audit doc.
-    private fun samplePosts(): List<CommunityPost> =
-        listOf(
-            CommunityPost(
-                id = 1,
-                author = "Ahmed Ali",
-                avatarUrl = "",
-                location = "Santorini, Greece",
-                timeAgo = "2 hours ago",
-                content = "The sunset views from Oia are absolutely breathtaking! " +
-                        "The blue domes against the golden hour light are magical.",
-                imageUrls = listOf(
-                    "https://images.unsplash.com/photo-1533105079780-92b9be482077?w=800",
-                    "https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?w=800",
-                    "https://images.unsplash.com/photo-1601581975053-7c199b540f7e?w=800"
-                ),
-                likesCount = 245,
-                commentsCount = 2,
-                rating = 5f,
-                comments = listOf(
-                    Comment(
-                        id = 1,
-                        authorName = "Alex John",
-                        avatarUrl = "",
-                        text = "This is absolutely stunning! Adding Santorini to my bucket list \uD83D\uDE0D",
-                        timeAgo = "1h ago"
-                    ),
-                    Comment(
-                        id = 2,
-                        authorName = "Thomas Shelby",
-                        avatarUrl = "",
-                        text = "I was there last summer! The sunsets are magical \u2728",
-                        timeAgo = "6h ago"
-                    )
-                )
-            ),
-            CommunityPost(
-                id = 2,
-                author = "Marcus Rodriguez",
-                avatarUrl = "",
-                location = "Bali, Indonesia",
-                timeAgo = "5 hours ago",
-                content = "Exploring the Tegallalang Rice Terraces at sunrise was like seeing the " +
-                        "light of Bali for the first time. The cool morning mist and the sound " +
-                        "of water flowing through the channels make this place absolutely serene.",
-                imageUrls = listOf(
-                    "https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=800"
-                ),
-                likesCount = 95,
-                commentsCount = 17,
-                rating = 4.5f,
-                comments = listOf(
-                    Comment(
-                        id = 1,
-                        authorName = "Sara Lee",
-                        text = "Bali is on my list!",
-                        timeAgo = "2h ago"
-                    ),
-                    Comment(
-                        id = 2,
-                        authorName = "Mike T.",
-                        text = "The mist looks incredible.",
-                        timeAgo = "4h ago"
-                    )
-                )
-            ),
-            CommunityPost(
-                id = 3,
-                author = "Mohamed Mohsen",
-                avatarUrl = "",
-                location = "Paris, France",
-                timeAgo = "Yesterday",
-                content = "My drone shot of the Eiffel Tower at dawn — France is more beautiful in person " +
-                        "than any photo can capture. It was worth the early wake-up to beat the crowds.",
-                imageUrls = listOf(
-                    "https://images.unsplash.com/photo-1511739001486-6bfe10ce785f?w=800"
-                ),
-                likesCount = 215,
-                commentsCount = 42,
-                rating = 4f,
-                comments = listOf(
-                    Comment(
-                        id = 1,
-                        authorName = "Anna K.",
-                        text = "Paris never disappoints!",
-                        timeAgo = "1d ago"
-                    )
-                )
-            ),
-            CommunityPost(
-                id = 4,
-                author = "Ahmed Ali",
-                avatarUrl = "",
-                location = "Goa, India",
-                timeAgo = "2 days ago",
-                content = "Watching this sunset from Palolem Beach is an explosion of bohemian colors, sharp contrasts.",
-                imageUrls = listOf(
-                    "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800"
-                ),
-                likesCount = 76,
-                commentsCount = 11,
-                rating = 4.8f,
-                comments = listOf(
-                    Comment(
-                        id = 1,
-                        authorName = "Ravi P.",
-                        text = "Goa is paradise!",
-                        timeAgo = "1d ago"
-                    )
-                )
-            )
-        )
+    override suspend fun deletePost(postId: Int): Result<Unit, DataError> =
+        safeApiCall { api.deletePost(postId) }
+
+    override suspend fun addComment(
+        postId: Int,
+        text: String,
+        authorName: String
+    ): Result<Unit, DataError> =
+        safeApiCall {
+            api.addComment(CommentContentRequest(content = text, postId = postId))
+        }
+
+    override suspend fun toggleLike(
+        postId: Int,
+        isCurrentlyLiked: Boolean
+    ): Result<Unit, DataError> =
+        safeApiCall {
+            if (isCurrentlyLiked) api.unlikePost(postId) else api.likePost(postId)
+        }
+
+    override suspend fun toggleBookmark(postId: Int): Result<Unit, DataError> {
+        bookmarkedIds.update { ids -> if (postId in ids) ids - postId else ids + postId }
+        return Result.Success(Unit)
+    }
 }

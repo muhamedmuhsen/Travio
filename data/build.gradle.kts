@@ -84,7 +84,6 @@ dependencies {
     implementation(libs.facebook.login)
 
     // Testing
-    testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 
