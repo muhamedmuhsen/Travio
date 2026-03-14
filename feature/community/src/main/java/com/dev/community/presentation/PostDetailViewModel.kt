@@ -76,7 +76,7 @@ class PostDetailViewModel @Inject constructor(
                 )
             )
         }
-        viewModelScope.launch { toggleLike(postId.toString(), post.isLiked) }
+        viewModelScope.launch { toggleLike(postId, post.isLiked) }
     }
 
     fun onBookmarkClicked() {

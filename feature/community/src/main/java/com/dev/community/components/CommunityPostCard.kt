@@ -381,7 +381,7 @@ fun LoadingCommunityPostCard(modifier: Modifier = Modifier) {
 }
 
 private val previewPost = CommunityPost(
-    id = "1",
+    id = 1,
     author = "Ahmed Ali",
     avatarUrl = "",
     location = "Santorini, Greece",

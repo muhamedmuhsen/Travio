@@ -18,7 +18,7 @@ interface CommunityRepository {
         imageUris: List<String>
     ): Result<Unit, DataError>
 
-    suspend fun deletePost(postId: String): Result<Unit, DataError>
+    suspend fun deletePost(postId: Int): Result<Unit, DataError>
     suspend fun addComment(
         postId: Int,
         text: String,
@@ -26,7 +26,7 @@ interface CommunityRepository {
     ): Result<Unit, DataError>
 
     suspend fun toggleLike(
-        postId: String,
+        postId: Int,
         isCurrentlyLiked: Boolean
     ): Result<Unit, DataError>
 

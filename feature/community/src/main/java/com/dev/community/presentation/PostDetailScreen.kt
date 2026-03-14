@@ -279,7 +279,7 @@ private fun PostDetailScreenPreview() {
             state = PostDetailUiState(
                 postState = UiState.Success(
                     CommunityPost(
-                        id = "1",
+                        id = 1,
                         author = "Ahmed Ali",
                         avatarUrl = "",
                         location = "Santorini, Greece",
@@ -347,7 +347,7 @@ private fun PostDetailDeleteDialogPreview() {
             state = PostDetailUiState(
                 postState = UiState.Success(
                     CommunityPost(
-                        id = "1",
+                        id = 1,
                         author = "Ahmed",
                         avatarUrl = "",
                         location = "Cairo",

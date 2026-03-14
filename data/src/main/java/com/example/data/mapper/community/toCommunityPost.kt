@@ -9,7 +9,7 @@ fun PostDto.toCommunityPost(): CommunityPost =
     CommunityPost(
         id = this.postId,
         author = this.authorName,
-        avatarUrl = this.authorAvatarUrl,
+        avatarUrl = this.authorAvatarUrl.orEmpty(),
         location = this.location,
         timeAgo = this.createdAt,
         content = this.content,

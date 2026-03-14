@@ -27,13 +27,13 @@ interface CommunityApi {
     suspend fun addComment(@Body() request: CommentContentRequest)
 
     @POST("community/like-post/{id}")
-    suspend fun likePost(@Path("id") postId: String)
+    suspend fun likePost(@Path("id") postId: Int)
 
     @POST("community/unlike-post/{id}")
-    suspend fun unlikePost(@Path("id") postId: String)
+    suspend fun unlikePost(@Path("id") postId: Int)
 
     @DELETE("Community/posts/{postId}")
-    suspend fun deletePost(@Path("postId") postId: String)
+    suspend fun deletePost(@Path("postId") postId: Int)
 
     @Multipart
     @POST("Community/posts/{postId}/images")

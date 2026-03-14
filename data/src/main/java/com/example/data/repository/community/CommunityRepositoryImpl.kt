@@ -70,7 +70,7 @@ class CommunityRepositoryImpl @Inject constructor(
             api.uploadPostImages(postId, parts)
         }
 
-    override suspend fun deletePost(postId: String): Result<Unit, DataError> =
+    override suspend fun deletePost(postId: Int): Result<Unit, DataError> =
         safeApiCall { api.deletePost(postId) }
 
     override suspend fun addComment(
@@ -83,7 +83,7 @@ class CommunityRepositoryImpl @Inject constructor(
         }
 
     override suspend fun toggleLike(
-        postId: String,
+        postId: Int,
         isCurrentlyLiked: Boolean
     ): Result<Unit, DataError> =
         safeApiCall {

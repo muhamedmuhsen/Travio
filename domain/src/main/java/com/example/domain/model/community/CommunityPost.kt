@@ -1,7 +1,7 @@
 package com.example.domain.model.community
 
 data class CommunityPost(
-    val id: String,
+    val id: Int,
     val author: String,
     val avatarUrl: String,
     val location: String,

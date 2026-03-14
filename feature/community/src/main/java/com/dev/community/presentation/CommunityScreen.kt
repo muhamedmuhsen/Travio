@@ -36,7 +36,7 @@ fun CommunityScreen(
     navigateToFavorite: () -> Unit = {},
     navigateToAi: () -> Unit = {},
     navigateToProfile: () -> Unit = {},
-    navigateToPostDetail: (String) -> Unit = {},
+    navigateToPostDetail: (Int) -> Unit = {},
     navigateToShareMoment: () -> Unit = {}
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
@@ -57,12 +57,12 @@ fun CommunityScreen(
 @Composable
 fun CommunityScreenContent(
     state: CommunityUiState,
-    onLikeClicked: (String) -> Unit,
+    onLikeClicked: (Int) -> Unit,
     navigateToHome: () -> Unit,
     navigateToFavorite: () -> Unit,
     navigateToAi: () -> Unit,
     navigateToProfile: () -> Unit,
-    navigateToPostDetail: (String) -> Unit,
+    navigateToPostDetail: (Int) -> Unit,
     modifier: Modifier = Modifier,
     navigateToShareMoment: () -> Unit = {}
 ) {
@@ -166,7 +166,7 @@ private fun CommunityScreenPreview() {
                 postsState = UiState.Success(
                     listOf(
                         CommunityPost(
-                            id = "1",
+                            id = 1,
                             author = "Ahmed Ali",
                             avatarUrl = "",
                             location = "Santorini, Greece",
@@ -182,7 +182,7 @@ private fun CommunityScreenPreview() {
                             rating = 5f
                         ),
                         CommunityPost(
-                            id = "2",
+                            id = 2,
                             author = "Marcus Rodriguez",
                             avatarUrl = "",
                             location = "Bali, Indonesia",
