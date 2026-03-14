@@ -11,5 +11,5 @@ class AddCommunityPostUseCase @Inject constructor(
     suspend operator fun invoke(
         location: String,
         description: String
-    ): Result<Unit, DataError> = repository.addPost(location, description)
+    ): Result<Int, DataError> = repository.addPost(location, description)
 }

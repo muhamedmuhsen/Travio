@@ -3,6 +3,7 @@ package com.example.network.api
 import com.example.common.baseresponse.BaseResponse
 import com.example.network.dto.community.CommentContentRequest
 import com.example.network.dto.community.PostContentRequest
+import com.example.network.dto.community.PostCreationResponse
 import com.example.network.dto.community.PostDto
 import okhttp3.MultipartBody
 import retrofit2.http.Body
@@ -15,7 +16,7 @@ import retrofit2.http.Path
 
 interface CommunityApi {
     @POST("Community/create-post")
-    suspend fun createPost(@Body request: PostContentRequest)
+    suspend fun createPost(@Body request: PostContentRequest): BaseResponse<PostCreationResponse>
 
     @GET("Community/feed")
     suspend fun getAllPosts(): BaseResponse<List<PostDto>>
@@ -39,6 +40,6 @@ interface CommunityApi {
     @POST("Community/posts/{postId}/images")
     suspend fun uploadPostImages(
         @Path("postId") postId: Int,
-        @Part images: List<MultipartBody.Part>
+        @Part image: List<MultipartBody.Part>
     )
 }

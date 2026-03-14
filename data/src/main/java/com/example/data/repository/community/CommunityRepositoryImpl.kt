@@ -1,7 +1,10 @@
 package com.example.data.repository.community
 
+import android.content.Context
+import androidx.core.net.toUri
 import com.example.data.mapper.community.toCommunityPost
 import com.example.data.utils.safeApiCall
+import com.example.data.utils.toMultipartBodyPart
 import com.example.domain.model.community.CommunityPost
 import com.example.domain.repository.community.CommunityRepository
 import com.example.domain.utils.DataError
@@ -9,20 +12,19 @@ import com.example.domain.utils.Result
 import com.example.network.api.CommunityApi
 import com.example.network.dto.community.CommentContentRequest
 import com.example.network.dto.community.PostContentRequest
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.update
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import okhttp3.MultipartBody
-import okhttp3.RequestBody.Companion.asRequestBody
-import java.io.File
+import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class CommunityRepositoryImpl @Inject constructor(
-    private val api: CommunityApi
+    private val api: CommunityApi,
+    @ApplicationContext private val context: Context
 ) : CommunityRepository {
 
     // No bookmark endpoint yet — track locally until the backend is ready.
@@ -47,28 +49,34 @@ class CommunityRepositoryImpl @Inject constructor(
     override suspend fun addPost(
         location: String,
         description: String
-    ): Result<Unit, DataError> =
+    ): Result<Int, DataError> =
         safeApiCall {
             api.createPost(
                 PostContentRequest(
                     content = description,
                     location = location
                 )
-            )
+            ).data.postId
         }
 
     override suspend fun uploadPostImages(
         postId: Int,
         imageUris: List<String>
-    ): Result<Unit, DataError> =
-        safeApiCall {
-            val parts = imageUris.mapIndexed { index, uri ->
-                val file = File(uri)
-                val requestBody = file.asRequestBody("image/*".toMediaTypeOrNull())
-                MultipartBody.Part.createFormData("images[$index]", file.name, requestBody)
-            }
-            api.uploadPostImages(postId, parts)
+    ): Result<Unit, DataError> {
+        val parts = imageUris.mapIndexed { index, uriString ->
+            uriString.toUri().toMultipartBodyPart(
+                context = context,
+                partName = "image"
+            )
         }
+
+        if (parts.any { it == null }) {
+            Timber.w("uploadPostImages: invalid uri in list -> $imageUris")
+            return Result.Error(DataError.Validation.InvalidUri)
+        }
+
+        return safeApiCall { api.uploadPostImages(postId, parts.filterNotNull()) }
+    }
 
     override suspend fun deletePost(postId: Int): Result<Unit, DataError> =
         safeApiCall { api.deletePost(postId) }

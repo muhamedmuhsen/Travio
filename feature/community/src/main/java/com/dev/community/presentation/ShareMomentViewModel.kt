@@ -66,14 +66,30 @@ class ShareMomentViewModel @Inject constructor(
                     }
                 }
 
+                is Result.Success -> handlePostCreated(result.data)
+            }
+        }
+    }
+
+    private suspend fun handlePostCreated(postId: Int) {
+        val photos = _uiState.value.photoUris
+        if (photos.isNotEmpty()) {
+            when (val uploadResult = uploadPostImages(postId, photos)) {
+                is Result.Error -> {
+                    _uiState.update { it.copy(submitState = UiState.Success()) }
+                    _event.send(ShareMomentEvent.ShowUploadError(uploadResult.error.asUiText()))
+                    _event.send(ShareMomentEvent.PostCreated)
+                    return
+                }
+
                 is Result.Success -> {
-                    // If the post was created, attempt image upload.
-                    // We don't block success on image upload failure since the post is already live.
-                    // TODO: replace with actual postId returned by the API once endpoint returns it.
                     _uiState.update { it.copy(submitState = UiState.Success()) }
                     _event.send(ShareMomentEvent.PostCreated)
                 }
             }
+        } else {
+            _uiState.update { it.copy(submitState = UiState.Success()) }
+            _event.send(ShareMomentEvent.PostCreated)
         }
     }
 }

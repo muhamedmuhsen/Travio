@@ -28,6 +28,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -53,6 +54,7 @@ fun ShareMomentScreen(
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
+    val context = LocalContext.current
 
     LaunchedEffect(selectedLocation) {
         if (!selectedLocation.isNullOrBlank()) {
@@ -76,6 +78,8 @@ fun ShareMomentScreen(
                 ShareMomentEvent.PostCreated -> onNavigateBack()
                 ShareMomentEvent.ShowLocationRequired ->
                     snackbarHostState.showSnackbar(locationRequiredMessage)
+                is ShareMomentEvent.ShowUploadError ->
+                    snackbarHostState.showSnackbar(event.message.asString(context))
             }
         }
     }

@@ -5,6 +5,7 @@ import com.example.domain.utils.Result
 import kotlinx.coroutines.CancellationException
 import retrofit2.HttpException
 import timber.log.Timber
+import java.io.FileNotFoundException
 import java.io.IOException
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
@@ -27,6 +28,12 @@ suspend fun <T> safeApiCall(apiCall: suspend () -> T): Result<T, DataError> {
     } catch (e: SocketTimeoutException) {
         Timber.e(e, "safeApiCall: request timed out (${e.message})")
         Result.Error(DataError.Network.Timeout)
+    } catch (e: FileNotFoundException) {
+        Timber.e(e, "safeApiCall: content not found -> ${e.message}")
+        Result.Error(DataError.Validation.InvalidUri)
+    } catch (e: SecurityException) {
+        Timber.e(e, "safeApiCall: security error accessing content -> ${e.message}")
+        Result.Error(DataError.Validation.InvalidUri)
     } catch (e: IOException) {
         Timber.e(e, "safeApiCall: I/O error -> no internet connection (${e.message})")
         Result.Error(DataError.Network.NoInternetConnection)

@@ -11,7 +11,7 @@ interface CommunityRepository {
     suspend fun addPost(
         location: String,
         description: String
-    ): Result<Unit, DataError>
+    ): Result<Int, DataError>
 
     suspend fun uploadPostImages(
         postId: Int,
