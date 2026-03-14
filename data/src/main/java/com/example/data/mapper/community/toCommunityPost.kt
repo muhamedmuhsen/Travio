@@ -7,7 +7,8 @@ import com.example.network.dto.community.CommentDto
 import com.example.network.dto.community.PostDto
 import java.time.Instant
 import java.time.LocalDateTime
-import java.time.ZoneOffset
+import java.time.OffsetDateTime
+import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
 fun PostDto.toCommunityPost(): CommunityPost =
@@ -42,10 +43,17 @@ private fun resolveImageUrl(path: String): String {
     return base + normalizedPath
 }
 
-private fun parseCreatedAt(value: String?): Instant? =
-    try {
-        val local = value?.let { LocalDateTime.parse(it, DateTimeFormatter.ISO_LOCAL_DATE_TIME) }
-        local?.toInstant(ZoneOffset.UTC)
-    } catch (_: Exception) {
-        null
-    }
+private fun parseCreatedAt(value: String?): Instant? {
+    if (value.isNullOrBlank()) return null
+
+    // Backend currently returns timestamps without an offset; treat those as device local time.
+    return runCatching { Instant.parse(value) }.getOrNull()
+        ?: runCatching {
+            OffsetDateTime.parse(value, DateTimeFormatter.ISO_OFFSET_DATE_TIME).toInstant()
+        }.getOrNull()
+        ?: runCatching {
+            LocalDateTime.parse(value, DateTimeFormatter.ISO_LOCAL_DATE_TIME)
+                .atZone(ZoneId.systemDefault())
+                .toInstant()
+        }.getOrNull()
+}
