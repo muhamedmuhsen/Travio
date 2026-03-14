@@ -3,6 +3,7 @@ package com.dev.community.presentation
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -45,11 +46,19 @@ import com.example.designsystem.theme.spacing
 @Composable
 fun ShareMomentScreen(
     onNavigateBack: () -> Unit,
+    onNavigateToLocationPicker: () -> Unit,
     modifier: Modifier = Modifier,
+    selectedLocation: String? = null,
     viewModel: ShareMomentViewModel = hiltViewModel()
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
+
+    LaunchedEffect(selectedLocation) {
+        if (!selectedLocation.isNullOrBlank()) {
+            viewModel.onLocationChanged(selectedLocation)
+        }
+    }
 
     val photoPickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetMultipleContents()
@@ -76,7 +85,7 @@ fun ShareMomentScreen(
         snackbarHostState = snackbarHostState,
         onPhotoClicked = { photoPickerLauncher.launch("image/*") },
         onPhotoRemoved = viewModel::onPhotoRemoved,
-        onLocationChanged = viewModel::onLocationChanged,
+        onLocationClicked = onNavigateToLocationPicker,
         onDescriptionChanged = viewModel::onDescriptionChanged,
         onPostClicked = viewModel::onPostClicked,
         onCloseClicked = onNavigateBack,
@@ -89,7 +98,7 @@ fun ShareMomentScreenContent(
     state: ShareMomentUiState,
     onPhotoClicked: () -> Unit,
     onPhotoRemoved: (String) -> Unit,
-    onLocationChanged: (String) -> Unit,
+    onLocationClicked: () -> Unit,
     onDescriptionChanged: (String) -> Unit,
     onPostClicked: () -> Unit,
     onCloseClicked: () -> Unit,
@@ -121,7 +130,7 @@ fun ShareMomentScreenContent(
 
             LocationSection(
                 location = state.location,
-                onLocationChanged = onLocationChanged
+                onLocationClicked = onLocationClicked
             )
 
             DescriptionSection(
@@ -145,7 +154,7 @@ fun ShareMomentScreenContent(
 @Composable
 private fun LocationSection(
     location: String,
-    onLocationChanged: (String) -> Unit,
+    onLocationClicked: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -159,7 +168,9 @@ private fun LocationSection(
         )
         OutlinedTextField(
             value = location,
-            onValueChange = onLocationChanged,
+            onValueChange = {},
+            readOnly = true,
+            enabled = false,
             placeholder = {
                 Text(
                     text = stringResource(R.string.share_moment_location_hint),
@@ -177,7 +188,9 @@ private fun LocationSection(
             shape = MaterialTheme.shapes.large,
             singleLine = true,
             colors = shareMomentFieldColors(),
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable(onClick = onLocationClicked)
         )
     }
 }
@@ -220,13 +233,16 @@ private fun shareMomentFieldColors() =
     TextFieldDefaults.colors(
         focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
         unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
+        disabledContainerColor = MaterialTheme.colorScheme.surfaceVariant,
         focusedIndicatorColor = MaterialTheme.colorScheme.primary,
         unfocusedIndicatorColor = MaterialTheme.colorScheme.outlineVariant,
-        disabledIndicatorColor = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.38f),
+        disabledIndicatorColor = MaterialTheme.colorScheme.outlineVariant,
         focusedTextColor = MaterialTheme.colorScheme.onSurface,
         unfocusedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
+        disabledTextColor = MaterialTheme.colorScheme.onSurface,
         focusedPlaceholderColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
         unfocusedPlaceholderColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
+        disabledPlaceholderColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
         cursorColor = MaterialTheme.colorScheme.primary
     )
 
@@ -238,7 +254,7 @@ private fun ShareMomentScreenEmptyPreview() {
             state = ShareMomentUiState(),
             onPhotoClicked = {},
             onPhotoRemoved = {},
-            onLocationChanged = {},
+            onLocationClicked = {},
             onDescriptionChanged = {},
             onPostClicked = {},
             onCloseClicked = {}
@@ -261,7 +277,7 @@ private fun ShareMomentScreenWithPhotosPreview() {
             ),
             onPhotoClicked = {},
             onPhotoRemoved = {},
-            onLocationChanged = {},
+            onLocationClicked = {},
             onDescriptionChanged = {},
             onPostClicked = {},
             onCloseClicked = {}
@@ -282,7 +298,7 @@ private fun ShareMomentScreenSubmittingPreview() {
             ),
             onPhotoClicked = {},
             onPhotoRemoved = {},
-            onLocationChanged = {},
+            onLocationClicked = {},
             onDescriptionChanged = {},
             onPostClicked = {},
             onCloseClicked = {}

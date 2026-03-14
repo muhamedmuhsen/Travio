@@ -1,5 +1,6 @@
 package com.example.network.api
 
+import com.example.common.baseresponse.BaseResponse
 import com.example.network.dto.community.CommentContentRequest
 import com.example.network.dto.community.PostContentRequest
 import com.example.network.dto.community.PostDto
@@ -17,7 +18,7 @@ interface CommunityApi {
     suspend fun createPost(@Body request: PostContentRequest)
 
     @GET("Community/feed")
-    suspend fun getAllPosts(): List<PostDto>
+    suspend fun getAllPosts(): BaseResponse<List<PostDto>>
 
     @GET("Community/posts/{postId}")
     suspend fun getPostById(@Path("postId") postId: Int): PostDto
@@ -26,16 +27,16 @@ interface CommunityApi {
     suspend fun addComment(@Body() request: CommentContentRequest)
 
     @POST("community/like-post/{id}")
-    suspend fun likePost(@Path("id") postId: Int)
+    suspend fun likePost(@Path("id") postId: String)
 
     @POST("community/unlike-post/{id}")
-    suspend fun unlikePost(@Path("id") postId: Int)
+    suspend fun unlikePost(@Path("id") postId: String)
 
     @DELETE("Community/posts/{postId}")
-    suspend fun deletePost(@Path("postId") postId: Int)
+    suspend fun deletePost(@Path("postId") postId: String)
 
     @Multipart
-    @POST("community/upload-post-images/{postId}")
+    @POST("Community/posts/{postId}/images")
     suspend fun uploadPostImages(
         @Path("postId") postId: Int,
         @Part images: List<MultipartBody.Part>

@@ -33,9 +33,7 @@ class CommunityRepositoryImpl @Inject constructor(
         flow {
             emit(
                 safeApiCall {
-                    api.getAllPosts().map { dto ->
-                        dto.toCommunityPost().copy(isBookmarked = dto.postId in bookmarkedIds.value)
-                    }
+                    api.getAllPosts().data.map { it.toCommunityPost() }
                 }
             )
         }
@@ -72,7 +70,7 @@ class CommunityRepositoryImpl @Inject constructor(
             api.uploadPostImages(postId, parts)
         }
 
-    override suspend fun deletePost(postId: Int): Result<Unit, DataError> =
+    override suspend fun deletePost(postId: String): Result<Unit, DataError> =
         safeApiCall { api.deletePost(postId) }
 
     override suspend fun addComment(
@@ -85,7 +83,7 @@ class CommunityRepositoryImpl @Inject constructor(
         }
 
     override suspend fun toggleLike(
-        postId: Int,
+        postId: String,
         isCurrentlyLiked: Boolean
     ): Result<Unit, DataError> =
         safeApiCall {

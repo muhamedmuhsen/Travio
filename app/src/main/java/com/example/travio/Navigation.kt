@@ -10,6 +10,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.dev.community.presentation.CommunityScreen
+import com.dev.community.presentation.LocationPickerScreen
 import com.dev.community.presentation.PostDetailScreen
 import com.dev.community.presentation.ShareMomentScreen
 import com.dev.favroite.FavoriteScreen
@@ -306,8 +307,28 @@ fun TravioNavHost(
             )
         }
 
-        composable(Screen.ShareMomentScreen.route) {
+        composable(Screen.ShareMomentScreen.route) { backStackEntry ->
+            val selectedLocation = backStackEntry
+                .savedStateHandle
+                .get<String>("selected_location")
+
             ShareMomentScreen(
+                onNavigateBack = { navController.popBackStack() },
+                onNavigateToLocationPicker = {
+                    navController.navigate(Screen.LocationPickerScreen.route)
+                },
+                selectedLocation = selectedLocation
+            )
+        }
+
+        composable(Screen.LocationPickerScreen.route) {
+            LocationPickerScreen(
+                onLocationSelected = { locationName ->
+                    navController.previousBackStackEntry
+                        ?.savedStateHandle
+                        ?.set("selected_location", locationName)
+                    navController.popBackStack()
+                },
                 onNavigateBack = { navController.popBackStack() }
             )
         }

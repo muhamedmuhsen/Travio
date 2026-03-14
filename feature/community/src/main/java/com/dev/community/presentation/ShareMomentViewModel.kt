@@ -31,7 +31,7 @@ class ShareMomentViewModel @Inject constructor(
     val event = _event.receiveAsFlow()
 
     fun onPhotosSelected(uris: List<String>) {
-        _uiState.update { it.copy(photoUris = it.photoUris + uris) }
+        _uiState.update { it.copy(photoUris = (it.photoUris + uris).distinct()) }
     }
 
     fun onPhotoRemoved(uri: String) {

@@ -49,4 +49,10 @@
     <string name="share_moment_post_button">Post Now</string>
     <string name="share_moment_error_photo_required">Please add a photo before posting.</string>
     <string name="share_moment_error_location_required">Please enter a location before posting.</string>
+
+    <!-- Location Picker Screen -->
+    <string name="location_picker_title">Pick Location</string>
+    <string name="location_picker_back_cd">Go back</string>
+    <string name="location_picker_confirm_cd">Confirm location</string>
+    <string name="location_picker_pin_title">Selected location</string>
 </resources>

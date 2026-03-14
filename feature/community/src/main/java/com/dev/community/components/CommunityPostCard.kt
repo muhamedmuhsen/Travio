@@ -1,5 +1,6 @@
 package com.dev.community.components
 
+import android.annotation.SuppressLint
 import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -41,6 +42,9 @@ import com.example.designsystem.components.shimmerEffect
 import com.example.designsystem.theme.TravioTheme
 import com.example.designsystem.theme.spacing
 import com.example.domain.model.community.CommunityPost
+import timber.log.Timber
+
+@SuppressLint("TimberArgCount")
 @Composable
 fun CommunityPostCard(
     modifier: Modifier = Modifier,
@@ -49,6 +53,7 @@ fun CommunityPostCard(
     onCommentClicked: () -> Unit = {},
     onCardClicked: () -> Unit = {}
 ) {
+    Timber.d("CommunityPost data: $post")
     Card(
         modifier = modifier
             .fillMaxWidth()
@@ -376,7 +381,7 @@ fun LoadingCommunityPostCard(modifier: Modifier = Modifier) {
 }
 
 private val previewPost = CommunityPost(
-    id = 1,
+    id = "1",
     author = "Ahmed Ali",
     avatarUrl = "",
     location = "Santorini, Greece",

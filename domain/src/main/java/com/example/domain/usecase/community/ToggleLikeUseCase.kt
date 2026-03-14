@@ -9,7 +9,7 @@ class ToggleLikeUseCase @Inject constructor(
     private val repository: CommunityRepository
 ) {
     suspend operator fun invoke(
-        postId: Int,
+        postId: String,
         isCurrentlyLiked: Boolean
     ): Result<Unit, DataError> = repository.toggleLike(postId, isCurrentlyLiked)
 }

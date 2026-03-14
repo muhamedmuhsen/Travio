@@ -14,12 +14,14 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -45,24 +47,35 @@ import com.example.designsystem.theme.spacing
 /**
  * Displays either a dashed "add photos" placeholder or a horizontal row of selected photo
  * thumbnails (each with a remove button). Tapping the box / row always opens the picker.
+ *
+ * @param photoUris   The currently selected photo URIs. Must be unique — duplicates will cause
+ *                    incorrect LazyRow diffing/animations.
+ * @param onClick     Called when the user taps the empty placeholder or the "add more" button.
+ * @param onPhotoRemoved Called with the URI that should be removed from the list.
+ * @param aspectRatio The aspect ratio used for the empty-state placeholder box. Defaults to 4:3.
+ * @param modifier    Optional modifier forwarded to the root layout.
  */
 @Composable
 fun AddPhotoBox(
     photoUris: List<String>,
     onClick: () -> Unit,
     onPhotoRemoved: (String) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    aspectRatio: Float = 4f / 3f
 ) {
     val shape = MaterialTheme.shapes.large
     val dashedColor = MaterialTheme.colorScheme.outlineVariant
-    val cornerRadiusPx = with(LocalDensity.current) { 16.dp.toPx() }
-    val strokePx = with(LocalDensity.current) { 1.5.dp.toPx() }
+    val density = LocalDensity.current
+
+    // Memoize px conversions so they aren't recomputed on every recomposition.
+    val cornerRadiusPx = remember(density) { with(density) { 16.dp.toPx() } }
+    val strokePx = remember(density) { with(density) { 1.5.dp.toPx() } }
 
     if (photoUris.isEmpty()) {
         Box(
             modifier = modifier
                 .fillMaxWidth()
-                .aspectRatio(4f / 3f)
+                .aspectRatio(aspectRatio)
                 .clip(shape)
                 .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.4f))
                 .drawBehind {
@@ -125,10 +138,10 @@ fun AddPhotoBox(
             horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.sm),
             contentPadding = PaddingValues(horizontal = MaterialTheme.spacing.xs)
         ) {
-            items(items = photoUris, key = { it }) { uri ->
+            items(items = photoUris, key = { it.toString() }) { uri ->
                 PhotoThumbnail(
-                    uri = uri,
-                    onRemove = { onPhotoRemoved(uri) }
+                    uri = uri.toString(),
+                    onRemove = { onPhotoRemoved(uri.toString()) }
                 )
             }
             item {
@@ -137,6 +150,10 @@ fun AddPhotoBox(
         }
     }
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Private sub-composables
+// ─────────────────────────────────────────────────────────────────────────────
 
 @Composable
 private fun PhotoThumbnail(
@@ -155,23 +172,39 @@ private fun PhotoThumbnail(
             contentScale = ContentScale.Crop,
             modifier = Modifier.fillMaxSize()
         )
+
+        // Remove button — uses a Box wrapper so the scrim background renders
+        // correctly as a circle around the icon, not on the icon drawable itself.
         IconButton(
             onClick = onRemove,
             modifier = Modifier
                 .align(Alignment.TopEnd)
-                .size(28.dp)
+                // 48 dp satisfies Material's minimum touch-target requirement.
+                .size(48.dp)
         ) {
-            Icon(
-                imageVector = Icons.Filled.Close,
-                contentDescription = stringResource(R.string.share_moment_remove_photo_cd),
-                tint = MaterialTheme.colorScheme.onPrimary,
+            Box(
                 modifier = Modifier
-                    .size(18.dp)
+                    .size(24.dp)
                     .background(
-                        color = MaterialTheme.colorScheme.scrim.copy(alpha = 0.6f),
+                        // FIX: Use inverseSurface instead of scrim. In dark mode,
+                        // scrim is near-black (#000) and blends into dark thumbnails.
+                        // inverseSurface flips to a light neutral in dark mode,
+                        // guaranteeing visibility on both light and dark images.
+                        color = MaterialTheme.colorScheme.inverseSurface.copy(alpha = 0.75f),
                         shape = CircleShape
-                    )
-            )
+                    ),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.Close,
+                    contentDescription = stringResource(R.string.share_moment_remove_photo_cd),
+                    // FIX: inverseOnSurface is guaranteed to contrast against
+                    // inverseSurface by the Material3 spec — replaces onPrimary
+                    // which had no such guarantee here.
+                    tint = MaterialTheme.colorScheme.inverseOnSurface,
+                    modifier = Modifier.size(14.dp)
+                )
+            }
         }
     }
 }
@@ -185,7 +218,11 @@ private fun AddMorePhotoButton(
         modifier = modifier
             .size(100.dp)
             .clip(MaterialTheme.shapes.medium)
-            .background(MaterialTheme.colorScheme.surfaceVariant)
+            // FIX: Replace surfaceVariant with surfaceContainerHigh. In dark mode,
+            // surfaceVariant can render very close in luminance to onSurfaceVariant,
+            // collapsing contrast. surfaceContainerHigh provides a stronger
+            // background tone that keeps the icon legible in both themes.
+            .background(MaterialTheme.colorScheme.surfaceContainerHigh)
             .clickable(
                 role = Role.Button,
                 onClickLabel = stringResource(R.string.share_moment_add_photo_cd),
@@ -194,13 +231,19 @@ private fun AddMorePhotoButton(
         contentAlignment = Alignment.Center
     ) {
         Icon(
-            painter = painterResource(R.drawable.add_image_icon),
+            imageVector = Icons.Default.Add,
             contentDescription = null,
-            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+            // FIX: onSurface has a higher contrast guarantee against
+            // surfaceContainerHigh than onSurfaceVariant did against surfaceVariant.
+            tint = MaterialTheme.colorScheme.onSurface,
             modifier = Modifier.size(32.dp)
         )
     }
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Previews
+// ─────────────────────────────────────────────────────────────────────────────
 
 @Preview(showBackground = true)
 @Composable
@@ -208,6 +251,20 @@ private fun AddPhotoBoxEmptyPreview() {
     TravioTheme {
         AddPhotoBox(
             photoUris = emptyList(),
+            onClick = {},
+            onPhotoRemoved = {}
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun AddPhotoBoxSinglePhotoPreview() {
+    TravioTheme {
+        AddPhotoBox(
+            photoUris = listOf(
+                "https://images.unsplash.com/photo-1533105079780-92b9be482077?w=400"
+            ),
             onClick = {},
             onPhotoRemoved = {}
         )

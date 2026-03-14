@@ -7,19 +7,18 @@ import com.example.network.dto.community.PostDto
 
 fun PostDto.toCommunityPost(): CommunityPost =
     CommunityPost(
-        id = postId,
-        author = authorName.orEmpty(),
-        avatarUrl = authorAvatarUrl.orEmpty(),
-        location = location.orEmpty(),
-        timeAgo = createdAt.orEmpty(),
-        content = content.orEmpty(),
-        imageUrls = imageUrls.orEmpty(),
-        likesCount = likesCount,
-        commentsCount = commentsCount,
-        rating = rating,
-        isLiked = isLiked,
-        isBookmarked = false,
-        comments = comments?.map { it.toComment() }.orEmpty()
+        id = this.postId,
+        author = this.authorName,
+        avatarUrl = this.authorAvatarUrl,
+        location = this.location,
+        timeAgo = this.createdAt,
+        content = this.content,
+        imageUrls = this.imageUrls,
+        likesCount = this.likesCount,
+        commentsCount = this.commentsCount,
+        rating = 0.0f,
+        isLiked = this.isLiked,
+        isBookmarked = false
     )
 
 fun CommentDto.toComment(): Comment =

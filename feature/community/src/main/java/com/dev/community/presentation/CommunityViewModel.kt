@@ -41,7 +41,7 @@ class CommunityViewModel @Inject constructor(
         }
     }
 
-    fun onLikeClicked(postId: Int) {
+    fun onLikeClicked(postId: String) {
         val currentPosts = (_uiState.value.postsState as? UiState.Success)?.data ?: return
         val post = currentPosts.firstOrNull { it.id == postId } ?: return
         // Optimistic update
