@@ -37,12 +37,15 @@ import androidx.compose.ui.text.style.TextDirection
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.dev.community.presentation.rememberRelativeTimeText
 import com.dev.feature.community.R
 import com.example.designsystem.components.shimmerEffect
 import com.example.designsystem.theme.TravioTheme
 import com.example.designsystem.theme.spacing
 import com.example.domain.model.community.CommunityPost
 import timber.log.Timber
+import java.time.Duration
+import java.time.Instant
 
 @SuppressLint("TimberArgCount")
 @Composable
@@ -187,7 +190,7 @@ fun CommunityPostCard(
                 }
 
                 Text(
-                    text = post.timeAgo,
+                    text = rememberRelativeTimeText(post.createdAt),
                     style = MaterialTheme.typography.labelSmall.copy(
                         textDirection = TextDirection.ContentOrLtr
                     ),
@@ -382,20 +385,19 @@ fun LoadingCommunityPostCard(modifier: Modifier = Modifier) {
 
 private val previewPost = CommunityPost(
     id = 1,
-    author = "Ahmed Ali",
-    avatarUrl = "",
+    author = "Alexander Smith",
+    avatarUrl = "https://images.unsplash.com/photo-1531123414780-f74242c2b052?w=200",
     location = "Santorini, Greece",
-    timeAgo = "2 hours ago",
-    content = "The sunset views from Oia are absolutely breathtaking! " +
-            "The blue domes against the golden hour light are magical.",
+    createdAt = Instant.now().minus(Duration.ofHours(2)),
+    content = "Sunsets in Santorini are unmatched—Oia is an absolute dream!",
     imageUrls = listOf(
-        "https://images.unsplash.com/photo-1533105079780-92b9be482077?w=800",
-        "https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?w=800",
-        "https://images.unsplash.com/photo-1601581975053-7c199b540f7e?w=800"
+        "https://images.unsplash.com/photo-1533105079780-92b9be482077?w=800"
     ),
     likesCount = 245,
-    commentsCount = 2,
-    rating = 5f
+    commentsCount = 32,
+    rating = 4.8f,
+    isLiked = false,
+    isBookmarked = false
 )
 
 @Preview(name = "Light", showBackground = true)

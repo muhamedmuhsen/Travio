@@ -41,6 +41,8 @@ import com.example.designsystem.theme.TravioTheme
 import com.example.designsystem.theme.spacing
 import com.example.domain.model.community.Comment
 import com.example.domain.model.community.CommunityPost
+import java.time.Duration
+import java.time.Instant
 
 @Composable
 fun PostDetailScreen(
@@ -283,7 +285,7 @@ private fun PostDetailScreenPreview() {
                         author = "Ahmed Ali",
                         avatarUrl = "",
                         location = "Santorini, Greece",
-                        timeAgo = "2 hours ago",
+                        createdAt = Instant.now().minus(Duration.ofHours(2)),
                         content = "The sunset views from Oia are absolutely breathtaking!",
                         imageUrls = listOf("https://images.unsplash.com/photo-1533105079780-92b9be482077?w=800"),
                         likesCount = 245,
@@ -295,13 +297,13 @@ private fun PostDetailScreenPreview() {
                                 id = 1,
                                 authorName = "Alex",
                                 text = "Stunning!",
-                                timeAgo = "1h ago"
+                                createdAt = Instant.now().minus(Duration.ofHours(1))
                             ),
                             Comment(
                                 id = 2,
                                 authorName = "Thomas",
                                 text = "I was there last summer!",
-                                timeAgo = "6h ago"
+                                createdAt = Instant.now().minus(Duration.ofHours(6))
                             )
                         )
                     )
@@ -351,7 +353,7 @@ private fun PostDetailDeleteDialogPreview() {
                         author = "Ahmed",
                         avatarUrl = "",
                         location = "Cairo",
-                        timeAgo = "Now",
+                        createdAt = Instant.now(),
                         content = "Hello!",
                         likesCount = 0,
                         commentsCount = 0

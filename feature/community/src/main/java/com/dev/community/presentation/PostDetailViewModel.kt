@@ -20,6 +20,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.time.Instant
 import javax.inject.Inject
 import javax.inject.Named
 
@@ -99,7 +100,7 @@ class PostDetailViewModel @Inject constructor(
             id = System.currentTimeMillis().toInt(),
             authorName = commentAuthorName,
             text = text,
-            timeAgo = "Just now"
+            createdAt = Instant.now()
         )
         _uiState.update { state ->
             state.copy(

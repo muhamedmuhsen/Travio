@@ -1,9 +1,14 @@
 package com.example.data.mapper.community
 
+import com.example.data.BuildConfig
 import com.example.domain.model.community.Comment
 import com.example.domain.model.community.CommunityPost
 import com.example.network.dto.community.CommentDto
 import com.example.network.dto.community.PostDto
+import java.time.Instant
+import java.time.LocalDateTime
+import java.time.ZoneOffset
+import java.time.format.DateTimeFormatter
 
 fun PostDto.toCommunityPost(): CommunityPost =
     CommunityPost(
@@ -11,9 +16,9 @@ fun PostDto.toCommunityPost(): CommunityPost =
         author = this.authorName,
         avatarUrl = this.authorAvatarUrl.orEmpty(),
         location = this.location,
-        timeAgo = this.createdAt,
+        createdAt = parseCreatedAt(this.createdAt) ?: Instant.now(),
         content = this.content,
-        imageUrls = this.imageUrls,
+        imageUrls = this.imageUrls.map(::resolveImageUrl),
         likesCount = this.likesCount,
         commentsCount = this.commentsCount,
         rating = 0.0f,
@@ -27,5 +32,20 @@ fun CommentDto.toComment(): Comment =
         authorName = authorName.orEmpty(),
         avatarUrl = authorAvatarUrl.orEmpty(),
         text = content,
-        timeAgo = createdAt.orEmpty()
+        createdAt = parseCreatedAt(createdAt) ?: Instant.now()
     )
+
+private fun resolveImageUrl(path: String): String {
+    if (path.startsWith("http", ignoreCase = true)) return path
+    val base = BuildConfig.IMAGE_BASE_URL.trimEnd('/')
+    val normalizedPath = if (path.startsWith("/")) path else "/$path"
+    return base + normalizedPath
+}
+
+private fun parseCreatedAt(value: String?): Instant? =
+    try {
+        val local = value?.let { LocalDateTime.parse(it, DateTimeFormatter.ISO_LOCAL_DATE_TIME) }
+        local?.toInstant(ZoneOffset.UTC)
+    } catch (_: Exception) {
+        null
+    }

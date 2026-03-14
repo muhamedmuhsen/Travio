@@ -27,6 +27,8 @@ import com.example.designsystem.components.AppBottomBar
 import com.example.designsystem.theme.TravioTheme
 import com.example.designsystem.theme.spacing
 import com.example.domain.model.community.CommunityPost
+import java.time.Duration
+import java.time.Instant
 
 @Composable
 fun CommunityScreen(
@@ -170,7 +172,7 @@ private fun CommunityScreenPreview() {
                             author = "Ahmed Ali",
                             avatarUrl = "",
                             location = "Santorini, Greece",
-                            timeAgo = "2 hours ago",
+                            createdAt = Instant.now().minus(Duration.ofHours(2)),
                             content = "The sunset views from Oia are absolutely breathtaking. " +
                                 "The blue domes against the golden hour light are magical.",
                             imageUrls = listOf(
@@ -186,7 +188,7 @@ private fun CommunityScreenPreview() {
                             author = "Marcus Rodriguez",
                             avatarUrl = "",
                             location = "Bali, Indonesia",
-                            timeAgo = "5 hours ago",
+                            createdAt = Instant.now().minus(Duration.ofHours(5)),
                             content = "Exploring the Tegallalang Rice Terraces at sunrise was like" +
                                 " seeing the light of Bali for the first time.",
                             imageUrls = listOf(

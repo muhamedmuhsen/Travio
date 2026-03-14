@@ -16,9 +16,11 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.dev.community.presentation.rememberRelativeTimeText
 import com.example.designsystem.theme.TravioTheme
 import com.example.designsystem.theme.spacing
 import com.example.domain.model.community.Comment
+import java.time.Instant
 
 @Composable
 fun CommentItem(
@@ -61,7 +63,7 @@ fun CommentItem(
                 )
             }
             Text(
-                text = comment.timeAgo,
+                text = rememberRelativeTimeText(comment.createdAt),
                 style = MaterialTheme.typography.labelSmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.padding(
@@ -92,7 +94,7 @@ private fun CommentItemPreview() {
                 text = "This is absolutely stunning! Adding Santorini to my bucket list \uD83D\uDE0D" +
                         "This is absolutely stunning! Adding Santorini to my bucket list \uD83D\uDE0D" +
                         "This is absolutely stunning! Adding Santorini to my bucket list \uD83D\uDE0D",
-                timeAgo = "1h ago"
+                createdAt = Instant.now().minusSeconds(3_600)
             )
         )
     }

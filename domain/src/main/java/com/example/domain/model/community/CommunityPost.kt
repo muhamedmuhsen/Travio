@@ -1,11 +1,13 @@
 package com.example.domain.model.community
 
+import java.time.Instant
+
 data class CommunityPost(
     val id: Int,
     val author: String,
     val avatarUrl: String,
     val location: String,
-    val timeAgo: String,
+    val createdAt: Instant,
     val content: String,
     val imageUrls: List<String> = emptyList(),
     val likesCount: Int,
