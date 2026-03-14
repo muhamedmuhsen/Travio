@@ -63,27 +63,22 @@ class CommunityRepositoryImpl @Inject constructor(
         postId: Int,
         imageUris: List<String>
     ): Result<Unit, DataError> {
-        val imageUri = imageUris.firstOrNull()
-        if (imageUri == null) {
-            Timber.w("uploadPostImages: no image provided")
-            return Result.Error(DataError.Validation.MissingFields)
+        val parts = imageUris.map { uriString ->
+            uriString.toUri().toMultipartBodyPart(
+                context = context,
+                partName = "Images"
+            )
         }
 
-        val part = imageUri.toUri().toMultipartBodyPart(
-            context = context,
-            partName = "image"
-        )
-
-        if (part == null) {
-            Timber.w("uploadPostImages: invalid uri -> $imageUri")
+        if (parts.any { it == null }) {
+            Timber.w("uploadPostImages: invalid uri in list -> $imageUris")
             return Result.Error(DataError.Validation.InvalidUri)
         }
 
-        return safeApiCall { api.uploadPostImages(postId, part) }
+        return safeApiCall { api.uploadPostImages(postId, parts.filterNotNull()) }
     }
 
-    override suspend fun deletePost(postId: Int): Result<Unit, DataError> =
-        safeApiCall { api.deletePost(postId) }
+    override suspend fun deletePost(postId: Int): Result<Unit, DataError> = safeApiCall { api.deletePost(postId) }
 
     override suspend fun addComment(
         postId: Int,

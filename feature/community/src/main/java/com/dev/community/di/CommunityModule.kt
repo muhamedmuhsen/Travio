@@ -17,6 +17,5 @@ object CommunityModule {
     @Provides
     @Singleton
     @Named("comment_author_you")
-    fun provideCommentAuthorYou(@ApplicationContext context: Context): String =
-        context.getString(R.string.comment_author_you)
+    fun provideCommentAuthorYou(@ApplicationContext context: Context): String = context.getString(R.string.comment_author_you)
 }

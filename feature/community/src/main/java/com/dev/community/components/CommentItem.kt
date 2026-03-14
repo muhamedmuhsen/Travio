@@ -92,8 +92,8 @@ private fun CommentItemPreview() {
                 id = 1,
                 authorName = "Alex John",
                 text = "This is absolutely stunning! Adding Santorini to my bucket list \uD83D\uDE0D" +
-                        "This is absolutely stunning! Adding Santorini to my bucket list \uD83D\uDE0D" +
-                        "This is absolutely stunning! Adding Santorini to my bucket list \uD83D\uDE0D",
+                    "This is absolutely stunning! Adding Santorini to my bucket list \uD83D\uDE0D" +
+                    "This is absolutely stunning! Adding Santorini to my bucket list \uD83D\uDE0D",
                 createdAt = Instant.now().minusSeconds(3_600)
             )
         )

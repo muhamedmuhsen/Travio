@@ -202,8 +202,7 @@ fun CommunityPostCard(
 }
 
 /** Formats a Float rating as an integer string when it has no fractional part (e.g. 5.0 → "5"), otherwise as-is (e.g. 4.5 → "4.5"). */
-private fun Float.toDisplayRating(): String =
-    if (this == toLong().toFloat()) toLong().toString() else toString()
+private fun Float.toDisplayRating(): String = if (this == toLong().toFloat()) toLong().toString() else toString()
 
 @Composable
 private fun StarBadge(rating: Float) {

@@ -40,6 +40,6 @@ interface CommunityApi {
     @POST("Community/posts/{postId}/images")
     suspend fun uploadPostImages(
         @Path("postId") postId: Int,
-        @Part image: MultipartBody.Part
+        @Part Images: List<MultipartBody.Part>
     )
 }

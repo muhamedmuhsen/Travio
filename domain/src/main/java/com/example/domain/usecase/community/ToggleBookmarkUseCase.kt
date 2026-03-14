@@ -8,6 +8,5 @@ import javax.inject.Inject
 class ToggleBookmarkUseCase @Inject constructor(
     private val repository: CommunityRepository
 ) {
-    suspend operator fun invoke(postId: Int): Result<Unit, DataError> =
-        repository.toggleBookmark(postId)
+    suspend operator fun invoke(postId: Int): Result<Unit, DataError> = repository.toggleBookmark(postId)
 }

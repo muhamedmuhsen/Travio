@@ -8,6 +8,5 @@ import javax.inject.Inject
 class DeletePostUseCase @Inject constructor(
     private val repository: CommunityRepository
 ) {
-    suspend operator fun invoke(postId: Int): Result<Unit, DataError> =
-        repository.deletePost(postId)
+    suspend operator fun invoke(postId: Int): Result<Unit, DataError> = repository.deletePost(postId)
 }

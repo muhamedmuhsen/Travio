@@ -62,18 +62,13 @@ private class ResourceRelativeTimeStrings(
     private val resources: Resources
 ) : RelativeTimeStrings {
     override fun justNow(): String = resources.getString(R.string.relative_time_just_now)
-    override fun minutesAgo(count: Int): String =
-        resources.getQuantityString(R.plurals.relative_time_minutes_ago, count, count)
+    override fun minutesAgo(count: Int): String = resources.getQuantityString(R.plurals.relative_time_minutes_ago, count, count)
 
-    override fun hoursAgo(count: Int): String =
-        resources.getQuantityString(R.plurals.relative_time_hours_ago, count, count)
+    override fun hoursAgo(count: Int): String = resources.getQuantityString(R.plurals.relative_time_hours_ago, count, count)
 
-    override fun daysAgo(count: Int): String =
-        resources.getQuantityString(R.plurals.relative_time_days_ago, count, count)
+    override fun daysAgo(count: Int): String = resources.getQuantityString(R.plurals.relative_time_days_ago, count, count)
 
-    override fun monthsAgo(count: Int): String =
-        resources.getQuantityString(R.plurals.relative_time_months_ago, count, count)
+    override fun monthsAgo(count: Int): String = resources.getQuantityString(R.plurals.relative_time_months_ago, count, count)
 
-    override fun yearsAgo(count: Int): String =
-        resources.getQuantityString(R.plurals.relative_time_years_ago, count, count)
+    override fun yearsAgo(count: Int): String = resources.getQuantityString(R.plurals.relative_time_years_ago, count, count)
 }

@@ -47,10 +47,19 @@ suspend fun <T> safeApiCall(apiCall: suspend () -> T): Result<T, DataError> {
 }
 
 private fun mapHttpError(e: HttpException): DataError {
-    val error = when (e.code()) {
-        400 -> DataError.Network.BadRequest
+    val code = e.code()
+    val errorBody = e.response()?.errorBody()?.string().orEmpty()
+
+    val error = when (code) {
+        400 -> {
+            Timber.w("mapHttpError: 400 Bad Request -> errorBody=$errorBody")
+            if (errorBody.contains("validation errors", ignoreCase = true)) {
+                DataError.Validation.MissingFields
+            } else {
+                DataError.Network.BadRequest
+            }
+        }
         401 -> {
-            val errorBody = e.response()?.errorBody()?.string().orEmpty()
             Timber.w("mapHttpError: 401 Unauthorized -> errorBody=$errorBody")
             if (errorBody.contains("Username is already registered", ignoreCase = true)) {
                 DataError.Authentication.UsernameAlreadyExists
@@ -64,6 +73,6 @@ private fun mapHttpError(e: HttpException): DataError {
         in 500..599 -> DataError.Network.ServerError
         else -> DataError.Network.UnexpectedResponse
     }
-    Timber.w("mapHttpError: HTTP ${e.code()} mapped to -> $error")
+    Timber.w("mapHttpError: HTTP $code mapped to -> $error")
     return error
 }
