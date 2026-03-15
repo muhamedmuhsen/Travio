@@ -3,14 +3,17 @@ package com.dev.community.presentation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dev.utils.uistate.UiState
+import com.dev.utils.uitext.UiText
 import com.dev.utils.uitext.asUiText
 import com.example.domain.usecase.community.GetCommunityPostsUseCase
 import com.example.domain.usecase.community.ToggleLikeUseCase
 import com.example.domain.utils.Result
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -23,6 +26,9 @@ class CommunityViewModel @Inject constructor(
 
     private val _uiState = MutableStateFlow(CommunityUiState())
     val uiState: StateFlow<CommunityUiState> = _uiState.asStateFlow()
+
+    private val _event = Channel<CommunityEvent>()
+    val event = _event.receiveAsFlow()
 
     init {
         loadPosts()
@@ -58,6 +64,18 @@ class CommunityViewModel @Inject constructor(
             }
             state.copy(postsState = UiState.Success(updated))
         }
-        viewModelScope.launch { toggleLike(postId, post.isLiked) }
+        viewModelScope.launch {
+            when (val result = toggleLike(postId, post.isLiked)) {
+                is Result.Success -> {
+                    val message = UiText.DynamicString(if (post.isLiked) "Post unliked successfully" else "Post liked successfully")
+                    _event.send(CommunityEvent.ShowSuccessSnackbar(message))
+                }
+                is Result.Error -> {
+                    // In a real app we might revert the optimistic update here,
+                    // but we focus on the snackbar output.
+                    _event.send(CommunityEvent.ShowErrorSnackbar(result.error.asUiText()))
+                }
+            }
+        }
     }
 }

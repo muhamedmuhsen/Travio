@@ -67,7 +67,7 @@ fun AppOutlinedButton(
     onClick: () -> Unit,
     text: String,
     shape: Shape = MaterialTheme.shapes.extraLarge,
-    buttonHeight: Int = 40,
+    buttonHeight: Int = 48,
     style: TextStyle = MaterialTheme.typography.titleMedium
 ) {
     OutlinedButton(

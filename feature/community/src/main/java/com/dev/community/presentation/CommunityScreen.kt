@@ -10,11 +10,15 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -24,6 +28,9 @@ import com.dev.community.components.CommunityTopBar
 import com.dev.feature.community.R
 import com.dev.utils.uistate.UiState
 import com.example.designsystem.components.AppBottomBar
+import com.example.designsystem.components.AppSnackBar
+import com.example.designsystem.components.SnackBarType
+import com.example.designsystem.components.showAppSnackbar
 import com.example.designsystem.theme.TravioTheme
 import com.example.designsystem.theme.spacing
 import com.example.domain.model.community.CommunityPost
@@ -41,10 +48,32 @@ fun CommunityScreen(
     navigateToPostDetail: (Int) -> Unit = {},
     navigateToShareMoment: () -> Unit = {}
 ) {
+    val context = LocalContext.current
     val state by viewModel.uiState.collectAsStateWithLifecycle()
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    LaunchedEffect(Unit) {
+        viewModel.event.collect { event ->
+            when (event) {
+                is CommunityEvent.ShowSuccessSnackbar -> {
+                    snackbarHostState.showAppSnackbar(
+                        message = event.message.asString(context),
+                        type = SnackBarType.SUCCESS
+                    )
+                }
+                is CommunityEvent.ShowErrorSnackbar -> {
+                    snackbarHostState.showAppSnackbar(
+                        message = event.message.asString(context),
+                        type = SnackBarType.ERROR
+                    )
+                }
+            }
+        }
+    }
 
     CommunityScreenContent(
         state = state,
+        snackbarHostState = snackbarHostState,
         onLikeClicked = viewModel::onLikeClicked,
         navigateToHome = navigateToHome,
         navigateToFavorite = navigateToFavorite,
@@ -59,6 +88,7 @@ fun CommunityScreen(
 @Composable
 fun CommunityScreenContent(
     state: CommunityUiState,
+    snackbarHostState: SnackbarHostState,
     onLikeClicked: (Int) -> Unit,
     navigateToHome: () -> Unit,
     navigateToFavorite: () -> Unit,
@@ -71,6 +101,7 @@ fun CommunityScreenContent(
     Scaffold(
         modifier = modifier,
         containerColor = MaterialTheme.colorScheme.background,
+        snackbarHost = { AppSnackBar(hostState = snackbarHostState) },
         topBar = { CommunityTopBar(onShareClicked = navigateToShareMoment) },
         bottomBar = {
             AppBottomBar(
@@ -201,6 +232,7 @@ private fun CommunityScreenPreview() {
                     )
                 )
             ),
+            snackbarHostState = SnackbarHostState(),
             onLikeClicked = {},
             navigateToHome = {},
             navigateToFavorite = {},
@@ -217,6 +249,7 @@ private fun CommunityScreenLoadingPreview() {
     TravioTheme {
         CommunityScreenContent(
             state = CommunityUiState(postsState = UiState.Loading),
+            snackbarHostState = SnackbarHostState(),
             onLikeClicked = {},
             navigateToHome = {},
             navigateToFavorite = {},
@@ -233,6 +266,7 @@ private fun CommunityScreenEmptyPreview() {
     TravioTheme {
         CommunityScreenContent(
             state = CommunityUiState(postsState = UiState.Success(emptyList())),
+            snackbarHostState = SnackbarHostState(),
             onLikeClicked = {},
             navigateToHome = {},
             navigateToFavorite = {},
