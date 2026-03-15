@@ -1,6 +1,5 @@
 package com.example.designsystem.components
 
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -27,6 +26,8 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.designsystem.theme.TravioTheme
+import com.example.designsystem.theme.onSuccess
+import com.example.designsystem.theme.success
 
 enum class SnackBarType {
     ERROR,
@@ -91,16 +92,10 @@ fun ErrorSnackBar(
     text: String
 ) {
     Snackbar(
-        modifier = modifier
-            .padding(16.dp)
-            .border(
-                1.dp,
-                color = MaterialTheme.colorScheme.error.copy(alpha = 0.25f),
-                shape = RoundedCornerShape(14.dp)
-            ),
+        modifier = modifier.padding(16.dp),
         shape = RoundedCornerShape(14.dp),
-        contentColor = MaterialTheme.colorScheme.error,
-        containerColor = MaterialTheme.colorScheme.errorContainer
+        contentColor = MaterialTheme.colorScheme.onError,
+        containerColor = MaterialTheme.colorScheme.error
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -108,13 +103,17 @@ fun ErrorSnackBar(
             modifier = Modifier.fillMaxWidth()
         ) {
             if (icon != null) {
-                Icon(imageVector = icon, contentDescription = null)
+                Icon(
+                    imageVector = icon,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onError
+                )
                 Spacer(modifier = Modifier.width(8.dp))
             }
             Text(
                 text = text,
                 style = MaterialTheme.typography.labelLarge,
-                color = MaterialTheme.colorScheme.error
+                color = MaterialTheme.colorScheme.onError
             )
         }
     }
@@ -139,16 +138,10 @@ fun SuccessSnackBar(
     text: String
 ) {
     Snackbar(
-        modifier = modifier
-            .padding(16.dp)
-            .border(
-                width = 1.dp,
-                color = MaterialTheme.colorScheme.primary.copy(alpha = 0.25f),
-                shape = RoundedCornerShape(14.dp)
-            ),
+        modifier = modifier.padding(16.dp),
         shape = RoundedCornerShape(14.dp),
-        contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-        containerColor = MaterialTheme.colorScheme.primaryContainer
+        contentColor = MaterialTheme.colorScheme.onSuccess,
+        containerColor = MaterialTheme.colorScheme.success
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -158,13 +151,13 @@ fun SuccessSnackBar(
             Icon(
                 imageVector = Icons.Default.Check,
                 contentDescription = null,
-                tint = MaterialTheme.colorScheme.onPrimaryContainer
+                tint = MaterialTheme.colorScheme.onSuccess
             )
             Spacer(modifier = Modifier.width(8.dp))
             Text(
                 text = text,
                 style = MaterialTheme.typography.labelLarge,
-                color = MaterialTheme.colorScheme.onPrimaryContainer
+                color = MaterialTheme.colorScheme.onSuccess
             )
         }
     }

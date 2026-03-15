@@ -248,3 +248,19 @@ val surfaceContainerLowDarkHighContrast = Color(0xFF1F201F)
 val surfaceContainerDarkHighContrast = Color(0xFF303030)
 val surfaceContainerHighDarkHighContrast = Color(0xFF3B3B3B)
 val surfaceContainerHighestDarkHighContrast = Color(0xFF474746)
+
+// ============================================
+// Custom Semantic Colors
+// ============================================
+val successLight = Color(0xFF4CAF50)
+val onSuccessLight = Color(0xFFFFFFFF)
+val successDark = Color(0xFF81C784)
+val onSuccessDark = Color(0xFF003300)
+
+val androidx.compose.material3.ColorScheme.success: Color
+    @androidx.compose.runtime.Composable
+    get() = if (androidx.compose.foundation.isSystemInDarkTheme()) successDark else successLight
+
+val androidx.compose.material3.ColorScheme.onSuccess: Color
+    @androidx.compose.runtime.Composable
+    get() = if (androidx.compose.foundation.isSystemInDarkTheme()) onSuccessDark else onSuccessLight
