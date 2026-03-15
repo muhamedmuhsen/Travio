@@ -89,12 +89,9 @@ class CommunityRepositoryImpl @Inject constructor(
             api.addComment(CommentContentRequest(content = text, postId = postId))
         }
 
-    override suspend fun toggleLike(
-        postId: Int,
-        isCurrentlyLiked: Boolean
-    ): Result<Unit, DataError> =
+    override suspend fun toggleLike(postId: Int): Result<Unit, DataError> =
         safeApiCall {
-            if (isCurrentlyLiked) api.unlikePost(postId) else api.likePost(postId)
+            api.likePost(postId)
         }
 
     override suspend fun toggleBookmark(postId: Int): Result<Unit, DataError> {

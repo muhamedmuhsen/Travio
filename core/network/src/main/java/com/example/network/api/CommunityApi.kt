@@ -2,6 +2,7 @@ package com.example.network.api
 
 import com.example.common.baseresponse.BaseResponse
 import com.example.network.dto.community.CommentContentRequest
+import com.example.network.dto.community.LikePostResponse
 import com.example.network.dto.community.PostContentRequest
 import com.example.network.dto.community.PostCreationResponse
 import com.example.network.dto.community.PostDto
@@ -27,8 +28,8 @@ interface CommunityApi {
     @POST("community/add-comment")
     suspend fun addComment(@Body() request: CommentContentRequest)
 
-    @POST("community/like-post/{id}")
-    suspend fun likePost(@Path("id") postId: Int)
+    @POST("Community/posts/{postId}/toggle-like")
+    suspend fun likePost(@Path("postId") postId: Int): LikePostResponse
 
     @POST("community/unlike-post/{id}")
     suspend fun unlikePost(@Path("id") postId: Int)

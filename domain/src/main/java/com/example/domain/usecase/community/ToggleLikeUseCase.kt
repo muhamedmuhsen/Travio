@@ -8,8 +8,5 @@ import javax.inject.Inject
 class ToggleLikeUseCase @Inject constructor(
     private val repository: CommunityRepository
 ) {
-    suspend operator fun invoke(
-        postId: Int,
-        isCurrentlyLiked: Boolean
-    ): Result<Unit, DataError> = repository.toggleLike(postId, isCurrentlyLiked)
+    suspend operator fun invoke(postId: Int): Result<Unit, DataError> = repository.toggleLike(postId)
 }

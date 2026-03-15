@@ -3,7 +3,6 @@ package com.dev.community.presentation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dev.utils.uistate.UiState
-import com.dev.utils.uitext.UiText
 import com.dev.utils.uitext.asUiText
 import com.example.domain.usecase.community.GetCommunityPostsUseCase
 import com.example.domain.usecase.community.ToggleLikeUseCase
@@ -65,10 +64,8 @@ class CommunityViewModel @Inject constructor(
             state.copy(postsState = UiState.Success(updated))
         }
         viewModelScope.launch {
-            when (val result = toggleLike(postId, post.isLiked)) {
+            when (val result = toggleLike(postId)) {
                 is Result.Success -> {
-                    val message = UiText.DynamicString(if (post.isLiked) "Post unliked successfully" else "Post liked successfully")
-                    _event.send(CommunityEvent.ShowSuccessSnackbar(message))
                 }
                 is Result.Error -> {
                     // In a real app we might revert the optimistic update here,
