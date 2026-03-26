@@ -16,7 +16,7 @@ fun PostDto.toCommunityPost(): CommunityPost =
     CommunityPost(
         id = this.postId,
         author = this.authorName.orEmpty(),
-        avatarUrl = this.authorAvatarUrl.orEmpty(),
+        avatarUrl = this.authorAvatarUrl?.let(::resolveImageUrl).orEmpty(),
         location = this.location.orEmpty(),
         createdAt = parseCreatedAt(this.createdAt) ?: Instant.now(),
         content = this.content.orEmpty(),
@@ -32,7 +32,7 @@ fun PostWithCommentsDto.toCommunityPost(): CommunityPost =
     CommunityPost(
         id = this.postId,
         author = this.authorName.orEmpty(),
-        avatarUrl = this.authorAvatarUrl.orEmpty(),
+        avatarUrl = this.authorAvatarUrl?.let(::resolveImageUrl).orEmpty(),
         location = this.location.orEmpty(),
         createdAt = parseCreatedAt(this.createdAt) ?: Instant.now(),
         content = this.content.orEmpty(),
@@ -49,7 +49,7 @@ fun CommentDto.toComment(): Comment =
     Comment(
         id = id,
         authorName = authorName.orEmpty(),
-        avatarUrl = authorAvatarUrl.orEmpty(),
+        avatarUrl = authorAvatarUrl?.let(::resolveImageUrl).orEmpty(),
         text = content,
         createdAt = parseCreatedAt(createdAt) ?: Instant.now()
     )
