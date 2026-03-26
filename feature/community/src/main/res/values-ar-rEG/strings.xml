@@ -13,6 +13,12 @@
     <!-- Post Detail Screen -->
     <string name="post_detail_bookmark_cd">حفظ المنشور</string>
     <string name="post_detail_close_cd">إغلاق</string>
+    <string name="post_detail_delete_cd">حذف المنشور</string>
+    <string name="post_detail_delete_confirm_title">حذف المنشور؟</string>
+    <string name="post_detail_delete_confirm_body">لا يمكن التراجع عن هذا الإجراء.</string>
+    <string name="post_detail_delete_confirm_button">حذف</string>
+    <string name="post_detail_delete_cancel_button">إلغاء</string>
+    <string name="post_detail_delete_error">فشل حذف المنشور. يرجى المحاولة مرة أخرى.</string>
     <string name="post_detail_comments_header">التعليقات</string>
     <string name="post_detail_no_comments">لا توجد تعليقات بعد. كن أول من يعلّق!</string>
     <string name="post_detail_comment_hint">أضف تعليقاً…</string>
@@ -35,6 +41,7 @@
     <string name="share_moment_add_photo_subtitle">انقر لرفع صورة سفرك</string>
     <string name="share_moment_add_photo_cd">إضافة صورة</string>
     <string name="share_moment_selected_photo_cd">الصورة المختارة</string>
+    <string name="share_moment_remove_photo_cd">إزالة الصورة</string>
     <string name="share_moment_location_label">الموقع</string>
     <string name="share_moment_location_hint">أين هذا المكان؟</string>
     <string name="share_moment_description_label">الوصف</string>
@@ -42,6 +49,12 @@
     <string name="share_moment_post_button">نشر الآن</string>
     <string name="share_moment_error_photo_required">يرجى إضافة صورة قبل النشر.</string>
     <string name="share_moment_error_location_required">يرجى إدخال الموقع قبل النشر.</string>
+
+    <!-- Location Picker Screen -->
+    <string name="location_picker_title">اختر الموقع</string>
+    <string name="location_picker_back_cd">رجوع</string>
+    <string name="location_picker_confirm_cd">تأكيد الموقع</string>
+    <string name="location_picker_pin_title">الموقع المختار</string>
 
     <!-- Relative time -->
     <string name="relative_time_just_now">الآن</string>

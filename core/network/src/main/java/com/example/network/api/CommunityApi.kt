@@ -6,6 +6,7 @@ import com.example.network.dto.community.LikePostResponse
 import com.example.network.dto.community.PostContentRequest
 import com.example.network.dto.community.PostCreationResponse
 import com.example.network.dto.community.PostDto
+import com.example.network.dto.community.PostWithCommentsDto
 import okhttp3.MultipartBody
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -23,16 +24,16 @@ interface CommunityApi {
     suspend fun getAllPosts(): BaseResponse<List<PostDto>>
 
     @GET("Community/posts/{postId}")
-    suspend fun getPostById(@Path("postId") postId: Int): PostDto
+    suspend fun getPostById(@Path("postId") postId: Int): BaseResponse<PostWithCommentsDto>
 
-    @POST("community/add-comment")
-    suspend fun addComment(@Body() request: CommentContentRequest)
+    @POST("Community/posts/{postId}/comments")
+    suspend fun addComment(
+        @Path("postId") postId: Int,
+        @Body() request: CommentContentRequest
+    ): BaseResponse<Unit>
 
     @POST("Community/posts/{postId}/toggle-like")
     suspend fun likePost(@Path("postId") postId: Int): LikePostResponse
-
-    @POST("community/unlike-post/{id}")
-    suspend fun unlikePost(@Path("id") postId: Int)
 
     @DELETE("Community/posts/{postId}")
     suspend fun deletePost(@Path("postId") postId: Int)

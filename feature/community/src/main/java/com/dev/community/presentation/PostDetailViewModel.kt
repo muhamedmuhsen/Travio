@@ -35,7 +35,9 @@ class PostDetailViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-    private val postId: Int = checkNotNull(savedStateHandle["postId"])
+    private val postId: Int = savedStateHandle.get<Int>("postId")
+        ?: savedStateHandle.get<String>("postId")?.toIntOrNull()
+        ?: error("postId is required")
 
     private val _uiState = MutableStateFlow(PostDetailUiState())
     val uiState: StateFlow<PostDetailUiState> = _uiState.asStateFlow()

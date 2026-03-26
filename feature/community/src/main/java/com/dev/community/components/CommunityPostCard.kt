@@ -395,8 +395,7 @@ private val previewPost = CommunityPost(
     likesCount = 245,
     commentsCount = 32,
     rating = 4.8f,
-    isLiked = false,
-    isBookmarked = false
+    isLiked = false
 )
 
 @Preview(name = "Light", showBackground = true)

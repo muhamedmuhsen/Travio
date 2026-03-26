@@ -7,8 +7,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import com.dev.community.presentation.CommunityScreen
 import com.dev.community.presentation.LocationPickerScreen
 import com.dev.community.presentation.PostDetailScreen
@@ -333,7 +335,10 @@ fun TravioNavHost(
             )
         }
 
-        composable(Screen.PostDetailScreen.route + "/{postId}") {
+        composable(
+            route = Screen.PostDetailScreen.route + "/{postId}",
+            arguments = listOf(navArgument("postId") { type = NavType.IntType })
+        ) {
             // postId is automatically injected into PostDetailViewModel via SavedStateHandle by Hilt
             PostDetailScreen(
                 onNavigateBack = { navController.popBackStack() }

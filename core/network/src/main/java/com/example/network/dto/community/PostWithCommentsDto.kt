@@ -2,7 +2,7 @@ package com.example.network.dto.community
 
 import com.google.gson.annotations.SerializedName
 
-data class PostDto(
+data class PostWithCommentsDto(
     @SerializedName("id") val postId: Int,
     @SerializedName("autherId") val authorId: String?,
     @SerializedName("autherName") val authorName: String?,

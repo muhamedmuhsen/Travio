@@ -52,4 +52,5 @@ dependencies {
 
     // Splash
     implementation(libs.androidx.core.splashscreen)
+    testImplementation(libs.junit)
 }

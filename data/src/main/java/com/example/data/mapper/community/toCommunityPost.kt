@@ -5,6 +5,7 @@ import com.example.domain.model.community.Comment
 import com.example.domain.model.community.CommunityPost
 import com.example.network.dto.community.CommentDto
 import com.example.network.dto.community.PostDto
+import com.example.network.dto.community.PostWithCommentsDto
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.OffsetDateTime
@@ -14,17 +15,34 @@ import java.time.format.DateTimeFormatter
 fun PostDto.toCommunityPost(): CommunityPost =
     CommunityPost(
         id = this.postId,
-        author = this.authorName,
+        author = this.authorName.orEmpty(),
         avatarUrl = this.authorAvatarUrl.orEmpty(),
-        location = this.location,
+        location = this.location.orEmpty(),
         createdAt = parseCreatedAt(this.createdAt) ?: Instant.now(),
-        content = this.content,
-        imageUrls = this.imageUrls.map(::resolveImageUrl),
+        content = this.content.orEmpty(),
+        imageUrls = this.imageUrls?.map(::resolveImageUrl).orEmpty(),
         likesCount = this.likesCount,
         commentsCount = this.commentsCount,
         rating = 0.0f,
         isLiked = this.isLiked,
         isBookmarked = false
+    )
+
+fun PostWithCommentsDto.toCommunityPost(): CommunityPost =
+    CommunityPost(
+        id = this.postId,
+        author = this.authorName.orEmpty(),
+        avatarUrl = this.authorAvatarUrl.orEmpty(),
+        location = this.location.orEmpty(),
+        createdAt = parseCreatedAt(this.createdAt) ?: Instant.now(),
+        content = this.content.orEmpty(),
+        imageUrls = this.imageUrls?.map(::resolveImageUrl).orEmpty(),
+        likesCount = this.likesCount,
+        commentsCount = this.commentsCount,
+        rating = 0.0f,
+        isLiked = this.isLiked,
+        isBookmarked = false,
+        comments = this.commentDto.map { it.toComment() }
     )
 
 fun CommentDto.toComment(): Comment =

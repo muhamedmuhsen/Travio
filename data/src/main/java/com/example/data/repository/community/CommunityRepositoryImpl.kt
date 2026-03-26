@@ -42,8 +42,7 @@ class CommunityRepositoryImpl @Inject constructor(
 
     override suspend fun getPostById(postId: Int): Result<CommunityPost, DataError> =
         safeApiCall {
-            api.getPostById(postId).toCommunityPost()
-                .copy(isBookmarked = postId in bookmarkedIds.value)
+            api.getPostById(postId).data.toCommunityPost()
         }
 
     override suspend fun addPost(
@@ -86,7 +85,8 @@ class CommunityRepositoryImpl @Inject constructor(
         authorName: String
     ): Result<Unit, DataError> =
         safeApiCall {
-            api.addComment(CommentContentRequest(content = text, postId = postId))
+            api.addComment(postId, CommentContentRequest(content = text, postId = postId))
+            Unit
         }
 
     override suspend fun toggleLike(postId: Int): Result<Unit, DataError> =

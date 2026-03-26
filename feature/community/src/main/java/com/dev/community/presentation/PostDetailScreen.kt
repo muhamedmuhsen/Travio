@@ -12,6 +12,7 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
@@ -65,22 +66,30 @@ fun PostDetailScreen(
         }
     }
 
-    Box(modifier = modifier.fillMaxSize()) {
+    Scaffold(
+        modifier = modifier.fillMaxSize(),
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
+        bottomBar = {
+            if (state.postState is UiState.Success) {
+                CommentInputBar(
+                    value = commentText,
+                    onValueChange = viewModel::onCommentTextChanged,
+                    onSendClicked = viewModel::onCommentSubmitted
+                )
+            }
+        }
+    ) { innerPadding ->
         PostDetailScreenContent(
             state = state,
-            commentText = commentText,
             onLikeClicked = viewModel::onLikeClicked,
             onBookmarkClicked = viewModel::onBookmarkClicked,
-            onCommentTextChanged = viewModel::onCommentTextChanged,
-            onCommentSubmitted = viewModel::onCommentSubmitted,
             onDeleteClicked = viewModel::onDeleteClicked,
             onDeleteConfirmed = viewModel::onDeleteConfirmed,
             onDeleteDismissed = viewModel::onDeleteDismissed,
-            onNavigateBack = onNavigateBack
-        )
-        SnackbarHost(
-            hostState = snackbarHostState,
-            modifier = Modifier.align(Alignment.BottomCenter)
+            onNavigateBack = onNavigateBack,
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
         )
     }
 }
@@ -88,11 +97,8 @@ fun PostDetailScreen(
 @Composable
 fun PostDetailScreenContent(
     state: PostDetailUiState,
-    commentText: String,
     onLikeClicked: () -> Unit,
     onBookmarkClicked: () -> Unit,
-    onCommentTextChanged: (String) -> Unit,
-    onCommentSubmitted: () -> Unit,
     onDeleteClicked: () -> Unit,
     onDeleteConfirmed: () -> Unit,
     onDeleteDismissed: () -> Unit,
@@ -123,14 +129,14 @@ fun PostDetailScreenContent(
     when (val postState = state.postState) {
         is UiState.Loading, is UiState.Idle -> {
             Box(
-                modifier = modifier.fillMaxSize(),
+                modifier = modifier,
                 contentAlignment = Alignment.Center
             ) { CircularProgressIndicator() }
         }
 
         is UiState.Error -> {
             Box(
-                modifier = modifier.fillMaxSize(),
+                modifier = modifier,
                 contentAlignment = Alignment.Center
             ) {
                 Text(
@@ -145,11 +151,8 @@ fun PostDetailScreenContent(
             val post = postState.data ?: return
             PostDetailBody(
                 post = post,
-                commentText = commentText,
                 onLikeClicked = onLikeClicked,
                 onBookmarkClicked = onBookmarkClicked,
-                onCommentTextChanged = onCommentTextChanged,
-                onCommentSubmitted = onCommentSubmitted,
                 onDeleteClicked = onDeleteClicked,
                 onNavigateBack = onNavigateBack,
                 modifier = modifier
@@ -161,115 +164,101 @@ fun PostDetailScreenContent(
 @Composable
 private fun PostDetailBody(
     post: CommunityPost,
-    commentText: String,
     onLikeClicked: () -> Unit,
     onBookmarkClicked: () -> Unit,
-    onCommentTextChanged: (String) -> Unit,
-    onCommentSubmitted: () -> Unit,
     onDeleteClicked: () -> Unit,
     onNavigateBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Box(modifier = modifier.fillMaxSize()) {
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(bottom = MaterialTheme.spacing.xxxl)
-        ) {
+    LazyColumn(
+        modifier = modifier.fillMaxSize()
+    ) {
+        item {
+            PostDetailHeader(
+                authorName = post.author,
+                avatarUrl = post.avatarUrl,
+                location = post.location,
+                isBookmarked = post.isBookmarked,
+                onBookmarkClicked = onBookmarkClicked,
+                onDeleteClicked = onDeleteClicked,
+                onCloseClicked = onNavigateBack
+            )
+        }
+
+        if (post.imageUrls.isNotEmpty()) {
             item {
-                PostDetailHeader(
-                    authorName = post.author,
-                    avatarUrl = post.avatarUrl,
-                    location = post.location,
-                    isBookmarked = post.isBookmarked,
-                    onBookmarkClicked = onBookmarkClicked,
-                    onDeleteClicked = onDeleteClicked,
-                    onCloseClicked = onNavigateBack
+                SharedImagePager(
+                    imageUrls = post.imageUrls,
+                    height = 240.dp,
+                    showArrows = true
                 )
             }
+        }
 
-            if (post.imageUrls.isNotEmpty()) {
-                item {
-                    SharedImagePager(
-                        imageUrls = post.imageUrls,
-                        height = 240.dp,
-                        showArrows = true
-                    )
-                }
-            }
-
-            if (post.rating > 0f) {
-                item {
-                    PostDetailRatingRow(
-                        rating = post.rating,
-                        modifier = Modifier.padding(
-                            horizontal = MaterialTheme.spacing.md,
-                            vertical = MaterialTheme.spacing.sm
-                        )
-                    )
-                }
-            }
-
+        if (post.rating > 0f) {
             item {
-                Text(
-                    text = post.content,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurface,
-                    modifier = Modifier.padding(
-                        horizontal = MaterialTheme.spacing.md,
-                        vertical = MaterialTheme.spacing.xs
-                    )
-                )
-            }
-
-            item {
-                PostDetailActions(
-                    likesCount = post.likesCount,
-                    commentsCount = post.commentsCount,
-                    isLiked = post.isLiked,
-                    onLikeClicked = onLikeClicked
-                )
-                HorizontalDivider(modifier = Modifier.fillMaxWidth())
-            }
-
-            item {
-                Text(
-                    text = stringResource(R.string.post_detail_comments_header),
-                    style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
-                    color = MaterialTheme.colorScheme.onSurface,
+                PostDetailRatingRow(
+                    rating = post.rating,
                     modifier = Modifier.padding(
                         horizontal = MaterialTheme.spacing.md,
                         vertical = MaterialTheme.spacing.sm
                     )
                 )
             }
-
-            if (post.comments.isEmpty()) {
-                item {
-                    Text(
-                        text = stringResource(R.string.post_detail_no_comments),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.padding(
-                            horizontal = MaterialTheme.spacing.md,
-                            vertical = MaterialTheme.spacing.xs
-                        )
-                    )
-                }
-            } else {
-                items(items = post.comments, key = { it.id }) { comment ->
-                    CommentItem(comment = comment)
-                    Spacer(modifier = Modifier.height(MaterialTheme.spacing.xs))
-                }
-            }
         }
 
-        CommentInputBar(
-            value = commentText,
-            onValueChange = onCommentTextChanged,
-            onSendClicked = onCommentSubmitted,
-            modifier = Modifier.align(Alignment.BottomCenter)
-        )
+        item {
+            Text(
+                text = post.content,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurface,
+                modifier = Modifier.padding(
+                    horizontal = MaterialTheme.spacing.md,
+                    vertical = MaterialTheme.spacing.xs
+                )
+            )
+        }
+
+        item {
+            PostDetailActions(
+                likesCount = post.likesCount,
+                commentsCount = post.commentsCount,
+                isLiked = post.isLiked,
+                onLikeClicked = onLikeClicked
+            )
+            HorizontalDivider(modifier = Modifier.fillMaxWidth())
+        }
+
+        item {
+            Text(
+                text = stringResource(R.string.post_detail_comments_header),
+                style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
+                color = MaterialTheme.colorScheme.onSurface,
+                modifier = Modifier.padding(
+                    horizontal = MaterialTheme.spacing.md,
+                    vertical = MaterialTheme.spacing.sm
+                )
+            )
+        }
+
+        if (post.comments.isEmpty()) {
+            item {
+                Text(
+                    text = stringResource(R.string.post_detail_no_comments),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(
+                        horizontal = MaterialTheme.spacing.md,
+                        vertical = MaterialTheme.spacing.xs
+                    )
+                )
+            }
+        } else {
+            items(items = post.comments, key = { it.id }) { comment ->
+                CommentItem(comment = comment)
+                Spacer(modifier = Modifier.height(MaterialTheme.spacing.xs))
+            }
+        }
     }
 }
 
@@ -309,11 +298,8 @@ private fun PostDetailScreenPreview() {
                     )
                 )
             ),
-            commentText = "",
             onLikeClicked = {},
             onBookmarkClicked = {},
-            onCommentTextChanged = {},
-            onCommentSubmitted = {},
             onDeleteClicked = {},
             onDeleteConfirmed = {},
             onDeleteDismissed = {},
@@ -328,11 +314,8 @@ private fun PostDetailScreenLoadingPreview() {
     TravioTheme {
         PostDetailScreenContent(
             state = PostDetailUiState(postState = UiState.Loading),
-            commentText = "",
             onLikeClicked = {},
             onBookmarkClicked = {},
-            onCommentTextChanged = {},
-            onCommentSubmitted = {},
             onDeleteClicked = {},
             onDeleteConfirmed = {},
             onDeleteDismissed = {},
@@ -361,11 +344,8 @@ private fun PostDetailDeleteDialogPreview() {
                 ),
                 showDeleteConfirmation = true
             ),
-            commentText = "",
             onLikeClicked = {},
             onBookmarkClicked = {},
-            onCommentTextChanged = {},
-            onCommentSubmitted = {},
             onDeleteClicked = {},
             onDeleteConfirmed = {},
             onDeleteDismissed = {},
