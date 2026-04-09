@@ -1,22 +1,31 @@
 package com.example.domain.repository.community
 
 import com.example.domain.model.community.CommunityPost
-import kotlinx.coroutines.flow.StateFlow
+import com.example.domain.utils.DataError
+import com.example.domain.utils.Result
+import kotlinx.coroutines.flow.Flow
 
 interface CommunityRepository {
-    val posts: StateFlow<List<CommunityPost>>
-    fun getPostById(id: Int): CommunityPost?
-    fun toggleLike(postId: Int)
-    fun toggleBookmark(postId: Int)
-    fun addPost(
-        photoUri: String,
+    fun getAllPost(): Flow<Result<List<CommunityPost>, DataError>>
+    suspend fun getPostById(postId: Int): Result<CommunityPost, DataError>
+    suspend fun addPost(
         location: String,
         description: String
-    )
+    ): Result<Int, DataError>
 
-    fun addComment(
+    suspend fun uploadPostImages(
         postId: Int,
-        commentText: String,
+        imageUris: List<String>
+    ): Result<Unit, DataError>
+
+    suspend fun deletePost(postId: Int): Result<Unit, DataError>
+    suspend fun addComment(
+        postId: Int,
+        text: String,
         authorName: String
-    )
+    ): Result<Unit, DataError>
+
+    suspend fun toggleLike(postId: Int): Result<Unit, DataError>
+
+    suspend fun toggleBookmark(postId: Int): Result<Unit, DataError>
 }

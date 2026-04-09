@@ -28,13 +28,11 @@ import androidx.compose.material.icons.outlined.SearchOff
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -60,8 +58,9 @@ import com.dev.home.components.LoadingRecentViewedCard
 import com.dev.home.components.RecentViewedCard
 import com.dev.utils.uistate.UiState
 import com.example.designsystem.components.AppBottomBar
-import com.example.designsystem.components.ErrorSnackBar
-import com.example.designsystem.components.SuccessSnackBar
+import com.example.designsystem.components.AppSnackBar
+import com.example.designsystem.components.SnackBarType
+import com.example.designsystem.components.showAppSnackbar
 import com.example.designsystem.theme.TravioTheme
 import com.example.designsystem.theme.spacing
 import com.example.domain.model.destination.Country
@@ -85,7 +84,6 @@ fun HomeScreen(
     val context = LocalContext.current
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
-    var isSuccessSnackbar by remember { mutableStateOf(false) }
 
     val locationPermissions = rememberMultiplePermissionsState(
         permissions = listOf(
@@ -104,12 +102,17 @@ fun HomeScreen(
                 is HomeEvent.NavigateToDestination -> navigateToDestination(event.id)
                 HomeEvent.NavigateToSearch -> navigateToSearch()
                 is HomeEvent.ShowErrorSnackbar -> {
-                    isSuccessSnackbar = false
-                    snackbarHostState.showSnackbar(message = event.message.asString(context))
+                    snackbarHostState.showAppSnackbar(
+                        message = event.message.asString(context),
+                        type = SnackBarType.ERROR,
+                        icon = Icons.Default.ErrorOutline
+                    )
                 }
                 is HomeEvent.ShowSuccessSnackbar -> {
-                    isSuccessSnackbar = true
-                    snackbarHostState.showSnackbar(message = event.message.asString(context))
+                    snackbarHostState.showAppSnackbar(
+                        message = event.message.asString(context),
+                        type = SnackBarType.SUCCESS
+                    )
                 }
                 HomeEvent.RequestLocationPermission -> {
                     if (locationPermissions.allPermissionsGranted) {
@@ -127,7 +130,6 @@ fun HomeScreen(
         onAction = viewModel::onAction,
         state = state,
         snackbarHostState = snackbarHostState,
-        isSuccessSnackbar = isSuccessSnackbar,
         navigateToProfile = navigateToProfile,
         navigateToFavorite = navigateToFavorite,
         navigateToCommunity = navigateToCommunity,
@@ -141,7 +143,6 @@ private fun HomeContent(
     onAction: (HomeAction) -> Unit,
     state: HomeUiState,
     snackbarHostState: SnackbarHostState,
-    isSuccessSnackbar: Boolean,
     navigateToProfile: () -> Unit,
     navigateToFavorite: () -> Unit,
     navigateToCommunity: () -> Unit,
@@ -149,18 +150,7 @@ private fun HomeContent(
 ) {
     Scaffold(
         modifier = modifier,
-        snackbarHost = {
-            SnackbarHost(hostState = snackbarHostState) { snackbarData ->
-                if (isSuccessSnackbar) {
-                    SuccessSnackBar(text = snackbarData.visuals.message)
-                } else {
-                    ErrorSnackBar(
-                        text = snackbarData.visuals.message,
-                        icon = Icons.Default.ErrorOutline
-                    )
-                }
-            }
-        },
+        snackbarHost = { AppSnackBar(hostState = snackbarHostState) },
         containerColor = MaterialTheme.colorScheme.background,
         bottomBar = {
             AppBottomBar(
@@ -540,7 +530,6 @@ private fun HomeScreenLoadedPreview() {
                 nearbyDestinationsState = UiState.Success(emptyList())
             ),
             snackbarHostState = SnackbarHostState(),
-            isSuccessSnackbar = false,
             navigateToProfile = {},
             navigateToFavorite = {},
             navigateToCommunity = {},
@@ -562,7 +551,6 @@ private fun HomeScreenErrorPreview() {
                 )
             ),
             snackbarHostState = SnackbarHostState(),
-            isSuccessSnackbar = false,
             navigateToProfile = {},
             navigateToFavorite = {},
             navigateToCommunity = {},

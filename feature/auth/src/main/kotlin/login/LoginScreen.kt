@@ -101,10 +101,12 @@ fun LoginScreen(
                 LoginEvent.NavigateToSurvey -> navigateToSurvey()
                 LoginEvent.NavigateToSignup -> navigateToSignUp()
                 is LoginEvent.ShowAuthError -> errorMessage = event.message.asString(context)
-                LoginEvent.ContinueWithFacebook -> { /* TODO */
+                LoginEvent.ContinueWithFacebook -> {
+                    /* TODO */
                 }
 
-                LoginEvent.ContinueWithGoogle -> { /* handled via onClick directly */
+                LoginEvent.ContinueWithGoogle -> {
+                    /* handled via onClick directly */
                 }
             }
         }

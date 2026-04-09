@@ -5,6 +5,7 @@ import com.example.domain.utils.Result
 import kotlinx.coroutines.CancellationException
 import retrofit2.HttpException
 import timber.log.Timber
+import java.io.FileNotFoundException
 import java.io.IOException
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
@@ -27,6 +28,12 @@ suspend fun <T> safeApiCall(apiCall: suspend () -> T): Result<T, DataError> {
     } catch (e: SocketTimeoutException) {
         Timber.e(e, "safeApiCall: request timed out (${e.message})")
         Result.Error(DataError.Network.Timeout)
+    } catch (e: FileNotFoundException) {
+        Timber.e(e, "safeApiCall: content not found -> ${e.message}")
+        Result.Error(DataError.Validation.InvalidUri)
+    } catch (e: SecurityException) {
+        Timber.e(e, "safeApiCall: security error accessing content -> ${e.message}")
+        Result.Error(DataError.Validation.InvalidUri)
     } catch (e: IOException) {
         Timber.e(e, "safeApiCall: I/O error -> no internet connection (${e.message})")
         Result.Error(DataError.Network.NoInternetConnection)
@@ -40,10 +47,19 @@ suspend fun <T> safeApiCall(apiCall: suspend () -> T): Result<T, DataError> {
 }
 
 private fun mapHttpError(e: HttpException): DataError {
-    val error = when (e.code()) {
-        400 -> DataError.Network.BadRequest
+    val code = e.code()
+    val errorBody = e.response()?.errorBody()?.string().orEmpty()
+
+    val error = when (code) {
+        400 -> {
+            Timber.w("mapHttpError: 400 Bad Request -> errorBody=$errorBody")
+            if (errorBody.contains("validation errors", ignoreCase = true)) {
+                DataError.Validation.MissingFields
+            } else {
+                DataError.Network.BadRequest
+            }
+        }
         401 -> {
-            val errorBody = e.response()?.errorBody()?.string().orEmpty()
             Timber.w("mapHttpError: 401 Unauthorized -> errorBody=$errorBody")
             if (errorBody.contains("Username is already registered", ignoreCase = true)) {
                 DataError.Authentication.UsernameAlreadyExists
@@ -57,6 +73,6 @@ private fun mapHttpError(e: HttpException): DataError {
         in 500..599 -> DataError.Network.ServerError
         else -> DataError.Network.UnexpectedResponse
     }
-    Timber.w("mapHttpError: HTTP ${e.code()} mapped to -> $error")
+    Timber.w("mapHttpError: HTTP $code mapped to -> $error")
     return error
 }

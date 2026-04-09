@@ -18,6 +18,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Travio"
         android:usesCleartextTraffic="true">
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyCU18KbbXIi9xXloZa4VLuOLntjpKGekfU" />
+
         <activity
             android:name=".MainActivity"
             android:exported="true"

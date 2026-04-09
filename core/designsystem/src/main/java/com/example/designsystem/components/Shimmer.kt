@@ -13,7 +13,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.unit.IntSize
 
@@ -35,9 +34,9 @@ fun Modifier.shimmerEffect(): Modifier =
         background(
             brush = Brush.linearGradient(
                 colors = listOf(
-                    Color(0xFFB8B5B5),
-                    Color(0xFF8F8B8B),
-                    Color(0xFFB8B5B5)
+                    androidx.compose.material3.MaterialTheme.colorScheme.surfaceVariant,
+                    androidx.compose.material3.MaterialTheme.colorScheme.outlineVariant,
+                    androidx.compose.material3.MaterialTheme.colorScheme.surfaceVariant
                 ),
                 start = Offset(startOffsetX, 0f),
                 end = Offset(startOffsetX + size.width.toFloat(), size.height.toFloat())

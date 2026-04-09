@@ -3,6 +3,7 @@ package com.dev.community.presentation
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -27,6 +28,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -45,30 +47,39 @@ import com.example.designsystem.theme.spacing
 @Composable
 fun ShareMomentScreen(
     onNavigateBack: () -> Unit,
+    onNavigateToLocationPicker: () -> Unit,
     modifier: Modifier = Modifier,
+    selectedLocation: String? = null,
     viewModel: ShareMomentViewModel = hiltViewModel()
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
+    val context = LocalContext.current
 
-    val photoPickerLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.GetContent()
-    ) { uri: Uri? ->
-        uri?.let { viewModel.onPhotoSelected(it.toString()) }
+    LaunchedEffect(selectedLocation) {
+        if (!selectedLocation.isNullOrBlank()) {
+            viewModel.onLocationChanged(selectedLocation)
+        }
     }
 
-    val photoRequiredMessage = stringResource(R.string.share_moment_error_photo_required)
+    val photoPickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetMultipleContents()
+    ) { uris: List<Uri> ->
+        if (uris.isNotEmpty()) {
+            viewModel.onPhotosSelected(uris.map { it.toString() })
+        }
+    }
+
     val locationRequiredMessage = stringResource(R.string.share_moment_error_location_required)
 
     LaunchedEffect(Unit) {
         viewModel.event.collect { event ->
             when (event) {
                 ShareMomentEvent.PostCreated -> onNavigateBack()
-                ShareMomentEvent.ShowPhotoRequired ->
-                    snackbarHostState.showSnackbar(photoRequiredMessage)
-
                 ShareMomentEvent.ShowLocationRequired ->
                     snackbarHostState.showSnackbar(locationRequiredMessage)
+                is ShareMomentEvent.ShowUploadError ->
+                    snackbarHostState.showSnackbar(event.message.asString(context))
             }
         }
     }
@@ -77,7 +88,8 @@ fun ShareMomentScreen(
         state = state,
         snackbarHostState = snackbarHostState,
         onPhotoClicked = { photoPickerLauncher.launch("image/*") },
-        onLocationChanged = viewModel::onLocationChanged,
+        onPhotoRemoved = viewModel::onPhotoRemoved,
+        onLocationClicked = onNavigateToLocationPicker,
         onDescriptionChanged = viewModel::onDescriptionChanged,
         onPostClicked = viewModel::onPostClicked,
         onCloseClicked = onNavigateBack,
@@ -89,7 +101,8 @@ fun ShareMomentScreen(
 fun ShareMomentScreenContent(
     state: ShareMomentUiState,
     onPhotoClicked: () -> Unit,
-    onLocationChanged: (String) -> Unit,
+    onPhotoRemoved: (String) -> Unit,
+    onLocationClicked: () -> Unit,
     onDescriptionChanged: (String) -> Unit,
     onPostClicked: () -> Unit,
     onCloseClicked: () -> Unit,
@@ -113,14 +126,15 @@ fun ShareMomentScreenContent(
             verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.lg)
         ) {
             AddPhotoBox(
-                photoUri = state.photoUri,
+                photoUris = state.photoUris,
                 onClick = onPhotoClicked,
+                onPhotoRemoved = onPhotoRemoved,
                 modifier = Modifier.fillMaxWidth()
             )
 
             LocationSection(
                 location = state.location,
-                onLocationChanged = onLocationChanged
+                onLocationClicked = onLocationClicked
             )
 
             DescriptionSection(
@@ -144,7 +158,7 @@ fun ShareMomentScreenContent(
 @Composable
 private fun LocationSection(
     location: String,
-    onLocationChanged: (String) -> Unit,
+    onLocationClicked: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -158,7 +172,9 @@ private fun LocationSection(
         )
         OutlinedTextField(
             value = location,
-            onValueChange = onLocationChanged,
+            onValueChange = {},
+            readOnly = true,
+            enabled = false,
             placeholder = {
                 Text(
                     text = stringResource(R.string.share_moment_location_hint),
@@ -176,7 +192,9 @@ private fun LocationSection(
             shape = MaterialTheme.shapes.large,
             singleLine = true,
             colors = shareMomentFieldColors(),
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable(onClick = onLocationClicked)
         )
     }
 }
@@ -219,13 +237,16 @@ private fun shareMomentFieldColors() =
     TextFieldDefaults.colors(
         focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
         unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
+        disabledContainerColor = MaterialTheme.colorScheme.surfaceVariant,
         focusedIndicatorColor = MaterialTheme.colorScheme.primary,
         unfocusedIndicatorColor = MaterialTheme.colorScheme.outlineVariant,
-        disabledIndicatorColor = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.38f),
+        disabledIndicatorColor = MaterialTheme.colorScheme.outlineVariant,
         focusedTextColor = MaterialTheme.colorScheme.onSurface,
         unfocusedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
+        disabledTextColor = MaterialTheme.colorScheme.onSurface,
         focusedPlaceholderColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
         unfocusedPlaceholderColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
+        disabledPlaceholderColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
         cursorColor = MaterialTheme.colorScheme.primary
     )
 
@@ -236,7 +257,8 @@ private fun ShareMomentScreenEmptyPreview() {
         ShareMomentScreenContent(
             state = ShareMomentUiState(),
             onPhotoClicked = {},
-            onLocationChanged = {},
+            onPhotoRemoved = {},
+            onLocationClicked = {},
             onDescriptionChanged = {},
             onPostClicked = {},
             onCloseClicked = {}
@@ -244,18 +266,22 @@ private fun ShareMomentScreenEmptyPreview() {
     }
 }
 
-@Preview(name = "Filled", showBackground = true)
+@Preview(name = "With Photos", showBackground = true)
 @Composable
-private fun ShareMomentScreenFilledPreview() {
+private fun ShareMomentScreenWithPhotosPreview() {
     TravioTheme {
         ShareMomentScreenContent(
             state = ShareMomentUiState(
-                photoUri = "https://images.unsplash.com/photo-1533105079780-92b9be482077?w=800",
+                photoUris = listOf(
+                    "https://images.unsplash.com/photo-1533105079780-92b9be482077?w=400",
+                    "https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=400"
+                ),
                 location = "Santorini, Greece",
                 description = "The sunset views from Oia are breathtaking!"
             ),
             onPhotoClicked = {},
-            onLocationChanged = {},
+            onPhotoRemoved = {},
+            onLocationClicked = {},
             onDescriptionChanged = {},
             onPostClicked = {},
             onCloseClicked = {}
@@ -269,13 +295,14 @@ private fun ShareMomentScreenSubmittingPreview() {
     TravioTheme {
         ShareMomentScreenContent(
             state = ShareMomentUiState(
-                photoUri = "https://images.unsplash.com/photo-1533105079780-92b9be482077?w=800",
+                photoUris = listOf("https://images.unsplash.com/photo-1533105079780-92b9be482077?w=400"),
                 location = "Santorini, Greece",
                 description = "The sunset views from Oia are breathtaking!",
                 submitState = UiState.Loading
             ),
             onPhotoClicked = {},
-            onLocationChanged = {},
+            onPhotoRemoved = {},
+            onLocationClicked = {},
             onDescriptionChanged = {},
             onPostClicked = {},
             onCloseClicked = {}

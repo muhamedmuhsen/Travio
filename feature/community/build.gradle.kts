@@ -41,7 +41,6 @@ dependencies {
     implementation(project(":core:designsystem"))
     implementation(project(":feature:utils"))
     implementation(project(":domain"))
-    testImplementation(project(":feature:utils"))
     // Core Android
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
@@ -59,6 +58,9 @@ dependencies {
     // Image loading
     implementation(libs.coil.compose)
 
+    // Maps
+    implementation(libs.maps.compose)
+
     // Lifecycle
     implementation(libs.androidx.lifecycle.runtime.compose)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
@@ -67,4 +69,7 @@ dependencies {
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
     implementation(libs.androidx.hilt.navigation.compose)
+
+    // Timber logging library
+    implementation(libs.timber)
 }
