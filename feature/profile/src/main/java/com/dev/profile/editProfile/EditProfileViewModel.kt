@@ -2,6 +2,8 @@ package com.dev.profile.editProfile
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.dev.utils.uistate.UiState
+import com.dev.utils.uitext.asUiText
 import com.example.domain.usecase.usermanagement.UpdateProfilePicUseCase
 import com.example.domain.usecase.usermanagement.UpdateProfileUseCase
 import com.example.domain.utils.DataError
@@ -15,8 +17,6 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import ui.state.UiState
-import ui.text.asUiText
 import javax.inject.Inject
 
 @HiltViewModel

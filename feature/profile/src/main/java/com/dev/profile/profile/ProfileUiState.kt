@@ -1,6 +1,6 @@
 package com.dev.profile.profile
 
-import ui.state.UiState
+import com.dev.utils.uistate.UiState
 
 data class ProfileUiState(
     val email: String = "",

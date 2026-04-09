@@ -1,6 +1,6 @@
 package com.example.feature.forgetpassword.code
 
-import ui.state.UiState
+import com.dev.utils.uistate.UiState
 
 data class CodeState(
     val code: String = "",

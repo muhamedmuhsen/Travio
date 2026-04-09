@@ -1,6 +1,6 @@
 package com.example.feature.forgetpassword.newpassword
 
-import ui.text.UiText
+import com.dev.utils.uitext.UiText
 
 sealed interface NewPasswordEvent {
     data object NavigateToLogin : NewPasswordEvent

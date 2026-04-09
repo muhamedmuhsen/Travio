@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Community Top Bar -->
+    <string name="community_title">Community</string>
+    <string name="community_subtitle">Travel &#x2022; Explore &#x2022; Share</string>
+    <string name="community_share_cd">Share</string>
+    <string name="community_empty_state">No posts yet. Be the first to share your journey!</string>
+
+    <!-- Community Post Card -->
+    <string name="community_like_cd">Like</string>
+    <string name="community_comment_cd">Comment</string>
+
+    <!-- Post Detail Screen -->
+    <string name="post_detail_bookmark_cd">Bookmark post</string>
+    <string name="post_detail_close_cd">Close</string>
+    <string name="post_detail_delete_cd">Delete post</string>
+    <string name="post_detail_delete_confirm_title">Delete post?</string>
+    <string name="post_detail_delete_confirm_body">This action cannot be undone.</string>
+    <string name="post_detail_delete_confirm_button">Delete</string>
+    <string name="post_detail_delete_cancel_button">Cancel</string>
+    <string name="post_detail_delete_error">Failed to delete post. Please try again.</string>
+    <string name="post_detail_comments_header">Comments</string>
+    <string name="post_detail_no_comments">No comments yet. Be the first!</string>
+    <string name="post_detail_comment_hint">Add a comment…</string>
+    <string name="post_detail_send_cd">Send comment</string>
+    <string name="post_detail_not_found">Post not found.</string>
+
+    <!-- Image Pager -->
+    <string name="image_n_of_m">Image %1$d of %2$d</string>
+    <string name="pager_previous_cd">Previous image</string>
+    <string name="pager_next_cd">Next image</string>
+
+    <!-- Comment author (current user) -->
+    <string name="comment_author_you">You</string>
+
+    <!-- Share Moment Screen -->
+    <string name="share_moment_title">Share Moment</string>
+    <string name="share_moment_subtitle">Capture and share your adventure</string>
+    <string name="share_moment_close_cd">Close</string>
+    <string name="share_moment_add_photo_title">Add Photo</string>
+    <string name="share_moment_add_photo_subtitle">Click to upload your travel photo</string>
+    <string name="share_moment_add_photo_cd">Add photo</string>
+    <string name="share_moment_selected_photo_cd">Selected photo</string>
+    <string name="share_moment_remove_photo_cd">Remove photo</string>
+    <string name="share_moment_location_label">Location</string>
+    <string name="share_moment_location_hint">Where is this place?</string>
+    <string name="share_moment_description_label">Description</string>
+    <string name="share_moment_description_hint">Tell us about your experience…</string>
+    <string name="share_moment_post_button">Post Now</string>
+    <string name="share_moment_error_photo_required">Please add a photo before posting.</string>
+    <string name="share_moment_error_location_required">Please enter a location before posting.</string>
+
+    <!-- Location Picker Screen -->
+    <string name="location_picker_title">Pick Location</string>
+    <string name="location_picker_back_cd">Go back</string>
+    <string name="location_picker_confirm_cd">Confirm location</string>
+    <string name="location_picker_pin_title">Selected location</string>
+
+    <!-- Relative time -->
+    <string name="relative_time_just_now">Just now</string>
+    <plurals name="relative_time_minutes_ago">
+        <item quantity="one">%d minute ago</item>
+        <item quantity="other">%d minutes ago</item>
+    </plurals>
+    <plurals name="relative_time_hours_ago">
+        <item quantity="one">%d hour ago</item>
+        <item quantity="other">%d hours ago</item>
+    </plurals>
+    <plurals name="relative_time_days_ago">
+        <item quantity="one">%d day ago</item>
+        <item quantity="other">%d days ago</item>
+    </plurals>
+    <plurals name="relative_time_months_ago">
+        <item quantity="one">%d month ago</item>
+        <item quantity="other">%d months ago</item>
+    </plurals>
+    <plurals name="relative_time_years_ago">
+        <item quantity="one">%d year ago</item>
+        <item quantity="other">%d years ago</item>
+    </plurals>
+</resources>

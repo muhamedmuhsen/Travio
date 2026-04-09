@@ -59,7 +59,6 @@ dependencies {
     implementation(project(":core:common"))
     implementation(project(":feature:utils"))
     implementation(project(":domain"))
-    implementation(project(":data"))
 
     // Core Android
     implementation(libs.androidx.core.ktx)
@@ -80,9 +79,6 @@ dependencies {
     ksp(libs.hilt.compiler)
     // Logging
     implementation(libs.timber)
-    // Credential Manager
-    implementation(libs.androidx.credentials)
-    implementation(libs.androidx.credentials.play.services.auth)
-    implementation(libs.googleid)
+    // Facebook login
     implementation(libs.facebook.login)
 }

@@ -1,7 +1,7 @@
 package com.dev.home.presentation
 
+import com.dev.utils.uitext.UiText
 import com.example.domain.model.destination.Destination
-import ui.text.UiText
 
 sealed interface HomeEvent {
     data class ShowErrorSnackbar(val message: UiText) : HomeEvent

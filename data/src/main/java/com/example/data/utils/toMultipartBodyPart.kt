@@ -6,6 +6,7 @@ import android.provider.OpenableColumns
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.toRequestBody
+import timber.log.Timber
 
 fun Uri.toMultipartBodyPart(
     context: Context,
@@ -32,7 +33,7 @@ fun Uri.toMultipartBodyPart(
             MultipartBody.Part.createFormData(partName, fileName, requestBody)
         }
     } catch (e: Exception) {
-        e.printStackTrace()
+        Timber.e(e, "toMultipartBodyPart: failed to read uri=$this")
         null
     }
 }

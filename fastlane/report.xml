@@ -1,31 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <testsuites>
-    <testsuite name="fastlane.lanes">
-
-
-        <testcase classname="fastlane.lanes" name="0: default_platform" time="0.0008601">
-
-        </testcase>
-
-
-        <testcase classname="fastlane.lanes" name="1: clean assembleDebug" time="52.4016136">
-
-        </testcase>
-
-
-        <testcase classname="fastlane.lanes" name="2: git_branch" time="0.0516382">
-
-        </testcase>
-
-
-        <testcase classname="fastlane.lanes" name="3: last_git_commit" time="0.2176495">
-
-        </testcase>
-
-
-        <testcase classname="fastlane.lanes" name="4: firebase_app_distribution" time="188.3646974">
-
-        </testcase>
-
-    </testsuite>
+  <testsuite name="fastlane.lanes">
+    
+    
+    
+      
+      <testcase classname="fastlane.lanes" name="0: default_platform" time="0.0012066">
+        
+      </testcase>
+    
+      
+      <testcase classname="fastlane.lanes" name="1: clean assembleDebug" time="77.3082053">
+        
+      </testcase>
+    
+      
+      <testcase classname="fastlane.lanes" name="2: git_branch" time="0.0374412">
+        
+      </testcase>
+    
+      
+      <testcase classname="fastlane.lanes" name="3: last_git_commit" time="0.2196547">
+        
+      </testcase>
+    
+      
+      <testcase classname="fastlane.lanes" name="4: firebase_app_distribution" time="184.8825379">
+        
+      </testcase>
+    
+  </testsuite>
 </testsuites>

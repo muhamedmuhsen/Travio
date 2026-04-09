@@ -71,18 +71,33 @@ fun ForgetPasswordScreen(
     LaunchedEffect(Unit) {
         viewModel.event.collect { event ->
             when (event) {
-                ForgetPasswordEvent.NavigateToCodeScreen -> {
-                    navigateToCodeScreen(uiState.value.email)
-                }
-                ForgetPasswordEvent.OnBackClicked -> {
-                    onCloseClicked()
-                }
-                is ForgetPasswordEvent.ShowError -> {
-                    errorMessage = event.message.asString(context)
-                }
+                ForgetPasswordEvent.NavigateToCodeScreen -> navigateToCodeScreen(uiState.value.email)
+                ForgetPasswordEvent.OnBackClicked -> onCloseClicked()
+                is ForgetPasswordEvent.ShowError -> errorMessage = event.message.asString(context)
             }
         }
     }
+
+    ForgetPasswordScreenContent(
+        state = uiState.value,
+        errorMessage = errorMessage,
+        onEmailChange = viewModel::onEmailChange,
+        onContinueClicked = viewModel::onContinueClicked,
+        onCloseClicked = viewModel::onCloseClicked,
+        modifier = modifier
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ForgetPasswordScreenContent(
+    state: com.example.feature.forgetpassword.forgetpassword.ForgetPasswordState,
+    errorMessage: String?,
+    onEmailChange: (String) -> Unit,
+    onContinueClicked: () -> Unit,
+    onCloseClicked: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     Scaffold(
         snackbarHost = {
             errorMessage?.let { message ->
@@ -109,7 +124,7 @@ fun ForgetPasswordScreen(
                                 color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
                                 shape = CircleShape
                             )
-                            .clickable { viewModel.onCloseClicked() },
+                            .clickable { onCloseClicked() },
                         contentAlignment = Alignment.Center
                     ) {
                         Icon(
@@ -149,9 +164,9 @@ fun ForgetPasswordScreen(
                 Spacer(modifier.height(MaterialTheme.spacing.lg))
 
                 AppTextField(
-                    value = uiState.value.email,
-                    onValueChange = { viewModel.onEmailChange(it) },
-                    isError = uiState.value.isEmailError,
+                    value = state.email,
+                    onValueChange = onEmailChange,
+                    isError = state.isEmailError,
                     placeholder = stringResource(id = R.string.email),
                     modifier = Modifier.fillMaxWidth()
                 )
@@ -165,15 +180,13 @@ fun ForgetPasswordScreen(
                 Spacer(modifier.height(MaterialTheme.spacing.lg))
 
                 AppButton(
-                    onClick = { viewModel.onContinueClicked() },
+                    onClick = onContinueClicked,
                     text = stringResource(id = R.string.continue_button),
                     modifier = Modifier.fillMaxWidth()
                 )
             }
 
-            ContactSection(
-                modifier = Modifier.padding(bottom = MaterialTheme.spacing.md)
-            )
+            ContactSection(modifier = Modifier.padding(bottom = MaterialTheme.spacing.md))
         }
     }
 }
@@ -208,10 +221,33 @@ fun ContactSection(modifier: Modifier = Modifier) {
     )
 }
 
-@Preview
+@Preview(name = "Default", showBackground = true, showSystemUi = true)
 @Composable
 private fun ForgetPasswordPreview() {
     TravioTheme {
-        ForgetPasswordScreen(onCloseClicked = {}) {}
+        ForgetPasswordScreenContent(
+            state = com.example.feature.forgetpassword.forgetpassword.ForgetPasswordState(),
+            errorMessage = null,
+            onEmailChange = {},
+            onContinueClicked = {},
+            onCloseClicked = {}
+        )
+    }
+}
+
+@Preview(name = "Error — invalid email", showBackground = true, showSystemUi = true)
+@Composable
+private fun ForgetPasswordErrorPreview() {
+    TravioTheme {
+        ForgetPasswordScreenContent(
+            state = com.example.feature.forgetpassword.forgetpassword.ForgetPasswordState(
+                email = "not-an-email",
+                isEmailError = true
+            ),
+            errorMessage = "No account found with this email.",
+            onEmailChange = {},
+            onContinueClicked = {},
+            onCloseClicked = {}
+        )
     }
 }

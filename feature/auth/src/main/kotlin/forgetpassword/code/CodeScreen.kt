@@ -80,13 +80,35 @@ fun CodeScreen(
             when (event) {
                 CodeEvent.NavigateToResetPassword -> navigateToResetPassword()
                 CodeEvent.OnBackClicked -> onBackClicked()
-                is CodeEvent.ShowError -> {
-                    errorMessage = event.message.asString(context)
-                }
+                is CodeEvent.ShowError -> errorMessage = event.message.asString(context)
             }
         }
     }
 
+    CodeScreenContent(
+        state = state,
+        email = email,
+        errorMessage = errorMessage,
+        onBackClicked = viewModel::onBackClicked,
+        onOtpFilled = viewModel::onCodeChange,
+        onSendAgainClicked = { viewModel.onSendAgainClicked(email) },
+        onContinueClicked = { viewModel.onContinueClicked(email) },
+        modifier = modifier
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun CodeScreenContent(
+    state: CodeState,
+    email: String,
+    errorMessage: String?,
+    onBackClicked: () -> Unit,
+    onOtpFilled: (String) -> Unit,
+    onSendAgainClicked: () -> Unit,
+    onContinueClicked: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     Scaffold(
         snackbarHost = {
             errorMessage?.let { message ->
@@ -103,7 +125,7 @@ fun CodeScreen(
                             .size(MaterialTheme.spacing.xxl)
                             .clip(CircleShape)
                             .background(color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f))
-                            .clickable { viewModel.onBackClicked() },
+                            .clickable { onBackClicked() },
                         contentAlignment = Alignment.Center
                     ) {
                         Icon(
@@ -142,7 +164,7 @@ fun CodeScreen(
             Spacer(modifier = Modifier.height(MaterialTheme.spacing.lg))
 
             OtpInputField(
-                onOtpFilled = { viewModel.onCodeChange(it) },
+                onOtpFilled = onOtpFilled,
                 isError = state.isCodeError
             )
 
@@ -153,16 +175,14 @@ fun CodeScreen(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                SendAgain(
-                    onSendAgainClicked = { viewModel.onSendAgainClicked(email) }
-                )
+                SendAgain(onSendAgainClicked = onSendAgainClicked)
                 CountdownTimer(state.timeLeft)
             }
 
             Spacer(modifier = Modifier.height(MaterialTheme.spacing.lg))
 
             AppButton(
-                onClick = { viewModel.onContinueClicked(email) },
+                onClick = onContinueClicked,
                 text = stringResource(id = R.string.continue_button),
                 modifier = Modifier
                     .fillMaxWidth()
@@ -298,15 +318,34 @@ fun OtpCell(
     }
 }
 
-@Preview
+@Preview(name = "Default", showBackground = true, showSystemUi = true)
 @Composable
 private fun CodeScreenPreview() {
     TravioTheme {
-        CodeScreen(
-            email = "mail@gmail.com",
-            navigateToResetPassword = {},
+        CodeScreenContent(
+            state = CodeState(timeLeft = 540),
+            email = "user@example.com",
+            errorMessage = null,
             onBackClicked = {},
-            viewModel = hiltViewModel()
+            onOtpFilled = {},
+            onSendAgainClicked = {},
+            onContinueClicked = {}
+        )
+    }
+}
+
+@Preview(name = "Error — invalid code", showBackground = true, showSystemUi = true)
+@Composable
+private fun CodeScreenErrorPreview() {
+    TravioTheme {
+        CodeScreenContent(
+            state = CodeState(isCodeError = true, timeLeft = 0),
+            email = "user@example.com",
+            errorMessage = "The code you entered is incorrect.",
+            onBackClicked = {},
+            onOtpFilled = {},
+            onSendAgainClicked = {},
+            onContinueClicked = {}
         )
     }
 }

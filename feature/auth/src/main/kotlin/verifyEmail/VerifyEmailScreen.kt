@@ -32,10 +32,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.designsystem.components.AppButton
 import com.example.designsystem.components.ErrorSnackBar
+import com.example.designsystem.theme.TravioTheme
 import com.example.designsystem.theme.spacing
 import com.example.feature.auth.R
 import com.example.feature.forgetpassword.code.CountdownTimer
@@ -73,6 +75,28 @@ fun VerifyEmailScreen(
         }
     }
 
+    VerifyEmailScreenContent(
+        state = state,
+        errorMessage = errorMessage,
+        onBackClicked = viewModel::onBackClicked,
+        onOtpFilled = viewModel::onCodeChange,
+        onSendAgainClicked = viewModel::onSendAgainClicked,
+        onContinueClicked = viewModel::onContinueClicked,
+        modifier = modifier
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun VerifyEmailScreenContent(
+    state: VerifyEmailState,
+    errorMessage: String?,
+    onBackClicked: () -> Unit,
+    onOtpFilled: (String) -> Unit,
+    onSendAgainClicked: () -> Unit,
+    onContinueClicked: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     Scaffold(
         snackbarHost = {
             errorMessage?.let { message ->
@@ -89,7 +113,7 @@ fun VerifyEmailScreen(
                             .size(MaterialTheme.spacing.xxl)
                             .clip(CircleShape)
                             .background(color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f))
-                            .clickable { viewModel.onBackClicked() },
+                            .clickable { onBackClicked() },
                         contentAlignment = Alignment.Center
                     ) {
                         Icon(
@@ -128,7 +152,7 @@ fun VerifyEmailScreen(
             Spacer(modifier = Modifier.height(MaterialTheme.spacing.lg))
 
             OtpInputField(
-                onOtpFilled = { viewModel.onCodeChange(it) },
+                onOtpFilled = onOtpFilled,
                 isError = state.isCodeError
             )
 
@@ -139,21 +163,49 @@ fun VerifyEmailScreen(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                SendAgain(
-                    onSendAgainClicked = { viewModel.onSendAgainClicked() }
-                )
+                SendAgain(onSendAgainClicked = onSendAgainClicked)
                 CountdownTimer(state.timeLeft)
             }
 
             Spacer(modifier = Modifier.height(MaterialTheme.spacing.lg))
 
             AppButton(
-                onClick = { viewModel.onContinueClicked() },
+                onClick = onContinueClicked,
                 text = stringResource(id = R.string.continue_button),
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(bottom = MaterialTheme.spacing.md)
             )
         }
+    }
+}
+
+@Preview(name = "Default", showBackground = true, showSystemUi = true)
+@Composable
+private fun VerifyEmailScreenPreview() {
+    TravioTheme {
+        VerifyEmailScreenContent(
+            state = VerifyEmailState(email = "user@example.com", timeLeft = 59),
+            errorMessage = null,
+            onBackClicked = {},
+            onOtpFilled = {},
+            onSendAgainClicked = {},
+            onContinueClicked = {}
+        )
+    }
+}
+
+@Preview(name = "Error — invalid code", showBackground = true, showSystemUi = true)
+@Composable
+private fun VerifyEmailScreenErrorPreview() {
+    TravioTheme {
+        VerifyEmailScreenContent(
+            state = VerifyEmailState(email = "user@example.com", isCodeError = true, timeLeft = 0),
+            errorMessage = "Invalid verification code. Please try again.",
+            onBackClicked = {},
+            onOtpFilled = {},
+            onSendAgainClicked = {},
+            onContinueClicked = {}
+        )
     }
 }

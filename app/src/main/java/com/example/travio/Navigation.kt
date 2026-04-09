@@ -7,10 +7,19 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
+import com.dev.community.presentation.CommunityScreen
+import com.dev.community.presentation.LocationPickerScreen
+import com.dev.community.presentation.PostDetailScreen
+import com.dev.community.presentation.ShareMomentScreen
 import com.dev.favroite.FavoriteScreen
 import com.dev.home.presentation.HomeScreen
+import com.dev.onboarding.language.LanguageScreen
+import com.dev.onboarding.onboarding.OnboardingScreen
+import com.dev.onboarding.starterlogin.StarterLogin
 import com.dev.profile.editProfile.EditProfileScreen
 import com.dev.profile.profile.ProfileScreen
 import com.dev.search.presentation.SearchScreen
@@ -19,11 +28,8 @@ import com.example.common.navigation.Screen
 import com.example.feature.forgetpassword.ForgetPasswordScreen
 import com.example.feature.forgetpassword.code.CodeScreen
 import com.example.feature.forgetpassword.newpassword.NewPasswordScreen
-import com.example.feature.language.LanguageScreen
 import com.example.feature.login.LoginScreen
-import com.example.feature.onboarding.OnboardingScreen
 import com.example.feature.signup.SignupScreen
-import com.example.feature.starterlogin.StarterLogin
 import com.example.feature.verifyEmail.VerifyEmailScreen
 import java.net.URLDecoder
 import java.net.URLEncoder
@@ -275,10 +281,71 @@ fun TravioNavHost(
         }
 
         composable(Screen.CommunityScreen.route) {
-            // TODO: replace with real CommunityScreen composable once feature is built
-            Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                Text("Community – coming soon")
-            }
+            CommunityScreen(
+                navigateToHome = {
+                    navController.navigate(Screen.HomeScreen.route) {
+                        popUpTo(Screen.HomeScreen.route) { inclusive = false }
+                        launchSingleTop = true
+                    }
+                },
+                navigateToFavorite = {
+                    navController.navigate(Screen.FavoriteScreen.route) {
+                        launchSingleTop = true
+                    }
+                },
+                navigateToAi = {
+                    navController.navigate(Screen.AiChatScreen.route) {
+                        launchSingleTop = true
+                    }
+                },
+                navigateToProfile = {
+                    navController.navigate(Screen.ProfileScreen.route) {
+                        launchSingleTop = true
+                    }
+                },
+                navigateToPostDetail = { postId ->
+                    navController.navigate(Screen.PostDetailScreen.route + "/$postId")
+                },
+                navigateToShareMoment = {
+                    navController.navigate(Screen.ShareMomentScreen.route)
+                }
+            )
+        }
+
+        composable(Screen.ShareMomentScreen.route) { backStackEntry ->
+            val selectedLocation = backStackEntry
+                .savedStateHandle
+                .get<String>("selected_location")
+
+            ShareMomentScreen(
+                onNavigateBack = { navController.popBackStack() },
+                onNavigateToLocationPicker = {
+                    navController.navigate(Screen.LocationPickerScreen.route)
+                },
+                selectedLocation = selectedLocation
+            )
+        }
+
+        composable(Screen.LocationPickerScreen.route) {
+            LocationPickerScreen(
+                onLocationSelected = { locationName ->
+                    navController.previousBackStackEntry
+                        ?.savedStateHandle
+                        ?.set("selected_location", locationName)
+                    navController.popBackStack()
+                },
+                onNavigateBack = { navController.popBackStack() }
+            )
+        }
+
+        composable(
+            route = Screen.PostDetailScreen.route + "/{postId}",
+            arguments = listOf(navArgument("postId") { type = NavType.IntType })
+        ) {
+            // postId is automatically injected into PostDetailViewModel via SavedStateHandle by Hilt
+            PostDetailScreen(
+                onNavigateBack = { navController.popBackStack() }
+            )
         }
 
         composable(Screen.AiChatScreen.route) {

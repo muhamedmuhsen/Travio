@@ -1,8 +1,8 @@
 package com.dev.home.presentation
 
+import com.dev.utils.uistate.UiState
 import com.example.domain.model.destination.Country
 import com.example.domain.model.destination.Destination
-import ui.state.UiState
 
 data class HomeUiState(
     val searchQuery: String = "",

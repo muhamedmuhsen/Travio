@@ -1,6 +1,6 @@
 package com.example.feature.verifyEmail
 
-import ui.state.UiState
+import com.dev.utils.uistate.UiState
 
 data class VerifyEmailState(
     val email: String = "",

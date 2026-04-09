@@ -1,6 +1,6 @@
 package com.example.feature.login
 
-import ui.text.UiText
+import com.dev.utils.uitext.UiText
 
 sealed interface LoginEvent {
     data object NavigateToHome : LoginEvent
