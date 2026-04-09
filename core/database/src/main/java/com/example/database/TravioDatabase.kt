@@ -26,4 +26,3 @@ abstract class TravioDatabase : RoomDatabase() {
     abstract fun recentlyViewedDao(): RecentlyViewedDao
     abstract fun recentSearchDao(): RecentSearchDao
 }
-

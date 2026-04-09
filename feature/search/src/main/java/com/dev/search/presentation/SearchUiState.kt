@@ -1,8 +1,8 @@
 package com.dev.search.presentation
 
+import com.dev.utils.uistate.UiState
 import com.example.domain.model.destination.Destination
 import com.example.domain.model.search.RecentSearch
-import ui.state.UiState
 
 data class SearchUiState(
     val query: String = "",

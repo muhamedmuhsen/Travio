@@ -1,6 +1,6 @@
 package com.dev.search.presentation
 
-import ui.text.UiText
+import com.dev.utils.uitext.UiText
 
 sealed interface SearchEvent {
     data class NavigateToDestination(val id: String) : SearchEvent
