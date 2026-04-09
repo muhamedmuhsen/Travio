@@ -2,6 +2,8 @@ package com.dev.search.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.dev.utils.uistate.UiState
+import com.dev.utils.uitext.asUiText
 import com.example.domain.model.destination.Destination
 import com.example.domain.usecase.destinations.AddToRecentlyViewedUseCase
 import com.example.domain.usecase.destinations.SearchForDestinationsUseCase
@@ -25,8 +27,6 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import ui.state.UiState
-import ui.text.asUiText
 import javax.inject.Inject
 
 @OptIn(FlowPreview::class)

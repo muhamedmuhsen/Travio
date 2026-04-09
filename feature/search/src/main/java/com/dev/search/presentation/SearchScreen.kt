@@ -44,13 +44,13 @@ import com.dev.search.components.LoadingSearchResultItem
 import com.dev.search.components.RecentSearchItem
 import com.dev.search.components.SearchResultItem
 import com.dev.search.components.SearchTopBar
+import com.dev.utils.uistate.UiState
 import com.example.designsystem.components.ErrorSnackBar
 import com.example.designsystem.theme.TravioTheme
 import com.example.designsystem.theme.spacing
 import com.example.domain.model.destination.Destination
 import com.example.domain.model.search.RecentSearch
 import com.example.feature.search.R
-import ui.state.UiState
 
 @Composable
 fun SearchScreen(
