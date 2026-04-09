@@ -12,6 +12,7 @@ import com.example.data.repository.destinations.LocationRepositoryImpl
 import com.example.data.repository.destinations.RecentlyViewedRepositoryImpl
 import com.example.data.repository.favorite.FavoritePlaceRepositoryImpl
 import com.example.data.repository.favorite.FavoritePostRepositoryImpl
+import com.example.data.repository.search.RecentSearchRepositoryImpl
 import com.example.domain.repository.auth.EmailVerificationRepository
 import com.example.domain.repository.auth.LoginRepository
 import com.example.domain.repository.auth.PasswordResetRepository
@@ -24,6 +25,7 @@ import com.example.domain.repository.destinations.LocationRepository
 import com.example.domain.repository.destinations.RecentlyViewedRepository
 import com.example.domain.repository.favorite.FavoritePlaceRepository
 import com.example.domain.repository.favorite.FavoritePostRepository
+import com.example.domain.repository.search.RecentSearchRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -80,6 +82,10 @@ abstract class RepositoryModule {
     @Singleton
     abstract fun bindRecentlyViewedRepository(recentlyViewedRepositoryImpl: RecentlyViewedRepositoryImpl): RecentlyViewedRepository
 
+    @Binds
+    @Singleton
+    abstract fun bindRecentSearchRepository(recentSearchRepositoryImpl: RecentSearchRepositoryImpl): RecentSearchRepository
+  
     @Binds
     @Singleton
     abstract fun bindCommunityRepository(communityRepositoryImpl: CommunityRepositoryImpl): CommunityRepository

@@ -11,10 +11,12 @@ import com.example.database.post.FavoritePostDao
 import com.example.database.post.Post
 import com.example.database.recentlyviewed.RecentlyViewedDao
 import com.example.database.recentlyviewed.RecentlyViewedDestination
+import com.example.database.recentsearch.RecentSearch
+import com.example.database.recentsearch.RecentSearchDao
 
 @Database(
-    entities = [Place::class, Post::class, Comment::class, RecentlyViewedDestination::class],
-    version = 2,
+    entities = [Place::class, Post::class, Comment::class, RecentlyViewedDestination::class, RecentSearch::class],
+    version = 3,
     exportSchema = false
 )
 @TypeConverters(StringListConverter::class)
@@ -22,6 +24,6 @@ abstract class TravioDatabase : RoomDatabase() {
     abstract fun postDao(): FavoritePostDao
     abstract fun placeDao(): FavoritePlaceDao
     abstract fun recentlyViewedDao(): RecentlyViewedDao
+    abstract fun recentSearchDao(): RecentSearchDao
 }
 
-// TODO: mapping entities to domain model

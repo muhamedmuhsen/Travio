@@ -22,6 +22,7 @@ import com.dev.onboarding.onboarding.OnboardingScreen
 import com.dev.onboarding.starterlogin.StarterLogin
 import com.dev.profile.editProfile.EditProfileScreen
 import com.dev.profile.profile.ProfileScreen
+import com.dev.search.presentation.SearchScreen
 import com.dev.survey.presentation.SurveyScreen
 import com.example.common.navigation.Screen
 import com.example.feature.forgetpassword.ForgetPasswordScreen
@@ -263,10 +264,12 @@ fun TravioNavHost(
         }
 
         composable(Screen.SearchScreen.route) {
-            // TODO: replace with real SearchScreen composable once feature is built
-            Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                Text("Search – coming soon")
-            }
+            SearchScreen(
+                navigateBack = { navController.popBackStack() },
+                navigateToDestination = { id ->
+                    navController.navigate(Screen.DestinationDetailScreen.route + "/$id")
+                }
+            )
         }
 
         composable(Screen.DestinationDetailScreen.route + "/{id}") { backStackEntry ->
