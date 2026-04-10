@@ -38,6 +38,7 @@ include(":feature:profile")
 include(":feature:survey")
 include(":feature:utils")
 include(":feature:search")
+include(":feature:destination")
 include(":feature")
 include(":core:database")
 

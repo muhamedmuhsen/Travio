@@ -272,12 +272,16 @@ fun TravioNavHost(
             )
         }
 
-        composable(Screen.DestinationDetailScreen.route + "/{id}") { backStackEntry ->
-            val id = backStackEntry.arguments?.getString("id").orEmpty()
-            // TODO: replace with real DestinationDetailScreen composable once feature is built
-            Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                Text("Destination $id – coming soon")
-            }
+        composable(
+            route = Screen.DestinationDetailScreen.route + "/{id}",
+            arguments = listOf(navArgument("id") { type = NavType.IntType })
+        ) { backStackEntry ->
+            com.dev.destination.presentation.DestinationDetailScreen(
+                onNavigateBack = { navController.popBackStack() },
+                onOpenMap = { lat, lng ->
+                    // Actually handle map intent if desired, for now no-op or intent
+                }
+            )
         }
 
         composable(Screen.CommunityScreen.route) {

@@ -12,8 +12,8 @@ interface DestinationsApi {
     suspend fun getAllDestinations(
         @Query("pageIndex") pageIndex: Int,
         @Query("pageSize") pageSize: Int,
-        @Query("cityId") cityId: Int,
-        @Query("interestId") interestId: Int,
+        @Query("cityId") cityId: Int?,
+        @Query("interestId") interestId: Int?,
         @Query("sortBy") sortBy: Int = 0
     ): GetAllDestinationsResponse
 

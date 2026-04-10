@@ -1,0 +1,18 @@
+package com.dev.destination.presentation
+
+sealed interface DestinationDetailAction {
+    data object OnBackClicked : DestinationDetailAction
+    data object OnShareClicked : DestinationDetailAction
+    data object OnFavoriteClicked : DestinationDetailAction
+    data object OnViewOnMapClicked : DestinationDetailAction
+    data object OnRetry : DestinationDetailAction
+    data class OnImagePageChanged(val index: Int) : DestinationDetailAction
+}
+
+sealed interface DestinationDetailEvent {
+    data object NavigateBack : DestinationDetailEvent
+    data class OpenMap(val lat: Double, val lng: Double) : DestinationDetailEvent
+    data class ShareDestination(val text: String) : DestinationDetailEvent
+    data class ShowSuccessSnackbar(val msg: String) : DestinationDetailEvent
+    data class ShowErrorSnackbar(val msg: String) : DestinationDetailEvent
+}
