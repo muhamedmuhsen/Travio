@@ -1,6 +1,7 @@
 package com.dev.home.components
 
 import android.content.res.Configuration
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -8,10 +9,10 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -20,10 +21,11 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.FavoriteBorder
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -36,11 +38,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -52,9 +51,9 @@ import com.example.designsystem.theme.elevation
 import com.example.designsystem.theme.spacing
 import com.example.feature.home.R
 
-// Single source of truth for the image height used by both the real card
-// and the shimmer loading placeholder — avoids silent drift between them.
-private val DESTINATION_IMAGE_HEIGHT: Dp = 310.dp
+// Single source of truth for the card dimensions
+private val DESTINATION_CARD_WIDTH: Dp = 240.dp
+private val DESTINATION_CARD_HEIGHT: Dp = 340.dp
 
 @Composable
 fun DestinationCard(
@@ -71,29 +70,110 @@ fun DestinationCard(
 ) {
     Card(
         modifier = modifier
-            .width(250.dp)
+            .width(DESTINATION_CARD_WIDTH)
+            .height(DESTINATION_CARD_HEIGHT)
             .clickable(onClick = onCardClicked),
-        shape = MaterialTheme.shapes.medium,
+        shape = MaterialTheme.shapes.extraLarge,
+        border = BorderStroke(2.dp, MaterialTheme.colorScheme.surfaceContainer),
         elevation = CardDefaults.cardElevation(
             defaultElevation = MaterialTheme.elevation.xs
-        ),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceContainer
         )
     ) {
-        Column {
-            DestinationImageSection(
-                title = title,
-                rating = rating,
-                reviewCount = reviewCount,
-                imageUrl = imageUrl,
+        Box(modifier = Modifier.fillMaxSize()) {
+            AsyncImage(
+                model = ImageRequest.Builder(LocalContext.current)
+                    .data(imageUrl)
+                    .crossfade(true)
+                    .placeholder(R.drawable.error_place_icon)
+                    .error(R.drawable.error_place_icon)
+                    .build(),
+                contentDescription = title,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.fillMaxSize()
+            )
+
+            // Gradient Scrim for text readability
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight(0.6f)
+                    .align(Alignment.BottomCenter)
+                    .background(
+                        Brush.verticalGradient(
+                            colors = listOf(
+                                Color.Transparent,
+                                Color.Black.copy(alpha = 0.8f)
+                            )
+                        )
+                    )
+            )
+
+            FavoriteButton(
+                onClick = onFavoriteClicked,
                 isFavorite = isFavorite,
-                onFavoriteClicked = onFavoriteClicked
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .padding(MaterialTheme.spacing.md)
             )
-            DestinationInfoSection(
-                description = description,
-                price = price
-            )
+
+            Column(
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .fillMaxWidth()
+                    .padding(MaterialTheme.spacing.md)
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = title,
+                        color = Color.White,
+                        style = MaterialTheme.typography.headlineMedium,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.weight(1f),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                    RatingBadge(rating = rating, reviewCount = reviewCount)
+                }
+
+                Spacer(modifier = Modifier.height(MaterialTheme.spacing.xxs))
+
+                Text(
+                    text = description,
+                    color = Color.White.copy(alpha = 0.8f),
+                    style = MaterialTheme.typography.bodyMedium,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+
+                Spacer(modifier = Modifier.height(MaterialTheme.spacing.xs))
+
+                PriceText(price = price)
+
+                Spacer(modifier = Modifier.height(MaterialTheme.spacing.md))
+
+                Button(
+                    onClick = onCardClicked,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = MaterialTheme.spacing.xs),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color.White,
+                        contentColor = Color.Black
+                    ),
+                    shape = CircleShape
+                ) {
+                    Text(
+                        text = "Explore",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.SemiBold
+                        // modifier = Modifier.padding(vertical = MaterialTheme.spacing.xs)
+                    )
+                }
+            }
         }
     }
 }
@@ -101,34 +181,37 @@ fun DestinationCard(
 @Composable
 fun LoadingDestinationCard(modifier: Modifier = Modifier) {
     Card(
-        modifier = modifier.width(250.dp),
-        shape = MaterialTheme.shapes.medium,
-        elevation = CardDefaults.cardElevation(defaultElevation = MaterialTheme.elevation.xs),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer)
+        modifier = modifier
+            .width(DESTINATION_CARD_WIDTH)
+            .height(DESTINATION_CARD_HEIGHT),
+        shape = MaterialTheme.shapes.extraLarge,
+        border = BorderStroke(4.dp, Color(0xFFE0E0E0)),
+        elevation = CardDefaults.cardElevation(defaultElevation = MaterialTheme.elevation.xs)
     ) {
-        Column {
+        Box(modifier = Modifier.fillMaxSize()) {
             Box(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .height(DESTINATION_IMAGE_HEIGHT) // ← shared constant
+                    .fillMaxSize()
                     .shimmerEffect()
             )
+
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .align(Alignment.BottomCenter)
                     .padding(MaterialTheme.spacing.md),
                 verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.sm)
             ) {
                 Box(
                     modifier = Modifier
-                        .fillMaxWidth(0.7f)
-                        .height(20.dp)
+                        .fillMaxWidth(0.6f)
+                        .height(28.dp)
                         .clip(MaterialTheme.shapes.extraSmall)
                         .shimmerEffect()
                 )
                 Box(
                     modifier = Modifier
-                        .fillMaxWidth(0.5f)
+                        .fillMaxWidth(0.4f)
                         .height(20.dp)
                         .clip(MaterialTheme.shapes.extraSmall)
                         .shimmerEffect()
@@ -136,56 +219,13 @@ fun LoadingDestinationCard(modifier: Modifier = Modifier) {
                 Spacer(modifier = Modifier.height(MaterialTheme.spacing.sm))
                 Box(
                     modifier = Modifier
-                        .fillMaxWidth(0.4f)
-                        .height(24.dp)
-                        .clip(MaterialTheme.shapes.extraSmall)
+                        .fillMaxWidth()
+                        .height(48.dp)
+                        .clip(CircleShape)
                         .shimmerEffect()
                 )
             }
         }
-    }
-}
-
-@Composable
-private fun DestinationImageSection(
-    title: String,
-    rating: Double,
-    reviewCount: Int,
-    imageUrl: String,
-    isFavorite: Boolean,
-    onFavoriteClicked: () -> Unit
-) {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(DESTINATION_IMAGE_HEIGHT)
-    ) {
-        AsyncImage(
-            model = ImageRequest.Builder(LocalContext.current)
-                .data(imageUrl)
-                .crossfade(true)
-                .placeholder(R.drawable.error_place_icon)
-                .error(R.drawable.error_place_icon)
-                .build(),
-            contentDescription = title,
-            contentScale = ContentScale.Crop,
-            modifier = Modifier.fillMaxSize()
-        )
-
-        FavoriteButton(
-            onClick = onFavoriteClicked,
-            isFavorite = isFavorite,
-            modifier = Modifier
-                .align(Alignment.TopEnd)
-                .padding(MaterialTheme.spacing.md)
-        )
-
-        ImageOverlay(
-            title = title,
-            rating = rating,
-            reviewCount = reviewCount,
-            modifier = Modifier.align(Alignment.BottomCenter)
-        )
     }
 }
 
@@ -196,70 +236,25 @@ private fun FavoriteButton(
     isFavorite: Boolean
 ) {
     Surface(
-        modifier = modifier.size(48.dp),
+        modifier = modifier.size(36.dp),
         shape = CircleShape,
-        color = MaterialTheme.colorScheme.surface,
+        color = Color.White,
         shadowElevation = MaterialTheme.elevation.xs
     ) {
-        IconButton(onClick = onClick) {
+        Box(
+            modifier = Modifier.fillMaxSize().clickable(onClick = onClick),
+            contentAlignment = Alignment.Center
+        ) {
             Icon(
                 imageVector = if (!isFavorite) Icons.Outlined.FavoriteBorder else Icons.Filled.Favorite,
                 contentDescription = if (isFavorite) {
-                    stringResource(
-                        R.string.remove_from_favorites
-                    )
+                    stringResource(R.string.remove_from_favorites)
                 } else {
                     stringResource(R.string.add_to_favorites)
                 },
-                tint = MaterialTheme.colorScheme.primary
+                tint = if (isFavorite) MaterialTheme.colorScheme.primary else Color.Gray,
+                modifier = Modifier.size(20.dp)
             )
-        }
-    }
-}
-
-@Composable
-private fun ImageOverlay(
-    title: String,
-    rating: Double,
-    reviewCount: Int,
-    modifier: Modifier = Modifier
-) {
-    // Text on a dark scrim — Color.White is intentional here, not a theming oversight.
-    val overlayContentColor = Color.White
-    Box(
-        modifier = modifier
-            .fillMaxWidth()
-            .height(80.dp)
-            .background(
-                Brush.verticalGradient(
-                    colors = listOf(
-                        Color.Transparent,
-                        MaterialTheme.colorScheme.scrim.copy(alpha = 0.8f)
-                    )
-                )
-            )
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(
-                    horizontal = MaterialTheme.spacing.md,
-                    vertical = MaterialTheme.spacing.sm
-                ),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.Bottom
-        ) {
-            Text(
-                text = title,
-                color = overlayContentColor,
-                style = MaterialTheme.typography.headlineSmall,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.weight(1f),
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis
-            )
-
-            RatingBadge(rating = rating, reviewCount = reviewCount)
         }
     }
 }
@@ -272,71 +267,32 @@ private fun RatingBadge(
     val overlayContentColor = Color.White
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.xxs)
+        horizontalArrangement = Arrangement.spacedBy(4.dp)
     ) {
         Icon(
             imageVector = Icons.Filled.Star,
             contentDescription = null,
-            tint = MaterialTheme.colorScheme.secondary,
+            // Light blue star as per design reference
+            tint = Color(0xFF81D4FA),
             modifier = Modifier.size(20.dp)
         )
         Text(
             text = "$rating ($reviewCount)",
             color = overlayContentColor,
-            style = MaterialTheme.typography.bodyMedium,
+            style = MaterialTheme.typography.bodyLarge,
             fontWeight = FontWeight.Medium
         )
     }
 }
 
 @Composable
-private fun DestinationInfoSection(
-    description: String,
-    price: String
-) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(MaterialTheme.spacing.md)
-    ) {
-        Text(
-            text = description,
-            color = MaterialTheme.colorScheme.onSurface,
-            style = MaterialTheme.typography.bodyMedium,
-            modifier = Modifier.heightIn(min = 60.dp),
-            maxLines = 3,
-            overflow = TextOverflow.Ellipsis
-        )
-
-        Spacer(modifier = Modifier.height(MaterialTheme.spacing.md))
-
-        PriceText(price = price)
-    }
-}
-
-@Composable
 private fun PriceText(price: String) {
-    val fromPrefix = stringResource(R.string.price_from_prefix)
+    // The design has price as "From $100" in an off-white/light grey color
     Text(
-        text = buildAnnotatedString {
-            withStyle(
-                style = SpanStyle(
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    fontSize = MaterialTheme.typography.bodyMedium.fontSize
-                )
-            ) {
-                append(fromPrefix)
-            }
-            withStyle(
-                style = SpanStyle(
-                    color = MaterialTheme.colorScheme.primary,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = MaterialTheme.typography.titleMedium.fontSize
-                )
-            ) {
-                append(price)
-            }
-        }
+        text = price,
+        color = Color.White.copy(alpha = 0.9f),
+        style = MaterialTheme.typography.bodyLarge,
+        fontWeight = FontWeight.Medium
     )
 }
 
