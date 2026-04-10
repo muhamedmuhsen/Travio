@@ -1,6 +1,7 @@
 package com.dev.destination.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -33,23 +34,26 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.dev.destination.R
 import com.example.domain.model.destination.Destination
 
 @Composable
 fun AnotherDestinationsRow(
     destinations: List<Destination>,
+    onDestinationClick: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
     if (destinations.isEmpty()) return
 
     Column(modifier = modifier.fillMaxWidth()) {
         Text(
-            text = "Suggested Destinations",
+            text = stringResource(id = R.string.destination_suggested_title),
             style = MaterialTheme.typography.titleLarge,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.onSurface,
@@ -64,6 +68,7 @@ fun AnotherDestinationsRow(
             items(destinations, key = { it.destinationID }) { destination ->
                 AnotherDestinationCard(
                     destination = destination,
+                    onDestinationClick = onDestinationClick,
                     modifier = Modifier
                         .width(230.dp)
                         .height(340.dp)
@@ -76,11 +81,15 @@ fun AnotherDestinationsRow(
 @Composable
 fun AnotherDestinationCard(
     destination: Destination,
+    onDestinationClick: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val overlayContentColor = MaterialTheme.colorScheme.onPrimary
+
     Card(
         shape = RoundedCornerShape(16.dp),
         modifier = modifier
+            .clickable { onDestinationClick(destination.destinationID) }
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
             AsyncImage(
@@ -99,7 +108,10 @@ fun AnotherDestinationCard(
                     .fillMaxSize()
                     .background(
                         Brush.verticalGradient(
-                            colors = listOf(Color.Transparent, Color.Black.copy(alpha = 0.7f)),
+                            colors = listOf(
+                                Color.Transparent,
+                                MaterialTheme.colorScheme.scrim.copy(alpha = 0.7f)
+                            ),
                             startY = 200f
                         )
                     )
@@ -108,7 +120,7 @@ fun AnotherDestinationCard(
             // Favorite Icon
             Surface(
                 shape = CircleShape,
-                color = Color.White.copy(alpha = 0.8f),
+                color = MaterialTheme.colorScheme.surface.copy(alpha = 0.8f),
                 modifier = Modifier
                     .align(Alignment.TopEnd)
                     .padding(8.dp)
@@ -116,9 +128,9 @@ fun AnotherDestinationCard(
             ) {
                 Icon(
                     imageVector = Icons.Default.FavoriteBorder,
-                    contentDescription = "Favorite",
+                    contentDescription = stringResource(id = R.string.destination_suggested_favorite_cd),
                     modifier = Modifier.padding(6.dp),
-                    tint = Color.Black
+                    tint = MaterialTheme.colorScheme.onSurface
                 )
             }
 
@@ -137,7 +149,7 @@ fun AnotherDestinationCard(
                         text = destination.name,
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
-                        color = Color.White,
+                        color = overlayContentColor,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                         modifier = Modifier.weight(1f)
@@ -146,15 +158,14 @@ fun AnotherDestinationCard(
                         Icon(
                             imageVector = Icons.Default.Star,
                             contentDescription = null,
-                            // Light theme primary inverse or custom accent
-                            tint = Color(0xFF82D3DE),
+                            tint = MaterialTheme.colorScheme.primary,
                             modifier = Modifier.size(14.dp)
                         )
                         Spacer(modifier = Modifier.width(2.dp))
                         Text(
                             text = "${destination.rating}",
                             style = MaterialTheme.typography.bodySmall,
-                            color = Color.White
+                            color = overlayContentColor
                         )
                     }
                 }
@@ -162,24 +173,24 @@ fun AnotherDestinationCard(
                 Text(
                     text = destination.cityName,
                     style = MaterialTheme.typography.bodySmall,
-                    color = Color.White.copy(alpha = 0.8f),
+                    color = overlayContentColor.copy(alpha = 0.8f),
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Button(
-                    onClick = { },
+                    onClick = { onDestinationClick(destination.destinationID) },
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(36.dp),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = Color.White,
-                        contentColor = Color.Black
+                        containerColor = MaterialTheme.colorScheme.surface,
+                        contentColor = MaterialTheme.colorScheme.onSurface
                     ),
                     shape = RoundedCornerShape(18.dp)
                 ) {
                     Text(
-                        text = "Explore",
+                        text = stringResource(id = R.string.destination_explore),
                         style = MaterialTheme.typography.labelMedium,
                         fontWeight = FontWeight.Bold
                     )

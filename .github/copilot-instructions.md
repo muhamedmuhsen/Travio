@@ -1,4 +1,4 @@
-# Engineering Rules (Jetpack Compose / Android)
+﻿# Engineering Rules (Jetpack Compose / Android)
 
 ---
 

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="destination_share_title">Share Destination</string>
+    <string name="destination_tab_overview">Overview</string>
+    <string name="destination_tab_reviews">Reviews</string>
+    <string name="destination_hero_image_cd">Destination hero image</string>
+    <string name="destination_back_cd">Back</string>
+    <string name="destination_favorite_cd">Favorite</string>
+    <string name="destination_location_cd">Location</string>
+    <string name="destination_default_interest">Attraction</string>
+    <string name="destination_rating_cd">Rating</string>
+    <string name="destination_reviews_placeholder">Reviews content coming soon</string>
+    <string name="destination_related_loading">Loading suggested destinations…</string>
+    <string name="destination_related_error">Could not load suggested destinations</string>
+    <string name="destination_retry">Retry</string>
+
+    <string name="destination_about_title">About</string>
+    <string name="destination_suggested_title">Suggested Destinations</string>
+    <string name="destination_suggested_favorite_cd">Favorite</string>
+    <string name="destination_explore">Explore</string>
+
+    <string name="destination_error_icon_cd">Error</string>
+</resources>
+

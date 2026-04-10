@@ -3,17 +3,23 @@ package com.dev.destination.presentation
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.toRoute
+import com.example.common.navigation.DestinationDetailRoute
 import com.example.domain.model.favorite.toPlace
 import com.example.domain.usecase.destinations.GetAllDestinationsUseCase
 import com.example.domain.usecase.destinations.GetDestinationByIdUseCase
 import com.example.domain.usecase.favorite.place.FavoritePlaceUseCase
+import com.example.domain.usecase.favorite.place.GetAllPlacesUseCase
 import com.example.domain.utils.Result
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -22,24 +28,41 @@ class DestinationDetailViewModel @Inject constructor(
     private val getDestinationByIdUseCase: GetDestinationByIdUseCase,
     private val getAllDestinationsUseCase: GetAllDestinationsUseCase,
     private val favoritePlaceUseCase: FavoritePlaceUseCase,
-    private val savedStateHandle: SavedStateHandle
+    private val getAllPlacesUseCase: GetAllPlacesUseCase,
+    savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-    private val destinationId: Int =
-        savedStateHandle.get<Int>("id") ?: savedStateHandle.get<String>("id")?.toIntOrNull() ?: -1
+    private val destinationId: Int? =
+        runCatching { savedStateHandle.toRoute<DestinationDetailRoute>().id }.getOrNull()
+            ?: savedStateHandle.get<Int>("id")
 
     private val _uiState = MutableStateFlow(DestinationDetailUiState())
     val uiState: StateFlow<DestinationDetailUiState> = _uiState.asStateFlow()
 
-    private val _events = MutableSharedFlow<DestinationDetailEvent>()
-    val events = _events.asSharedFlow()
+    private val _events = Channel<DestinationDetailEvent>(capacity = Channel.BUFFERED)
+    val events = _events.receiveAsFlow()
 
     init {
+        observeFavoriteState()
         loadDestination()
     }
 
+    private fun observeFavoriteState() {
+        val currentDestinationId = destinationId ?: return
+
+        viewModelScope.launch {
+            getAllPlacesUseCase()
+                .map { places -> places.any { it.id == currentDestinationId } }
+                .distinctUntilChanged()
+                .collect { isFavorite ->
+                    _uiState.update { it.copy(isFavorite = isFavorite) }
+                }
+        }
+    }
+
     private fun loadDestination() {
-        if (destinationId == -1) {
+        val currentDestinationId = destinationId
+        if (currentDestinationId == null) {
             _uiState.value = _uiState.value.copy(detailState = UiState.Error("Destination not found"))
             return
         }
@@ -47,7 +70,7 @@ class DestinationDetailViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(detailState = UiState.Loading)
 
-            when (val result = getDestinationByIdUseCase(destinationId)) {
+            when (val result = getDestinationByIdUseCase(currentDestinationId)) {
                 is Result.Success -> {
                     _uiState.value = _uiState.value.copy(detailState = UiState.Success(result.data))
                     loadRelatedDestinations(result.data)
@@ -71,7 +94,11 @@ class DestinationDetailViewModel @Inject constructor(
                     // Filter out the current destination, shuffle the results to make it dynamic, and take the top 10
                     val filtered = result.data
                         .filter { it.destinationID != destination.destinationID }
-                        .shuffled()
+                        .sortedWith(
+                            compareByDescending<com.example.domain.model.destination.Destination> { it.rating }
+                                .thenByDescending { it.totalReviews }
+                                .thenBy { it.destinationID }
+                        )
                         .take(10)
                     _uiState.value = _uiState.value.copy(relatedDestinationsState = UiState.Success(filtered))
                 }
@@ -85,7 +112,7 @@ class DestinationDetailViewModel @Inject constructor(
     fun onAction(action: DestinationDetailAction) {
         when (action) {
             is DestinationDetailAction.OnBackClicked -> {
-                viewModelScope.launch { _events.emit(DestinationDetailEvent.NavigateBack) }
+                viewModelScope.launch { _events.send(DestinationDetailEvent.NavigateBack) }
             }
             is DestinationDetailAction.OnRetry -> {
                 loadDestination()
@@ -93,8 +120,13 @@ class DestinationDetailViewModel @Inject constructor(
             is DestinationDetailAction.OnFavoriteClicked -> toggleFavorite()
             is DestinationDetailAction.OnViewOnMapClicked -> openMap()
             is DestinationDetailAction.OnShareClicked -> shareMap()
-            // Add other actions
-            else -> {}
+            is DestinationDetailAction.OnImagePageChanged -> Unit
+            is DestinationDetailAction.OnRetryRelatedDestinations -> retryRelatedDestinations()
+            is DestinationDetailAction.OnRelatedDestinationClicked -> {
+                viewModelScope.launch {
+                    _events.send(DestinationDetailEvent.NavigateToDestination(action.destinationId))
+                }
+            }
         }
     }
 
@@ -106,15 +138,15 @@ class DestinationDetailViewModel @Inject constructor(
                 val newState = !_uiState.value.isFavorite
                 _uiState.value = _uiState.value.copy(isFavorite = newState)
 
-                when (val result = favoritePlaceUseCase(destination.toPlace())) {
+                when (favoritePlaceUseCase(destination.toPlace())) {
                     is Result.Success -> {
                         val message = if (newState) "Saved to favourites" else "Removed from favourites"
-                        _events.emit(DestinationDetailEvent.ShowSuccessSnackbar(message))
+                        _events.send(DestinationDetailEvent.ShowSuccessSnackbar(message))
                     }
                     is Result.Error -> {
                         // Revert
                         _uiState.value = _uiState.value.copy(isFavorite = !newState)
-                        _events.emit(DestinationDetailEvent.ShowErrorSnackbar("Action failed"))
+                        _events.send(DestinationDetailEvent.ShowErrorSnackbar("Action failed"))
                     }
                 }
             }
@@ -126,7 +158,7 @@ class DestinationDetailViewModel @Inject constructor(
         if (detailState is UiState.Success) {
             val destination = detailState.data
             viewModelScope.launch {
-                _events.emit(DestinationDetailEvent.OpenMap(destination.latitude, destination.longitude))
+                _events.send(DestinationDetailEvent.OpenMap(destination.latitude, destination.longitude))
             }
         }
     }
@@ -136,8 +168,15 @@ class DestinationDetailViewModel @Inject constructor(
         if (detailState is UiState.Success) {
             val destination = detailState.data
             viewModelScope.launch {
-                _events.emit(DestinationDetailEvent.ShareDestination("Check out ${destination.name} in ${destination.cityName}!"))
+                _events.send(DestinationDetailEvent.ShareDestination("Check out ${destination.name} in ${destination.cityName}!"))
             }
+        }
+    }
+
+    private fun retryRelatedDestinations() {
+        val detailState = _uiState.value.detailState
+        if (detailState is UiState.Success) {
+            loadRelatedDestinations(detailState.data)
         }
     }
 }

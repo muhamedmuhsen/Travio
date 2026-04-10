@@ -22,10 +22,14 @@ import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
@@ -44,6 +48,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -52,6 +57,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.dev.destination.R
 import com.dev.destination.components.AboutSection
 import com.dev.destination.components.AnotherDestinationsRow
 import com.dev.destination.components.DetailErrorState
@@ -63,6 +69,7 @@ import com.example.domain.model.destination.Interest
 @Composable
 fun DestinationDetailScreen(
     onNavigateBack: () -> Unit,
+    onNavigateToDestination: (Int) -> Unit,
     onOpenMap: (Double, Double) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: DestinationDetailViewModel = hiltViewModel()
@@ -70,45 +77,57 @@ fun DestinationDetailScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     val context = LocalContext.current
+    val snackbarHostState = remember { SnackbarHostState() }
 
     LaunchedEffect(viewModel.events) {
         viewModel.events.collect { event ->
             when (event) {
                 is DestinationDetailEvent.NavigateBack -> onNavigateBack()
+                is DestinationDetailEvent.NavigateToDestination -> onNavigateToDestination(event.destinationId)
                 is DestinationDetailEvent.OpenMap -> onOpenMap(event.lat, event.lng)
+                is DestinationDetailEvent.ShowSuccessSnackbar -> snackbarHostState.showSnackbar(event.msg)
+                is DestinationDetailEvent.ShowErrorSnackbar -> snackbarHostState.showSnackbar(event.msg)
                 is DestinationDetailEvent.ShareDestination -> {
                     val shareIntent = Intent(Intent.ACTION_SEND).apply {
                         type = "text/plain"
                         putExtra(Intent.EXTRA_TEXT, event.text)
                     }
-                    context.startActivity(Intent.createChooser(shareIntent, "Share Destination"))
+                    context.startActivity(
+                        Intent.createChooser(
+                            shareIntent,
+                            context.getString(R.string.destination_share_title)
+                        )
+                    )
                 }
-                // We'll handle other events later
-                else -> {}
             }
         }
     }
 
     DestinationDetailContent(
         uiState = uiState,
-        onNavigateBack = onNavigateBack,
         onAction = viewModel::onAction,
-        modifier = modifier
+        modifier = modifier,
+        snackbarHostState = snackbarHostState
     )
 }
 
 @Composable
 private fun DestinationDetailContent(
     uiState: DestinationDetailUiState,
-    onNavigateBack: () -> Unit,
     onAction: (DestinationDetailAction) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    snackbarHostState: SnackbarHostState
 ) {
     var selectedTabIndex by remember { mutableIntStateOf(0) }
-    val tabs = listOf("Overview", "Reviews")
+    val tabs = listOf(
+        stringResource(id = R.string.destination_tab_overview),
+        stringResource(id = R.string.destination_tab_reviews)
+    )
+    val overlayContentColor = MaterialTheme.colorScheme.onPrimary
 
     Scaffold(
-        modifier = modifier.fillMaxSize()
+        modifier = modifier.fillMaxSize(),
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
     ) { paddingValues ->
         when (val detailState = uiState.detailState) {
             is UiState.Success -> {
@@ -125,7 +144,7 @@ private fun DestinationDetailContent(
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(350.dp)
+                            .height(300.dp)
                     ) {
                         // Background Image
                         if (heroImage != null) {
@@ -134,7 +153,7 @@ private fun DestinationDetailContent(
                                     .data(heroImage)
                                     .crossfade(true)
                                     .build(),
-                                contentDescription = "Hero Image",
+                                contentDescription = stringResource(id = R.string.destination_hero_image_cd),
                                 contentScale = ContentScale.Crop,
                                 modifier = Modifier.fillMaxSize()
                             )
@@ -142,7 +161,7 @@ private fun DestinationDetailContent(
                             Box(
                                 modifier = Modifier
                                     .fillMaxSize()
-                                    .background(Color.LightGray)
+                                    .background(MaterialTheme.colorScheme.surfaceVariant)
                             )
                         }
 
@@ -152,7 +171,10 @@ private fun DestinationDetailContent(
                                 .fillMaxSize()
                                 .background(
                                     Brush.verticalGradient(
-                                        colors = listOf(Color.Transparent, Color.Black.copy(alpha = 0.8f)),
+                                        colors = listOf(
+                                            Color.Transparent,
+                                            MaterialTheme.colorScheme.scrim.copy(alpha = 0.8f)
+                                        ),
                                         // Starts below the middle
                                         startY = 500f
                                     )
@@ -163,33 +185,37 @@ private fun DestinationDetailContent(
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(top = 40.dp, start = 16.dp, end = 16.dp),
+                                .padding(start = 16.dp, end = 16.dp),
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
                             Surface(
                                 shape = CircleShape,
-                                color = Color.White.copy(alpha = 0.8f),
-                                modifier = Modifier.size(40.dp)
+                                color = MaterialTheme.colorScheme.surface.copy(alpha = 0.8f),
+                                modifier = Modifier.size(48.dp)
                             ) {
-                                IconButton(onClick = onNavigateBack) {
+                                IconButton(onClick = { onAction(DestinationDetailAction.OnBackClicked) }) {
                                     Icon(
                                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                                        contentDescription = "Back",
-                                        tint = Color.Black
+                                        contentDescription = stringResource(id = R.string.destination_back_cd),
+                                        tint = MaterialTheme.colorScheme.onSurface
                                     )
                                 }
                             }
 
                             Surface(
                                 shape = CircleShape,
-                                color = Color.White.copy(alpha = 0.8f),
-                                modifier = Modifier.size(40.dp)
+                                color = MaterialTheme.colorScheme.surface.copy(alpha = 0.8f),
+                                modifier = Modifier.size(48.dp)
                             ) {
                                 IconButton(onClick = { onAction(DestinationDetailAction.OnFavoriteClicked) }) {
                                     Icon(
                                         imageVector = if (uiState.isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
-                                        contentDescription = "Favorite",
-                                        tint = if (uiState.isFavorite) Color.Red else Color.Black
+                                        contentDescription = stringResource(id = R.string.destination_favorite_cd),
+                                        tint = if (uiState.isFavorite) {
+                                            MaterialTheme.colorScheme.error
+                                        } else {
+                                            MaterialTheme.colorScheme.onSurface
+                                        }
                                     )
                                 }
                             }
@@ -206,16 +232,17 @@ private fun DestinationDetailContent(
                             ) {
                                 Icon(
                                     imageVector = Icons.Default.LocationOn,
-                                    contentDescription = "Location",
-                                    tint = Color.White,
+                                    contentDescription = stringResource(id = R.string.destination_location_cd),
+                                    tint = overlayContentColor,
                                     modifier = Modifier.size(16.dp)
                                 )
                                 Spacer(modifier = Modifier.width(4.dp))
                                 Text(
                                     // Fallback text acting as subtitle category
-                                    text = destination.interests.firstOrNull()?.interestName ?: "Attraction",
+                                    text = destination.interests.firstOrNull()?.interestName
+                                        ?: stringResource(id = R.string.destination_default_interest),
                                     style = MaterialTheme.typography.bodyMedium,
-                                    color = Color.White.copy(alpha = 0.9f)
+                                    color = overlayContentColor.copy(alpha = 0.9f)
                                 )
                             }
 
@@ -225,7 +252,7 @@ private fun DestinationDetailContent(
                                 text = "${destination.name}, ${destination.cityName}",
                                 style = MaterialTheme.typography.headlineMedium,
                                 fontWeight = FontWeight.Bold,
-                                color = Color.White,
+                                color = overlayContentColor,
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis
                             )
@@ -235,7 +262,7 @@ private fun DestinationDetailContent(
                             // Rating Pill Container
                             Surface(
                                 shape = CircleShape,
-                                color = Color.White.copy(alpha = 0.2f),
+                                color = MaterialTheme.colorScheme.surface.copy(alpha = 0.2f),
                                 modifier = Modifier.padding(bottom = 8.dp)
                             ) {
                                 Row(
@@ -244,15 +271,15 @@ private fun DestinationDetailContent(
                                 ) {
                                     Icon(
                                         imageVector = Icons.Default.Star,
-                                        contentDescription = "Rating",
-                                        tint = Color.White,
+                                        contentDescription = stringResource(id = R.string.destination_rating_cd),
+                                        tint = overlayContentColor,
                                         modifier = Modifier.size(18.dp)
                                     )
                                     Spacer(modifier = Modifier.width(4.dp))
                                     Text(
                                         text = "${destination.rating} (${destination.totalReviews} reviews)",
                                         style = MaterialTheme.typography.labelLarge,
-                                        color = Color.White
+                                        color = overlayContentColor
                                     )
                                 }
                             }
@@ -267,8 +294,7 @@ private fun DestinationDetailContent(
                             if (selectedTabIndex < tabPositions.size) {
                                 SecondaryIndicator(
                                     modifier = Modifier.tabIndicatorOffset(tabPositions[selectedTabIndex]),
-                                    // Primary inverse color
-                                    color = Color(0xFF82D3DE)
+                                    color = MaterialTheme.colorScheme.primary
                                 )
                             }
                         }
@@ -281,7 +307,11 @@ private fun DestinationDetailContent(
                                     Text(
                                         text = title,
                                         fontWeight = if (selectedTabIndex == index) FontWeight.Bold else FontWeight.Normal,
-                                        color = if (selectedTabIndex == index) Color(0xFF00535B) else Color.Gray
+                                        color = if (selectedTabIndex == index) {
+                                            MaterialTheme.colorScheme.primary
+                                        } else {
+                                            MaterialTheme.colorScheme.onSurfaceVariant
+                                        }
                                     )
                                 },
                                 modifier = Modifier.background(MaterialTheme.colorScheme.surfaceVariant)
@@ -304,16 +334,42 @@ private fun DestinationDetailContent(
                                     if (relatedState.data.isNotEmpty()) {
                                         AnotherDestinationsRow(
                                             destinations = relatedState.data,
+                                            onDestinationClick = { destinationId ->
+                                                onAction(DestinationDetailAction.OnRelatedDestinationClicked(destinationId))
+                                            },
                                             modifier = Modifier.padding(bottom = 16.dp)
                                         )
                                     }
                                 }
                                 is UiState.Loading -> {
-                                    // You can show a loading indicator here or simply show nothing while loading
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        modifier = Modifier.padding(bottom = 16.dp)
+                                    ) {
+                                        CircularProgressIndicator(
+                                            modifier = Modifier.size(20.dp),
+                                            strokeWidth = 2.dp
+                                        )
+                                        Spacer(modifier = Modifier.width(8.dp))
+                                        Text(
+                                            text = stringResource(id = R.string.destination_related_loading),
+                                            style = MaterialTheme.typography.bodyMedium,
+                                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                                        )
+                                    }
                                 }
                                 is UiState.Error -> {
-                                    // Normally you wouldn't block the screen on related destinations failing,
-                                    // so you might not show anything, or show a small retry option
+                                    Column(modifier = Modifier.padding(bottom = 16.dp)) {
+                                        Text(
+                                            text = stringResource(id = R.string.destination_related_error),
+                                            style = MaterialTheme.typography.bodyMedium,
+                                            color = MaterialTheme.colorScheme.error
+                                        )
+                                        Spacer(modifier = Modifier.height(8.dp))
+                                        Button(onClick = { onAction(DestinationDetailAction.OnRetryRelatedDestinations) }) {
+                                            Text(text = stringResource(id = R.string.destination_retry))
+                                        }
+                                    }
                                 }
                                 else -> {}
                             }
@@ -325,7 +381,7 @@ private fun DestinationDetailContent(
                                 .height(200.dp),
                             contentAlignment = Alignment.Center
                         ) {
-                            Text("Reviews Content Placeholder")
+                            Text(stringResource(id = R.string.destination_reviews_placeholder))
                         }
                     }
                 }
@@ -376,8 +432,8 @@ fun DestinationDetailScreenPreview() {
     TravioTheme {
         DestinationDetailContent(
             uiState = sampleUiState,
-            onNavigateBack = {},
-            onAction = {}
+            onAction = {},
+            snackbarHostState = remember { SnackbarHostState() }
         )
     }
 }

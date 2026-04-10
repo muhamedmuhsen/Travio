@@ -60,3 +60,14 @@ specs
 .specify
 .agent
 .skills
+.github/agents
+.github/prompts
+.vscode
+
+# Common temp/log/env noise
+*.log
+.env*
+*.tmp
+*.swp
+.DS_Store
+Thumbs.db

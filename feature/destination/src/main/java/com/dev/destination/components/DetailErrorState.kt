@@ -15,9 +15,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.dev.destination.R
 
 @Composable
 fun DetailErrorState(
@@ -32,7 +34,7 @@ fun DetailErrorState(
     ) {
         Icon(
             imageVector = Icons.Default.Warning,
-            contentDescription = "Error",
+            contentDescription = stringResource(id = R.string.destination_error_icon_cd),
             tint = MaterialTheme.colorScheme.error,
             modifier = Modifier.size(64.dp)
         )
@@ -44,7 +46,7 @@ fun DetailErrorState(
         )
         Spacer(modifier = Modifier.height(24.dp))
         Button(onClick = onRetry) {
-            Text("Retry")
+            Text(stringResource(id = R.string.destination_retry))
         }
     }
 }

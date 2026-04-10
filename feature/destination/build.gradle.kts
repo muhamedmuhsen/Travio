@@ -79,6 +79,9 @@ dependencies {
     // Flow/State collection
     implementation(libs.androidx.lifecycle.runtime.compose)
 
+    // Typed navigation argument extraction
+    implementation(libs.androidx.navigation.runtime.ktx)
+
     // Unit Tests
     testImplementation(libs.junit)
     testImplementation(libs.kotlinx.coroutines.test)
