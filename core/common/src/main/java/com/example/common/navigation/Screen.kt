@@ -16,7 +16,12 @@ sealed class Screen(val route: String) {
     data object FavoriteScreen : Screen(Screens.FAVORITE.name)
     data object CommunityScreen : Screen(Screens.COMMUNITY.name)
     data object AiChatScreen : Screen(Screens.AI_CHAT.name)
-    data object DestinationDetailScreen : Screen(Screens.DESTINATION_DETAIL.name)
+    data object DestinationDetailScreen : Screen(Screens.DESTINATION_DETAIL.name) {
+        const val ARG_DESTINATION_ID = "id"
+        val routePattern = "$route/{$ARG_DESTINATION_ID}"
+
+        fun createRoute(destinationId: Int): String = "$route/$destinationId"
+    }
     data object SearchScreen : Screen(Screens.SEARCH.name)
     data object SurveyScreen : Screen(Screens.SURVEY.name)
     data object PostDetailScreen : Screen(Screens.POST_DETAIL.name)

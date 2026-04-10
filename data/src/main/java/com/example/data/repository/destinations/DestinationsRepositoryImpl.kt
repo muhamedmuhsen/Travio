@@ -22,13 +22,19 @@ class DestinationsRepositoryImpl @Inject constructor(
     override suspend fun getAllDestinations(
         pageIndex: Int,
         pageSize: Int,
-        cityId: Int,
-        interestId: Int
-    ): Result<List<Destination>, DataError> =
-        safeApiCall {
-            val response = api.getAllDestinations(pageIndex, pageSize, cityId, interestId)
+        cityId: Int?,
+        interestId: Int?
+    ): Result<List<Destination>, DataError> {
+        return safeApiCall {
+            val response = api.getAllDestinations(
+                pageIndex = pageIndex,
+                pageSize = pageSize,
+                cityId = cityId,
+                interestId = interestId
+            )
             response.data.map { it.toDomain() }
         }
+    }
 
     override suspend fun getTopRatedDestinations(): Result<List<Destination>, DataError> =
         safeApiCall {

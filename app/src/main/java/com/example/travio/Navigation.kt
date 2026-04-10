@@ -24,6 +24,7 @@ import com.dev.profile.editProfile.EditProfileScreen
 import com.dev.profile.profile.ProfileScreen
 import com.dev.search.presentation.SearchScreen
 import com.dev.survey.presentation.SurveyScreen
+import com.example.common.navigation.DestinationDetailRoute
 import com.example.common.navigation.Screen
 import com.example.feature.forgetpassword.ForgetPasswordScreen
 import com.example.feature.forgetpassword.code.CodeScreen
@@ -172,7 +173,9 @@ fun TravioNavHost(
                 },
                 navigateToSearch = { navController.navigate(Screen.SearchScreen.route) },
                 navigateToDestination = { id ->
-                    navController.navigate(Screen.DestinationDetailScreen.route + "/$id")
+                    id.toIntOrNull()?.let { destinationId ->
+                        navController.navigate(DestinationDetailRoute(destinationId))
+                    }
                 }
             )
         }
@@ -267,17 +270,23 @@ fun TravioNavHost(
             SearchScreen(
                 navigateBack = { navController.popBackStack() },
                 navigateToDestination = { id ->
-                    navController.navigate(Screen.DestinationDetailScreen.route + "/$id")
+                    id.toIntOrNull()?.let { destinationId ->
+                        navController.navigate(DestinationDetailRoute(destinationId))
+                    }
                 }
             )
         }
 
-        composable(Screen.DestinationDetailScreen.route + "/{id}") { backStackEntry ->
-            val id = backStackEntry.arguments?.getString("id").orEmpty()
-            // TODO: replace with real DestinationDetailScreen composable once feature is built
-            Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                Text("Destination $id – coming soon")
-            }
+        composable<DestinationDetailRoute> {
+            com.dev.destination.presentation.DestinationDetailScreen(
+                onNavigateBack = { navController.popBackStack() },
+                onNavigateToDestination = { id ->
+                    navController.navigate(DestinationDetailRoute(id))
+                },
+                onOpenMap = { lat, lng ->
+                    // Actually handle map intent if desired, for now no-op or intent
+                }
+            )
         }
 
         composable(Screen.CommunityScreen.route) {

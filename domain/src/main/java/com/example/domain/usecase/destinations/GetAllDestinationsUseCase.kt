@@ -10,8 +10,8 @@ class GetAllDestinationsUseCase @Inject constructor(private val repository: Dest
     suspend operator fun invoke(
         pageIndex: Int,
         pageSize: Int,
-        cityId: Int,
-        interestId: Int
+        cityId: Int? = null,
+        interestId: Int? = null
     ): Result<List<Destination>, DataError> {
         return repository.getAllDestinations(
             pageIndex = pageIndex,

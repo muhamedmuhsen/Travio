@@ -10,8 +10,8 @@ interface DestinationsRepository {
     suspend fun getAllDestinations(
         pageIndex: Int,
         pageSize: Int,
-        cityId: Int,
-        interestId: Int
+        cityId: Int? = null,
+        interestId: Int? = null
     ): Result<List<Destination>, DataError>
 
     suspend fun getTopRatedDestinations(): Result<List<Destination>, DataError>
