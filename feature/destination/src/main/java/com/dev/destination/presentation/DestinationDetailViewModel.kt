@@ -65,9 +65,14 @@ class DestinationDetailViewModel @Inject constructor(
 
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(relatedDestinationsState = UiState.Loading)
-            when (val result = getAllDestinationsUseCase(pageIndex = 1, pageSize = 10, cityId = null, interestId = interestId)) {
+            // Fetch a larger page size (e.g., 30) so we have a bigger pool to shuffle from
+            when (val result = getAllDestinationsUseCase(pageIndex = 1, pageSize = 30, cityId = null, interestId = interestId)) {
                 is Result.Success -> {
-                    val filtered = result.data.filter { it.destinationID != destination.destinationID }
+                    // Filter out the current destination, shuffle the results to make it dynamic, and take the top 10
+                    val filtered = result.data
+                        .filter { it.destinationID != destination.destinationID }
+                        .shuffled()
+                        .take(10)
                     _uiState.value = _uiState.value.copy(relatedDestinationsState = UiState.Success(filtered))
                 }
                 is Result.Error -> {

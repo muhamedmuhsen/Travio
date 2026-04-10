@@ -49,7 +49,7 @@ fun AnotherDestinationsRow(
 
     Column(modifier = modifier.fillMaxWidth()) {
         Text(
-            text = "Another",
+            text = "Suggested Destinations",
             style = MaterialTheme.typography.titleLarge,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.onSurface,
@@ -65,8 +65,8 @@ fun AnotherDestinationsRow(
                 AnotherDestinationCard(
                     destination = destination,
                     modifier = Modifier
-                        .width(180.dp)
-                        .height(260.dp)
+                        .width(230.dp)
+                        .height(340.dp)
                 )
             }
         }
