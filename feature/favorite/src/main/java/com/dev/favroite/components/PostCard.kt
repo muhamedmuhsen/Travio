@@ -2,7 +2,9 @@ package com.dev.favroite.components
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -12,7 +14,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -30,10 +31,10 @@ import com.example.designsystem.theme.TravioTheme
 import com.example.feature.favorite.R
 
 @Composable
-fun PostCard(
+fun TripCard(
     modifier: Modifier = Modifier,
     title: String,
-    author: String,
+    ownerName: String,
     imageUrl: String,
     isFavorite: Boolean,
     onFavoriteClick: () -> Unit,
@@ -44,12 +45,12 @@ fun PostCard(
         shape = MaterialTheme.shapes.small,
         elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
         border = BorderStroke(width = 1.dp, color = MaterialTheme.colorScheme.surface),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.outlineVariant),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer),
         onClick = onClick
     ) {
         PostContent(
             title = title,
-            author = author,
+            ownerName = ownerName,
             imageUrl = imageUrl,
             isFavorite = isFavorite,
             onFavoriteClick = onFavoriteClick
@@ -60,7 +61,7 @@ fun PostCard(
 @Composable
 private fun PostContent(
     title: String,
-    author: String,
+    ownerName: String,
     imageUrl: String,
     isFavorite: Boolean,
     onFavoriteClick: () -> Unit
@@ -85,7 +86,7 @@ private fun PostContent(
                     .size(96.dp)
                     .clip(MaterialTheme.shapes.medium)
             )
-            PostDetails(title = title, author = author)
+            PostDetails(title = title, ownerName = ownerName)
         }
         PostFavoriteIcon(isFavorite = isFavorite, onFavoriteClick = onFavoriteClick)
     }
@@ -96,32 +97,43 @@ private fun PostFavoriteIcon(
     isFavorite: Boolean,
     onFavoriteClick: () -> Unit
 ) {
-    IconButton(
-        onClick = onFavoriteClick,
+    Box(
         modifier = Modifier
-            .size(40.dp)
-            .background(
-                color = MaterialTheme.colorScheme.surfaceContainerHigh,
-                shape = CircleShape
-            )
+            .size(48.dp)
+            .clickable(onClick = onFavoriteClick),
+        contentAlignment = Alignment.Center
     ) {
-        Icon(
-            painter = painterResource(id = R.drawable.favorite_icon),
-            contentDescription = stringResource(R.string.favorite_remove_cd),
-            tint = if (isFavorite) {
-                MaterialTheme.colorScheme.error
-            } else {
-                MaterialTheme.colorScheme.outlineVariant
-            },
-            modifier = Modifier.size(20.dp)
-        )
+        Box(
+            modifier = Modifier
+                .size(28.dp)
+                .background(
+                    color = if (isFavorite) {
+                        MaterialTheme.colorScheme.errorContainer
+                    } else {
+                        MaterialTheme.colorScheme.surfaceContainerHigh
+                    },
+                    shape = CircleShape
+                ),
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(
+                painter = painterResource(id = R.drawable.favorite_icon),
+                contentDescription = stringResource(R.string.favorite_remove_cd),
+                tint = if (isFavorite) {
+                    MaterialTheme.colorScheme.error
+                } else {
+                    MaterialTheme.colorScheme.onSurfaceVariant
+                },
+                modifier = Modifier.size(14.dp)
+            )
+        }
     }
 }
 
 @Composable
 private fun PostDetails(
     title: String,
-    author: String
+    ownerName: String
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
         Text(
@@ -132,7 +144,7 @@ private fun PostDetails(
             overflow = TextOverflow.Ellipsis
         )
         Text(
-            text = author,
+            text = ownerName,
             style = MaterialTheme.typography.labelMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             maxLines = 1,
@@ -145,9 +157,9 @@ private fun PostDetails(
 @Composable
 private fun PostCardPreview() {
     TravioTheme {
-        PostCard(
+        TripCard(
             title = "Top 10 places to visit in Europe",
-            author = "John Doe",
+            ownerName = "John Doe",
             imageUrl = "",
             isFavorite = true,
             onFavoriteClick = {},

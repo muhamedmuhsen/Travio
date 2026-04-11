@@ -9,6 +9,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -38,7 +39,7 @@ val items = listOf(
     BottomNavigationItem(
         title = R.string.bottom_nav_favorite,
         selectedIcon = R.drawable.favorite_fill,
-        unselectedIcon = R.drawable.favorite_icon
+        unselectedIcon = R.drawable.favorite_outline
     ),
     BottomNavigationItem(
         title = R.string.bottom_nav_community,
@@ -72,11 +73,18 @@ fun AppBottomBar(
                 onClick = {
                     onItemSelected(index)
                 },
+                colors = NavigationBarItemDefaults.colors(
+                    selectedIconColor = MaterialTheme.colorScheme.primary,
+                    selectedTextColor = MaterialTheme.colorScheme.primary,
+                    unselectedIconColor = MaterialTheme.colorScheme.onBackground,
+                    unselectedTextColor = MaterialTheme.colorScheme.onBackground,
+                    indicatorColor = Color.Transparent
+                ),
                 label = {
                     val textColor = if (selectedItem == index) {
                         MaterialTheme.colorScheme.primary
                     } else {
-                        MaterialTheme.colorScheme.onSurfaceVariant
+                        MaterialTheme.colorScheme.onBackground
                     }
                     Text(
                         text = stringResource(id = item.title),
@@ -89,11 +97,16 @@ fun AppBottomBar(
                 icon = {
                     val iconR =
                         if (selectedItem == index) item.selectedIcon else item.unselectedIcon
+                    val iconTint = if (selectedItem == index) {
+                        MaterialTheme.colorScheme.primary
+                    } else {
+                        MaterialTheme.colorScheme.onBackground
+                    }
                     Icon(
                         painterResource(iconR),
                         contentDescription = stringResource(id = item.title),
                         modifier = Modifier.size(MaterialTheme.spacing.lg),
-                        tint = Color.Unspecified
+                        tint = iconTint
                     )
                 }
             )

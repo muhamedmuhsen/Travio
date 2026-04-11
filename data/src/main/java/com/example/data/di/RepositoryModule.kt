@@ -1,5 +1,6 @@
 package com.example.data.di
 
+import com.example.data.local.preferences.FavoriteTabPreferenceRepositoryImpl
 import com.example.data.repository.auth.EmailVerificationRepositoryImpl
 import com.example.data.repository.auth.LoginRepositoryImpl
 import com.example.data.repository.auth.PasswordResetRepositoryImpl
@@ -12,6 +13,7 @@ import com.example.data.repository.destinations.LocationRepositoryImpl
 import com.example.data.repository.destinations.RecentlyViewedRepositoryImpl
 import com.example.data.repository.favorite.FavoritePlaceRepositoryImpl
 import com.example.data.repository.favorite.FavoritePostRepositoryImpl
+import com.example.data.repository.favorite.FavoriteTripRepositoryImpl
 import com.example.data.repository.search.RecentSearchRepositoryImpl
 import com.example.domain.repository.auth.EmailVerificationRepository
 import com.example.domain.repository.auth.LoginRepository
@@ -25,6 +27,8 @@ import com.example.domain.repository.destinations.LocationRepository
 import com.example.domain.repository.destinations.RecentlyViewedRepository
 import com.example.domain.repository.favorite.FavoritePlaceRepository
 import com.example.domain.repository.favorite.FavoritePostRepository
+import com.example.domain.repository.favorite.FavoriteTabPreferenceRepository
+import com.example.domain.repository.favorite.FavoriteTripRepository
 import com.example.domain.repository.search.RecentSearchRepository
 import dagger.Binds
 import dagger.Module
@@ -65,6 +69,16 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindFavoritePostRepository(favoritePostRepositoryImpl: FavoritePostRepositoryImpl): FavoritePostRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindFavoriteTripRepository(favoriteTripRepositoryImpl: FavoriteTripRepositoryImpl): FavoriteTripRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindFavoriteTabPreferenceRepository(
+        favoriteTabPreferenceRepositoryImpl: FavoriteTabPreferenceRepositoryImpl
+    ): FavoriteTabPreferenceRepository
 
     @Binds
     @Singleton
