@@ -217,7 +217,7 @@ fun SurveyScreenPreview() {
 private fun SurveyScreenLastStepPreview() {
     TravioTheme {
         SurveyScreenContent(
-            state = SurveyUiState(currentStep = 3, totalSteps = 4),
+            state = SurveyUiState(currentStep = 1, totalSteps = 2),
             onAction = {}
         )
     }
@@ -228,7 +228,7 @@ private fun SurveyScreenLastStepPreview() {
 private fun SurveyScreenLoadingPreview() {
     TravioTheme {
         SurveyScreenContent(
-            state = SurveyUiState(currentStep = 3, totalSteps = 4, submitState = UiState.Loading),
+            state = SurveyUiState(currentStep = 1, totalSteps = 2, submitState = UiState.Loading),
             onAction = {}
         )
     }
