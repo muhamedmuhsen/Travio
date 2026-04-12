@@ -1,9 +1,18 @@
 package com.example.data.mapper.destination
 
+import com.example.data.BuildConfig
 import com.example.domain.model.favorite.Place
 import com.example.network.dto.destinations.Country
 import com.example.network.dto.destinations.Destination
 import com.example.network.dto.destinations.Interest
+
+private fun resolveCountryImageUrl(path: String?): String {
+    if (path.isNullOrBlank()) return ""
+    if (path.startsWith("http", ignoreCase = true)) return path
+    val base = BuildConfig.IMAGE_BASE_URL.trimEnd('/')
+    val normalizedPath = if (path.startsWith('/')) path else "/$path"
+    return base + normalizedPath
+}
 
 fun Destination.toDomain(): com.example.domain.model.destination.Destination {
     return com.example.domain.model.destination.Destination(
@@ -30,7 +39,7 @@ fun Interest.toDomain(): com.example.domain.model.destination.Interest {
 fun Country.toDomain(): com.example.domain.model.destination.Country {
     return com.example.domain.model.destination.Country(
         countryID = this.countryID,
-        flagURL = this.imageURL.orEmpty(),
+        flagURL = resolveCountryImageUrl(this.imageURL),
         name = this.name
     )
 }
