@@ -91,9 +91,12 @@ class DestinationDetailViewModel @Inject constructor(
             // Fetch a larger page size (e.g., 30) so we have a bigger pool to shuffle from
             when (val result = getAllDestinationsUseCase(pageIndex = 1, pageSize = 30, cityId = null, interestId = interestId)) {
                 is Result.Success -> {
-                    // Filter out the current destination, shuffle the results to make it dynamic, and take the top 10
+                    // Keep only same-category destinations, then apply deterministic ranking.
                     val filtered = result.data
-                        .filter { it.destinationID != destination.destinationID }
+                        .filter { candidate ->
+                            candidate.destinationID != destination.destinationID &&
+                                candidate.interests.any { it.interestID == interestId }
+                        }
                         .sortedWith(
                             compareByDescending<com.example.domain.model.destination.Destination> { it.rating }
                                 .thenByDescending { it.totalReviews }

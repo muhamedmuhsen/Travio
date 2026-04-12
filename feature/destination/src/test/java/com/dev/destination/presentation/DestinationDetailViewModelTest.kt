@@ -203,6 +203,29 @@ class DestinationDetailViewModelTest {
         assertTrue(viewModel.uiState.value.relatedDestinationsState is UiState.Success)
     }
 
+    @Test
+    fun should_discardDifferentCategories_when_relatedDestinationsLoaded() = runTest {
+        val sameCategory = sampleDestination.copy(destinationID = 2)
+        val differentCategory = sampleDestination.copy(
+            destinationID = 3,
+            interests = listOf(Interest(99, "Beaches"))
+        )
+
+        fakeDestinationsRepository.destinationByIdResult = Result.Success(sampleDestination)
+        fakeDestinationsRepository.allDestinationsResult = Result.Success(
+            listOf(sampleDestination, sameCategory, differentCategory)
+        )
+
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+
+        val relatedState = viewModel.uiState.value.relatedDestinationsState
+        assertTrue(relatedState is UiState.Success)
+
+        val ids = (relatedState as UiState.Success).data.map { it.destinationID }
+        assertEquals(listOf(2), ids)
+    }
+
     private class FakeDestinationsRepository : DestinationsRepository {
         var destinationByIdResult: Result<Destination, DataError> = Result.Success(
             Destination(
