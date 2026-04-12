@@ -5,13 +5,22 @@
     <string name="favorite_items_count">%d عنصر مفضل</string>
 
     <!-- Favorite Screen - Tabs -->
-    <string name="favorite_tab_all">الكل</string>
-    <string name="favorite_tab_places">الأماكن</string>
-    <string name="favorite_tab_posts">المنشورات</string>
+    <string name="favorite_tab_destinations">الوجهات</string>
+    <string name="favorite_tab_trips">الرحلات</string>
 
     <!-- Favorite Screen - Empty State -->
     <string name="favorite_empty_title">لا توجد مفضلات بعد</string>
     <string name="favorite_empty_subtitle">ابدأ الاستكشاف واحفظ مفضلاتك</string>
+    <string name="favorite_empty_destinations_title">لا توجد وجهات مفضلة بعد</string>
+    <string name="favorite_empty_destinations_subtitle">استكشف الوجهات واحفظ الأماكن التي تعجبك</string>
+    <string name="favorite_empty_trips_title">لا توجد رحلات مفضلة بعد</string>
+    <string name="favorite_empty_trips_subtitle">اكتشف الرحلات واحفظها لاحقا</string>
+
+    <!-- Favorite Screen - Error State -->
+    <string name="favorite_error_destinations">تعذر تحميل الوجهات المفضلة</string>
+    <string name="favorite_error_trips">تعذر تحميل الرحلات المفضلة</string>
+    <string name="favorite_retry">إعادة المحاولة</string>
+    <string name="favorite_load_more">تحميل المزيد</string>
 
     <!-- Favorite Screen - Content Descriptions -->
     <string name="favorite_icon_cd">مفضلة</string>

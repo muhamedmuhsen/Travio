@@ -29,18 +29,17 @@ import com.example.designsystem.theme.spacing
 import com.example.feature.favorite.R
 
 enum class SectionTab {
-    All,
-    Places,
-    Posts
+    Destinations,
+    Trips
 }
 
 @Composable
 fun Section(
     modifier: Modifier = Modifier,
-    selectedTab: SectionTab = SectionTab.All,
+    selectedTab: SectionTab = SectionTab.Destinations,
     onTabSelected: (SectionTab) -> Unit = {}
 ) {
-    val tabs = listOf(SectionTab.All, SectionTab.Places, SectionTab.Posts)
+    val tabs = listOf(SectionTab.Destinations, SectionTab.Trips)
 
     SectionContainer(modifier = modifier) {
         tabs.forEach { tab ->
@@ -135,9 +134,8 @@ private fun SectionTabLabel(
 @Composable
 private fun SectionTab.labelString(): String =
     when (this) {
-        SectionTab.All -> stringResource(R.string.favorite_tab_all)
-        SectionTab.Places -> stringResource(R.string.favorite_tab_places)
-        SectionTab.Posts -> stringResource(R.string.favorite_tab_posts)
+        SectionTab.Destinations -> stringResource(R.string.favorite_tab_destinations)
+        SectionTab.Trips -> stringResource(R.string.favorite_tab_trips)
     }
 
 @Preview(showBackground = true)

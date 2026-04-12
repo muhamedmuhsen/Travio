@@ -17,6 +17,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -34,15 +35,14 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.dev.favroite.components.PlaceCard
-import com.dev.favroite.components.PostCard
 import com.dev.favroite.components.Section
 import com.dev.favroite.components.SectionTab
-import com.dev.utils.uistate.UiState
+import com.dev.favroite.components.TripCard
 import com.example.designsystem.components.AppBottomBar
 import com.example.designsystem.theme.TravioTheme
 import com.example.designsystem.theme.spacing
 import com.example.domain.model.favorite.Place
-import com.example.domain.model.favorite.Post
+import com.example.domain.model.favorite.Trip
 import com.example.feature.favorite.R
 
 @Composable
@@ -61,7 +61,10 @@ fun FavoriteScreen(
         state = state,
         onTabSelected = viewModel::onTabSelected,
         onDeletePlace = viewModel::onDeletePlace,
-        onDeletePost = viewModel::onDeletePost,
+        onDeleteTrip = viewModel::onDeleteTrip,
+        onRetryCurrentTab = viewModel::onRetryCurrentTab,
+        onLoadMoreCurrentTab = viewModel::onLoadMoreCurrentTab,
+        onRetryLoadMoreCurrentTab = viewModel::onRetryLoadMoreCurrentTab,
         onBottomBarItemSelected = { index ->
             when (index) {
                 0 -> navigateToHome()
@@ -74,12 +77,15 @@ fun FavoriteScreen(
 }
 
 @Composable
-private fun FavoriteContent(
+fun FavoriteContent(
     modifier: Modifier = Modifier,
     state: FavoriteState,
     onTabSelected: (SectionTab) -> Unit,
     onDeletePlace: (String) -> Unit,
-    onDeletePost: (String) -> Unit,
+    onDeleteTrip: (String) -> Unit,
+    onRetryCurrentTab: () -> Unit,
+    onLoadMoreCurrentTab: () -> Unit,
+    onRetryLoadMoreCurrentTab: () -> Unit,
     onBottomBarItemSelected: (Int) -> Unit
 ) {
     Scaffold(
@@ -114,22 +120,27 @@ private fun FavoriteContent(
 
             Spacer(modifier = Modifier.height(MaterialTheme.spacing.md))
 
-            val isLoading = state.placesUiState is UiState.Loading ||
-                state.postsUiState is UiState.Loading
-
             Box(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(horizontal = MaterialTheme.spacing.md)
             ) {
-                when {
-                    isLoading -> FavoriteLoadingState()
-                    state.isEmpty -> FavoriteEmptyState()
-                    else -> FavoriteList(
-                        Places = state.displayedPlaces,
-                        posts = state.displayedPosts,
+                when (state.currentTabState) {
+                    is FavoritesTabUiState.Loading -> FavoriteLoadingState()
+                    is FavoritesTabUiState.Empty -> FavoriteEmptyState(selectedTab = state.selectedTab)
+                    is FavoritesTabUiState.Error -> FavoriteErrorState(
+                        selectedTab = state.selectedTab,
+                        onRetry = onRetryCurrentTab
+                    )
+
+                    is FavoritesTabUiState.Success<*> -> FavoriteList(
+                        destinations = state.displayedDestinations,
+                        trips = state.displayedTrips,
+                        paginationState = state.currentPaginationState,
                         onDeletePlace = onDeletePlace,
-                        onDeletePost = onDeletePost
+                        onDeleteTrip = onDeleteTrip,
+                        onLoadMore = onLoadMoreCurrentTab,
+                        onRetryLoadMore = onRetryLoadMoreCurrentTab
                     )
                 }
             }
@@ -169,13 +180,13 @@ private fun FavoriteHeaderIcon() {
     Box(
         contentAlignment = Alignment.Center,
         modifier = Modifier
-            .size(40.dp)
-            .background(color = MaterialTheme.colorScheme.error, shape = CircleShape)
+            .size(44.dp)
+            .background(color = MaterialTheme.colorScheme.errorContainer, shape = CircleShape)
     ) {
         Icon(
-            painter = painterResource(id = R.drawable.top_bar_favrorite_icon),
+            painter = painterResource(id = R.drawable.favorite_icon),
             contentDescription = stringResource(R.string.favorite_icon_cd),
-            tint = MaterialTheme.colorScheme.onError,
+            tint = MaterialTheme.colorScheme.error,
             modifier = Modifier.size(20.dp)
         )
     }
@@ -184,10 +195,13 @@ private fun FavoriteHeaderIcon() {
 @Composable
 private fun FavoriteList(
     modifier: Modifier = Modifier,
-    Places: List<Place>,
-    posts: List<Post>,
+    destinations: List<Place>,
+    trips: List<Trip>,
+    paginationState: FavoritesPaginationState,
     onDeletePlace: (String) -> Unit,
-    onDeletePost: (String) -> Unit
+    onDeleteTrip: (String) -> Unit,
+    onLoadMore: () -> Unit,
+    onRetryLoadMore: () -> Unit
 ) {
     LazyColumn(
         modifier = modifier.fillMaxSize(),
@@ -195,13 +209,13 @@ private fun FavoriteList(
         contentPadding = PaddingValues(bottom = MaterialTheme.spacing.md)
     ) {
         items(
-            items = Places,
+            items = destinations,
             key = { place -> "place_${place.id}" }
         ) { place ->
             PlaceCard(
                 country = place.name,
                 city = place.description,
-                imageUrl = place.imageUrls[0],
+                imageUrl = place.imageUrls.firstOrNull().orEmpty(),
                 isFavorite = true,
                 onFavoriteClick = { onDeletePlace(place.id.toString()) },
                 onClick = {}
@@ -209,23 +223,73 @@ private fun FavoriteList(
         }
 
         items(
-            items = posts,
-            key = { post -> "post_${post.id}" }
-        ) { post ->
-            PostCard(
-                title = post.title,
-                author = post.author,
-                imageUrl = post.imageUrl,
+            items = trips,
+            key = { trip -> "trip_${trip.id}" }
+        ) { trip ->
+            TripCard(
+                title = trip.title,
+                ownerName = trip.ownerName,
+                imageUrl = trip.imageUrl,
                 isFavorite = true,
-                onFavoriteClick = { onDeletePost(post.id.toString()) },
+                onFavoriteClick = { onDeleteTrip(trip.id.toString()) },
                 onClick = {}
+            )
+        }
+
+        item(key = "pagination_state") {
+            FavoritePaginationState(
+                paginationState = paginationState,
+                onLoadMore = onLoadMore,
+                onRetryLoadMore = onRetryLoadMore
             )
         }
     }
 }
 
 @Composable
-private fun FavoriteEmptyState(modifier: Modifier = Modifier) {
+private fun FavoritePaginationState(
+    paginationState: FavoritesPaginationState,
+    onLoadMore: () -> Unit,
+    onRetryLoadMore: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(vertical = MaterialTheme.spacing.sm),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.xs)
+    ) {
+        when {
+            paginationState.isLoadingMore -> {
+                CircularProgressIndicator(modifier = Modifier.size(24.dp))
+            }
+
+            paginationState.loadMoreError != null -> {
+                Text(
+                    text = paginationState.loadMoreError.asString(),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.error
+                )
+                FilledTonalButton(onClick = onRetryLoadMore) {
+                    Text(text = stringResource(R.string.favorite_retry))
+                }
+            }
+
+            paginationState.hasMore -> {
+                FilledTonalButton(onClick = onLoadMore) {
+                    Text(text = stringResource(R.string.favorite_load_more))
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun FavoriteEmptyState(
+    selectedTab: SectionTab,
+    modifier: Modifier = Modifier
+) {
     Box(
         modifier = modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
@@ -252,16 +316,60 @@ private fun FavoriteEmptyState(modifier: Modifier = Modifier) {
             }
             Spacer(modifier = Modifier.height(MaterialTheme.spacing.xs))
             Text(
-                text = stringResource(R.string.favorite_empty_title),
+                text = stringResource(
+                    if (selectedTab == SectionTab.Destinations) {
+                        R.string.favorite_empty_destinations_title
+                    } else {
+                        R.string.favorite_empty_trips_title
+                    }
+                ),
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onBackground
             )
             Text(
-                text = stringResource(R.string.favorite_empty_subtitle),
+                text = stringResource(
+                    if (selectedTab == SectionTab.Destinations) {
+                        R.string.favorite_empty_destinations_subtitle
+                    } else {
+                        R.string.favorite_empty_trips_subtitle
+                    }
+                ),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
+        }
+    }
+}
+
+@Composable
+private fun FavoriteErrorState(
+    selectedTab: SectionTab,
+    onRetry: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Box(
+        modifier = modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.sm)
+        ) {
+            Text(
+                text = stringResource(
+                    if (selectedTab == SectionTab.Destinations) {
+                        R.string.favorite_error_destinations
+                    } else {
+                        R.string.favorite_error_trips
+                    }
+                ),
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            FilledTonalButton(onClick = onRetry) {
+                Text(text = stringResource(R.string.favorite_retry))
+            }
         }
     }
 }
@@ -283,12 +391,15 @@ private fun FavoriteScreenEmptyPreview() {
     TravioTheme {
         FavoriteContent(
             state = FavoriteState(
-                placesUiState = UiState.Success(),
-                postsUiState = UiState.Success()
+                destinationsState = FavoritesTabUiState.Empty,
+                tripsState = FavoritesTabUiState.Empty
             ),
             onTabSelected = {},
             onDeletePlace = {},
-            onDeletePost = {},
+            onDeleteTrip = {},
+            onRetryCurrentTab = {},
+            onLoadMoreCurrentTab = {},
+            onRetryLoadMoreCurrentTab = {},
             onBottomBarItemSelected = {}
         )
     }
@@ -301,9 +412,8 @@ private fun FavoriteScreenWithDataPreview() {
     TravioTheme {
         FavoriteContent(
             state = FavoriteState(
-                placesUiState = UiState.Success(),
-                postsUiState = UiState.Success(),
-                Places = listOf(
+                selectedTab = SectionTab.Destinations,
+                loadedDestinations = listOf(
                     Place(
                         id = 1,
                         name = "Eiffel Tower",
@@ -319,21 +429,38 @@ private fun FavoriteScreenWithDataPreview() {
 
                     )
                 ),
-                posts = listOf(
-                    Post(
+                loadedTrips = listOf(
+                    Trip(
                         id = 1,
                         title = "Top 10 places in Europe",
-                        content = "",
-                        createdAt = "",
-                        postLikes = 120,
+                        savedAt = "2026-04-11T10:00:00Z",
                         imageUrl = "",
-                        author = "Jane Doe"
+                        ownerName = "Jane Doe"
+                    )
+                ),
+                destinationsState = FavoritesTabUiState.Success(
+                    listOf(
+                        Place(id = 1, name = "Eiffel Tower", description = "Paris, France", imageUrls = listOf(""))
+                    )
+                ),
+                tripsState = FavoritesTabUiState.Success(
+                    listOf(
+                        Trip(
+                            id = 1,
+                            title = "Top 10 places in Europe",
+                            ownerName = "Jane Doe",
+                            imageUrl = "",
+                            savedAt = "2026-04-11T10:00:00Z"
+                        )
                     )
                 )
             ),
             onTabSelected = {},
             onDeletePlace = {},
-            onDeletePost = {},
+            onDeleteTrip = {},
+            onRetryCurrentTab = {},
+            onLoadMoreCurrentTab = {},
+            onRetryLoadMoreCurrentTab = {},
             onBottomBarItemSelected = {}
         )
     }

@@ -5,13 +5,22 @@
     <string name="favorite_items_count">%d items favourite</string>
 
     <!-- Favorite Screen - Tabs -->
-    <string name="favorite_tab_all">All</string>
-    <string name="favorite_tab_places">Places</string>
-    <string name="favorite_tab_posts">Posts</string>
+    <string name="favorite_tab_destinations">Destinations</string>
+    <string name="favorite_tab_trips">Trips</string>
 
     <!-- Favorite Screen - Empty State -->
     <string name="favorite_empty_title">No favorites yet</string>
     <string name="favorite_empty_subtitle">Start exploring and save your favorites</string>
+    <string name="favorite_empty_destinations_title">No favorite destinations yet</string>
+    <string name="favorite_empty_destinations_subtitle">Explore destinations and save places you love</string>
+    <string name="favorite_empty_trips_title">No favorite trips yet</string>
+    <string name="favorite_empty_trips_subtitle">Discover trips and save them for later</string>
+
+    <!-- Favorite Screen - Error State -->
+    <string name="favorite_error_destinations">Could not load favorite destinations</string>
+    <string name="favorite_error_trips">Could not load favorite trips</string>
+    <string name="favorite_retry">Retry</string>
+    <string name="favorite_load_more">Load more</string>
 
     <!-- Favorite Screen - Content Descriptions -->
     <string name="favorite_icon_cd">Favorite</string>
