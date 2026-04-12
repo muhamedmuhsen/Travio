@@ -1,7 +1,9 @@
 package com.example.network.dto.destinations
 
+import com.google.gson.annotations.SerializedName
+
 data class Country(
-    val countryID: Int,
-    val flagURL: String,
-    val name: String
+    @SerializedName("countryID") val countryID: Int,
+    @SerializedName(value = "imageURL", alternate = ["flagURL"]) val imageURL: String? = null,
+    @SerializedName("name") val name: String
 )

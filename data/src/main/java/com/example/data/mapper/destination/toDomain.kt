@@ -30,7 +30,7 @@ fun Interest.toDomain(): com.example.domain.model.destination.Interest {
 fun Country.toDomain(): com.example.domain.model.destination.Country {
     return com.example.domain.model.destination.Country(
         countryID = this.countryID,
-        flagURL = this.flagURL,
+        flagURL = this.imageURL.orEmpty(),
         name = this.name
     )
 }
