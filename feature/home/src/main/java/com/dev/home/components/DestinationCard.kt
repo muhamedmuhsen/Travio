@@ -68,6 +68,8 @@ fun DestinationCard(
     onFavoriteClicked: () -> Unit,
     onCardClicked: () -> Unit = {}
 ) {
+    val overlayContentColor = Color.White
+
     Card(
         modifier = modifier
             .width(DESTINATION_CARD_WIDTH)
@@ -129,21 +131,25 @@ fun DestinationCard(
                 ) {
                     Text(
                         text = title,
-                        color = Color.White,
+                        color = overlayContentColor,
                         style = MaterialTheme.typography.headlineMedium,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.weight(1f),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
-                    RatingBadge(rating = rating, reviewCount = reviewCount)
+                    RatingBadge(
+                        rating = rating,
+                        reviewCount = reviewCount,
+                        contentColor = overlayContentColor
+                    )
                 }
 
                 Spacer(modifier = Modifier.height(MaterialTheme.spacing.xxs))
 
                 Text(
                     text = description,
-                    color = Color.White.copy(alpha = 0.8f),
+                    color = overlayContentColor.copy(alpha = 0.9f),
                     style = MaterialTheme.typography.bodyMedium,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
@@ -151,7 +157,7 @@ fun DestinationCard(
 
                 Spacer(modifier = Modifier.height(MaterialTheme.spacing.xs))
 
-                PriceText(price = price)
+                PriceText(price = price, contentColor = overlayContentColor)
 
                 Spacer(modifier = Modifier.height(MaterialTheme.spacing.md))
 
@@ -185,7 +191,7 @@ fun LoadingDestinationCard(modifier: Modifier = Modifier) {
             .width(DESTINATION_CARD_WIDTH)
             .height(DESTINATION_CARD_HEIGHT),
         shape = MaterialTheme.shapes.extraLarge,
-        border = BorderStroke(4.dp, Color(0xFFE0E0E0)),
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
         elevation = CardDefaults.cardElevation(defaultElevation = MaterialTheme.elevation.xs)
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
@@ -262,9 +268,9 @@ private fun FavoriteButton(
 @Composable
 private fun RatingBadge(
     rating: Double,
-    reviewCount: Int
+    reviewCount: Int,
+    contentColor: Color
 ) {
-    val overlayContentColor = Color.White
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(4.dp)
@@ -272,13 +278,12 @@ private fun RatingBadge(
         Icon(
             imageVector = Icons.Filled.Star,
             contentDescription = null,
-            // Light blue star as per design reference
-            tint = Color(0xFF81D4FA),
+            tint = contentColor,
             modifier = Modifier.size(20.dp)
         )
         Text(
             text = "$rating ($reviewCount)",
-            color = overlayContentColor,
+            color = contentColor,
             style = MaterialTheme.typography.bodyLarge,
             fontWeight = FontWeight.Medium
         )
@@ -286,11 +291,13 @@ private fun RatingBadge(
 }
 
 @Composable
-private fun PriceText(price: String) {
-    // The design has price as "From $100" in an off-white/light grey color
+private fun PriceText(
+    price: String,
+    contentColor: Color
+) {
     Text(
         text = price,
-        color = Color.White.copy(alpha = 0.9f),
+        color = contentColor.copy(alpha = 0.9f),
         style = MaterialTheme.typography.bodyLarge,
         fontWeight = FontWeight.Medium
     )

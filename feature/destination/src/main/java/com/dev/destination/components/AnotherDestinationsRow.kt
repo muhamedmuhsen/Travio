@@ -149,7 +149,7 @@ fun AnotherDestinationCard(
                         text = destination.name,
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
-                        color = overlayContentColor,
+                        color = Color.White,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                         modifier = Modifier.weight(1f)
@@ -165,7 +165,7 @@ fun AnotherDestinationCard(
                         Text(
                             text = "${destination.rating}",
                             style = MaterialTheme.typography.bodySmall,
-                            color = overlayContentColor
+                            color = Color.White
                         )
                     }
                 }
@@ -173,7 +173,7 @@ fun AnotherDestinationCard(
                 Text(
                     text = destination.cityName,
                     style = MaterialTheme.typography.bodySmall,
-                    color = overlayContentColor.copy(alpha = 0.8f),
+                    color = Color.White,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
@@ -184,8 +184,8 @@ fun AnotherDestinationCard(
                         .fillMaxWidth()
                         .height(36.dp),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.surface,
-                        contentColor = MaterialTheme.colorScheme.onSurface
+                        containerColor = Color.White,
+                        contentColor = Color.Black
                     ),
                     shape = RoundedCornerShape(18.dp)
                 ) {

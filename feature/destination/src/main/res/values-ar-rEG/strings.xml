@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="destination_share_title">مشاركة الوجهة</string>
+    <string name="destination_tab_overview">نظرة عامة</string>
+    <string name="destination_tab_reviews">المراجعات</string>
+    <string name="destination_hero_image_cd">صورة رئيسية للوجهة</string>
+    <string name="destination_back_cd">رجوع</string>
+    <string name="destination_favorite_cd">المفضلة</string>
+    <string name="destination_location_cd">الموقع</string>
+    <string name="destination_default_interest">معلم سياحي</string>
+    <string name="destination_rating_cd">التقييم</string>
+    <string name="destination_reviews_placeholder">محتوى المراجعات قريبا</string>
+    <string name="destination_related_loading">جاري تحميل الوجهات المقترحة...</string>
+    <string name="destination_related_error">تعذر تحميل الوجهات المقترحة</string>
+    <string name="destination_failed_to_load">فشل التحميل</string>
+    <string name="destination_tap_to_retry">حدث خطأ ما. يرجى المحاولة مرة أخرى.</string>
+    <string name="destination_retry">إعادة المحاولة</string>
+
+    <string name="destination_about_title">حول</string>
+    <string name="destination_suggested_title">وجهات مقترحة</string>
+    <string name="destination_suggested_favorite_cd">المفضلة</string>
+    <string name="destination_explore">استكشف</string>
+
+    <string name="destination_error_icon_cd">خطأ</string>
+</resources>
+

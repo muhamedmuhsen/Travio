@@ -123,7 +123,7 @@ class DestinationDetailViewModel @Inject constructor(
                             is Result.Success -> {
                                 _uiState.value = _uiState.value.copy(
                                     relatedDestinationsState = UiState.Success(
-                                        buildRelatedDestinations(
+                                        buildFallbackRelatedDestinations(
                                             fallback.data,
                                             destination.destinationID,
                                             interestId
@@ -160,6 +160,27 @@ class DestinationDetailViewModel @Inject constructor(
             }
             .sortedWith(
                 compareByDescending<com.example.domain.model.destination.Destination> { it.rating }
+                    .thenByDescending { it.totalReviews }
+                    .thenBy { it.destinationID }
+            )
+            .take(10)
+    }
+
+    private fun buildFallbackRelatedDestinations(
+        source: List<com.example.domain.model.destination.Destination>,
+        currentDestinationId: Int,
+        preferredInterestId: Int
+    ): List<com.example.domain.model.destination.Destination> {
+        val strictMatches = buildRelatedDestinations(source, currentDestinationId, preferredInterestId)
+        if (strictMatches.isNotEmpty()) return strictMatches
+
+        return source
+            .filter { candidate -> candidate.destinationID != currentDestinationId }
+            .sortedWith(
+                compareByDescending<com.example.domain.model.destination.Destination> { candidate ->
+                    candidate.interests.count { it.interestID == preferredInterestId }
+                }
+                    .thenByDescending { it.rating }
                     .thenByDescending { it.totalReviews }
                     .thenBy { it.destinationID }
             )

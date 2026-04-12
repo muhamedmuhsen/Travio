@@ -61,13 +61,14 @@ object NetworkModule {
     @Provides
     @Singleton
     fun provideLoggingInterceptor(): HttpLoggingInterceptor =
-        HttpLoggingInterceptor().setLevel(
-            if (BuildConfig.DEBUG) {
+        HttpLoggingInterceptor().apply {
+            level = if (BuildConfig.DEBUG) {
                 HttpLoggingInterceptor.Level.BODY
             } else {
                 HttpLoggingInterceptor.Level.NONE
             }
-        )
+            redactHeader("Authorization")
+        }
 
     @Provides
     @Singleton

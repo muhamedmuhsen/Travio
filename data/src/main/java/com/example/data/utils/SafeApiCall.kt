@@ -26,7 +26,8 @@ suspend fun <T> safeApiCall(apiCall: suspend () -> T): Result<T, DataError> {
         Timber.e(e, "safeApiCall: no internet connection -> host unreachable (${e.message})")
         Result.Error(DataError.Network.NoInternetConnection)
     } catch (e: SocketTimeoutException) {
-        Timber.e(e, "safeApiCall: request timed out (${e.message})")
+        // Timeout can be recoverable in callers that apply a fallback request strategy.
+        Timber.w(e, "safeApiCall: request timed out (${e.message})")
         Result.Error(DataError.Network.Timeout)
     } catch (e: FileNotFoundException) {
         Timber.e(e, "safeApiCall: content not found -> ${e.message}")

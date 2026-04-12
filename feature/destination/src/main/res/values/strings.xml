@@ -12,6 +12,8 @@
     <string name="destination_reviews_placeholder">Reviews content coming soon</string>
     <string name="destination_related_loading">Loading suggested destinations…</string>
     <string name="destination_related_error">Could not load suggested destinations</string>
+    <string name="destination_failed_to_load">Failed to load</string>
+    <string name="destination_tap_to_retry">Something went wrong. Please try again.</string>
     <string name="destination_retry">Retry</string>
 
     <string name="destination_about_title">About</string>
