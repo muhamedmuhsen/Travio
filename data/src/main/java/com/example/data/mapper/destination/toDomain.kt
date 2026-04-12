@@ -6,7 +6,7 @@ import com.example.network.dto.destinations.Country
 import com.example.network.dto.destinations.Destination
 import com.example.network.dto.destinations.Interest
 
-private fun resolveCountryImageUrl(path: String?): String {
+private fun resolveImageUrl(path: String?): String {
     if (path.isNullOrBlank()) return ""
     if (path.startsWith("http", ignoreCase = true)) return path
     val base = BuildConfig.IMAGE_BASE_URL.trimEnd('/')
@@ -19,7 +19,7 @@ fun Destination.toDomain(): com.example.domain.model.destination.Destination {
         cityName = this.cityName,
         description = this.description,
         destinationID = this.destinationID,
-        imageUrls = this.imageUrls,
+        imageUrls = this.imageUrls.map(::resolveImageUrl).filter(String::isNotEmpty),
         interests = this.interests.map { it.toDomain() },
         latitude = this.latitude,
         longitude = this.longitude,
@@ -39,7 +39,7 @@ fun Interest.toDomain(): com.example.domain.model.destination.Interest {
 fun Country.toDomain(): com.example.domain.model.destination.Country {
     return com.example.domain.model.destination.Country(
         countryID = this.countryID,
-        flagURL = resolveCountryImageUrl(this.imageURL),
+        flagURL = resolveImageUrl(this.imageURL),
         name = this.name
     )
 }
