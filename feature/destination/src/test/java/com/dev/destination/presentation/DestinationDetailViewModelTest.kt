@@ -226,6 +226,30 @@ class DestinationDetailViewModelTest {
         assertEquals(listOf(2), ids)
     }
 
+    @Test
+    fun should_fallbackToUnfilteredQuery_when_interestQueryTimesOut() = runTest {
+        val sameCategory = sampleDestination.copy(destinationID = 2)
+        val differentCategory = sampleDestination.copy(
+            destinationID = 3,
+            interests = listOf(Interest(99, "Beaches"))
+        )
+
+        fakeDestinationsRepository.destinationByIdResult = Result.Success(sampleDestination)
+        fakeDestinationsRepository.allDestinationsResultByInterest[1] =
+            Result.Error(DataError.Network.Timeout)
+        fakeDestinationsRepository.allDestinationsResultByInterest[null] =
+            Result.Success(listOf(sampleDestination, sameCategory, differentCategory))
+
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+
+        val relatedState = viewModel.uiState.value.relatedDestinationsState
+        assertTrue(relatedState is UiState.Success)
+        val ids = (relatedState as UiState.Success).data.map { it.destinationID }
+        assertEquals(listOf(2), ids)
+        assertEquals(listOf(1, null), fakeDestinationsRepository.requestedInterestIds)
+    }
+
     private class FakeDestinationsRepository : DestinationsRepository {
         var destinationByIdResult: Result<Destination, DataError> = Result.Success(
             Destination(
@@ -242,6 +266,9 @@ class DestinationDetailViewModelTest {
             )
         )
         var allDestinationsResult: Result<List<Destination>, DataError> = Result.Success(emptyList())
+        val allDestinationsResultByInterest: MutableMap<Int?, Result<List<Destination>, DataError>> =
+            mutableMapOf()
+        val requestedInterestIds: MutableList<Int?> = mutableListOf()
 
         override suspend fun getDestinationsById(destinationId: Int): Result<Destination, DataError> = destinationByIdResult
 
@@ -250,7 +277,10 @@ class DestinationDetailViewModelTest {
             pageSize: Int,
             cityId: Int?,
             interestId: Int?
-        ): Result<List<Destination>, DataError> = allDestinationsResult
+        ): Result<List<Destination>, DataError> {
+            requestedInterestIds.add(interestId)
+            return allDestinationsResultByInterest[interestId] ?: allDestinationsResult
+        }
 
         override suspend fun getTopRatedDestinations(): Result<List<Destination>, DataError> = Result.Success(emptyList())
 

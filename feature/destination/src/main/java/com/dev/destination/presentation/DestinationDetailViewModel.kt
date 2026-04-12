@@ -10,6 +10,7 @@ import com.example.domain.usecase.destinations.GetAllDestinationsUseCase
 import com.example.domain.usecase.destinations.GetDestinationByIdUseCase
 import com.example.domain.usecase.favorite.place.FavoritePlaceUseCase
 import com.example.domain.usecase.favorite.place.GetAllPlacesUseCase
+import com.example.domain.utils.DataError
 import com.example.domain.utils.Result
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
@@ -31,6 +32,10 @@ class DestinationDetailViewModel @Inject constructor(
     private val getAllPlacesUseCase: GetAllPlacesUseCase,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
+
+    private companion object {
+        const val RELATED_PAGE_SIZE = 12
+    }
 
     private val destinationId: Int? =
         runCatching { savedStateHandle.toRoute<DestinationDetailRoute>().id }.getOrNull()
@@ -88,28 +93,77 @@ class DestinationDetailViewModel @Inject constructor(
 
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(relatedDestinationsState = UiState.Loading)
-            // Fetch a larger page size (e.g., 30) so we have a bigger pool to shuffle from
-            when (val result = getAllDestinationsUseCase(pageIndex = 1, pageSize = 30, cityId = null, interestId = interestId)) {
+            when (
+                val result = getAllDestinationsUseCase(
+                    pageIndex = 1,
+                    pageSize = RELATED_PAGE_SIZE,
+                    cityId = null,
+                    interestId = interestId
+                )
+            ) {
                 is Result.Success -> {
-                    // Keep only same-category destinations, then apply deterministic ranking.
-                    val filtered = result.data
-                        .filter { candidate ->
-                            candidate.destinationID != destination.destinationID &&
-                                candidate.interests.any { it.interestID == interestId }
-                        }
-                        .sortedWith(
-                            compareByDescending<com.example.domain.model.destination.Destination> { it.rating }
-                                .thenByDescending { it.totalReviews }
-                                .thenBy { it.destinationID }
+                    _uiState.value = _uiState.value.copy(
+                        relatedDestinationsState = UiState.Success(
+                            buildRelatedDestinations(result.data, destination.destinationID, interestId)
                         )
-                        .take(10)
-                    _uiState.value = _uiState.value.copy(relatedDestinationsState = UiState.Success(filtered))
+                    )
                 }
+
                 is Result.Error -> {
-                    _uiState.value = _uiState.value.copy(relatedDestinationsState = UiState.Error("Failed to load related destinations"))
+                    if (result.error == DataError.Network.Timeout) {
+                        // Fallback: avoid blocking UI on slow category-filter endpoint.
+                        when (
+                            val fallback = getAllDestinationsUseCase(
+                                pageIndex = 1,
+                                pageSize = RELATED_PAGE_SIZE,
+                                cityId = null,
+                                interestId = null
+                            )
+                        ) {
+                            is Result.Success -> {
+                                _uiState.value = _uiState.value.copy(
+                                    relatedDestinationsState = UiState.Success(
+                                        buildRelatedDestinations(
+                                            fallback.data,
+                                            destination.destinationID,
+                                            interestId
+                                        )
+                                    )
+                                )
+                            }
+
+                            is Result.Error -> {
+                                _uiState.value = _uiState.value.copy(
+                                    relatedDestinationsState = UiState.Success(emptyList())
+                                )
+                            }
+                        }
+                    } else {
+                        _uiState.value = _uiState.value.copy(
+                            relatedDestinationsState = UiState.Error("Failed to load related destinations")
+                        )
+                    }
                 }
             }
         }
+    }
+
+    private fun buildRelatedDestinations(
+        source: List<com.example.domain.model.destination.Destination>,
+        currentDestinationId: Int,
+        interestId: Int
+    ): List<com.example.domain.model.destination.Destination> {
+        return source
+            .filter { candidate ->
+                candidate.destinationID != currentDestinationId &&
+                    candidate.interests.any { it.interestID == interestId }
+            }
+            .sortedWith(
+                compareByDescending<com.example.domain.model.destination.Destination> { it.rating }
+                    .thenByDescending { it.totalReviews }
+                    .thenBy { it.destinationID }
+            )
+            .take(10)
     }
 
     fun onAction(action: DestinationDetailAction) {
