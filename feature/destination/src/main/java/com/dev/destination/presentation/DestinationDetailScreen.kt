@@ -185,19 +185,20 @@ private fun DestinationDetailContent(
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(start = 16.dp, end = 16.dp),
+                                .padding(start = 16.dp, top = 8.dp, end = 16.dp),
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
                             Surface(
                                 shape = CircleShape,
                                 color = MaterialTheme.colorScheme.surface.copy(alpha = 0.8f),
-                                modifier = Modifier.size(48.dp)
+                                modifier = Modifier.size(40.dp)
                             ) {
                                 IconButton(onClick = { onAction(DestinationDetailAction.OnBackClicked) }) {
                                     Icon(
                                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                                         contentDescription = stringResource(id = R.string.destination_back_cd),
-                                        tint = MaterialTheme.colorScheme.onSurface
+                                        tint = MaterialTheme.colorScheme.onSurface,
+                                        modifier = Modifier.size(20.dp)
                                     )
                                 }
                             }
@@ -205,7 +206,7 @@ private fun DestinationDetailContent(
                             Surface(
                                 shape = CircleShape,
                                 color = MaterialTheme.colorScheme.surface.copy(alpha = 0.8f),
-                                modifier = Modifier.size(48.dp)
+                                modifier = Modifier.size(40.dp)
                             ) {
                                 IconButton(onClick = { onAction(DestinationDetailAction.OnFavoriteClicked) }) {
                                     Icon(
@@ -215,7 +216,8 @@ private fun DestinationDetailContent(
                                             MaterialTheme.colorScheme.error
                                         } else {
                                             MaterialTheme.colorScheme.onSurface
-                                        }
+                                        },
+                                        modifier = Modifier.size(20.dp)
                                     )
                                 }
                             }
