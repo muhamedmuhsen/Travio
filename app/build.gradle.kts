@@ -1,3 +1,4 @@
+import com.google.firebase.appdistribution.gradle.firebaseAppDistribution
 import java.io.FileInputStream
 import java.util.Properties
 
@@ -24,16 +25,79 @@ android {
         localProperties.load(FileInputStream(localPropertiesFile))
     }
 
-    val productionBaseUrl = localProperties.getProperty("BASE_URL", "http://10.0.2.2:5116/api/")
+    val secureProperties = Properties()
+    val securePropertiesFile = rootProject.file("app/config/environment.secrets.properties")
+    if (securePropertiesFile.exists()) {
+        secureProperties.load(FileInputStream(securePropertiesFile))
+    }
+
+    val defaultsProperties = Properties()
+    val defaultsPropertiesFile = rootProject.file("app/config/environment.defaults.properties")
+    if (defaultsPropertiesFile.exists()) {
+        defaultsProperties.load(FileInputStream(defaultsPropertiesFile))
+    }
+
+    fun readConfigValue(
+        key: String,
+        fallback: String,
+    ): String {
+        return providers.environmentVariable(key).orNull
+            ?: secureProperties.getProperty(key)
+            ?: defaultsProperties.getProperty(key)
+            ?: localProperties.getProperty(key)
+            ?: fallback
+    }
+
+    fun normalizeApiBaseUrl(raw: String): String {
+        val withProtocol = if (raw.startsWith("http://") || raw.startsWith("https://")) raw else "http://$raw"
+        return withProtocol.removeSuffix("/api/").removeSuffix("/api").trimEnd('/') + "/api/"
+    }
+
+    fun normalizeImageBaseUrl(raw: String): String {
+        val withProtocol = if (raw.startsWith("http://") || raw.startsWith("https://")) raw else "http://$raw"
+        return withProtocol.removeSuffix("/api/").removeSuffix("/api").trimEnd('/')
+    }
 
     productFlavors {
+        create("emulator") {
+            dimension = "environment"
+            val emulatorBaseUrl = normalizeApiBaseUrl(readConfigValue("EMULATOR_BASE_URL", "http://10.0.2.2:5116/api/"))
+            val emulatorImageBaseUrl = normalizeImageBaseUrl(readConfigValue("EMULATOR_IMAGE_BASE_URL", "http://10.0.2.2:5116"))
+
+            buildConfigField("String", "ENVIRONMENT_NAME", "\"emulator\"")
+            buildConfigField("String", "BASE_URL", "\"$emulatorBaseUrl\"")
+            buildConfigField("String", "IMAGE_BASE_URL", "\"$emulatorImageBaseUrl\"")
+            buildConfigField("boolean", "ENABLE_DEBUG_DIAGNOSTICS", "true")
+            buildConfigField("boolean", "ENABLE_VERBOSE_NETWORK_LOGS", "true")
+            buildConfigField("String", "APP_DISTRIBUTION_LABEL", "\"local\"")
+        }
+
+        create("deviceTester") {
+            dimension = "environment"
+            val testerBaseUrl = normalizeApiBaseUrl(readConfigValue("TESTER_DEVICE_BASE_URL", "http://tester.example.invalid:5116/api/"))
+            val testerImageBaseUrl =
+                normalizeImageBaseUrl(readConfigValue("TESTER_DEVICE_IMAGE_BASE_URL", "http://tester.example.invalid:5116"))
+
+            buildConfigField("String", "ENVIRONMENT_NAME", "\"testerDevice\"")
+            buildConfigField("String", "BASE_URL", "\"$testerBaseUrl\"")
+            buildConfigField("String", "IMAGE_BASE_URL", "\"$testerImageBaseUrl\"")
+            buildConfigField("boolean", "ENABLE_DEBUG_DIAGNOSTICS", "true")
+            buildConfigField("boolean", "ENABLE_VERBOSE_NETWORK_LOGS", "true")
+            buildConfigField("String", "APP_DISTRIBUTION_LABEL", "\"tester\"")
+        }
+
         create("production") {
             dimension = "environment"
+            val productionBaseUrl = normalizeApiBaseUrl(readConfigValue("PRODUCTION_BASE_URL", "http://api.example.invalid:5116/api/"))
+            val productionImageBaseUrl =
+                normalizeImageBaseUrl(readConfigValue("PRODUCTION_IMAGE_BASE_URL", "http://api.example.invalid:5116"))
+
+            buildConfigField("String", "ENVIRONMENT_NAME", "\"production\"")
             buildConfigField("String", "BASE_URL", "\"$productionBaseUrl\"")
-        }
-        create("localhost") {
-            dimension = "environment"
-            buildConfigField("String", "BASE_URL", "\"https://localhost:7219\"")
+            buildConfigField("String", "IMAGE_BASE_URL", "\"$productionImageBaseUrl\"")
+            buildConfigField("boolean", "ENABLE_DEBUG_DIAGNOSTICS", "false")
+            buildConfigField("boolean", "ENABLE_VERBOSE_NETWORK_LOGS", "false")
+            buildConfigField("String", "APP_DISTRIBUTION_LABEL", "\"production\"")
         }
     }
 
@@ -41,17 +105,13 @@ android {
         applicationId = "com.example.travio"
         minSdk = 29
         targetSdk = 36
-        versionCode = 6
+        versionCode = 10
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
         val googleWebClientId = localProperties.getProperty("GOOGLE_WEB_CLIENT_ID", "")
-        buildConfigField(
-            "String",
-            "GOOGLE_WEB_CLIENT_ID",
-            "\"$googleWebClientId\"",
-        )
+        buildConfigField("String", "GOOGLE_WEB_CLIENT_ID", "\"$googleWebClientId\"")
     }
 
     buildTypes {
@@ -86,8 +146,37 @@ android {
     }
 }
 
+secrets {
+    // Keep endpoint selection owned by product flavors and explicit environment files.
+    ignoreList +=
+        listOf(
+            "BASE_URL",
+            "IMAGE_BASE_URL",
+            "EMULATOR_BASE_URL",
+            "EMULATOR_IMAGE_BASE_URL",
+            "TESTER_DEVICE_BASE_URL",
+            "TESTER_DEVICE_IMAGE_BASE_URL",
+            "PRODUCTION_BASE_URL",
+            "PRODUCTION_IMAGE_BASE_URL",
+        )
+}
+
+androidComponents {
+    beforeVariants(selector().all()) { variantBuilder ->
+        val environmentFlavor = variantBuilder.productFlavors.find { it.first == "environment" }?.second
+
+        val isCanonical =
+            (environmentFlavor == "emulator" && variantBuilder.buildType == "debug") ||
+                (environmentFlavor == "deviceTester" && variantBuilder.buildType == "release") ||
+                (environmentFlavor == "production" && variantBuilder.buildType == "release")
+
+        if (!isCanonical) {
+            variantBuilder.enable = false
+        }
+    }
+}
+
 dependencies {
-    // Core modules
     implementation(project(":data"))
     implementation(project(":domain"))
     implementation(project(":core:common"))
@@ -122,20 +211,97 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.test.manifest)
     testImplementation(libs.junit)
 
-    // Splash
     implementation(libs.androidx.core.splashscreen)
-
-    // Hilt
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
-
-    // Compose Navigation
     implementation(libs.androidx.navigation.compose)
-
-    // Coil (image loading) + OkHttp for custom ImageLoader
     implementation(libs.coil.compose)
     implementation(libs.okhttp)
-
-    // Timber logging library
     implementation(libs.timber)
+}
+
+firebaseAppDistribution {
+    artifactType = "APK"
+    releaseNotes = "Tester device build"
+    groups = providers.environmentVariable("FIREBASE_TESTER_GROUPS").orNull ?: ""
+}
+
+tasks.register("assembleTesterDeviceRelease") {
+    group = "build"
+    description = "Compatibility alias for tester distribution artifact assembly."
+    dependsOn("assembleDeviceTesterRelease")
+}
+
+tasks.register("installTesterDeviceRelease") {
+    group = "install"
+    description = "Compatibility alias for tester distribution artifact install."
+    dependsOn("installDeviceTesterRelease")
+}
+
+tasks.register("validateCanonicalReleaseEndpoints") {
+    group = "verification"
+    description = "Validates tester and production endpoint safety for release artifacts."
+
+    doLast {
+        val localProperties = Properties()
+        val localPropertiesFile = rootProject.file("local.properties")
+        if (localPropertiesFile.exists()) {
+            localProperties.load(FileInputStream(localPropertiesFile))
+        }
+
+        val secureProperties = Properties()
+        val securePropertiesFile = rootProject.file("app/config/environment.secrets.properties")
+        if (securePropertiesFile.exists()) {
+            secureProperties.load(FileInputStream(securePropertiesFile))
+        }
+
+        val defaultsProperties = Properties()
+        val defaultsPropertiesFile = rootProject.file("app/config/environment.defaults.properties")
+        if (defaultsPropertiesFile.exists()) {
+            defaultsProperties.load(FileInputStream(defaultsPropertiesFile))
+        }
+
+        fun readConfigValue(
+            key: String,
+            fallback: String,
+        ): String {
+            return providers.environmentVariable(key).orNull
+                ?: secureProperties.getProperty(key)
+                ?: defaultsProperties.getProperty(key)
+                ?: localProperties.getProperty(key)
+                ?: fallback
+        }
+
+        val testerBaseUrl = readConfigValue("TESTER_DEVICE_BASE_URL", "http://tester.example.invalid:5116/api/")
+        val testerImageBaseUrl = readConfigValue("TESTER_DEVICE_IMAGE_BASE_URL", "http://tester.example.invalid:5116")
+        val productionBaseUrl = readConfigValue("PRODUCTION_BASE_URL", "http://api.example.invalid:5116/api/")
+        val productionImageBaseUrl = readConfigValue("PRODUCTION_IMAGE_BASE_URL", "http://api.example.invalid:5116")
+        val localhostAllowedForTester =
+            readConfigValue("LOCALHOST_ALLOWED_FOR_TESTER", "false").equals("true", ignoreCase = true)
+
+        val localhostMarkers = listOf("://localhost", "://127.0.0.1")
+        val emulatorOnlyMarkers = listOf("://10.0.2.2")
+        val releaseEndpoints =
+            mapOf(
+                "TESTER_DEVICE_BASE_URL" to testerBaseUrl,
+                "TESTER_DEVICE_IMAGE_BASE_URL" to testerImageBaseUrl,
+                "PRODUCTION_BASE_URL" to productionBaseUrl,
+                "PRODUCTION_IMAGE_BASE_URL" to productionImageBaseUrl,
+            )
+
+        releaseEndpoints.forEach { (key, value) ->
+            require(!value.contains("example.invalid")) { "$key must be configured for release artifacts" }
+            require(emulatorOnlyMarkers.none { marker -> value.contains(marker) }) {
+                "$key contains forbidden emulator endpoint: $value"
+            }
+
+            val isTesterEndpoint = key.startsWith("TESTER_DEVICE_")
+            val shouldBlockLocalhost = !(isTesterEndpoint && localhostAllowedForTester)
+            if (shouldBlockLocalhost) {
+                require(localhostMarkers.none { marker -> value.contains(marker) }) {
+                    "$key contains forbidden localhost endpoint: $value"
+                }
+            }
+        }
+    }
 }

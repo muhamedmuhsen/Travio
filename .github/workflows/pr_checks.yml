@@ -36,3 +36,9 @@ jobs:
       - name: Build
         run: ./gradlew assembleDebug
 
+      - name: Build Tester Device Artifact
+        run: ./gradlew :app:assembleTesterDeviceRelease
+
+      - name: Validate Release Endpoints
+        run: ./gradlew :app:validateCanonicalReleaseEndpoints
+

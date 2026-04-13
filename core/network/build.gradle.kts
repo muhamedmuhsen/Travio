@@ -13,15 +13,14 @@ android {
 
     flavorDimensions += "environment"
 
-    val properties = Properties()
-    val propertiesFile = rootProject.file("local.properties")
-    if (propertiesFile.exists()) {
-        properties.load(propertiesFile.inputStream())
-    }
+        create("emulator") {
+            dimension = "environment"
+        }
 
-    val productionBaseUrl = properties.getProperty("BASE_URL", "http://10.0.2.2:5116/api/")
+        create("deviceTester") {
+            dimension = "environment"
+        }
 
-    productFlavors {
         create("production") {
             dimension = "environment"
             buildConfigField("String", "BASE_URL", "\"$productionBaseUrl\"")

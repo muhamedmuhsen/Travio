@@ -24,12 +24,60 @@ android {
         localProperties.load(FileInputStream(localPropertiesFile))
     }
 
+    val secureProperties = Properties()
+    val securePropertiesFile = rootProject.file("app/config/environment.secrets.properties")
+    if (securePropertiesFile.exists()) {
+        secureProperties.load(FileInputStream(securePropertiesFile))
+    }
+
+    val defaultsProperties = Properties()
+    val defaultsPropertiesFile = rootProject.file("app/config/environment.defaults.properties")
+    if (defaultsPropertiesFile.exists()) {
+        defaultsProperties.load(FileInputStream(defaultsPropertiesFile))
+    }
+
+    fun readConfigValue(
+        key: String,
+        fallback: String,
+    ): String {
+        return providers.environmentVariable(key).orNull
+            ?: secureProperties.getProperty(key)
+            ?: defaultsProperties.getProperty(key)
+            ?: localProperties.getProperty(key)
+            ?: fallback
+    }
+
+    fun normalizeImageBaseUrl(raw: String): String {
+        val withProtocol = if (raw.startsWith("http://") || raw.startsWith("https://")) raw else "http://$raw"
+        return withProtocol.removeSuffix("/api/").removeSuffix("/api").trimEnd('/')
+    }
+
     productFlavors {
+        create("emulator") {
+            dimension = "environment"
+            val imageBaseUrl =
+                normalizeImageBaseUrl(
+                    readConfigValue("EMULATOR_IMAGE_BASE_URL", "http://10.0.2.2:5116"),
+                )
+            buildConfigField("String", "IMAGE_BASE_URL", "\"$imageBaseUrl\"")
+        }
+
+        create("deviceTester") {
+            dimension = "environment"
+            val imageBaseUrl =
+                normalizeImageBaseUrl(
+                    readConfigValue("TESTER_DEVICE_IMAGE_BASE_URL", "http://tester.example.invalid:5116"),
+                )
+            buildConfigField("String", "IMAGE_BASE_URL", "\"$imageBaseUrl\"")
+        }
+
         create("production") {
             dimension = "environment"
-        }
-        create("localhost") {
-            dimension = "environment"
+            val imageBaseUrl =
+                normalizeImageBaseUrl(
+                    readConfigValue("PRODUCTION_IMAGE_BASE_URL", "http://api.example.invalid:5116"),
+                )
+            buildConfigField("String", "IMAGE_BASE_URL", "\"$imageBaseUrl\"")
         }
     }
 
@@ -41,9 +89,6 @@ android {
 
         val googleWebClientId = localProperties.getProperty("GOOGLE_WEB_CLIENT_ID", "")
         buildConfigField("String", "GOOGLE_WEB_CLIENT_ID", "\"$googleWebClientId\"")
-
-        val imageBaseUrl = localProperties.getProperty("IMAGE_BASE_URL", "http://10.0.2.2:5116")
-        buildConfigField("String", "IMAGE_BASE_URL", "\"$imageBaseUrl\"")
     }
     buildTypes {
         release {
