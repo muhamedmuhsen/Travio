@@ -16,17 +16,32 @@ android {
     namespace = "com.example.travio"
     compileSdk = 36
 
+    flavorDimensions += "environment"
+
     val localProperties = Properties()
     val localPropertiesFile = rootProject.file("local.properties")
     if (localPropertiesFile.exists()) {
         localProperties.load(FileInputStream(localPropertiesFile))
     }
 
+    val productionBaseUrl = localProperties.getProperty("BASE_URL", "http://10.0.2.2:5116/api/")
+
+    productFlavors {
+        create("production") {
+            dimension = "environment"
+            buildConfigField("String", "BASE_URL", "\"$productionBaseUrl\"")
+        }
+        create("localhost") {
+            dimension = "environment"
+            buildConfigField("String", "BASE_URL", "\"https://localhost:7219\"")
+        }
+    }
+
     defaultConfig {
         applicationId = "com.example.travio"
         minSdk = 29
         targetSdk = 36
-        versionCode = 4
+        versionCode = 6
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"

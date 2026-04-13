@@ -11,6 +11,27 @@ android {
     namespace = "com.example.network"
     compileSdk = 36
 
+    flavorDimensions += "environment"
+
+    val properties = Properties()
+    val propertiesFile = rootProject.file("local.properties")
+    if (propertiesFile.exists()) {
+        properties.load(propertiesFile.inputStream())
+    }
+
+    val productionBaseUrl = properties.getProperty("BASE_URL", "http://10.0.2.2:5116/api/")
+
+    productFlavors {
+        create("production") {
+            dimension = "environment"
+            buildConfigField("String", "BASE_URL", "\"$productionBaseUrl\"")
+        }
+        create("localhost") {
+            dimension = "environment"
+            buildConfigField("String", "BASE_URL", "\"http://localhost:5116/api/\"")
+        }
+    }
+
     buildFeatures {
         buildConfig = true
     }
@@ -20,14 +41,6 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
-
-        val properties = Properties()
-        val propertiesFile = rootProject.file("local.properties")
-        if (propertiesFile.exists()) {
-            properties.load(propertiesFile.inputStream())
-        }
-        val baseUrl = properties.getProperty("BASE_URL", "http://10.0.2.2:5116/api/")
-        buildConfigField("String", "BASE_URL", "\"$baseUrl\"")
     }
 
     buildTypes {

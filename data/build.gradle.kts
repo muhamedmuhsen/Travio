@@ -12,6 +12,8 @@ android {
     namespace = "com.example.data"
     compileSdk = 36
 
+    flavorDimensions += "environment"
+
     buildFeatures {
         buildConfig = true
     }
@@ -20,6 +22,15 @@ android {
     val localPropertiesFile = rootProject.file("local.properties")
     if (localPropertiesFile.exists()) {
         localProperties.load(FileInputStream(localPropertiesFile))
+    }
+
+    productFlavors {
+        create("production") {
+            dimension = "environment"
+        }
+        create("localhost") {
+            dimension = "environment"
+        }
     }
 
     defaultConfig {

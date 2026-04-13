@@ -10,6 +10,17 @@ android {
     namespace = "com.example.feature.search"
     compileSdk = 36
 
+    flavorDimensions += "environment"
+
+    productFlavors {
+        create("production") {
+            dimension = "environment"
+        }
+        create("localhost") {
+            dimension = "environment"
+        }
+    }
+
     defaultConfig {
         minSdk = 29
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
