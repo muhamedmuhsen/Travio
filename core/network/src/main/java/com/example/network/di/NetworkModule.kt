@@ -2,13 +2,13 @@ package com.example.network.di
 
 import com.example.domain.repository.auth.TokenProvider
 import com.example.domain.session.SessionEventBus
-import com.example.network.BuildConfig
 import com.example.network.api.AuthApi
 import com.example.network.api.CommunityApi
 import com.example.network.api.DestinationsApi
 import com.example.network.api.UserManagementApi
 import com.example.network.clients.AuthInterceptor
 import com.example.network.clients.TokenAuthenticator
+import com.example.network.config.EnvironmentConfig
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -60,9 +60,9 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideLoggingInterceptor(): HttpLoggingInterceptor =
+    fun provideLoggingInterceptor(environmentConfig: EnvironmentConfig): HttpLoggingInterceptor =
         HttpLoggingInterceptor().apply {
-            level = if (BuildConfig.DEBUG) {
+            level = if (environmentConfig.enableVerboseNetworkLogs) {
                 HttpLoggingInterceptor.Level.BODY
             } else {
                 HttpLoggingInterceptor.Level.NONE
@@ -95,15 +95,20 @@ object NetworkModule {
     fun provideOkHttpClient(
         authInterceptor: AuthInterceptor,
         loggingInterceptor: HttpLoggingInterceptor,
-        authenticator: TokenAuthenticator
+        authenticator: TokenAuthenticator,
+        environmentConfig: EnvironmentConfig
     ): OkHttpClient {
+        require(!(environmentConfig.isProduction && environmentConfig.enableDebugDiagnostics)) {
+            "Production environment cannot enable debug diagnostics in network client"
+        }
+
         return OkHttpClient
             .Builder()
             .addInterceptor(authInterceptor)
             .addInterceptor(loggingInterceptor)
             .authenticator(authenticator)
             .apply {
-                if (BuildConfig.DEBUG) {
+                if (environmentConfig.enableDebugDiagnostics) {
                     addUnsafeTrustManager(this)
                 }
             }.build()
@@ -140,7 +145,14 @@ object NetworkModule {
     @Provides
     @Singleton
     @BaseUrl
-    fun provideBaseUrl(): String {
-        return BuildConfig.BASE_URL
+    fun provideBaseUrl(environmentConfig: EnvironmentConfig): String {
+        return environmentConfig.baseUrl
+    }
+
+    @Provides
+    @Singleton
+    @ImageBaseUrl
+    fun provideImageBaseUrl(environmentConfig: EnvironmentConfig): String {
+        return environmentConfig.imageBaseUrl
     }
 }

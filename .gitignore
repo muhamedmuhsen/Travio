@@ -56,6 +56,7 @@ authWithGoogle.md
 engineering_rules_revised.md
 plan-rulesComplianceAudit.prompt.md
 .env
+/app/config/environment.secrets.properties
 /build_output.txt
 specs
 .specify

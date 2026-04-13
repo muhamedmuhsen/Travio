@@ -23,6 +23,14 @@ For _fastlane_ installation instructions, see [Installing _fastlane_](https://do
 
 Build and distribute beta release to Firebase App Distribution
 
+### android distribute_tester_device
+
+```sh
+[bundle exec] fastlane android distribute_tester_device
+```
+
+Build and distribute tester-device release to Firebase App Distribution
+
 ----
 
 This README.md is auto-generated and will be re-generated every time [_fastlane_](https://fastlane.tools) is run.

@@ -3,6 +3,7 @@ package com.example.travio
 import android.app.Application
 import coil.Coil
 import coil.ImageLoader
+import com.example.travio.config.AppEnvironmentConfig
 import dagger.hilt.android.HiltAndroidApp
 import okhttp3.OkHttpClient
 import timber.log.Timber
@@ -17,7 +18,11 @@ import javax.net.ssl.X509TrustManager
 class Travio : Application() {
     override fun onCreate() {
         super.onCreate()
-        if (BuildConfig.DEBUG) {
+
+        // Fails fast when tester/production variants are built with placeholder endpoint values.
+        val environmentConfig = AppEnvironmentConfig.fromBuildConfig()
+
+        if (environmentConfig.enableDebugDiagnostics) {
             Timber.plant(Timber.DebugTree())
             Coil.setImageLoader(
                 ImageLoader.Builder(this)

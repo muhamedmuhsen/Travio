@@ -13,14 +13,27 @@ platform :android do
     File.write(path, s)
     UI.message("Version code updated: #{current_version_code} → #{new_version_code}")
 
-    gradle(task: "clean assembleLocalhostDebug")
+    gradle(task: "clean assembleEmulatorDebug")
 
     firebase_app_distribution(
       app: ENV["FIREBASE_APP_ID"],
-      android_artifact_path: "app/build/outputs/apk/localhost/debug/app-localhost-debug.apk",
+      android_artifact_path: "app/build/outputs/apk/emulator/debug/app-emulator-debug.apk",
       testers: ENV["FIREBASE_TESTERS"],
       firebase_cli_token: ENV["FIREBASE_CLI_TOKEN"],
       release_notes: "Beta release - #{git_branch} - #{last_git_commit[:message]}"
+    )
+  end
+
+  desc "Build and distribute tester-device release to Firebase App Distribution"
+  lane :distribute_tester_device do
+    gradle(task: "clean assembleTesterDeviceRelease")
+
+    firebase_app_distribution(
+      app: ENV["FIREBASE_APP_ID"],
+      android_artifact_path: "app/build/outputs/apk/deviceTester/release/app-deviceTester-release.apk",
+      testers: ENV["FIREBASE_TESTERS"],
+      firebase_cli_token: ENV["FIREBASE_CLI_TOKEN"],
+      release_notes: "Tester device release - #{git_branch} - #{last_git_commit[:message]}"
     )
   end
 end
