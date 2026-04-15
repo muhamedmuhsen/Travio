@@ -5,6 +5,7 @@ import com.example.domain.session.SessionEventBus
 import com.example.network.api.AuthApi
 import com.example.network.api.CommunityApi
 import com.example.network.api.DestinationsApi
+import com.example.network.api.FavoritesApi
 import com.example.network.api.SurveyApi
 import com.example.network.api.UserManagementApi
 import com.example.network.clients.AuthInterceptor
@@ -141,6 +142,12 @@ object NetworkModule {
     @Singleton
     fun provideDestinationApi(retrofit: Retrofit): DestinationsApi {
         return retrofit.create(DestinationsApi::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideFavoritesApi(retrofit: Retrofit): FavoritesApi {
+        return retrofit.create(FavoritesApi::class.java)
     }
 
     @Provides

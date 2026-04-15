@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.HorizontalDivider
@@ -24,6 +23,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -60,11 +60,15 @@ fun FavoriteScreen(
         modifier = modifier,
         state = state,
         onTabSelected = viewModel::onTabSelected,
-        onDeletePlace = viewModel::onDeletePlace,
+        onDeletePlace = { placeId ->
+            val destinationId = placeId.toIntOrNull() ?: return@FavoriteContent
+            viewModel.onDestinationFavoriteToggled(destinationId = destinationId, shouldFavorite = false)
+        },
         onDeleteTrip = viewModel::onDeleteTrip,
         onRetryCurrentTab = viewModel::onRetryCurrentTab,
         onLoadMoreCurrentTab = viewModel::onLoadMoreCurrentTab,
         onRetryLoadMoreCurrentTab = viewModel::onRetryLoadMoreCurrentTab,
+        onDestinationItemVisible = viewModel::onDestinationItemVisible,
         onBottomBarItemSelected = { index ->
             when (index) {
                 0 -> navigateToHome()
@@ -86,6 +90,7 @@ fun FavoriteContent(
     onRetryCurrentTab: () -> Unit,
     onLoadMoreCurrentTab: () -> Unit,
     onRetryLoadMoreCurrentTab: () -> Unit,
+    onDestinationItemVisible: (Int) -> Unit,
     onBottomBarItemSelected: (Int) -> Unit
 ) {
     Scaffold(
@@ -140,7 +145,9 @@ fun FavoriteContent(
                         onDeletePlace = onDeletePlace,
                         onDeleteTrip = onDeleteTrip,
                         onLoadMore = onLoadMoreCurrentTab,
-                        onRetryLoadMore = onRetryLoadMoreCurrentTab
+                        onRetryLoadMore = onRetryLoadMoreCurrentTab,
+                        onDestinationItemVisible = onDestinationItemVisible,
+                        inFlightMutationIds = state.inFlightMutationIds
                     )
                 }
             }
@@ -181,7 +188,7 @@ private fun FavoriteHeaderIcon() {
         contentAlignment = Alignment.Center,
         modifier = Modifier
             .size(44.dp)
-            .background(color = MaterialTheme.colorScheme.errorContainer, shape = CircleShape)
+            .background(color = MaterialTheme.colorScheme.errorContainer, shape = androidx.compose.foundation.shape.CircleShape)
     ) {
         Icon(
             painter = painterResource(id = R.drawable.favorite_icon),
@@ -201,7 +208,9 @@ private fun FavoriteList(
     onDeletePlace: (String) -> Unit,
     onDeleteTrip: (String) -> Unit,
     onLoadMore: () -> Unit,
-    onRetryLoadMore: () -> Unit
+    onRetryLoadMore: () -> Unit,
+    onDestinationItemVisible: (Int) -> Unit,
+    inFlightMutationIds: Set<Int>
 ) {
     LazyColumn(
         modifier = modifier.fillMaxSize(),
@@ -212,11 +221,21 @@ private fun FavoriteList(
             items = destinations,
             key = { place -> "place_${place.id}" }
         ) { place ->
+            val index = destinations.indexOf(place)
+            if (index >= 0) {
+                LaunchedEffect(index, destinations.size, paginationState.hasMore, paginationState.isLoadingMore) {
+                    val remainingItems = destinations.lastIndex - index
+                    if (!paginationState.isLoadingMore && paginationState.hasMore && remainingItems <= 3) {
+                        onDestinationItemVisible(index)
+                    }
+                }
+            }
             PlaceCard(
                 country = place.name,
                 city = place.description,
                 imageUrl = place.imageUrls.firstOrNull().orEmpty(),
                 isFavorite = true,
+                isFavoriteActionEnabled = place.id !in inFlightMutationIds,
                 onFavoriteClick = { onDeletePlace(place.id.toString()) },
                 onClick = {}
             )
@@ -304,7 +323,7 @@ private fun FavoriteEmptyState(
                     .size(96.dp)
                     .background(
                         color = MaterialTheme.colorScheme.errorContainer,
-                        shape = CircleShape
+                        shape = androidx.compose.foundation.shape.CircleShape
                     )
             ) {
                 Icon(
@@ -384,8 +403,8 @@ private fun FavoriteLoadingState(modifier: Modifier = Modifier) {
     }
 }
 
-@Preview(name = "Empty — Light", showBackground = true)
-@Preview(name = "Empty — Dark", showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Preview(name = "Empty - Light", showBackground = true)
+@Preview(name = "Empty - Dark", showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 private fun FavoriteScreenEmptyPreview() {
     TravioTheme {
@@ -400,13 +419,14 @@ private fun FavoriteScreenEmptyPreview() {
             onRetryCurrentTab = {},
             onLoadMoreCurrentTab = {},
             onRetryLoadMoreCurrentTab = {},
+            onDestinationItemVisible = {},
             onBottomBarItemSelected = {}
         )
     }
 }
 
-@Preview(name = "With Data — Light", showBackground = true)
-@Preview(name = "With Data — Dark", showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Preview(name = "With Data - Light", showBackground = true)
+@Preview(name = "With Data - Dark", showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 private fun FavoriteScreenWithDataPreview() {
     TravioTheme {
@@ -461,6 +481,7 @@ private fun FavoriteScreenWithDataPreview() {
             onRetryCurrentTab = {},
             onLoadMoreCurrentTab = {},
             onRetryLoadMoreCurrentTab = {},
+            onDestinationItemVisible = {},
             onBottomBarItemSelected = {}
         )
     }

@@ -6,6 +6,14 @@ import com.dev.utils.uitext.UiText
 sealed interface FavoriteEvent {
     data object OnScreenOpened : FavoriteEvent
 
+    data object OnLoadDestinations : FavoriteEvent
+
+    data object OnLoadMoreDestinations : FavoriteEvent
+
+    data object OnRetryDestinations : FavoriteEvent
+
+    data object OnRetryLoadMoreDestinations : FavoriteEvent
+
     data class OnTabSelected(val tab: SectionTab) : FavoriteEvent
 
     data object OnRetryCurrentTab : FavoriteEvent
@@ -21,4 +29,6 @@ sealed interface FavoriteEvent {
 
 sealed interface FavoriteEffect {
     data class ShowMessage(val message: UiText) : FavoriteEffect
+
+    data object ScrollToTop : FavoriteEffect
 }

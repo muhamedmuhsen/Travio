@@ -60,11 +60,13 @@ class DestinationDetailViewModelTest {
     private fun createViewModel(id: Int = 1): DestinationDetailViewModel {
         val savedStateHandle = SavedStateHandle(mapOf("id" to id))
         return DestinationDetailViewModel(
-            getDestinationByIdUseCase,
-            getAllDestinationsUseCase,
-            favoritePlaceUseCase,
-            getAllPlacesUseCase,
-            savedStateHandle
+            getDestinationByIdUseCase = getDestinationByIdUseCase,
+            getAllDestinationsUseCase = getAllDestinationsUseCase,
+            favoritePlaceUseCase = favoritePlaceUseCase,
+            addDestinationFavoriteUseCase = null,
+            observeFavoriteDestinationIdsUseCase = null,
+            getAllPlacesUseCase = getAllPlacesUseCase,
+            savedStateHandle = savedStateHandle
         )
     }
 

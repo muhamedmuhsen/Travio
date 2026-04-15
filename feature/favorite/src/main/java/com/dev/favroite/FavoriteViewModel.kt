@@ -8,12 +8,21 @@ import com.dev.favroite.FavoritesTabUiState.Loading
 import com.dev.favroite.FavoritesTabUiState.Success
 import com.dev.favroite.components.SectionTab
 import com.dev.utils.uitext.UiText
+import com.example.domain.model.favorite.FavoriteDestination
+import com.example.domain.model.favorite.FavoritesPage
+import com.example.domain.usecase.favorite.destination.AddDestinationFavoriteUseCase
+import com.example.domain.usecase.favorite.destination.GetFavoriteDestinationsPageUseCase
+import com.example.domain.usecase.favorite.destination.ObserveFavoriteDestinationIdsUseCase
+import com.example.domain.usecase.favorite.destination.RemoveDestinationFavoriteUseCase
 import com.example.domain.usecase.favorite.place.DeletePlaceUseCase
 import com.example.domain.usecase.favorite.place.GetAllPlacesUseCase
 import com.example.domain.usecase.favorite.preference.GetFavoriteSelectedTabUseCase
 import com.example.domain.usecase.favorite.preference.SaveFavoriteSelectedTabUseCase
 import com.example.domain.usecase.favorite.trip.DeleteTripUseCase
 import com.example.domain.usecase.favorite.trip.GetAllTripsUseCase
+import com.example.domain.utils.DataError
+import com.example.domain.utils.Result
+import com.example.feature.favorite.R
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -31,8 +40,12 @@ class FavoriteViewModel @Inject constructor(
     private val getAllTripsUseCase: GetAllTripsUseCase,
     private val deletePlaceUseCase: DeletePlaceUseCase,
     private val deleteTripUseCase: DeleteTripUseCase,
+    private val addDestinationFavoriteUseCase: AddDestinationFavoriteUseCase? = null,
+    private val removeDestinationFavoriteUseCase: RemoveDestinationFavoriteUseCase? = null,
+    private val observeFavoriteDestinationIdsUseCase: ObserveFavoriteDestinationIdsUseCase? = null,
     private val getFavoriteSelectedTabUseCase: GetFavoriteSelectedTabUseCase,
-    private val saveFavoriteSelectedTabUseCase: SaveFavoriteSelectedTabUseCase
+    private val saveFavoriteSelectedTabUseCase: SaveFavoriteSelectedTabUseCase,
+    private val getFavoriteDestinationsPageUseCase: GetFavoriteDestinationsPageUseCase? = null
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(FavoriteState())
@@ -43,12 +56,32 @@ class FavoriteViewModel @Inject constructor(
 
     private var hasLoadedDestinations = false
     private var hasLoadedTrips = false
+    private val queuedMutationIntents = mutableMapOf<Int, MutationIntent>()
+    private val activeMutationIntents = mutableMapOf<Int, MutationIntent>()
 
     init {
+        observeSharedFavoriteIds()
         viewModelScope.launch {
             val restoredTab = mapToSectionTab(getFavoriteSelectedTabUseCase())
             _state.update { it.copy(selectedTab = restoredTab) }
             loadSelectedTabIfNeeded()
+        }
+    }
+
+    private fun observeSharedFavoriteIds() {
+        val sharedObserver = observeFavoriteDestinationIdsUseCase ?: return
+        viewModelScope.launch {
+            sharedObserver()
+                .catch { throwable ->
+                    System.err.println("FavoriteViewModel observer failed: ${throwable.message}")
+                    _effect.trySend(FavoriteEffect.ShowMessage(UiText.StringResource(R.string.favorite_sync_unavailable)))
+                    if (_state.value.loadedDestinations.isEmpty()) {
+                        loadDestinationsIfNeeded(force = true)
+                    }
+                }
+                .collect { ids ->
+                    _state.update { it.copy(favoriteIds = ids) }
+                }
         }
     }
 
@@ -68,38 +101,155 @@ class FavoriteViewModel @Inject constructor(
 
     private fun loadDestinationsIfNeeded(force: Boolean = false) {
         if (!force && hasLoadedDestinations) return
-        _state.update { it.copy(destinationsState = Loading) }
+        fetchDestinationPage(pageIndex = FIRST_PAGE, isInitialLoad = true)
+    }
+
+    private fun fetchDestinationPage(
+        pageIndex: Int,
+        isInitialLoad: Boolean
+    ) {
+        if (isInitialLoad) {
+            _state.update {
+                it.copy(
+                    destinationsState = Loading,
+                    destinationsPagination = it.destinationsPagination.copy(
+                        isLoadingMore = false,
+                        loadMoreError = null
+                    )
+                )
+            }
+        } else {
+            val currentPagination = _state.value.destinationsPagination
+            if (currentPagination.isLoadingMore) return
+            _state.update {
+                it.copy(
+                    destinationsPagination = it.destinationsPagination.copy(
+                        isLoadingMore = true,
+                        loadMoreError = null
+                    )
+                )
+            }
+        }
+
         viewModelScope.launch {
-            getAllPlacesUseCase()
-                .catch { e ->
-                    _state.update {
-                        it.copy(
-                            destinationsState = Error(
-                                UiText.DynamicString(
-                                    e.message ?: "Unknown error"
+            when (val result = requestDestinationPage(pageIndex, PAGE_SIZE)) {
+                is Result.Success -> {
+                    applyDestinationPage(page = result.data, replaceExisting = isInitialLoad)
+                    hasLoadedDestinations = true
+                    if (isInitialLoad) {
+                        _effect.trySend(FavoriteEffect.ScrollToTop)
+                    }
+                }
+
+                is Result.Error -> {
+                    if (isInitialLoad) {
+                        _state.update {
+                            it.copy(
+                                destinationsState = Error(UiText.StringResource(R.string.favorite_error_destinations)),
+                                destinationsPagination = FavoritesPaginationState(pageSize = PAGE_SIZE)
+                            )
+                        }
+                    } else {
+                        _state.update {
+                            it.copy(
+                                destinationsPagination = it.destinationsPagination.copy(
+                                    isLoadingMore = false,
+                                    loadMoreError = UiText.StringResource(R.string.favorite_error_destinations)
                                 )
                             )
-                        )
+                        }
                     }
                 }
-                .collect { places ->
-                    val sortedPlaces = places
-                        .filter { it.name.isNotBlank() }
-                        .sortedByDescending { it.id }
-                    hasLoadedDestinations = true
-                    _state.update {
-                        it.copy(
-                            loadedDestinations = sortedPlaces,
-                            destinationsState = if (sortedPlaces.isEmpty()) Empty else Success(sortedPlaces),
-                            destinationsPagination = it.destinationsPagination.copy(
-                                nextCursor = null,
-                                hasMore = false,
-                                isLoadingMore = false,
-                                loadMoreError = null
-                            )
-                        )
-                    }
-                }
+            }
+        }
+    }
+
+    private suspend fun requestDestinationPage(
+        pageIndex: Int,
+        pageSize: Int
+    ): Result<FavoritesPage, DataError> {
+        val modernUseCase = getFavoriteDestinationsPageUseCase
+        if (modernUseCase != null) {
+            return modernUseCase(pageIndex = pageIndex, pageSize = pageSize)
+        }
+
+        if (pageIndex > FIRST_PAGE) {
+            val currentItems = _state.value.loadedDestinations
+            return Result.Success(
+                FavoritesPage(
+                    pageIndex = pageIndex,
+                    pageSize = pageSize,
+                    count = currentItems.size,
+                    items = emptyList()
+                )
+            )
+        }
+
+        return try {
+            val places = getAllPlacesUseCase().first()
+            val mappedItems = places.map {
+                FavoriteDestination(
+                    destinationId = it.id,
+                    name = it.name,
+                    description = it.description,
+                    rating = 0.0,
+                    cityName = it.description,
+                    imageUrls = it.imageUrls
+                )
+            }
+            Result.Success(
+                FavoritesPage(
+                    pageIndex = FIRST_PAGE,
+                    pageSize = pageSize,
+                    count = mappedItems.size,
+                    items = mappedItems
+                )
+            )
+        } catch (_: Exception) {
+            Result.Error(DataError.Network.UnexpectedResponse)
+        }
+    }
+
+    private fun applyDestinationPage(
+        page: FavoritesPage,
+        replaceExisting: Boolean
+    ) {
+        val mappedPageItems = page.items
+            .filter { it.destinationId > 0 }
+            .map { destination ->
+                com.example.domain.model.favorite.Place(
+                    id = destination.destinationId,
+                    name = destination.name.ifBlank {
+                        destination.cityName.ifBlank { destination.description }
+                    },
+                    description = destination.cityName.ifBlank { destination.description },
+                    imageUrls = destination.imageUrls
+                )
+            }
+
+        val mergedItems = if (replaceExisting) {
+            mappedPageItems
+        } else {
+            (_state.value.loadedDestinations + mappedPageItems).distinctBy { it.id }
+        }
+
+        val hasMore = mergedItems.size < page.count
+        val updatedTabState = if (mergedItems.isEmpty()) Empty else Success(mergedItems)
+
+        _state.update {
+            it.copy(
+                loadedDestinations = mergedItems,
+                destinationsState = updatedTabState,
+                destinationsPagination = it.destinationsPagination.copy(
+                    currentPageIndex = page.pageIndex,
+                    pageSize = page.pageSize,
+                    totalCount = page.count,
+                    loadedCount = mergedItems.size,
+                    hasMore = hasMore,
+                    isLoadingMore = false,
+                    loadMoreError = null
+                )
+            )
         }
     }
 
@@ -129,7 +279,10 @@ class FavoriteViewModel @Inject constructor(
                             loadedTrips = validTrips,
                             tripsState = if (validTrips.isEmpty()) Empty else Success(validTrips),
                             tripsPagination = it.tripsPagination.copy(
-                                nextCursor = null,
+                                currentPageIndex = FIRST_PAGE,
+                                pageSize = validTrips.size.coerceAtLeast(1),
+                                totalCount = validTrips.size,
+                                loadedCount = validTrips.size,
                                 hasMore = false,
                                 isLoadingMore = false,
                                 loadMoreError = null
@@ -146,6 +299,14 @@ class FavoriteViewModel @Inject constructor(
             saveFavoriteSelectedTabUseCase(tab.name)
         }
         loadSelectedTabIfNeeded()
+    }
+
+    fun onDestinationItemVisible(index: Int) {
+        if (_state.value.selectedTab != SectionTab.Destinations) return
+        val remainingItems = _state.value.loadedDestinations.lastIndex - index
+        if (remainingItems <= PREFETCH_THRESHOLD) {
+            onLoadMoreCurrentTab()
+        }
     }
 
     fun onRetryCurrentTab() {
@@ -169,50 +330,114 @@ class FavoriteViewModel @Inject constructor(
         }
     }
 
-    private fun loadMoreDestinations(force: Boolean = false) {
-        val pagination = _state.value.destinationsPagination
-        if (!force && (!pagination.hasMore || pagination.isLoadingMore)) return
+    fun onDestinationFavoriteToggled(
+        destinationId: Int,
+        shouldFavorite: Boolean
+    ) {
+        if (destinationId <= 0) {
+            _effect.trySend(FavoriteEffect.ShowMessage(UiText.StringResource(R.string.favorite_invalid_destination_id)))
+            return
+        }
+        val intent = if (shouldFavorite) MutationIntent.Add else MutationIntent.Remove
+        processDestinationMutation(destinationId = destinationId, intent = intent)
+    }
+
+    private fun processDestinationMutation(
+        destinationId: Int,
+        intent: MutationIntent
+    ) {
+        if (destinationId in _state.value.inFlightMutationIds) {
+            queuedMutationIntents[destinationId] = intent
+            return
+        }
+
+        activeMutationIntents[destinationId] = intent
+        val beforeItems = _state.value.loadedDestinations
+
+        val optimisticItems = when (intent) {
+            MutationIntent.Add -> {
+                beforeItems
+            }
+
+            MutationIntent.Remove -> beforeItems.filterNot { it.id == destinationId }
+        }
 
         _state.update {
             it.copy(
-                destinationsPagination = it.destinationsPagination.copy(
-                    isLoadingMore = true,
-                    loadMoreError = null
-                )
+                inFlightMutationIds = it.inFlightMutationIds + destinationId,
+                loadedDestinations = optimisticItems,
+                destinationsState = if (optimisticItems.isEmpty()) Empty else Success(optimisticItems)
             )
         }
 
         viewModelScope.launch {
-            try {
-                // Repository currently returns full snapshot flow; append step remains deduplicated.
-                val page = getAllPlacesUseCase().first()
-                val merged = (_state.value.loadedDestinations + page)
-                    .distinctBy { it.id }
-                    .sortedByDescending { it.id }
-
-                _state.update {
-                    it.copy(
-                        loadedDestinations = merged,
-                        destinationsState = if (merged.isEmpty()) Empty else Success(merged),
-                        destinationsPagination = it.destinationsPagination.copy(
-                            isLoadingMore = false,
-                            loadMoreError = null,
-                            hasMore = false,
-                            nextCursor = null
+            val result = when (intent) {
+                MutationIntent.Add -> {
+                    val addUseCase = addDestinationFavoriteUseCase
+                    if (addUseCase != null) {
+                        addUseCase(destinationId)
+                    } else {
+                        Result.Success(
+                            com.example.domain.model.favorite.FavoriteMutationResult(
+                                isSuccess = true,
+                                message = null,
+                                errors = emptyList()
+                            )
                         )
-                    )
+                    }
                 }
-            } catch (e: Exception) {
-                _state.update {
-                    it.copy(
-                        destinationsPagination = it.destinationsPagination.copy(
-                            isLoadingMore = false,
-                            loadMoreError = UiText.DynamicString(e.message ?: "Load more failed")
+
+                MutationIntent.Remove -> {
+                    val removeUseCase = removeDestinationFavoriteUseCase
+                    if (removeUseCase != null) {
+                        removeUseCase(destinationId)
+                    } else {
+                        Result.Success(
+                            com.example.domain.model.favorite.FavoriteMutationResult(
+                                isSuccess = true,
+                                message = null,
+                                errors = emptyList()
+                            )
                         )
-                    )
+                    }
                 }
             }
+
+            if (result is Result.Error) {
+                _state.update {
+                    it.copy(
+                        loadedDestinations = beforeItems,
+                        destinationsState = if (beforeItems.isEmpty()) Empty else Success(beforeItems)
+                    )
+                }
+                _effect.trySend(FavoriteEffect.ShowMessage(UiText.StringResource(R.string.favorite_error_destinations)))
+            } else {
+                reconcileFavoritesAfterMutation()
+            }
+
+            _state.update {
+                it.copy(inFlightMutationIds = it.inFlightMutationIds - destinationId)
+            }
+
+            val activeIntent = activeMutationIntents.remove(destinationId)
+            val queuedIntent = queuedMutationIntents.remove(destinationId)
+            if (queuedIntent != null && queuedIntent != activeIntent) {
+                processDestinationMutation(destinationId = destinationId, intent = queuedIntent)
+            }
         }
+    }
+
+    private fun reconcileFavoritesAfterMutation() {
+        // Re-fetch first page so favorites list and shared IDs settle to server truth after mutation.
+        fetchDestinationPage(pageIndex = FIRST_PAGE, isInitialLoad = true)
+    }
+
+    private fun loadMoreDestinations(force: Boolean = false) {
+        val pagination = _state.value.destinationsPagination
+        if (!force && (!pagination.hasMore || pagination.isLoadingMore)) return
+
+        val nextPageIndex = if (pagination.currentPageIndex < FIRST_PAGE) FIRST_PAGE else pagination.currentPageIndex + 1
+        fetchDestinationPage(pageIndex = nextPageIndex, isInitialLoad = false)
     }
 
     private fun loadMoreTrips(force: Boolean = false) {
@@ -230,7 +455,6 @@ class FavoriteViewModel @Inject constructor(
 
         viewModelScope.launch {
             try {
-                // Repository currently returns full snapshot flow; append step remains deduplicated.
                 val page = getAllTripsUseCase().first()
                 val merged = (_state.value.loadedTrips + page)
                     .distinctBy { it.id }
@@ -243,8 +467,7 @@ class FavoriteViewModel @Inject constructor(
                         tripsPagination = it.tripsPagination.copy(
                             isLoadingMore = false,
                             loadMoreError = null,
-                            hasMore = false,
-                            nextCursor = null
+                            hasMore = false
                         )
                     )
                 }
@@ -262,38 +485,8 @@ class FavoriteViewModel @Inject constructor(
     }
 
     fun onDeletePlace(placeId: String) {
-        viewModelScope.launch {
-            val current = _state.value.loadedDestinations
-            val removedIndex = current.indexOfFirst { it.id.toString() == placeId }
-            if (removedIndex == -1) return@launch
-            val removedItem = current[removedIndex]
-            val optimistic = current.filterNot { it.id.toString() == placeId }
-
-            _state.update {
-                it.copy(
-                    loadedDestinations = optimistic,
-                    destinationsState = if (optimistic.isEmpty()) Empty else Success(optimistic)
-                )
-            }
-
-            when (deletePlaceUseCase(placeId)) {
-                is com.example.domain.utils.Result.Success -> {
-                }
-
-                is com.example.domain.utils.Result.Error -> {
-                    val rollback = _state.value.loadedDestinations.toMutableList().apply {
-                        add(removedIndex.coerceAtMost(size), removedItem)
-                    }
-                    _state.update {
-                        it.copy(
-                            loadedDestinations = rollback,
-                            destinationsState = Success(rollback)
-                        )
-                    }
-                    _effect.trySend(FavoriteEffect.ShowMessage(UiText.DynamicString("Failed to remove destination")))
-                }
-            }
-        }
+        val destinationId = placeId.toIntOrNull() ?: return
+        onDestinationFavoriteToggled(destinationId = destinationId, shouldFavorite = false)
     }
 
     fun onDeleteTrip(tripId: String) {
@@ -312,10 +505,9 @@ class FavoriteViewModel @Inject constructor(
             }
 
             when (deleteTripUseCase(tripId)) {
-                is com.example.domain.utils.Result.Success -> {
-                }
+                is Result.Success -> Unit
 
-                is com.example.domain.utils.Result.Error -> {
+                is Result.Error -> {
                     val rollback = _state.value.loadedTrips.toMutableList().apply {
                         add(removedIndex.coerceAtMost(size), removedItem)
                     }
@@ -325,7 +517,7 @@ class FavoriteViewModel @Inject constructor(
                             tripsState = Success(rollback)
                         )
                     }
-                    _effect.trySend(FavoriteEffect.ShowMessage(UiText.DynamicString("Failed to remove trip")))
+                    _effect.trySend(FavoriteEffect.ShowMessage(UiText.StringResource(R.string.favorite_error_trips)))
                 }
             }
         }
@@ -349,5 +541,16 @@ class FavoriteViewModel @Inject constructor(
 
     fun onProfileClicked() {
         _state.update { it.copy(selectedItem = 4) }
+    }
+
+    private companion object {
+        const val FIRST_PAGE = 1
+        const val PAGE_SIZE = 10
+        const val PREFETCH_THRESHOLD = 3
+    }
+
+    private enum class MutationIntent {
+        Add,
+        Remove
     }
 }

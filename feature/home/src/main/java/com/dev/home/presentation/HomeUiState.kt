@@ -10,5 +10,6 @@ data class HomeUiState(
     val recommendedDestinationsState: UiState<List<Destination>> = UiState.Idle,
     val recentViewedDestinationsState: UiState<List<Destination>> = UiState.Idle,
     val nearbyDestinationsState: UiState<List<Destination>> = UiState.Idle,
-    val favoriteIds: Set<Int> = emptySet()
+    val favoriteIds: Set<Int> = emptySet(),
+    val favoriteMutationInFlightIds: Set<Int> = emptySet()
 )

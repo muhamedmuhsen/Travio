@@ -5,9 +5,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.example.common.navigation.DestinationDetailRoute
+import com.example.domain.model.favorite.FavoriteMutationResult
 import com.example.domain.model.favorite.toPlace
 import com.example.domain.usecase.destinations.GetAllDestinationsUseCase
 import com.example.domain.usecase.destinations.GetDestinationByIdUseCase
+import com.example.domain.usecase.favorite.destination.AddDestinationFavoriteUseCase
+import com.example.domain.usecase.favorite.destination.ObserveFavoriteDestinationIdsUseCase
+import com.example.domain.usecase.favorite.destination.RemoveDestinationFavoriteUseCase
 import com.example.domain.usecase.favorite.place.FavoritePlaceUseCase
 import com.example.domain.usecase.favorite.place.GetAllPlacesUseCase
 import com.example.domain.utils.DataError
@@ -29,6 +33,9 @@ class DestinationDetailViewModel @Inject constructor(
     private val getDestinationByIdUseCase: GetDestinationByIdUseCase,
     private val getAllDestinationsUseCase: GetAllDestinationsUseCase,
     private val favoritePlaceUseCase: FavoritePlaceUseCase,
+    private val addDestinationFavoriteUseCase: AddDestinationFavoriteUseCase? = null,
+    private val removeDestinationFavoriteUseCase: RemoveDestinationFavoriteUseCase? = null,
+    private val observeFavoriteDestinationIdsUseCase: ObserveFavoriteDestinationIdsUseCase? = null,
     private val getAllPlacesUseCase: GetAllPlacesUseCase,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
@@ -54,6 +61,19 @@ class DestinationDetailViewModel @Inject constructor(
 
     private fun observeFavoriteState() {
         val currentDestinationId = destinationId ?: return
+
+        val sharedObserver = observeFavoriteDestinationIdsUseCase
+        if (sharedObserver != null) {
+            viewModelScope.launch {
+                sharedObserver()
+                    .map { ids -> currentDestinationId in ids }
+                    .distinctUntilChanged()
+                    .collect { isFavorite ->
+                        _uiState.update { it.copy(isFavorite = isFavorite) }
+                    }
+            }
+            return
+        }
 
         viewModelScope.launch {
             getAllPlacesUseCase()
@@ -213,21 +233,82 @@ class DestinationDetailViewModel @Inject constructor(
         if (detailState is UiState.Success) {
             val destination = detailState.data
             viewModelScope.launch {
-                val newState = !_uiState.value.isFavorite
-                _uiState.value = _uiState.value.copy(isFavorite = newState)
+                if (_uiState.value.isFavoriteMutationInFlight) return@launch
 
-                when (favoritePlaceUseCase(destination.toPlace())) {
+                val newState = !_uiState.value.isFavorite
+                _uiState.value = _uiState.value.copy(
+                    isFavorite = newState,
+                    isFavoriteMutationInFlight = true
+                )
+
+                val result = if (newState) {
+                    if (addDestinationFavoriteUseCase != null) {
+                        addDestinationFavoriteUseCase(destination.destinationID)
+                    } else {
+                        when (favoritePlaceUseCase(destination.toPlace())) {
+                            is Result.Success -> Result.Success(
+                                FavoriteMutationResult(
+                                    isSuccess = true,
+                                    message = null,
+                                    errors = emptyList()
+                                )
+                            )
+
+                            is Result.Error -> Result.Error(DataError.Local.DatabaseError)
+                        }
+                    }
+                } else {
+                    if (removeDestinationFavoriteUseCase != null) {
+                        removeDestinationFavoriteUseCase(destination.destinationID)
+                    } else {
+                        when (favoritePlaceUseCase(destination.toPlace())) {
+                            is Result.Success -> Result.Success(
+                                FavoriteMutationResult(
+                                    isSuccess = true,
+                                    message = null,
+                                    errors = emptyList()
+                                )
+                            )
+
+                            is Result.Error -> Result.Error(DataError.Local.DatabaseError)
+                        }
+                    }
+                }
+
+                when (result) {
                     is Result.Success -> {
-                        val message = if (newState) "Saved to favourites" else "Removed from favourites"
+                        val message = result.data.message
+                            ?.takeIf { it.isNotBlank() }
+                            ?: if (newState) {
+                                "Saved to favourites"
+                            } else {
+                                "Removed from favourites"
+                            }
                         _events.send(DestinationDetailEvent.ShowSuccessSnackbar(message))
                     }
                     is Result.Error -> {
                         // Revert
                         _uiState.value = _uiState.value.copy(isFavorite = !newState)
-                        _events.send(DestinationDetailEvent.ShowErrorSnackbar("Action failed"))
+                        _events.send(DestinationDetailEvent.ShowErrorSnackbar(mapFavoriteMutationError(result.error)))
                     }
                 }
+
+                _uiState.value = _uiState.value.copy(isFavoriteMutationInFlight = false)
             }
+        }
+    }
+
+    private fun mapFavoriteMutationError(error: DataError): String {
+        return when (error) {
+            DataError.Network.NoInternetConnection -> "No internet connection. Check your network and try again."
+            DataError.Network.Timeout -> "Request timed out. Please try again."
+            DataError.Network.BadRequest,
+            DataError.Network.ServerError,
+            DataError.Network.UnexpectedResponse,
+            DataError.Network.TooManyRequests -> "Server error while updating favorites. Please try again."
+            DataError.Validation.InvalidInputs,
+            DataError.Data.NotFound -> "This destination is no longer available for favorites."
+            else -> "Could not update favorites. Please try again."
         }
     }
 
