@@ -2,7 +2,7 @@
 <resources>
     <!-- Favorite Screen - Header -->
     <string name="favorite_title">My Favorites</string>
-    <string name="favorite_items_count">%d items favourite</string>
+    <string name="favorite_items_count">%d favorite items</string>
 
     <!-- Favorite Screen - Tabs -->
     <string name="favorite_tab_destinations">Destinations</string>
@@ -19,11 +19,13 @@
     <!-- Favorite Screen - Error State -->
     <string name="favorite_error_destinations">Could not load favorite destinations</string>
     <string name="favorite_error_trips">Could not load favorite trips</string>
+    <string name="favorite_sync_unavailable">Favorite sync is temporarily unavailable. Pull to refresh or try again.</string>
+    <string name="favorite_invalid_destination_id">This destination cannot be updated right now.</string>
     <string name="favorite_retry">Retry</string>
     <string name="favorite_load_more">Load more</string>
 
     <!-- Favorite Screen - Content Descriptions -->
-    <string name="favorite_icon_cd">Favorite</string>
+    <string name="favorite_icon_cd">Favorite destination</string>
     <string name="favorite_remove_cd">Remove from favorites</string>
 </resources>
 

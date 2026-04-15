@@ -34,7 +34,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -207,6 +206,7 @@ private fun HomeContent(
                     title = stringResource(R.string.section_recommended_destinations),
                     state = state.recommendedDestinationsState,
                     favoriteIds = state.favoriteIds,
+                    favoriteMutationInFlightIds = state.favoriteMutationInFlightIds,
                     onAction = onAction,
                     onRetry = { onAction(HomeAction.OnRetrySection(HomeSection.Recommended)) }
                 )
@@ -214,6 +214,7 @@ private fun HomeContent(
                     title = stringResource(R.string.section_nearby_destinations),
                     state = state.nearbyDestinationsState,
                     favoriteIds = state.favoriteIds,
+                    favoriteMutationInFlightIds = state.favoriteMutationInFlightIds,
                     onAction = onAction,
                     onRetry = { onAction(HomeAction.OnRetrySection(HomeSection.Nearby)) },
                     isNearby = true
@@ -415,6 +416,7 @@ private fun DestinationStateHandling(
     title: String,
     state: UiState<List<Destination>>,
     favoriteIds: Set<Int>,
+    favoriteMutationInFlightIds: Set<Int>,
     onAction: (HomeAction) -> Unit,
     onRetry: () -> Unit,
     isNearby: Boolean = false
@@ -462,6 +464,7 @@ private fun DestinationStateHandling(
                             price = "1250/ adult",
                             imageUrl = destination.imageUrls.firstOrNull().orEmpty(),
                             isFavorite = favoriteIds.contains(destination.destinationID),
+                            isFavoriteActionEnabled = destination.destinationID !in favoriteMutationInFlightIds,
                             onFavoriteClicked = {
                                 onAction(HomeAction.OnFavoriteClicked(destination))
                             },

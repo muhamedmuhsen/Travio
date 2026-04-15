@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="favorite_sync_unavailable">مزامنة المفضلة غير متاحة حاليا. اسحب للتحديث أو حاول مرة أخرى.</string>
+    <string name="favorite_invalid_destination_id">لا يمكن تحديث هذه الوجهة الآن.</string>
+</resources>
+

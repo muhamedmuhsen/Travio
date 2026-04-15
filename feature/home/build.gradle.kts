@@ -65,4 +65,8 @@ dependencies {
     implementation(libs.accompanist.permissions)
     // Timber logging library
     implementation(libs.timber)
+
+    // Unit Tests
+    testImplementation(libs.junit)
+    testImplementation(libs.kotlinx.coroutines.test)
 }

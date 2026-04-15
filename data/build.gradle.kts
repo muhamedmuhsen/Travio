@@ -149,6 +149,7 @@ dependencies {
     implementation(libs.facebook.login)
 
     // Testing
+    testImplementation(project(":core:common"))
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     testImplementation(libs.junit)

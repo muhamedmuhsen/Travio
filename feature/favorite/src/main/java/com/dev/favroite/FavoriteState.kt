@@ -16,7 +16,10 @@ sealed interface FavoritesTabUiState<out T> {
 }
 
 data class FavoritesPaginationState(
-    val nextCursor: String? = null,
+    val currentPageIndex: Int = 0,
+    val pageSize: Int = 10,
+    val totalCount: Int = 0,
+    val loadedCount: Int = 0,
     val hasMore: Boolean = false,
     val isLoadingMore: Boolean = false,
     val loadMoreError: UiText? = null
@@ -27,8 +30,10 @@ data class FavoriteState(
     val selectedTab: SectionTab = SectionTab.Destinations,
     val destinationsState: FavoritesTabUiState<Place> = FavoritesTabUiState.Loading,
     val tripsState: FavoritesTabUiState<Trip> = FavoritesTabUiState.Loading,
+    val favoriteIds: Set<Int> = emptySet(),
     val destinationsPagination: FavoritesPaginationState = FavoritesPaginationState(),
     val tripsPagination: FavoritesPaginationState = FavoritesPaginationState(),
+    val inFlightMutationIds: Set<Int> = emptySet(),
     val loadedDestinations: List<Place> = emptyList(),
     val loadedTrips: List<Trip> = emptyList()
 ) {

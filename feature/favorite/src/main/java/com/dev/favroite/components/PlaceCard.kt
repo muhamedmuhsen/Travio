@@ -20,12 +20,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.example.designsystem.theme.TravioTheme
 import com.example.feature.favorite.R
 
@@ -36,6 +41,7 @@ fun PlaceCard(
     city: String,
     imageUrl: String,
     isFavorite: Boolean,
+    isFavoriteActionEnabled: Boolean = true,
     onFavoriteClick: () -> Unit,
     onClick: () -> Unit
 ) {
@@ -52,6 +58,7 @@ fun PlaceCard(
             city = city,
             imageUrl = imageUrl,
             isFavorite = isFavorite,
+            isFavoriteActionEnabled = isFavoriteActionEnabled,
             onFavoriteClick = onFavoriteClick
         )
     }
@@ -63,6 +70,7 @@ private fun PlaceContent(
     city: String,
     imageUrl: String,
     isFavorite: Boolean,
+    isFavoriteActionEnabled: Boolean,
     onFavoriteClick: () -> Unit
 ) {
     Row(
@@ -78,8 +86,17 @@ private fun PlaceContent(
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             AsyncImage(
-                model = imageUrl,
-                contentDescription = "$city, $country",
+                model = if (imageUrl.isBlank()) {
+                    painterResource(id = R.drawable.favorite_icon)
+                } else {
+                    ImageRequest.Builder(androidx.compose.ui.platform.LocalContext.current)
+                        .data(imageUrl).crossfade(true).build()
+                },
+                contentDescription = if (country.isBlank() && city.isBlank()) {
+                    null
+                } else {
+                    "$city, $country"
+                },
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .size(96.dp)
@@ -87,42 +104,46 @@ private fun PlaceContent(
             )
             PlaceDetails(country = country, city = city)
         }
-        FavoriteIcon(isFavorite = isFavorite, onFavoriteClick = onFavoriteClick)
+        FavoriteIcon(
+            isFavorite = isFavorite,
+            enabled = isFavoriteActionEnabled,
+            onFavoriteClick = onFavoriteClick
+        )
     }
 }
 
 @Composable
 private fun FavoriteIcon(
     isFavorite: Boolean,
+    enabled: Boolean,
     onFavoriteClick: () -> Unit
 ) {
     Box(
         modifier = Modifier
             .size(48.dp)
-            .clickable(onClick = onFavoriteClick),
+            .semantics { role = Role.Button }
+            .clickable(enabled = enabled, onClick = onFavoriteClick),
         contentAlignment = Alignment.Center
     ) {
         Box(
             modifier = Modifier
                 .size(28.dp)
                 .background(
-                    color = if (isFavorite) {
-                        MaterialTheme.colorScheme.errorContainer
-                    } else {
-                        MaterialTheme.colorScheme.surfaceContainerHigh
-                    },
+                    MaterialTheme.colorScheme.surfaceContainerHighest,
                     shape = CircleShape
                 ),
             contentAlignment = Alignment.Center
         ) {
             Icon(
                 painter = painterResource(id = R.drawable.favorite_icon),
-                contentDescription = stringResource(R.string.favorite_remove_cd),
-                tint = if (isFavorite) {
-                    MaterialTheme.colorScheme.error
-                } else {
-                    MaterialTheme.colorScheme.onSurfaceVariant
-                },
+                contentDescription = stringResource(
+                    if (isFavorite) {
+                        R.string.favorite_remove_cd
+                    } else {
+                        R.string.favorite_icon_cd
+                    }
+                ),
+                tint = Color(0xFFCB2323),
                 modifier = Modifier.size(14.dp)
             )
         }
@@ -157,6 +178,21 @@ private fun PlaceCardPreviewNotFavorite() {
             city = "Tokyo",
             imageUrl = "",
             isFavorite = false,
+            onFavoriteClick = {},
+            onClick = {}
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun PlaceCardPreviewFavorite() {
+    TravioTheme {
+        PlaceCard(
+            country = "France",
+            city = "Paris",
+            imageUrl = "",
+            isFavorite = true,
             onFavoriteClick = {},
             onClick = {}
         )

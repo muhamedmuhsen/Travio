@@ -19,6 +19,8 @@
     <!-- Favorite Screen - Error State -->
     <string name="favorite_error_destinations">تعذر تحميل الوجهات المفضلة</string>
     <string name="favorite_error_trips">تعذر تحميل الرحلات المفضلة</string>
+    <string name="favorite_sync_unavailable">مزامنة المفضلة غير متاحة حاليا. اسحب للتحديث أو حاول مرة أخرى.</string>
+    <string name="favorite_invalid_destination_id">لا يمكن تحديث هذه الوجهة الآن.</string>
     <string name="favorite_retry">إعادة المحاولة</string>
     <string name="favorite_load_more">تحميل المزيد</string>
 

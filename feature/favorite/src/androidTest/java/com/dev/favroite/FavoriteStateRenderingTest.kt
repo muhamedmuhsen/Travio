@@ -29,6 +29,7 @@ class FavoriteStateRenderingTest {
                     onRetryCurrentTab = {},
                     onLoadMoreCurrentTab = {},
                     onRetryLoadMoreCurrentTab = {},
+                    onDestinationItemVisible = {},
                     onBottomBarItemSelected = {}
                 )
             }
@@ -54,6 +55,7 @@ class FavoriteStateRenderingTest {
                     onRetryCurrentTab = {},
                     onLoadMoreCurrentTab = {},
                     onRetryLoadMoreCurrentTab = {},
+                    onDestinationItemVisible = {},
                     onBottomBarItemSelected = {}
                 )
             }

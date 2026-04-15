@@ -45,7 +45,7 @@ fun DestinationInfoOverlay(
             Icon(
                 imageVector = Icons.Default.Star,
                 contentDescription = "Rating star",
-                tint = Color(0xFFFFC107),
+                tint = Color(0xFFFFD700),
                 modifier = Modifier.size(20.dp)
             )
             Spacer(modifier = Modifier.width(4.dp))

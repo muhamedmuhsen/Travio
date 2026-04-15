@@ -11,6 +11,7 @@ import com.example.data.repository.community.CommunityRepositoryImpl
 import com.example.data.repository.destinations.DestinationsRepositoryImpl
 import com.example.data.repository.destinations.LocationRepositoryImpl
 import com.example.data.repository.destinations.RecentlyViewedRepositoryImpl
+import com.example.data.repository.favorite.FavoriteDestinationRepositoryImpl
 import com.example.data.repository.favorite.FavoritePlaceRepositoryImpl
 import com.example.data.repository.favorite.FavoritePostRepositoryImpl
 import com.example.data.repository.favorite.FavoriteTripRepositoryImpl
@@ -26,6 +27,7 @@ import com.example.domain.repository.community.CommunityRepository
 import com.example.domain.repository.destinations.DestinationsRepository
 import com.example.domain.repository.destinations.LocationRepository
 import com.example.domain.repository.destinations.RecentlyViewedRepository
+import com.example.domain.repository.favorite.FavoriteDestinationRepository
 import com.example.domain.repository.favorite.FavoritePlaceRepository
 import com.example.domain.repository.favorite.FavoritePostRepository
 import com.example.domain.repository.favorite.FavoriteTabPreferenceRepository
@@ -71,6 +73,12 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindFavoritePostRepository(favoritePostRepositoryImpl: FavoritePostRepositoryImpl): FavoritePostRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindFavoriteDestinationRepository(
+        favoriteDestinationRepositoryImpl: FavoriteDestinationRepositoryImpl
+    ): FavoriteDestinationRepository
 
     @Binds
     @Singleton

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="search_placeholder">Exploration</string>
+    <string name="search_placeholder">Explore destinations</string>
     <string name="error_image_description">Error illustration</string>
     <string name="failed_to_load">Failed to load</string>
     <string name="tap_to_retry">Something went wrong. Please try again.</string>
@@ -21,7 +21,7 @@
     <string name="add_to_favorites">Add to favorites</string>
     <string name="remove_from_favorites">Remove from favorites</string>
     <string name="price_from_prefix">From </string>
-    <string name="country_destination_cd">%s destination</string>
+    <string name="country_destination_cd">Destination: %s</string>
 
     <!-- Empty States -->
     <string name="no_destinations_found">No destinations found.</string>

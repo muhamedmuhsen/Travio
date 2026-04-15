@@ -12,6 +12,9 @@ import com.example.domain.usecase.destinations.GetAllDestinationsUseCase
 import com.example.domain.usecase.destinations.GetFamousCountriesUseCase
 import com.example.domain.usecase.destinations.GetNearbyDestinationsUseCase
 import com.example.domain.usecase.destinations.GetRecentlyViewedUseCase
+import com.example.domain.usecase.favorite.destination.AddDestinationFavoriteUseCase
+import com.example.domain.usecase.favorite.destination.ObserveFavoriteDestinationIdsUseCase
+import com.example.domain.usecase.favorite.destination.RemoveDestinationFavoriteUseCase
 import com.example.domain.usecase.favorite.place.FavoritePlaceUseCase
 import com.example.domain.usecase.favorite.place.GetAllPlacesUseCase
 import com.example.domain.utils.DataError
@@ -36,6 +39,9 @@ class HomeViewModel @Inject constructor(
     private val getNearbyDestinationsUseCase: GetNearbyDestinationsUseCase,
     private val getFamousCountriesUseCase: GetFamousCountriesUseCase,
     private val favoritePlaceUseCase: FavoritePlaceUseCase,
+    private val addDestinationFavoriteUseCase: AddDestinationFavoriteUseCase? = null,
+    private val removeDestinationFavoriteUseCase: RemoveDestinationFavoriteUseCase? = null,
+    private val observeFavoriteDestinationIdsUseCase: ObserveFavoriteDestinationIdsUseCase? = null,
     private val getAllPlacesUseCase: GetAllPlacesUseCase,
     private val getRecentlyViewedUseCase: GetRecentlyViewedUseCase,
     private val addToRecentlyViewedUseCase: AddToRecentlyViewedUseCase
@@ -96,6 +102,18 @@ class HomeViewModel @Inject constructor(
     }
 
     private fun observeFavoriteIds() {
+        val sharedObserver = observeFavoriteDestinationIdsUseCase
+        if (sharedObserver != null) {
+            viewModelScope.launch {
+                sharedObserver()
+                    .catch { e -> Timber.e(e, "observeFavoriteIds(shared): failed") }
+                    .collect { favoriteIds ->
+                        _uiState.update { it.copy(favoriteIds = favoriteIds) }
+                    }
+            }
+            return
+        }
+
         viewModelScope.launch {
             getAllPlacesUseCase()
                 .catch { e -> Timber.e(e, "observeFavoriteIds: failed to observe favorites") }
@@ -110,27 +128,111 @@ class HomeViewModel @Inject constructor(
     private fun toggleFavorite(destination: Destination) {
         viewModelScope.launch {
             val place = destination.toPlace()
-            val isCurrentlyFavorite = destination.destinationID in _uiState.value.favoriteIds
-            when (val result = favoritePlaceUseCase(place)) {
-                is Result.Success -> {
-                    Timber.d(
-                        "toggleFavorite: DB write succeeded for id=%d",
-                        destination.destinationID
+            val destinationId = destination.destinationID
+            if (destinationId in _uiState.value.favoriteMutationInFlightIds) return@launch
+
+            val isCurrentlyFavorite = destinationId in _uiState.value.favoriteIds
+            if (!isCurrentlyFavorite) {
+                _uiState.update {
+                    it.copy(
+                        favoriteIds = it.favoriteIds + destinationId,
+                        favoriteMutationInFlightIds = it.favoriteMutationInFlightIds + destinationId
                     )
-                    // favoriteIds is driven by the live DB flow — no manual update needed.
-                    val message = if (isCurrentlyFavorite) {
-                        UiText.StringResource(R.string.removed_from_favourites)
-                    } else {
-                        UiText.StringResource(R.string.saved_to_favourites)
+                }
+                val addResult = if (addDestinationFavoriteUseCase != null) {
+                    addDestinationFavoriteUseCase(destinationId)
+                } else {
+                    when (favoritePlaceUseCase(place)) {
+                        is Result.Success -> {
+                            Result.Success(
+                                com.example.domain.model.favorite.FavoriteMutationResult(
+                                    isSuccess = true,
+                                    message = null,
+                                    errors = emptyList()
+                                )
+                            )
+                        }
+
+                        is Result.Error -> {
+                            Result.Error(DataError.Local.DatabaseError)
+                        }
                     }
+                }
+
+                when (addResult) {
+                    is Result.Success -> {
+                        val message = addResult.data.message
+                            ?.takeIf { it.isNotBlank() }
+                            ?.let(UiText::DynamicString)
+                            ?: UiText.StringResource(R.string.saved_to_favourites)
+                        _event.send(HomeEvent.ShowSuccessSnackbar(message))
+                    }
+
+                    is Result.Error -> {
+                        _uiState.update {
+                            it.copy(
+                                favoriteIds = it.favoriteIds - destinationId
+                            )
+                        }
+                        _event.send(HomeEvent.ShowErrorSnackbar(addResult.error.asUiText()))
+                    }
+                }
+                _uiState.update {
+                    it.copy(
+                        favoriteMutationInFlightIds = it.favoriteMutationInFlightIds - destinationId
+                    )
+                }
+                return@launch
+            }
+
+            _uiState.update {
+                it.copy(
+                    favoriteIds = it.favoriteIds - destinationId,
+                    favoriteMutationInFlightIds = it.favoriteMutationInFlightIds + destinationId
+                )
+            }
+
+            val removeResult = if (removeDestinationFavoriteUseCase != null) {
+                removeDestinationFavoriteUseCase(destinationId)
+            } else {
+                when (favoritePlaceUseCase(place)) {
+                    is Result.Success -> {
+                        Result.Success(
+                            com.example.domain.model.favorite.FavoriteMutationResult(
+                                isSuccess = true,
+                                message = null,
+                                errors = emptyList()
+                            )
+                        )
+                    }
+
+                    is Result.Error -> {
+                        Result.Error(DataError.Local.DatabaseError)
+                    }
+                }
+            }
+
+            when (removeResult) {
+                is Result.Success -> {
+                    val message = removeResult.data.message
+                        ?.takeIf { it.isNotBlank() }
+                        ?.let(UiText::DynamicString)
+                        ?: UiText.StringResource(R.string.removed_from_favourites)
                     _event.send(HomeEvent.ShowSuccessSnackbar(message))
-                    // TODO: sync toggle with remote backend favourite endpoint
                 }
 
                 is Result.Error -> {
-                    Timber.e("toggleFavorite: DB write failed — %s", result.error.name)
-                    _event.send(HomeEvent.ShowErrorSnackbar(result.error.asUiText()))
+                    _uiState.update {
+                        it.copy(favoriteIds = it.favoriteIds + destinationId)
+                    }
+                    _event.send(HomeEvent.ShowErrorSnackbar(removeResult.error.asUiText()))
                 }
+            }
+
+            _uiState.update {
+                it.copy(
+                    favoriteMutationInFlightIds = it.favoriteMutationInFlightIds - destinationId
+                )
             }
         }
     }

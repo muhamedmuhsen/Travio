@@ -65,6 +65,7 @@ fun DestinationCard(
     price: String,
     imageUrl: String,
     isFavorite: Boolean,
+    isFavoriteActionEnabled: Boolean = true,
     onFavoriteClicked: () -> Unit,
     onCardClicked: () -> Unit = {}
 ) {
@@ -113,6 +114,7 @@ fun DestinationCard(
             FavoriteButton(
                 onClick = onFavoriteClicked,
                 isFavorite = isFavorite,
+                enabled = isFavoriteActionEnabled,
                 modifier = Modifier
                     .align(Alignment.TopEnd)
                     .padding(MaterialTheme.spacing.md)
@@ -239,7 +241,8 @@ fun LoadingDestinationCard(modifier: Modifier = Modifier) {
 private fun FavoriteButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    isFavorite: Boolean
+    isFavorite: Boolean,
+    enabled: Boolean
 ) {
     Surface(
         modifier = modifier.size(36.dp),
@@ -248,7 +251,9 @@ private fun FavoriteButton(
         shadowElevation = MaterialTheme.elevation.xs
     ) {
         Box(
-            modifier = Modifier.fillMaxSize().clickable(onClick = onClick),
+            modifier = Modifier
+                .fillMaxSize()
+                .clickable(enabled = enabled, onClick = onClick),
             contentAlignment = Alignment.Center
         ) {
             Icon(
@@ -258,7 +263,7 @@ private fun FavoriteButton(
                 } else {
                     stringResource(R.string.add_to_favorites)
                 },
-                tint = if (isFavorite) MaterialTheme.colorScheme.primary else Color.Gray,
+                tint = if (isFavorite) Color(0xFFCB2323) else Color.Gray,
                 modifier = Modifier.size(20.dp)
             )
         }
@@ -278,7 +283,7 @@ private fun RatingBadge(
         Icon(
             imageVector = Icons.Filled.Star,
             contentDescription = null,
-            tint = contentColor,
+            tint = Color(0xFFFFD700),
             modifier = Modifier.size(20.dp)
         )
         Text(

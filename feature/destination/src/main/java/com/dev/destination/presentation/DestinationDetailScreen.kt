@@ -217,7 +217,10 @@ private fun DestinationDetailContent(
                                 color = MaterialTheme.colorScheme.surface.copy(alpha = 0.8f),
                                 modifier = Modifier.size(40.dp)
                             ) {
-                                IconButton(onClick = { onAction(DestinationDetailAction.OnFavoriteClicked) }) {
+                                IconButton(
+                                    enabled = !uiState.isFavoriteMutationInFlight,
+                                    onClick = { onAction(DestinationDetailAction.OnFavoriteClicked) }
+                                ) {
                                     Icon(
                                         imageVector = if (uiState.isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
                                         contentDescription = stringResource(id = R.string.destination_favorite_cd),
@@ -283,7 +286,7 @@ private fun DestinationDetailContent(
                                     Icon(
                                         imageVector = Icons.Default.Star,
                                         contentDescription = stringResource(id = R.string.destination_rating_cd),
-                                        tint = overlayContentColor,
+                                        tint = Color(0xFFFFD700),
                                         modifier = Modifier.size(18.dp)
                                     )
                                     Spacer(modifier = Modifier.width(4.dp))

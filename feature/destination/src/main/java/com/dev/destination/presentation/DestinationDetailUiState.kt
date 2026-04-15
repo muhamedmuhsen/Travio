@@ -12,5 +12,6 @@ sealed interface UiState<out T> {
 data class DestinationDetailUiState(
     val detailState: UiState<Destination> = UiState.Idle,
     val relatedDestinationsState: UiState<List<Destination>> = UiState.Idle,
-    val isFavorite: Boolean = false
+    val isFavorite: Boolean = false,
+    val isFavoriteMutationInFlight: Boolean = false
 )
