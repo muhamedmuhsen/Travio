@@ -13,6 +13,12 @@ android {
     flavorDimensions += "environment"
 
     productFlavors {
+        create("emulator") {
+            dimension = "environment"
+        }
+        create("deviceTester") {
+            dimension = "environment"
+        }
         create("production") {
             dimension = "environment"
         }

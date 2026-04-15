@@ -27,6 +27,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -36,7 +37,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.dev.feature.survey.R
 import com.dev.survey.components.SurveyStepProgressBar
 import com.dev.survey.components.TravelCategoryCard
-import com.dev.utils.uistate.UiState
 import com.example.designsystem.components.AppButton
 import com.example.designsystem.theme.TravioTheme
 import com.example.designsystem.theme.spacing
@@ -87,9 +87,11 @@ fun SurveyScreenContent(
     }
 
     // Show error snackbar
-    LaunchedEffect(state.submitState) {
-        if (state.submitState is UiState.Error) {
-            val msg = (state.submitState as UiState.Error).message.asString(context)
+    LaunchedEffect(state.submitState, state.validationError) {
+        val submitMessage = (state.submitState as? SurveySubmitState.Error)?.message
+        val validationMessage = state.validationError?.toMessage(context)
+        val msg = submitMessage ?: validationMessage
+        if (!msg.isNullOrBlank()) {
             snackbarHostState.showSnackbar(msg)
         }
     }
@@ -177,7 +179,8 @@ fun SurveyScreenContent(
 
             // Next / Enjoy button
             val isLastStep = state.currentStep == state.totalSteps - 1
-            val isLoading = state.submitState is UiState.Loading
+            val isLoading = state.submitState is SurveySubmitState.Submitting
+            val isRetry = state.submitState is SurveySubmitState.Error
 
             Box(
                 modifier = Modifier
@@ -186,13 +189,24 @@ fun SurveyScreenContent(
                 contentAlignment = Alignment.Center
             ) {
                 if (isLoading) {
-                    CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
+                    CircularProgressIndicator(
+                        color = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.testTag("survey_submit_loading")
+                    )
                 } else {
                     AppButton(
                         modifier = Modifier.fillMaxWidth(),
-                        onClick = { onAction(SurveyAction.NextStep) },
+                        onClick = {
+                            onAction(
+                                if (isRetry) SurveyAction.RetrySubmission else SurveyAction.NextStep
+                            )
+                        },
                         text = stringResource(
-                            if (isLastStep) R.string.survey_enjoy else R.string.survey_next
+                            when {
+                                isRetry -> R.string.survey_retry
+                                isLastStep -> R.string.survey_enjoy
+                                else -> R.string.survey_next
+                            }
                         )
                     )
                 }
@@ -228,8 +242,20 @@ private fun SurveyScreenLastStepPreview() {
 private fun SurveyScreenLoadingPreview() {
     TravioTheme {
         SurveyScreenContent(
-            state = SurveyUiState(currentStep = 1, totalSteps = 2, submitState = UiState.Loading),
+            state = SurveyUiState(currentStep = 1, totalSteps = 2, submitState = SurveySubmitState.Submitting),
             onAction = {}
         )
     }
+}
+
+private fun ValidationError.toMessage(context: android.content.Context): String {
+    val resId = when (this) {
+        ValidationError.EmptySelection -> R.string.survey_validation_empty
+        ValidationError.PartialCompletion -> R.string.survey_validation_partial
+        ValidationError.DuplicateExactPair -> R.string.survey_validation_duplicate
+        ValidationError.ConflictingSelectionSameCategory -> R.string.survey_validation_conflict
+        ValidationError.InvalidCategoryId -> R.string.survey_validation_invalid_category
+        ValidationError.InvalidOptionId -> R.string.survey_validation_invalid_option
+    }
+    return context.getString(resId)
 }

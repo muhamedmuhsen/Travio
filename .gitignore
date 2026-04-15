@@ -61,7 +61,7 @@ plan-rulesComplianceAudit.prompt.md
 specs
 .specify
 .agent
-.skills
+.claude/.skills
 .github/agents
 .github/prompts
 .vscode

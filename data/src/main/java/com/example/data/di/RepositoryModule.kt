@@ -15,6 +15,7 @@ import com.example.data.repository.favorite.FavoritePlaceRepositoryImpl
 import com.example.data.repository.favorite.FavoritePostRepositoryImpl
 import com.example.data.repository.favorite.FavoriteTripRepositoryImpl
 import com.example.data.repository.search.RecentSearchRepositoryImpl
+import com.example.data.repository.survey.SurveyPreferencesRepositoryImpl
 import com.example.domain.repository.auth.EmailVerificationRepository
 import com.example.domain.repository.auth.LoginRepository
 import com.example.domain.repository.auth.PasswordResetRepository
@@ -30,6 +31,7 @@ import com.example.domain.repository.favorite.FavoritePostRepository
 import com.example.domain.repository.favorite.FavoriteTabPreferenceRepository
 import com.example.domain.repository.favorite.FavoriteTripRepository
 import com.example.domain.repository.search.RecentSearchRepository
+import com.example.domain.repository.survey.SurveyPreferencesRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -103,4 +105,10 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindCommunityRepository(communityRepositoryImpl: CommunityRepositoryImpl): CommunityRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindSurveyPreferencesRepository(
+        surveyPreferencesRepositoryImpl: SurveyPreferencesRepositoryImpl
+    ): SurveyPreferencesRepository
 }

@@ -35,7 +35,16 @@
     <!-- Buttons -->
     <string name="survey_next">Next</string>
     <string name="survey_enjoy">Enjoy</string>
+    <string name="survey_retry">Retry</string>
 
     <!-- Step indicator -->
     <string name="survey_step_indicator">Step %1$d of %2$d</string>
+
+    <!-- Submission/validation -->
+    <string name="survey_validation_empty">Please make a selection before continuing.</string>
+    <string name="survey_validation_partial">Please complete all survey steps first.</string>
+    <string name="survey_validation_duplicate">Duplicate selections are not allowed.</string>
+    <string name="survey_validation_conflict">Select only one option per step.</string>
+    <string name="survey_validation_invalid_category">Invalid category selection.</string>
+    <string name="survey_validation_invalid_option">Invalid option selection.</string>
 </resources>
