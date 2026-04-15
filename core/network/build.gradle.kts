@@ -1,5 +1,3 @@
-import java.util.Properties
-
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
@@ -12,7 +10,9 @@ android {
     compileSdk = 36
 
     flavorDimensions += "environment"
+    val productionBaseUrl = "http://api.example.invalid:5116/api/"
 
+    productFlavors {
         create("emulator") {
             dimension = "environment"
         }

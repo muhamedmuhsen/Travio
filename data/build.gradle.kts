@@ -62,6 +62,15 @@ android {
             buildConfigField("String", "IMAGE_BASE_URL", "\"$imageBaseUrl\"")
         }
 
+        create("localhost") {
+            dimension = "environment"
+            val imageBaseUrl =
+                normalizeImageBaseUrl(
+                    readConfigValue("LOCALHOST_IMAGE_BASE_URL", "http://localhost:5116"),
+                )
+            buildConfigField("String", "IMAGE_BASE_URL", "\"$imageBaseUrl\"")
+        }
+
         create("deviceTester") {
             dimension = "environment"
             val imageBaseUrl =
@@ -143,6 +152,7 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     testImplementation(libs.junit)
+    testImplementation(libs.kotlinx.coroutines.test)
 
     // Location
     implementation(libs.play.services.location)
