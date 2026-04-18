@@ -21,7 +21,9 @@ class GetDestinationsPageUseCase @Inject constructor(
 
         return repository.getDestinationsPage(
             pageIndex = pageIndex,
-            pageSize = pageSize
+            pageSize = pageSize,
+            cityId = cityId,
+            interestId = interestId
         )
     }
 }

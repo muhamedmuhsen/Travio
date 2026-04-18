@@ -88,7 +88,8 @@ class GetDestinationsPageUseCaseTest {
             pageIndex: Int,
             pageSize: Int,
             cityId: Int?,
-            interestId: Int?
+            interestId: Int?,
+            countryId: Int?
         ): Result<DestinationsPage, DataError> {
             lastPageIndex = pageIndex
             lastPageSize = pageSize

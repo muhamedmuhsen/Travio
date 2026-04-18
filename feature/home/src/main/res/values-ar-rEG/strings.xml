@@ -28,4 +28,8 @@
     <string name="nearby_no_destinations_found">لا توجد وجهات قريبة من موقعك.</string>
     <string name="nearby_location_permission_rationale">اسمح بالوصول إلى موقعك لعرض الوجهات القريبة منك.</string>
     <string name="recently_viewed_empty">لم تشاهد أي وجهات بعد. ابدأ الاستكشاف!</string>
+
+    <!-- Pagination -->
+    <string name="destinations_load_more_retry_label">إعادة المحاولة</string>
+    <string name="destinations_load_more_retry_content_description">إعادة محاولة تحميل المزيد من الوجهات</string>
 </resources>

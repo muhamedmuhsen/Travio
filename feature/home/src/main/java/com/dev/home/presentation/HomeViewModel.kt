@@ -335,9 +335,8 @@ class HomeViewModel @Inject constructor(
             when (
                 val result = getDestinationsPageUseCase(
                     pageIndex = pageIndex,
-                    pageSize = PAGE_SIZE,
-                    cityId = 1,
-                    interestId = 1
+                    pageSize = PAGE_SIZE
+
                 )
             ) {
                 is Result.Success -> applyDestinationPage(
@@ -429,9 +428,8 @@ class HomeViewModel @Inject constructor(
             when (
                 val result = getDestinationsPageUseCase(
                     pageIndex = FIRST_PAGE,
-                    pageSize = PAGE_SIZE,
-                    cityId = 1,
-                    interestId = 1
+                    pageSize = PAGE_SIZE
+
                 )
             ) {
                 is Result.Success -> {

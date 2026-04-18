@@ -289,7 +289,8 @@ class DestinationDetailViewModelTest {
             pageIndex: Int,
             pageSize: Int,
             cityId: Int?,
-            interestId: Int?
+            interestId: Int?,
+            countryId: Int?
         ): Result<DestinationsPage, DataError> {
             return Result.Success(
                 DestinationsPage(

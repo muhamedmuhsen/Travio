@@ -14,12 +14,11 @@ class GetNearbyDestinationsUseCase @Inject constructor(
     suspend operator fun invoke(): Result<List<Destination>, DataError> {
         return when (val locationResult = locationRepository.getLastKnownLocation()) {
             is Result.Error -> {
-                Result.Error(DataError.Location.CouldNotGetTheLocation)
+                Result.Error(locationResult.error)
             }
 
             is Result.Success -> {
                 val location = locationResult.data
-
                 destinationsRepository.getNearbyDestinations(
                     latitude = location.latitude,
                     longitude = location.longitude
