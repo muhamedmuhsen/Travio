@@ -1,9 +1,11 @@
 package com.example.data.repository.destinations
 
+import com.example.data.mapper.destination.toDestinationsPage
 import com.example.data.mapper.destination.toDomain
 import com.example.data.utils.safeApiCall
 import com.example.domain.model.destination.Country
 import com.example.domain.model.destination.Destination
+import com.example.domain.model.destination.DestinationsPage
 import com.example.domain.repository.destinations.DestinationsRepository
 import com.example.domain.utils.DataError
 import com.example.domain.utils.Result
@@ -33,6 +35,23 @@ class DestinationsRepositoryImpl @Inject constructor(
                 interestId = interestId
             )
             response.data.map { it.toDomain() }
+        }
+    }
+
+    override suspend fun getDestinationsPage(
+        pageIndex: Int,
+        pageSize: Int,
+        cityId: Int?,
+        interestId: Int?,
+        countryId: Int?
+    ): Result<DestinationsPage, DataError> {
+        return safeApiCall {
+            api.getAllDestinations(
+                pageIndex = pageIndex,
+                pageSize = pageSize,
+                cityId = cityId,
+                interestId = interestId
+            ).toDestinationsPage()
         }
     }
 

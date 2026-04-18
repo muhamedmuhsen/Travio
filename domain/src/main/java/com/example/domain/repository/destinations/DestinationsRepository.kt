@@ -2,6 +2,7 @@ package com.example.domain.repository.destinations
 
 import com.example.domain.model.destination.Country
 import com.example.domain.model.destination.Destination
+import com.example.domain.model.destination.DestinationsPage
 import com.example.domain.utils.DataError
 import com.example.domain.utils.Result
 
@@ -13,6 +14,14 @@ interface DestinationsRepository {
         cityId: Int? = null,
         interestId: Int? = null
     ): Result<List<Destination>, DataError>
+
+    suspend fun getDestinationsPage(
+        pageIndex: Int,
+        pageSize: Int,
+        cityId: Int? = null,
+        interestId: Int? = null,
+        countryId: Int? = null
+    ): Result<DestinationsPage, DataError>
 
     suspend fun getTopRatedDestinations(): Result<List<Destination>, DataError>
     suspend fun getNearbyDestinations(

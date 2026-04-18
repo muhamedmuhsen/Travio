@@ -3,6 +3,7 @@ package com.dev.destination.presentation
 import androidx.lifecycle.SavedStateHandle
 import com.example.domain.model.destination.Country
 import com.example.domain.model.destination.Destination
+import com.example.domain.model.destination.DestinationsPage
 import com.example.domain.model.destination.Interest
 import com.example.domain.model.favorite.FavoriteDestination
 import com.example.domain.model.favorite.FavoriteMutationResult
@@ -128,6 +129,22 @@ class DestinationFavoriteSyncTest {
             cityId: Int?,
             interestId: Int?
         ): Result<List<Destination>, DataError> = Result.Success(emptyList())
+
+        override suspend fun getDestinationsPage(
+            pageIndex: Int,
+            pageSize: Int,
+            cityId: Int?,
+            interestId: Int?
+        ): Result<DestinationsPage, DataError> {
+            return Result.Success(
+                DestinationsPage(
+                    pageIndex = pageIndex,
+                    pageSize = pageSize,
+                    count = 0,
+                    items = emptyList()
+                )
+            )
+        }
 
         override suspend fun getTopRatedDestinations(): Result<List<Destination>, DataError> = Result.Success(emptyList())
 
