@@ -28,4 +28,8 @@
     <string name="nearby_no_destinations_found">No destinations found near your location.</string>
     <string name="nearby_location_permission_rationale">Allow location access so we can show destinations near you.</string>
     <string name="recently_viewed_empty">No destinations viewed yet. Start exploring!</string>
+
+    <!-- Pagination -->
+    <string name="destinations_load_more_retry_label">Retry</string>
+    <string name="destinations_load_more_retry_content_description">Retry loading more destinations</string>
 </resources>

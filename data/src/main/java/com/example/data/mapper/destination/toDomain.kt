@@ -1,9 +1,11 @@
 package com.example.data.mapper.destination
 
 import com.example.data.BuildConfig
+import com.example.domain.model.destination.DestinationsPage
 import com.example.domain.model.favorite.Place
 import com.example.network.dto.destinations.Country
 import com.example.network.dto.destinations.Destination
+import com.example.network.dto.destinations.GetAllDestinationsResponse
 import com.example.network.dto.destinations.Interest
 
 private fun resolveImageUrl(path: String?): String {
@@ -41,6 +43,15 @@ fun Country.toDomain(): com.example.domain.model.destination.Country {
         countryID = this.countryID,
         flagURL = resolveImageUrl(this.imageURL),
         name = this.name
+    )
+}
+
+fun GetAllDestinationsResponse.toDestinationsPage(): DestinationsPage {
+    return DestinationsPage(
+        pageIndex = pageIndex,
+        pageSize = pageSize,
+        count = count,
+        items = data.map { it.toDomain() }
     )
 }
 

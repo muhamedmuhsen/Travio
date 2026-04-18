@@ -6,9 +6,10 @@ import com.dev.utils.uistate.UiState
 import com.dev.utils.uitext.UiText
 import com.dev.utils.uitext.asUiText
 import com.example.domain.model.destination.Destination
+import com.example.domain.model.destination.DestinationsPage
 import com.example.domain.model.favorite.toPlace
 import com.example.domain.usecase.destinations.AddToRecentlyViewedUseCase
-import com.example.domain.usecase.destinations.GetAllDestinationsUseCase
+import com.example.domain.usecase.destinations.GetDestinationsPageUseCase
 import com.example.domain.usecase.destinations.GetFamousCountriesUseCase
 import com.example.domain.usecase.destinations.GetNearbyDestinationsUseCase
 import com.example.domain.usecase.destinations.GetRecentlyViewedUseCase
@@ -35,7 +36,7 @@ import com.example.designsystem.R as DesignSystemR
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val getAllDestinationsUseCase: GetAllDestinationsUseCase,
+    private val getDestinationsPageUseCase: GetDestinationsPageUseCase,
     private val getNearbyDestinationsUseCase: GetNearbyDestinationsUseCase,
     private val getFamousCountriesUseCase: GetFamousCountriesUseCase,
     private val favoritePlaceUseCase: FavoritePlaceUseCase,
@@ -68,6 +69,10 @@ class HomeViewModel @Inject constructor(
             is HomeAction.OnFavoriteClicked -> toggleFavorite(action.destination)
             is HomeAction.OnSearchQueryChanged -> _uiState.update { it.copy(searchQuery = action.query) }
             is HomeAction.OnRetrySection -> retrySection(action.section)
+            HomeAction.OnLoadMoreDestinations -> loadMoreDestinations()
+            HomeAction.OnRetryLoadMoreDestinations -> loadMoreDestinations(force = true)
+            HomeAction.OnRefresh -> onRefresh()
+            is HomeAction.OnDestinationItemVisible -> onDestinationItemVisible(action.index)
             is HomeAction.OnLocationPermissionResult -> onLocationPermissionResult(action.granted)
         }
     }
@@ -95,7 +100,8 @@ class HomeViewModel @Inject constructor(
     private fun retrySection(section: HomeSection) {
         when (section) {
             HomeSection.Countries -> loadFamousCountries()
-            HomeSection.Recommended -> loadRecommendedDestinations()
+            HomeSection.Recommended,
+            HomeSection.Destinations -> fetchDestinationPage(pageIndex = FIRST_PAGE, isInitialLoad = true)
             HomeSection.Nearby -> requestLocationPermission()
             HomeSection.RecentlyViewed -> observeRecentlyViewed()
         }
@@ -256,10 +262,9 @@ class HomeViewModel @Inject constructor(
     private fun findDestinationById(id: String): Destination? {
         val intId = id.toIntOrNull() ?: return null
         val s = _uiState.value
-        val recommended =
-            (s.recommendedDestinationsState as? UiState.Success)?.data.orEmpty()
+        val recommended = s.loadedDestinations
         val nearby =
-            (s.nearbyDestinationsState as? UiState.Success)?.data.orEmpty()
+            (s.nearbyDestinationsState as? UiState.Success<List<Destination>>)?.data.orEmpty()
         return (recommended + nearby).firstOrNull { it.destinationID == intId }
     }
 
@@ -286,7 +291,7 @@ class HomeViewModel @Inject constructor(
     }
 
     private fun loadHomeData() {
-        loadRecommendedDestinations()
+        fetchDestinationPage(pageIndex = FIRST_PAGE, isInitialLoad = true)
         loadFamousCountries()
     }
 
@@ -299,24 +304,175 @@ class HomeViewModel @Inject constructor(
         )
     }
 
-    private fun loadRecommendedDestinations() {
-        launchLoad(
-            setLoading = { it.copy(recommendedDestinationsState = UiState.Loading) },
-            setError = { state, msg -> state.copy(recommendedDestinationsState = UiState.Error(msg)) },
-            setSuccess = { state, data ->
-                state.copy(recommendedDestinationsState = UiState.Success(data))
-            },
-            load = {
-                getAllDestinationsUseCase(
-                    pageIndex = 1,
-                    pageSize = 10,
-                    // TODO: derive from user preferences
-                    cityId = 1,
-                    // TODO: derive from user preferences
-                    interestId = 1
+    private fun fetchDestinationPage(
+        pageIndex: Int,
+        isInitialLoad: Boolean
+    ) {
+        if (!isInitialLoad && _uiState.value.destinationsPagination.isLoadingMore) return
+
+        if (isInitialLoad) {
+            _uiState.update {
+                it.copy(
+                    recommendedDestinationsState = UiState.Loading,
+                    destinationsPagination = it.destinationsPagination.copy(
+                        isLoadingMore = false,
+                        loadMoreError = null
+                    )
                 )
             }
-        )
+        } else {
+            _uiState.update {
+                it.copy(
+                    destinationsPagination = it.destinationsPagination.copy(
+                        isLoadingMore = true,
+                        loadMoreError = null
+                    )
+                )
+            }
+        }
+
+        viewModelScope.launch {
+            when (
+                val result = getDestinationsPageUseCase(
+                    pageIndex = pageIndex,
+                    pageSize = PAGE_SIZE,
+                    cityId = 1,
+                    interestId = 1
+                )
+            ) {
+                is Result.Success -> applyDestinationPage(
+                    page = result.data,
+                    replaceExisting = isInitialLoad
+                )
+
+                is Result.Error -> {
+                    val msg = result.error.asUiText()
+                    if (isInitialLoad) {
+                        _uiState.update {
+                            it.copy(
+                                destinationsPagination = it.destinationsPagination.copy(
+                                    isLoadingMore = false,
+                                    loadMoreError = null
+                                ),
+                                recommendedDestinationsState = UiState.Error(msg)
+                            )
+                        }
+                    } else {
+                        _uiState.update {
+                            it.copy(
+                                destinationsPagination = it.destinationsPagination.copy(
+                                    isLoadingMore = false,
+                                    loadMoreError = msg
+                                )
+                            )
+                        }
+                    }
+                    _event.send(HomeEvent.ShowErrorSnackbar(msg))
+                }
+            }
+        }
+    }
+
+    private fun applyDestinationPage(
+        page: DestinationsPage,
+        replaceExisting: Boolean
+    ) {
+        _uiState.update { state ->
+            val mergedDestinations = if (replaceExisting) {
+                page.items
+            } else {
+                (state.loadedDestinations + page.items)
+                    .distinctBy { it.destinationID }
+            }
+
+            val hasMore = page.items.size >= PAGE_SIZE
+            state.copy(
+                loadedDestinations = mergedDestinations,
+                destinationsPagination = state.destinationsPagination.copy(
+                    currentPageIndex = page.pageIndex,
+                    pageSize = page.pageSize,
+                    totalCount = page.count,
+                    hasMore = hasMore,
+                    isLoadingMore = false,
+                    loadMoreError = null
+                ),
+                recommendedDestinationsState = UiState.Success(mergedDestinations)
+            )
+        }
+    }
+
+    private fun loadMoreDestinations(force: Boolean = false) {
+        val paginationState = _uiState.value.destinationsPagination
+        if (!paginationState.hasMore) return
+        if (!force && paginationState.isLoadingMore) return
+
+        val nextPageIndex = if (paginationState.currentPageIndex > 0) {
+            paginationState.currentPageIndex + 1
+        } else {
+            FIRST_PAGE
+        }
+        fetchDestinationPage(pageIndex = nextPageIndex, isInitialLoad = false)
+    }
+
+    private fun onRefresh() {
+        viewModelScope.launch {
+            val previousState = _uiState.value
+            _uiState.update {
+                it.copy(
+                    isRefreshing = true,
+                    loadedDestinations = emptyList(),
+                    destinationsPagination = HomePaginationState(pageSize = PAGE_SIZE),
+                    recommendedDestinationsState = UiState.Loading
+                )
+            }
+
+            when (
+                val result = getDestinationsPageUseCase(
+                    pageIndex = FIRST_PAGE,
+                    pageSize = PAGE_SIZE,
+                    cityId = 1,
+                    interestId = 1
+                )
+            ) {
+                is Result.Success -> {
+                    applyDestinationPage(page = result.data, replaceExisting = true)
+                    loadFamousCountries()
+                    observeRecentlyViewed()
+                    requestLocationPermission()
+                }
+
+                is Result.Error -> {
+                    val fallbackState = if (previousState.loadedDestinations.isNotEmpty()) {
+                        UiState.Success(previousState.loadedDestinations)
+                    } else {
+                        previousState.recommendedDestinationsState
+                    }
+                    _uiState.update {
+                        it.copy(
+                            loadedDestinations = previousState.loadedDestinations,
+                            destinationsPagination = previousState.destinationsPagination.copy(
+                                isLoadingMore = false,
+                                loadMoreError = null
+                            ),
+                            recommendedDestinationsState = fallbackState
+                        )
+                    }
+                    _event.send(HomeEvent.ShowErrorSnackbar(result.error.asUiText()))
+                }
+            }
+
+            _uiState.update { it.copy(isRefreshing = false) }
+        }
+    }
+
+    private fun onDestinationItemVisible(index: Int) {
+        val totalLoadedItems = _uiState.value.loadedDestinations.size
+        if (totalLoadedItems == 0) return
+
+        val remainingItems = totalLoadedItems - (index + 1)
+        if (remainingItems <= PREFETCH_THRESHOLD) {
+            loadMoreDestinations()
+        }
     }
 
     private fun loadNearbyDestinations() {
@@ -356,5 +512,11 @@ class HomeViewModel @Inject constructor(
                 is Result.Success -> _uiState.update { setSuccess(it, result.data) }
             }
         }
+    }
+
+    private companion object {
+        const val FIRST_PAGE = 1
+        const val PAGE_SIZE = 10
+        const val PREFETCH_THRESHOLD = 3
     }
 }

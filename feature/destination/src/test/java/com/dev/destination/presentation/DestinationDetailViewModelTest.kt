@@ -3,6 +3,7 @@ package com.dev.destination.presentation
 import androidx.lifecycle.SavedStateHandle
 import com.example.domain.model.destination.Country
 import com.example.domain.model.destination.Destination
+import com.example.domain.model.destination.DestinationsPage
 import com.example.domain.model.destination.Interest
 import com.example.domain.model.favorite.Place
 import com.example.domain.repository.destinations.DestinationsRepository
@@ -282,6 +283,22 @@ class DestinationDetailViewModelTest {
         ): Result<List<Destination>, DataError> {
             requestedInterestIds.add(interestId)
             return allDestinationsResultByInterest[interestId] ?: allDestinationsResult
+        }
+
+        override suspend fun getDestinationsPage(
+            pageIndex: Int,
+            pageSize: Int,
+            cityId: Int?,
+            interestId: Int?
+        ): Result<DestinationsPage, DataError> {
+            return Result.Success(
+                DestinationsPage(
+                    pageIndex = pageIndex,
+                    pageSize = pageSize,
+                    count = 0,
+                    items = emptyList()
+                )
+            )
         }
 
         override suspend fun getTopRatedDestinations(): Result<List<Destination>, DataError> = Result.Success(emptyList())

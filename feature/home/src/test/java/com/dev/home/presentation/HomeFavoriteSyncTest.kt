@@ -2,7 +2,7 @@ package com.dev.home.presentation
 
 import com.example.domain.model.destination.Country
 import com.example.domain.model.destination.Destination
-import com.example.domain.model.destination.Interest
+import com.example.domain.model.destination.DestinationsPage
 import com.example.domain.model.destination.UserLocation
 import com.example.domain.model.favorite.FavoriteDestination
 import com.example.domain.model.favorite.FavoriteMutationResult
@@ -14,7 +14,7 @@ import com.example.domain.repository.destinations.RecentlyViewedRepository
 import com.example.domain.repository.favorite.FavoriteDestinationRepository
 import com.example.domain.repository.favorite.FavoritePlaceRepository
 import com.example.domain.usecase.destinations.AddToRecentlyViewedUseCase
-import com.example.domain.usecase.destinations.GetAllDestinationsUseCase
+import com.example.domain.usecase.destinations.GetDestinationsPageUseCase
 import com.example.domain.usecase.destinations.GetFamousCountriesUseCase
 import com.example.domain.usecase.destinations.GetNearbyDestinationsUseCase
 import com.example.domain.usecase.destinations.GetRecentlyViewedUseCase
@@ -60,7 +60,7 @@ class HomeFavoriteSyncTest {
         val recentlyViewedRepository = FakeRecentlyViewedRepository()
 
         return HomeViewModel(
-            getAllDestinationsUseCase = GetAllDestinationsUseCase(destinationsRepository),
+            getDestinationsPageUseCase = GetDestinationsPageUseCase(destinationsRepository),
             getNearbyDestinationsUseCase = GetNearbyDestinationsUseCase(locationRepository, destinationsRepository),
             getFamousCountriesUseCase = GetFamousCountriesUseCase(destinationsRepository),
             favoritePlaceUseCase = FavoritePlaceUseCase(favoritePlaceRepository),
@@ -124,6 +124,22 @@ class HomeFavoriteSyncTest {
             cityId: Int?,
             interestId: Int?
         ): Result<List<Destination>, DataError> = Result.Success(emptyList())
+
+        override suspend fun getDestinationsPage(
+            pageIndex: Int,
+            pageSize: Int,
+            cityId: Int?,
+            interestId: Int?
+        ): Result<DestinationsPage, DataError> {
+            return Result.Success(
+                DestinationsPage(
+                    pageIndex = pageIndex,
+                    pageSize = pageSize,
+                    count = 0,
+                    items = emptyList()
+                )
+            )
+        }
 
         override suspend fun getTopRatedDestinations(): Result<List<Destination>, DataError> = Result.Success(emptyList())
 
