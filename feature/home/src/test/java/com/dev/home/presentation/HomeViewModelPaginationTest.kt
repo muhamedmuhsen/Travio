@@ -376,7 +376,8 @@ class HomeViewModelPaginationTest {
             pageIndex: Int,
             pageSize: Int,
             cityId: Int?,
-            interestId: Int?
+            interestId: Int?,
+            countryId: Int?
         ): Result<DestinationsPage, DataError> {
             requestedPageIndices.add(pageIndex)
             val queuedResults = queuedPageResults[pageIndex]

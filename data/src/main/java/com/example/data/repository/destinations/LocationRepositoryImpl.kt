@@ -4,6 +4,7 @@ import com.example.domain.model.destination.UserLocation
 import com.example.domain.repository.destinations.LocationRepository
 import com.example.domain.utils.DataError
 import com.example.domain.utils.Result
+import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
@@ -16,12 +17,12 @@ class LocationRepositoryImpl @Inject constructor(
     override fun observeLocation(): Flow<Result<UserLocation, DataError>> {
         return dataSource.locationFlow()
             .map<UserLocation, Result<UserLocation, DataError>> {
-                Timber.d("observeLocation: location received -> lat=${it.latitude}, lng=${it.longitude}")
+                logLocationFreshness("observeLocation", it)
                 Result.Success(it)
             }
             .catch {
                 Timber.e(it, "observeLocation: failed to get location")
-                emit(Result.Error(DataError.Location.CouldNotGetTheLocation))
+                emit(Result.Error(mapLocationError(it)))
             }
     }
 
@@ -30,7 +31,7 @@ class LocationRepositoryImpl @Inject constructor(
             .fold(
                 onSuccess = { location ->
                     if (location != null) {
-                        Timber.d("getLastKnownLocation: success -> lat=${location.latitude}, lng=${location.longitude}")
+                        logLocationFreshness("getLastKnownLocation", location)
                         Result.Success(location)
                     } else {
                         Timber.w("getLastKnownLocation: location is null, could not get location")
@@ -42,8 +43,29 @@ class LocationRepositoryImpl @Inject constructor(
                         throwable,
                         "getLastKnownLocation: exception thrown, could not get location"
                     )
-                    Result.Error(DataError.Location.CouldNotGetTheLocation)
+                    Result.Error(mapLocationError(throwable))
                 }
             )
+    }
+
+    private fun mapLocationError(throwable: Throwable): DataError.Location {
+        return when (throwable) {
+            is SecurityException -> DataError.Location.PermissionDenied
+            is TimeoutCancellationException -> DataError.Location.Timeout
+            else -> DataError.Location.CouldNotGetTheLocation
+        }
+    }
+
+    private fun logLocationFreshness(
+        source: String,
+        location: UserLocation
+    ) {
+        val ageMs = (System.currentTimeMillis() - location.timestamp).coerceAtLeast(0L)
+        Timber.d(
+            "%s: location freshness -> ageMs=%d, accuracyMeters=%.1f",
+            source,
+            ageMs,
+            location.accuracyMeters
+        )
     }
 }
