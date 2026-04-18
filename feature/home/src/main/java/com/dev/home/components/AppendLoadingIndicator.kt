@@ -32,4 +32,3 @@ private fun AppendLoadingIndicatorPreview() {
         AppendLoadingIndicator()
     }
 }
-

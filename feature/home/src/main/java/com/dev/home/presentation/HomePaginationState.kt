@@ -10,4 +10,3 @@ data class HomePaginationState(
     val isLoadingMore: Boolean = false,
     val loadMoreError: UiText? = null
 )
-

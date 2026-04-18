@@ -22,11 +22,15 @@ import com.example.domain.utils.DataError
 import com.example.domain.utils.Result
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.advanceUntilIdle
+import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Rule
@@ -156,6 +160,180 @@ class HomeViewModelPaginationTest {
         assertEquals(16, recentlyViewedRepository.lastAddedDestination?.destinationID)
     }
 
+    @Test
+    fun givenInitialLoadError_whenViewModelInitializes_thenSetsRecommendedStateToError() = runTest {
+        val destinationsRepository = FakeDestinationsRepository().apply {
+            pageResults[1] = Result.Error(DataError.Network.ServerError)
+        }
+
+        val viewModel = createViewModel(destinationsRepository = destinationsRepository)
+        advanceUntilIdle()
+
+        assertTrue(viewModel.uiState.value.recommendedDestinationsState is UiState.Error)
+    }
+
+    @Test
+    fun givenAppendError_whenLoadMoreTriggered_thenKeepsItemsAndSetsLoadMoreError() = runTest {
+        val destinationsRepository = FakeDestinationsRepository().apply {
+            pageResults[1] = Result.Success(page(pageIndex = 1, count = 30, items = destinations(1..10)))
+            pageResults[2] = Result.Error(DataError.Network.ServerError)
+        }
+
+        val viewModel = createViewModel(destinationsRepository = destinationsRepository)
+        advanceUntilIdle()
+
+        viewModel.onAction(HomeAction.OnLoadMoreDestinations)
+        advanceUntilIdle()
+
+        assertEquals(10, viewModel.uiState.value.loadedDestinations.size)
+        assertTrue(viewModel.uiState.value.recommendedDestinationsState is UiState.Success)
+        assertTrue(viewModel.uiState.value.destinationsPagination.loadMoreError != null)
+    }
+
+    @Test
+    fun givenAppendError_whenRetryLoadMoreTriggered_thenRefetchesSamePage() = runTest {
+        val destinationsRepository = FakeDestinationsRepository().apply {
+            pageResults[1] = Result.Success(page(pageIndex = 1, count = 30, items = destinations(1..10)))
+            queuedPageResults[2] = ArrayDeque(
+                listOf(
+                    Result.Error(DataError.Network.ServerError),
+                    Result.Success(page(pageIndex = 2, count = 30, items = destinations(11..20)))
+                )
+            )
+        }
+
+        val viewModel = createViewModel(destinationsRepository = destinationsRepository)
+        advanceUntilIdle()
+
+        viewModel.onAction(HomeAction.OnLoadMoreDestinations)
+        advanceUntilIdle()
+        viewModel.onAction(HomeAction.OnRetryLoadMoreDestinations)
+        advanceUntilIdle()
+
+        assertEquals(2, destinationsRepository.requestedPageIndices.count { it == 2 })
+        assertEquals(20, viewModel.uiState.value.loadedDestinations.size)
+        assertTrue(viewModel.uiState.value.destinationsPagination.loadMoreError == null)
+    }
+
+    @Test
+    fun givenInitialLoadError_whenRetrySectionTriggered_thenRefetchesPageOne() = runTest {
+        val destinationsRepository = FakeDestinationsRepository().apply {
+            queuedPageResults[1] = ArrayDeque(
+                listOf(
+                    Result.Error(DataError.Network.Timeout),
+                    Result.Success(page(pageIndex = 1, count = 10, items = destinations(1..10)))
+                )
+            )
+        }
+
+        val viewModel = createViewModel(destinationsRepository = destinationsRepository)
+        advanceUntilIdle()
+
+        viewModel.onAction(HomeAction.OnRetrySection(HomeSection.Destinations))
+        advanceUntilIdle()
+
+        assertEquals(2, destinationsRepository.requestedPageIndices.count { it == 1 })
+        assertTrue(viewModel.uiState.value.recommendedDestinationsState is UiState.Success)
+    }
+
+    @Test
+    fun givenMultiplePagesLoaded_whenRefreshTriggered_thenResetsAndFetchesPageOne() = runTest {
+        val destinationsRepository = FakeDestinationsRepository().apply {
+            pageResults[1] = Result.Success(page(pageIndex = 1, count = 20, items = destinations(1..10)))
+            pageResults[2] = Result.Success(page(pageIndex = 2, count = 20, items = destinations(11..20)))
+        }
+
+        val viewModel = createViewModel(destinationsRepository = destinationsRepository)
+        advanceUntilIdle()
+        viewModel.onAction(HomeAction.OnLoadMoreDestinations)
+        advanceUntilIdle()
+
+        destinationsRepository.queuedPageResults[1] = ArrayDeque(
+            listOf(Result.Success(page(pageIndex = 1, count = 8, items = destinations(101..108))))
+        )
+
+        viewModel.onAction(HomeAction.OnRefresh)
+        advanceUntilIdle()
+
+        assertTrue(destinationsRepository.requestedPageIndices.count { it == 1 } >= 2)
+        assertEquals((101..108).toList(), viewModel.uiState.value.loadedDestinations.map { it.destinationID })
+        assertEquals(1, viewModel.uiState.value.destinationsPagination.currentPageIndex)
+        assertFalse(viewModel.uiState.value.isRefreshing)
+    }
+
+    @Test
+    fun givenRefreshFailure_whenRefreshTriggered_thenKeepsOldItemsAndEmitsErrorEvent() = runTest {
+        val destinationsRepository = FakeDestinationsRepository().apply {
+            pageResults[1] = Result.Success(page(pageIndex = 1, count = 20, items = destinations(1..10)))
+            queuedPageResults[2] = ArrayDeque(
+                listOf(Result.Error(DataError.Network.ServerError))
+            )
+        }
+        val viewModel = createViewModel(destinationsRepository = destinationsRepository)
+        advanceUntilIdle()
+
+        destinationsRepository.queuedPageResults[1] = ArrayDeque(
+            listOf(Result.Error(DataError.Network.ServerError))
+        )
+
+        val errorDeferred = async {
+            viewModel.event.first { it is HomeEvent.ShowErrorSnackbar }
+        }
+
+        viewModel.onAction(HomeAction.OnRefresh)
+        advanceUntilIdle()
+
+        assertEquals((1..10).toList(), viewModel.uiState.value.loadedDestinations.map { it.destinationID })
+        assertTrue(errorDeferred.await() is HomeEvent.ShowErrorSnackbar)
+        assertFalse(viewModel.uiState.value.isRefreshing)
+    }
+
+    @Test
+    fun givenAppendInFlight_whenRefreshTriggered_thenClearsLoadingMoreState() = runTest {
+        val delayedPage2 = CompletableDeferred<Result<DestinationsPage, DataError>>()
+        val destinationsRepository = FakeDestinationsRepository().apply {
+            pageResults[1] = Result.Success(page(pageIndex = 1, count = 30, items = destinations(1..10)))
+            deferredPageResults[2] = delayedPage2
+            queuedPageResults[1] = ArrayDeque(
+                listOf(Result.Success(page(pageIndex = 1, count = 10, items = destinations(21..30))))
+            )
+        }
+
+        val viewModel = createViewModel(destinationsRepository = destinationsRepository)
+        advanceUntilIdle()
+
+        viewModel.onAction(HomeAction.OnLoadMoreDestinations)
+        runCurrent()
+        assertTrue(viewModel.uiState.value.destinationsPagination.isLoadingMore)
+
+        viewModel.onAction(HomeAction.OnRefresh)
+        runCurrent()
+
+        assertFalse(viewModel.uiState.value.destinationsPagination.isLoadingMore)
+
+        delayedPage2.complete(Result.Success(page(pageIndex = 2, count = 30, items = destinations(11..20))))
+        advanceUntilIdle()
+    }
+
+    @Test
+    fun givenPageTwoItem_whenFavoriteClicked_thenFavoriteStateUpdates() = runTest {
+        val destinationsRepository = FakeDestinationsRepository().apply {
+            pageResults[1] = Result.Success(page(pageIndex = 1, count = 20, items = destinations(1..10)))
+            pageResults[2] = Result.Success(page(pageIndex = 2, count = 20, items = destinations(11..20)))
+        }
+
+        val viewModel = createViewModel(destinationsRepository = destinationsRepository)
+        advanceUntilIdle()
+        viewModel.onAction(HomeAction.OnLoadMoreDestinations)
+        advanceUntilIdle()
+
+        val pageTwoDestination = viewModel.uiState.value.loadedDestinations.first { it.destinationID == 15 }
+        viewModel.onAction(HomeAction.OnFavoriteClicked(pageTwoDestination))
+        advanceUntilIdle()
+
+        assertTrue(viewModel.uiState.value.favoriteIds.contains(15))
+    }
+
     private fun createViewModel(
         destinationsRepository: FakeDestinationsRepository,
         recentlyViewedRepository: FakeRecentlyViewedRepository = FakeRecentlyViewedRepository()
@@ -176,6 +354,7 @@ class HomeViewModelPaginationTest {
 
     private class FakeDestinationsRepository : DestinationsRepository {
         val pageResults: MutableMap<Int, Result<DestinationsPage, DataError>> = mutableMapOf()
+        val queuedPageResults: MutableMap<Int, ArrayDeque<Result<DestinationsPage, DataError>>> = mutableMapOf()
         val deferredPageResults: MutableMap<Int, CompletableDeferred<Result<DestinationsPage, DataError>>> =
             mutableMapOf()
         val requestedPageIndices: MutableList<Int> = mutableListOf()
@@ -200,6 +379,10 @@ class HomeViewModelPaginationTest {
             interestId: Int?
         ): Result<DestinationsPage, DataError> {
             requestedPageIndices.add(pageIndex)
+            val queuedResults = queuedPageResults[pageIndex]
+            if (queuedResults != null && queuedResults.isNotEmpty()) {
+                return queuedResults.removeFirst()
+            }
             val deferred = deferredPageResults[pageIndex]
             if (deferred != null) {
                 return deferred.await()
@@ -307,4 +490,8 @@ class HomeViewModelPaginationTest {
         }
     }
 }
+
+
+
+
 

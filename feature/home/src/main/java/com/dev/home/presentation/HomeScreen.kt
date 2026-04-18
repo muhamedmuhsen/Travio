@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.verticalScroll
@@ -25,11 +26,13 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ErrorOutline
 import androidx.compose.material.icons.outlined.LocationOff
 import androidx.compose.material.icons.outlined.SearchOff
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -47,6 +50,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.dev.home.components.AppendErrorRetry
+import com.dev.home.components.AppendLoadingIndicator
 import com.dev.home.components.CountryCard
 import com.dev.home.components.DestinationCard
 import com.dev.home.components.ErrorView
@@ -137,6 +142,7 @@ fun HomeScreen(
 }
 
 @Composable
+@OptIn(ExperimentalMaterial3Api::class)
 private fun HomeContent(
     modifier: Modifier,
     onAction: (HomeAction) -> Unit,
@@ -169,58 +175,67 @@ private fun HomeContent(
             )
         }
     ) { paddingValues ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-                .padding(bottom = paddingValues.calculateBottomPadding())
+        PullToRefreshBox(
+            isRefreshing = state.isRefreshing,
+            onRefresh = { onAction(HomeAction.OnRefresh) },
+            modifier = Modifier.fillMaxSize()
         ) {
-            HomeTopSection(
-                searchQuery = state.searchQuery,
-                onSearchQueryChanged = { onAction(HomeAction.OnSearchQueryChanged(it)) },
-                onSearchClicked = { onAction(HomeAction.OnSearchClicked) }
-            )
             Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .offset(y = -MaterialTheme.spacing.xl)
-                    .clip(
-                        MaterialTheme.shapes.extraLarge.copy(
-                            bottomStart = CornerSize(MaterialTheme.spacing.none),
-                            bottomEnd = CornerSize(MaterialTheme.spacing.none)
-                        )
-                    )
-                    .background(MaterialTheme.colorScheme.surface)
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
+                    .padding(bottom = paddingValues.calculateBottomPadding())
             ) {
-                Spacer(modifier = Modifier.height(MaterialTheme.spacing.sm))
-                CountryStateHandling(
-                    state = state.countriesState,
-                    onRetry = { onAction(HomeAction.OnRetrySection(HomeSection.Countries)) }
+                HomeTopSection(
+                    searchQuery = state.searchQuery,
+                    onSearchQueryChanged = { onAction(HomeAction.OnSearchQueryChanged(it)) },
+                    onSearchClicked = { onAction(HomeAction.OnSearchClicked) }
                 )
-                RecentViewedStateHandling(
-                    state = state.recentViewedDestinationsState,
-                    onAction = onAction,
-                    onRetry = { onAction(HomeAction.OnRetrySection(HomeSection.RecentlyViewed)) }
-                )
-                DestinationStateHandling(
-                    title = stringResource(R.string.section_recommended_destinations),
-                    state = state.recommendedDestinationsState,
-                    favoriteIds = state.favoriteIds,
-                    favoriteMutationInFlightIds = state.favoriteMutationInFlightIds,
-                    onAction = onAction,
-                    onRetry = { onAction(HomeAction.OnRetrySection(HomeSection.Recommended)) }
-                )
-                DestinationStateHandling(
-                    title = stringResource(R.string.section_nearby_destinations),
-                    state = state.nearbyDestinationsState,
-                    favoriteIds = state.favoriteIds,
-                    favoriteMutationInFlightIds = state.favoriteMutationInFlightIds,
-                    onAction = onAction,
-                    onRetry = { onAction(HomeAction.OnRetrySection(HomeSection.Nearby)) },
-                    isNearby = true
-                )
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .offset(y = -MaterialTheme.spacing.xl)
+                        .clip(
+                            MaterialTheme.shapes.extraLarge.copy(
+                                bottomStart = CornerSize(MaterialTheme.spacing.none),
+                                bottomEnd = CornerSize(MaterialTheme.spacing.none)
+                            )
+                        )
+                        .background(MaterialTheme.colorScheme.surface)
+                ) {
+                    Spacer(modifier = Modifier.height(MaterialTheme.spacing.sm))
+                    CountryStateHandling(
+                        state = state.countriesState,
+                        onRetry = { onAction(HomeAction.OnRetrySection(HomeSection.Countries)) }
+                    )
+                    RecentViewedStateHandling(
+                        state = state.recentViewedDestinationsState,
+                        onAction = onAction,
+                        onRetry = { onAction(HomeAction.OnRetrySection(HomeSection.RecentlyViewed)) }
+                    )
+                    DestinationStateHandling(
+                        title = stringResource(R.string.section_recommended_destinations),
+                        state = state.recommendedDestinationsState,
+                        paginationState = state.destinationsPagination,
+                        favoriteIds = state.favoriteIds,
+                        favoriteMutationInFlightIds = state.favoriteMutationInFlightIds,
+                        onAction = onAction,
+                        onItemVisible = { index -> onAction(HomeAction.OnDestinationItemVisible(index)) },
+                        onRetry = { onAction(HomeAction.OnRetrySection(HomeSection.Destinations)) },
+                        onRetryLoadMore = { onAction(HomeAction.OnRetryLoadMoreDestinations) }
+                    )
+                    DestinationStateHandling(
+                        title = stringResource(R.string.section_nearby_destinations),
+                        state = state.nearbyDestinationsState,
+                        favoriteIds = state.favoriteIds,
+                        favoriteMutationInFlightIds = state.favoriteMutationInFlightIds,
+                        onAction = onAction,
+                        onRetry = { onAction(HomeAction.OnRetrySection(HomeSection.Nearby)) },
+                        isNearby = true
+                    )
+                }
+                Spacer(modifier = Modifier.height(MaterialTheme.spacing.xl))
             }
-            Spacer(modifier = Modifier.height(MaterialTheme.spacing.xl))
         }
     }
 }
@@ -415,10 +430,13 @@ private fun RecentViewedStateHandling(
 private fun DestinationStateHandling(
     title: String,
     state: UiState<List<Destination>>,
+    paginationState: HomePaginationState = HomePaginationState(),
     favoriteIds: Set<Int>,
     favoriteMutationInFlightIds: Set<Int>,
     onAction: (HomeAction) -> Unit,
+    onItemVisible: (Int) -> Unit = {},
     onRetry: () -> Unit,
+    onRetryLoadMore: () -> Unit = {},
     isNearby: Boolean = false
 ) {
     val context = LocalContext.current
@@ -455,7 +473,10 @@ private fun DestinationStateHandling(
                 )
             } else {
                 HorizontalSection(title = title) {
-                    items(destinations, key = { it.destinationID }) { destination ->
+                    itemsIndexed(destinations, key = { _, destination -> destination.destinationID }) { index, destination ->
+                        LaunchedEffect(index) {
+                            onItemVisible(index)
+                        }
                         DestinationCard(
                             title = destination.name,
                             rating = destination.rating,
@@ -472,6 +493,16 @@ private fun DestinationStateHandling(
                                 onAction(HomeAction.OnDestinationClicked(destination.destinationID.toString()))
                             }
                         )
+                    }
+
+                    if (paginationState.loadMoreError != null) {
+                        item(key = "destinations_append_error") {
+                            AppendErrorRetry(onRetry = onRetryLoadMore)
+                        }
+                    } else if (paginationState.isLoadingMore) {
+                        item(key = "destinations_append_loading") {
+                            AppendLoadingIndicator()
+                        }
                     }
                 }
             }
@@ -519,13 +550,23 @@ fun HomeScreenDarkPreview() {
 @Preview(name = "Loaded", showBackground = true)
 @Composable
 private fun HomeScreenLoadedPreview() {
+    val destinations = previewDestinations()
     TravioTheme {
         HomeContent(
             modifier = Modifier,
             onAction = {},
             state = HomeUiState(
                 countriesState = UiState.Success(emptyList()),
-                recommendedDestinationsState = UiState.Success(emptyList()),
+                recommendedDestinationsState = UiState.Success(destinations),
+                loadedDestinations = destinations,
+                destinationsPagination = HomePaginationState(
+                    currentPageIndex = 1,
+                    pageSize = 10,
+                    totalCount = 30,
+                    hasMore = true,
+                    isLoadingMore = false,
+                    loadMoreError = null
+                ),
                 recentViewedDestinationsState = UiState.Success(emptyList()),
                 nearbyDestinationsState = UiState.Success(emptyList())
             ),
@@ -557,4 +598,91 @@ private fun HomeScreenErrorPreview() {
             navigateToAi = {}
         )
     }
+}
+
+@Preview(name = "Append Loading", showBackground = true)
+@Composable
+private fun HomeScreenAppendLoadingPreview() {
+    val destinations = previewDestinations()
+    TravioTheme {
+        HomeContent(
+            modifier = Modifier,
+            onAction = {},
+            state = HomeUiState(
+                recommendedDestinationsState = UiState.Success(destinations),
+                loadedDestinations = destinations,
+                destinationsPagination = HomePaginationState(
+                    currentPageIndex = 1,
+                    pageSize = 10,
+                    totalCount = 30,
+                    hasMore = true,
+                    isLoadingMore = true,
+                    loadMoreError = null
+                )
+            ),
+            snackbarHostState = SnackbarHostState(),
+            navigateToProfile = {},
+            navigateToFavorite = {},
+            navigateToCommunity = {},
+            navigateToAi = {}
+        )
+    }
+}
+
+@Preview(name = "Append Error", showBackground = true)
+@Composable
+private fun HomeScreenAppendErrorPreview() {
+    val destinations = previewDestinations()
+    TravioTheme {
+        HomeContent(
+            modifier = Modifier,
+            onAction = {},
+            state = HomeUiState(
+                recommendedDestinationsState = UiState.Success(destinations),
+                loadedDestinations = destinations,
+                destinationsPagination = HomePaginationState(
+                    currentPageIndex = 1,
+                    pageSize = 10,
+                    totalCount = 30,
+                    hasMore = true,
+                    isLoadingMore = false,
+                    loadMoreError = com.dev.utils.uitext.UiText.DynamicString("Load more failed")
+                )
+            ),
+            snackbarHostState = SnackbarHostState(),
+            navigateToProfile = {},
+            navigateToFavorite = {},
+            navigateToCommunity = {},
+            navigateToAi = {}
+        )
+    }
+}
+
+private fun previewDestinations(): List<Destination> {
+    return listOf(
+        Destination(
+            cityName = "Cairo",
+            description = "Historic city",
+            destinationID = 1,
+            imageUrls = listOf("https://example.com/1.jpg"),
+            interests = emptyList(),
+            latitude = 30.0,
+            longitude = 31.0,
+            name = "Cairo Citadel",
+            rating = 4.7,
+            totalReviews = 120
+        ),
+        Destination(
+            cityName = "Aswan",
+            description = "Beautiful river scenery",
+            destinationID = 2,
+            imageUrls = listOf("https://example.com/2.jpg"),
+            interests = emptyList(),
+            latitude = 24.0,
+            longitude = 32.9,
+            name = "Nile View",
+            rating = 4.6,
+            totalReviews = 95
+        )
+    )
 }
