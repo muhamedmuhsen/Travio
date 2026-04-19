@@ -32,4 +32,17 @@
     <!-- Pagination -->
     <string name="destinations_load_more_retry_label">Retry</string>
     <string name="destinations_load_more_retry_content_description">Retry loading more destinations</string>
+
+    <!-- Flights Section -->
+    <string name="section_flights">Flights</string>
+    <string name="section_see_all">See all</string>
+    <string name="flight_status_unknown">Unknown</string>
+    <string name="flight_city_unavailable">City unavailable</string>
+    <string name="flight_value_unavailable">Unavailable</string>
+    <string name="flight_stops_default">Non-stop</string>
+    <string name="flight_book_now">Book Now</string>
+    <string name="flight_airline_logo_cd">%1$s logo</string>
+    <string name="flight_card_cd">Flight %1$s %2$s from %3$s to %4$s</string>
+    <string name="flight_status_badge_cd">Flight status: %1$s</string>
+    <string name="flight_path_icon_cd">Flight path icon</string>
 </resources>

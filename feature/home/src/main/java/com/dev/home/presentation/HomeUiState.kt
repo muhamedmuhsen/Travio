@@ -1,5 +1,6 @@
 package com.dev.home.presentation
 
+import com.dev.home.presentation.flights.FlightsSectionUiState
 import com.dev.utils.uistate.UiState
 import com.example.domain.model.destination.Country
 import com.example.domain.model.destination.Destination
@@ -11,6 +12,7 @@ data class HomeUiState(
     val loadedDestinations: List<Destination> = emptyList(),
     val destinationsPagination: HomePaginationState = HomePaginationState(),
     val isRefreshing: Boolean = false,
+    val flightsState: FlightsSectionUiState = FlightsSectionUiState.Loading,
     val recentViewedDestinationsState: UiState<List<Destination>> = UiState.Idle,
     val nearbyDestinationsState: UiState<List<Destination>> = UiState.Idle,
     val favoriteIds: Set<Int> = emptySet(),

@@ -7,6 +7,8 @@ sealed interface HomeEvent {
     data class ShowErrorSnackbar(val message: UiText) : HomeEvent
     data class ShowSuccessSnackbar(val message: UiText) : HomeEvent
     data class NavigateToDestination(val id: String) : HomeEvent
+    data class NavigateToFlightDetails(val id: String) : HomeEvent
+    data class StartFlightBooking(val id: String) : HomeEvent
     data object NavigateToSearch : HomeEvent
     data object RequestLocationPermission : HomeEvent
 }
@@ -17,6 +19,7 @@ sealed interface HomeSection {
     data object Recommended : HomeSection
     data object Destinations : HomeSection
     data object Nearby : HomeSection
+    data object Flights : HomeSection
 }
 
 sealed interface HomeAction {
@@ -28,6 +31,8 @@ sealed interface HomeAction {
     data object OnRetryLoadMoreDestinations : HomeAction
     data object OnRefresh : HomeAction
     data class OnDestinationItemVisible(val index: Int) : HomeAction
+    data class OnFlightCardClicked(val id: String) : HomeAction
+    data class OnFlightCtaClicked(val id: String) : HomeAction
     data class OnRetrySection(val section: HomeSection) : HomeAction
     data class OnLocationPermissionResult(val granted: Boolean) : HomeAction
 }
