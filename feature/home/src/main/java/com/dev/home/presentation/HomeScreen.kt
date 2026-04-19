@@ -55,11 +55,13 @@ import com.dev.home.components.AppendLoadingIndicator
 import com.dev.home.components.CountryCard
 import com.dev.home.components.DestinationCard
 import com.dev.home.components.ErrorView
+import com.dev.home.components.FlightsSection
 import com.dev.home.components.HomeSearchBar
 import com.dev.home.components.LoadingCountryCard
 import com.dev.home.components.LoadingDestinationCard
 import com.dev.home.components.LoadingRecentViewedCard
 import com.dev.home.components.RecentViewedCard
+import com.dev.home.presentation.flights.FlightsSectionUiState
 import com.dev.utils.uistate.UiState
 import com.example.designsystem.components.AppBottomBar
 import com.example.designsystem.components.AppSnackBar
@@ -78,6 +80,8 @@ import com.google.accompanist.permissions.rememberMultiplePermissionsState
 fun HomeScreen(
     modifier: Modifier = Modifier,
     navigateToDestination: (String) -> Unit = {},
+    navigateToFlightDetails: (String) -> Unit = {},
+    startFlightBooking: (String) -> Unit = {},
     navigateToSearch: () -> Unit = {},
     navigateToProfile: () -> Unit = {},
     navigateToFavorite: () -> Unit = {},
@@ -104,6 +108,8 @@ fun HomeScreen(
         viewModel.event.collect { event ->
             when (event) {
                 is HomeEvent.NavigateToDestination -> navigateToDestination(event.id)
+                is HomeEvent.NavigateToFlightDetails -> navigateToFlightDetails(event.id)
+                is HomeEvent.StartFlightBooking -> startFlightBooking(event.id)
                 HomeEvent.NavigateToSearch -> navigateToSearch()
                 is HomeEvent.ShowErrorSnackbar -> {
                     snackbarHostState.showAppSnackbar(
@@ -233,9 +239,41 @@ private fun HomeContent(
                         onRetry = { onAction(HomeAction.OnRetrySection(HomeSection.Nearby)) },
                         isNearby = true
                     )
+                    FlightsStateHandling(
+                        state = state.flightsState,
+                        onAction = onAction,
+                        onRetry = { onAction(HomeAction.OnRetrySection(HomeSection.Flights)) }
+                    )
                 }
                 Spacer(modifier = Modifier.height(MaterialTheme.spacing.xl))
             }
+        }
+    }
+}
+
+@Composable
+private fun FlightsStateHandling(
+    state: FlightsSectionUiState,
+    onAction: (HomeAction) -> Unit,
+    onRetry: () -> Unit
+) {
+    when (state) {
+        FlightsSectionUiState.Loading -> Unit
+        is FlightsSectionUiState.Error -> ErrorSection(
+            title = stringResource(R.string.section_flights),
+            onRetry = onRetry
+        )
+
+        is FlightsSectionUiState.Success -> {
+            FlightsSection(
+                flights = state.cards,
+                onCardClick = { flightId ->
+                    onAction(HomeAction.OnFlightCardClicked(flightId))
+                },
+                onCtaClick = { flightId ->
+                    onAction(HomeAction.OnFlightCtaClicked(flightId))
+                }
+            )
         }
     }
 }

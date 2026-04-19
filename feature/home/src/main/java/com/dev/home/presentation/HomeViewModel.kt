@@ -2,6 +2,10 @@ package com.dev.home.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.dev.home.presentation.flights.FlightCardFallbackStrings
+import com.dev.home.presentation.flights.FlightsSectionUiState
+import com.dev.home.presentation.flights.RawFlightCardPayload
+import com.dev.home.presentation.flights.toFlightCardContent
 import com.dev.utils.uistate.UiState
 import com.dev.utils.uitext.UiText
 import com.dev.utils.uitext.asUiText
@@ -65,6 +69,8 @@ class HomeViewModel @Inject constructor(
     fun onAction(action: HomeAction) {
         when (action) {
             is HomeAction.OnDestinationClicked -> navigateToDestination(action.id)
+            is HomeAction.OnFlightCardClicked -> navigateToFlightDetails(action.id)
+            is HomeAction.OnFlightCtaClicked -> startFlightBooking(action.id)
             HomeAction.OnSearchClicked -> navigateToSearch()
             is HomeAction.OnFavoriteClicked -> toggleFavorite(action.destination)
             is HomeAction.OnSearchQueryChanged -> _uiState.update { it.copy(searchQuery = action.query) }
@@ -104,6 +110,7 @@ class HomeViewModel @Inject constructor(
             HomeSection.Destinations -> fetchDestinationPage(pageIndex = FIRST_PAGE, isInitialLoad = true)
             HomeSection.Nearby -> requestLocationPermission()
             HomeSection.RecentlyViewed -> observeRecentlyViewed()
+            HomeSection.Flights -> loadFlightsSectionData()
         }
     }
 
@@ -258,6 +265,18 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    private fun navigateToFlightDetails(id: String) {
+        viewModelScope.launch {
+            _event.send(HomeEvent.NavigateToFlightDetails(id))
+        }
+    }
+
+    private fun startFlightBooking(id: String) {
+        viewModelScope.launch {
+            _event.send(HomeEvent.StartFlightBooking(id))
+        }
+    }
+
     /** Searches all loaded destination lists for a matching ID. */
     private fun findDestinationById(id: String): Destination? {
         val intId = id.toIntOrNull() ?: return null
@@ -293,6 +312,55 @@ class HomeViewModel @Inject constructor(
     private fun loadHomeData() {
         fetchDestinationPage(pageIndex = FIRST_PAGE, isInitialLoad = true)
         loadFamousCountries()
+        loadFlightsSectionData()
+    }
+
+    private fun loadFlightsSectionData() {
+        val fallbackStrings = FlightCardFallbackStrings()
+        val cards = listOf(
+            RawFlightCardPayload(
+                id = "flight-vs003",
+                airlineName = "Virgin Atlantic",
+                flightNumber = "VS003",
+                statusLabel = "On Time",
+                departureTime = "10:15",
+                durationText = "8H 10M",
+                arrivalTime = "13:25",
+                departureAirportCode = "LHR",
+                departureCityName = "London",
+                arrivalAirportCode = "JFK",
+                arrivalCityName = "New York",
+                stopsText = "Non-stop",
+                durationSummary = "Duration: 8h 10m",
+                tripTypeSummary = "Total (Round Trip)",
+                currencySymbol = "$",
+                amountText = "489",
+                qualifierText = "round trip"
+            ),
+            RawFlightCardPayload(
+                id = "flight-ba117",
+                airlineName = "British Airways",
+                flightNumber = "BA117",
+                statusLabel = "Boarding",
+                departureTime = "12:40",
+                durationText = "7H 50M",
+                arrivalTime = "15:30",
+                departureAirportCode = "LHR",
+                departureCityName = "London",
+                arrivalAirportCode = "JFK",
+                arrivalCityName = "New York",
+                stopsText = "Non-stop",
+                durationSummary = "Duration: 7h 50m",
+                tripTypeSummary = "Total (Round Trip)",
+                currencySymbol = "$",
+                amountText = "529",
+                qualifierText = "round trip"
+            )
+        ).map { it.toFlightCardContent(fallback = fallbackStrings) }
+
+        _uiState.update {
+            it.copy(flightsState = FlightsSectionUiState.Success(cards))
+        }
     }
 
     private fun loadFamousCountries() {
