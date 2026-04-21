@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -51,15 +50,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.example.designsystem.theme.TravioTheme
+import com.example.designsystem.theme.elevation
 import com.example.designsystem.theme.spacing
 import com.example.feature.search.R
 
@@ -117,7 +117,7 @@ fun AllFlightsScreen(
 
     Scaffold(
         modifier = modifier,
-        containerColor = Color(0xFFF7F9FB),
+        containerColor = MaterialTheme.colorScheme.background,
         bottomBar = {
             BottomBar(
                 selectedTab = selectedTab,
@@ -193,7 +193,7 @@ private fun AllFlightsContent(
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                     contentDescription = stringResource(R.string.all_flights_back),
-                    tint = Color(0xFF1B1C1E)
+                    tint = MaterialTheme.colorScheme.onSurface
                 )
             }
             Text(
@@ -202,9 +202,9 @@ private fun AllFlightsContent(
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.weight(1f),
                 textAlign = TextAlign.Center,
-                color = Color(0xFF1B1C1E)
+                color = MaterialTheme.colorScheme.onSurface
             )
-            Spacer(modifier = Modifier.width(48.dp)) // To balance the back button
+            Spacer(modifier = Modifier.width(MaterialTheme.spacing.xxxl)) // To balance the back button
         }
 
         SearchCriteriaCard(
@@ -216,7 +216,7 @@ private fun AllFlightsContent(
             card = data.flightCard,
             onBookNowClick = onBookNowClick
         )
-        
+
         Spacer(modifier = Modifier.height(MaterialTheme.spacing.md))
     }
 }
@@ -228,9 +228,9 @@ private fun SearchCriteriaCard(
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(24.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+        shape = MaterialTheme.shapes.extraLarge,
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        elevation = CardDefaults.cardElevation(defaultElevation = MaterialTheme.elevation.sm)
     ) {
         Column(
             modifier = Modifier.padding(MaterialTheme.spacing.lg),
@@ -251,17 +251,17 @@ private fun SearchCriteriaCard(
                     modifier = Modifier
                         .align(Alignment.CenterEnd)
                         .padding(end = MaterialTheme.spacing.md)
-                        .size(32.dp),
+                        .size(MaterialTheme.spacing.xl),
                     shape = CircleShape,
-                    color = Color.Black,
-                    shadowElevation = 4.dp
+                    color = MaterialTheme.colorScheme.primary,
+                    shadowElevation = MaterialTheme.elevation.md
                 ) {
-                    Box(contentAlignment = Alignment.Center) {
+                    Box(contentAlignment = Alignment.Center, modifier = Modifier.size(MaterialTheme.spacing.xxl)) {
                         Icon(
                             imageVector = Icons.Filled.SwapVert,
                             contentDescription = stringResource(R.string.all_flights_swap_airports),
-                            tint = Color.White,
-                            modifier = Modifier.size(18.dp)
+                            tint = MaterialTheme.colorScheme.surface,
+                            modifier = Modifier.size(MaterialTheme.spacing.lg)
                         )
                     }
                 }
@@ -281,10 +281,10 @@ private fun SearchCriteriaCard(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(56.dp),
-                shape = RoundedCornerShape(28.dp),
+                shape = MaterialTheme.shapes.extraLarge,
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.Black,
-                    contentColor = Color.White
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.onPrimary
                 )
             ) {
                 Text(
@@ -304,30 +304,38 @@ private fun FlightFieldRow(
 ) {
     OutlinedCard(
         modifier = modifier,
-        shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.outlinedCardColors(containerColor = Color.White),
-        border = CardDefaults.outlinedCardBorder().copy(width = 1.dp, brush = androidx.compose.ui.graphics.SolidColor(Color(0xFFE0E0E0)))
+        shape = MaterialTheme.shapes.medium,
+        colors = CardDefaults.outlinedCardColors(containerColor = MaterialTheme.colorScheme.surface),
+        border = CardDefaults.outlinedCardBorder().copy(
+            width = MaterialTheme.elevation.xs,
+            brush = SolidColor(MaterialTheme.colorScheme.outlineVariant)
+        )
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(
-                    horizontal = MaterialTheme.spacing.md,
-                    vertical = 14.dp
-                ),
+                .padding(MaterialTheme.spacing.md),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Icon(
-                imageVector = field.icon,
-                contentDescription = null,
-                tint = Color(0xFF9E9E9E),
-                modifier = Modifier.size(20.dp)
-            )
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier
+                    .size(32.dp)
+                    .clip(MaterialTheme.shapes.extraLarge)
+                    .background(MaterialTheme.colorScheme.surfaceContainer)
+            ) {
+                Icon(
+                    imageVector = field.icon,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(MaterialTheme.spacing.md)
+                )
+            }
             Spacer(modifier = Modifier.width(MaterialTheme.spacing.md))
             Text(
                 text = field.value,
                 style = MaterialTheme.typography.bodyMedium,
-                color = Color(0xFF616161),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
@@ -340,11 +348,11 @@ private fun FlightResultCard(
     card: FlightCardUi,
     onBookNowClick: () -> Unit
 ) {
-    val tealColor = Color(0xFF006D77)
+    val tealColor = MaterialTheme.colorScheme.primaryContainer
     Card(
-        shape = RoundedCornerShape(24.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+        shape = MaterialTheme.shapes.extraLarge,
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        elevation = CardDefaults.cardElevation(defaultElevation = MaterialTheme.elevation.sm),
         modifier = Modifier.fillMaxWidth()
     ) {
         Column(
@@ -359,15 +367,15 @@ private fun FlightResultCard(
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Box(
                         modifier = Modifier
-                            .size(40.dp)
-                            .background(tealColor, CircleShape),
+                            .size(MaterialTheme.spacing.xxl)
+                            .background(MaterialTheme.colorScheme.primary, CircleShape),
                         contentAlignment = Alignment.Center
                     ) {
                         Icon(
                             imageVector = Icons.Default.FlightTakeoff,
                             contentDescription = null,
-                            tint = Color.White,
-                            modifier = Modifier.size(20.dp)
+                            tint = MaterialTheme.colorScheme.onPrimary,
+                            modifier = Modifier.size(MaterialTheme.spacing.md)
                         )
                     }
                     Spacer(modifier = Modifier.width(MaterialTheme.spacing.sm))
@@ -376,24 +384,27 @@ private fun FlightResultCard(
                             text = card.airline,
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold,
-                            color = Color(0xFF1B1C1E)
+                            color = MaterialTheme.colorScheme.onSurface
                         )
                         Text(
                             text = card.flightCode,
                             style = MaterialTheme.typography.labelSmall,
-                            color = Color(0xFF9E9E9E)
+                            color = MaterialTheme.colorScheme.outline
                         )
                     }
                 }
                 Surface(
-                    shape = RoundedCornerShape(12.dp),
-                    color = Color(0xFFE0F2F1)
+                    shape = MaterialTheme.shapes.medium,
+                    color = MaterialTheme.colorScheme.secondaryContainer
                 ) {
                     Text(
                         text = card.status,
                         style = MaterialTheme.typography.labelSmall,
-                        color = tealColor,
-                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                        color = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.padding(
+                            horizontal = MaterialTheme.spacing.xs,
+                            vertical = MaterialTheme.spacing.xxs
+                        ),
                         fontWeight = FontWeight.Bold
                     )
                 }
@@ -404,8 +415,12 @@ private fun FlightResultCard(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                FlightTimeBlock(time = card.departureTime, code = card.departureCode, city = card.departureCity)
-                
+                FlightTimeBlock(
+                    time = card.departureTime,
+                    code = card.departureCode,
+                    city = card.departureCity
+                )
+
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier.weight(1f)
@@ -414,27 +429,33 @@ private fun FlightResultCard(
                         modifier = Modifier.fillMaxWidth(0.7f),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        HorizontalDivider(modifier = Modifier.weight(1f), color = Color(0xFFEEEEEE))
+                        HorizontalDivider(
+                            modifier = Modifier.weight(1f),
+                            color = MaterialTheme.colorScheme.outlineVariant
+                        )
                         Surface(
-                            modifier = Modifier.size(24.dp),
+                            modifier = Modifier.size(MaterialTheme.spacing.lg),
                             shape = CircleShape,
-                            color = tealColor
+                            color = MaterialTheme.colorScheme.primary
                         ) {
                             Box(contentAlignment = Alignment.Center) {
                                 Icon(
                                     imageVector = Icons.Default.SwapHoriz,
                                     contentDescription = null,
-                                    tint = Color.White,
-                                    modifier = Modifier.size(14.dp)
+                                    tint = MaterialTheme.colorScheme.onPrimary,
+                                    modifier = Modifier.size(MaterialTheme.spacing.sm)
                                 )
                             }
                         }
-                        HorizontalDivider(modifier = Modifier.weight(1f), color = Color(0xFFEEEEEE))
+                        HorizontalDivider(
+                            modifier = Modifier.weight(1f),
+                            color = MaterialTheme.colorScheme.outlineVariant
+                        )
                     }
                     Text(
                         text = stringResource(R.string.all_flights_non_stop),
                         style = MaterialTheme.typography.labelSmall,
-                        color = Color(0xFF9E9E9E),
+                        color = MaterialTheme.colorScheme.outline,
                         fontWeight = FontWeight.Medium
                     )
                 }
@@ -456,28 +477,31 @@ private fun FlightResultCard(
                     Text(
                         text = "Duration: ${card.duration}",
                         style = MaterialTheme.typography.labelSmall,
-                        color = Color(0xFF616161),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                         fontWeight = FontWeight.Medium
                     )
                     Text(
                         text = "Total (One Way)",
                         style = MaterialTheme.typography.labelSmall,
-                        color = Color(0xFF9E9E9E)
+                        color = MaterialTheme.colorScheme.outline
                     )
                 }
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(
                         text = card.price,
-                        style = 24.sp.let { MaterialTheme.typography.headlineSmall.copy(fontSize = it) },
-                        color = tealColor,
+                        style = MaterialTheme.typography.headlineSmall,
+                        color = MaterialTheme.colorScheme.primary,
                         fontWeight = FontWeight.Bold
                     )
                     Spacer(modifier = Modifier.width(MaterialTheme.spacing.md))
                     Button(
                         onClick = onBookNowClick,
-                        shape = RoundedCornerShape(8.dp),
-                        colors = ButtonDefaults.buttonColors(containerColor = tealColor),
-                        modifier = Modifier.height(40.dp)
+                        shape = MaterialTheme.shapes.small,
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.primary,
+                            contentColor = MaterialTheme.colorScheme.onPrimary
+                        ),
+                        modifier = Modifier.height(MaterialTheme.spacing.xxl)
                     ) {
                         Text(
                             text = stringResource(R.string.all_flights_book_now),
@@ -502,18 +526,18 @@ private fun FlightTimeBlock(
             text = time,
             style = MaterialTheme.typography.titleLarge,
             fontWeight = FontWeight.Bold,
-            color = Color(0xFF1B1C1E)
+            color = MaterialTheme.colorScheme.onSurface
         )
         Text(
             text = code,
             style = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.Bold,
-            color = Color(0xFF1B1C1E)
+            color = MaterialTheme.colorScheme.onSurface
         )
         Text(
             text = city,
             style = MaterialTheme.typography.labelSmall,
-            color = Color(0xFF9E9E9E)
+            color = MaterialTheme.colorScheme.outline
         )
     }
 }
@@ -523,7 +547,7 @@ private fun BottomBar(
     selectedTab: BottomNavTab,
     onTabSelected: (BottomNavTab) -> Unit
 ) {
-    val tealColor = Color(0xFF006D77)
+    val accentColor = MaterialTheme.colorScheme.primary
     val items = listOf(
         Triple(BottomNavTab.Explore, Icons.Filled.Home, "Explore"),
         Triple(BottomNavTab.Favorite, Icons.Filled.Favorite, "Favorite"),
@@ -533,31 +557,31 @@ private fun BottomBar(
     )
 
     Surface(
-        color = Color.White,
-        shadowElevation = 16.dp
+        color = MaterialTheme.colorScheme.surface,
+        shadowElevation = MaterialTheme.elevation.xxl
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 12.dp),
+                .padding(vertical = MaterialTheme.spacing.sm),
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
             items.forEach { (tab, icon, label) ->
                 val selected = selectedTab == tab
-                val color = if (selected) tealColor else Color(0xFF9E9E9E)
+                val color = if (selected) accentColor else MaterialTheme.colorScheme.outline
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier
                         .clickable { onTabSelected(tab) }
-                        .padding(horizontal = 4.dp)
+                        .padding(horizontal = MaterialTheme.spacing.xxs)
                 ) {
                     Icon(
                         imageVector = icon,
                         contentDescription = label,
                         tint = color,
-                        modifier = Modifier.size(24.dp)
+                        modifier = Modifier.size(MaterialTheme.spacing.lg)
                     )
-                    Spacer(modifier = Modifier.height(4.dp))
+                    Spacer(modifier = Modifier.height(MaterialTheme.spacing.xxs))
                     Text(
                         text = label,
                         style = MaterialTheme.typography.labelSmall,
@@ -602,7 +626,10 @@ private fun AllFlightsScreenPreview() {
     }
 }
 
-@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Preview(
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_YES or Configuration.UI_MODE_TYPE_NORMAL
+)
 @Composable
 private fun AllFlightsScreenDarkPreview() {
     TravioTheme(darkTheme = true) {
