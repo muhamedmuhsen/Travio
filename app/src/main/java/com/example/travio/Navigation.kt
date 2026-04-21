@@ -22,7 +22,7 @@ import com.dev.onboarding.onboarding.OnboardingScreen
 import com.dev.onboarding.starterlogin.StarterLogin
 import com.dev.profile.editProfile.EditProfileScreen
 import com.dev.profile.profile.ProfileScreen
-import com.dev.search.presentation.SearchScreen
+import com.dev.search.presentation.AllFlightsScreen
 import com.dev.survey.presentation.SurveyScreen
 import com.example.common.navigation.DestinationDetailRoute
 import com.example.common.navigation.Screen
@@ -267,13 +267,8 @@ fun TravioNavHost(
         }
 
         composable(Screen.SearchScreen.route) {
-            SearchScreen(
-                navigateBack = { navController.popBackStack() },
-                navigateToDestination = { id ->
-                    id.toIntOrNull()?.let { destinationId ->
-                        navController.navigate(DestinationDetailRoute(destinationId))
-                    }
-                }
+            AllFlightsScreen(
+                onBackClick = { navController.popBackStack() }
             )
         }
 
