@@ -9,6 +9,9 @@ sealed interface DestinationDetailAction {
     data object OnRetryRelatedDestinations : DestinationDetailAction
     data class OnImagePageChanged(val index: Int) : DestinationDetailAction
     data class OnRelatedDestinationClicked(val destinationId: Int) : DestinationDetailAction
+    data class OnReviewTextChanged(val text: String) : DestinationDetailAction
+    data class OnReviewRatingChanged(val rating: Float) : DestinationDetailAction
+    data object OnSubmitReviewClicked : DestinationDetailAction
 }
 
 sealed interface DestinationDetailEvent {

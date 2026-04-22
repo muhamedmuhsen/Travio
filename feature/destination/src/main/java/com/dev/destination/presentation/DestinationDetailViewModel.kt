@@ -7,6 +7,7 @@ import androidx.navigation.toRoute
 import com.example.common.navigation.DestinationDetailRoute
 import com.example.domain.model.favorite.FavoriteMutationResult
 import com.example.domain.model.favorite.toPlace
+import com.example.domain.repository.review.ReviewRepository
 import com.example.domain.usecase.destinations.GetAllDestinationsUseCase
 import com.example.domain.usecase.destinations.GetDestinationByIdUseCase
 import com.example.domain.usecase.favorite.destination.AddDestinationFavoriteUseCase
@@ -37,6 +38,7 @@ class DestinationDetailViewModel @Inject constructor(
     private val removeDestinationFavoriteUseCase: RemoveDestinationFavoriteUseCase? = null,
     private val observeFavoriteDestinationIdsUseCase: ObserveFavoriteDestinationIdsUseCase? = null,
     private val getAllPlacesUseCase: GetAllPlacesUseCase,
+    private val reviewRepository: ReviewRepository,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -57,6 +59,48 @@ class DestinationDetailViewModel @Inject constructor(
     init {
         observeFavoriteState()
         loadDestination()
+        loadReviews()
+    }
+
+    private fun loadReviews() {
+        val id = destinationId ?: return
+        viewModelScope.launch {
+            _uiState.update { it.copy(reviewsState = UiState.Loading) }
+            when (val result = reviewRepository.getReviewsByDestinationId(id)) {
+                is Result.Success -> _uiState.update { it.copy(reviewsState = UiState.Success(result.data)) }
+                is Result.Error -> _uiState.update { it.copy(reviewsState = UiState.Error("Failed to load reviews")) }
+            }
+        }
+    }
+
+    private fun submitReview() {
+        val id = destinationId ?: return
+        val text = uiState.value.reviewText
+        val rating = uiState.value.reviewRating
+
+        if (text.isBlank()) return
+
+        viewModelScope.launch {
+            _uiState.update { it.copy(isSubmittingReview = true) }
+            when (val result = reviewRepository.submitReview(id, rating, text)) {
+                is Result.Success -> {
+                    _uiState.update {
+                        it.copy(
+                            isSubmittingReview = false,
+                            reviewText = "",
+                            reviewRating = 0f
+                        )
+                    }
+                    _events.send(DestinationDetailEvent.ShowSuccessSnackbar("Review submitted successfully"))
+                    loadReviews()
+                }
+
+                is Result.Error -> {
+                    _uiState.update { it.copy(isSubmittingReview = false) }
+                    _events.send(DestinationDetailEvent.ShowErrorSnackbar("Failed to submit review"))
+                }
+            }
+        }
     }
 
     private fun observeFavoriteState() {
@@ -224,6 +268,18 @@ class DestinationDetailViewModel @Inject constructor(
                 viewModelScope.launch {
                     _events.send(DestinationDetailEvent.NavigateToDestination(action.destinationId))
                 }
+            }
+
+            is DestinationDetailAction.OnReviewTextChanged -> {
+                _uiState.update { it.copy(reviewText = action.text) }
+            }
+
+            is DestinationDetailAction.OnReviewRatingChanged -> {
+                _uiState.update { it.copy(reviewRating = action.rating) }
+            }
+
+            DestinationDetailAction.OnSubmitReviewClicked -> {
+                submitReview()
             }
         }
     }

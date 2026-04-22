@@ -3,6 +3,7 @@ package com.dev.destination.presentation
 import android.content.Intent
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -20,6 +21,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -28,12 +30,16 @@ import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.Refresh
+import androidx.compose.material.icons.outlined.Star
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -43,6 +49,7 @@ import androidx.compose.material3.TabRow
 import androidx.compose.material3.TabRowDefaults.SecondaryIndicator
 import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -58,6 +65,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -74,6 +82,11 @@ import com.example.designsystem.components.shimmerEffect
 import com.example.designsystem.theme.TravioTheme
 import com.example.domain.model.destination.Destination
 import com.example.domain.model.destination.Interest
+import com.example.domain.model.review.Review
+import java.time.Instant
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
 
 @Composable
 fun DestinationDetailScreen(
@@ -125,9 +138,10 @@ private fun DestinationDetailContent(
     uiState: DestinationDetailUiState,
     onAction: (DestinationDetailAction) -> Unit,
     modifier: Modifier = Modifier,
-    snackbarHostState: SnackbarHostState
+    snackbarHostState: SnackbarHostState,
+    initialTabIndex: Int = 0
 ) {
-    var selectedTabIndex by remember { mutableIntStateOf(0) }
+    var selectedTabIndex by remember { mutableIntStateOf(initialTabIndex) }
     val tabs = listOf(
         stringResource(id = R.string.destination_tab_overview),
         stringResource(id = R.string.destination_tab_reviews)
@@ -353,14 +367,11 @@ private fun DestinationDetailContent(
                             )
                         }
                     } else {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(200.dp),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text(stringResource(id = R.string.destination_reviews_placeholder))
-                        }
+                        ReviewSection(
+                            uiState = uiState,
+                            onAction = onAction,
+                            modifier = Modifier.padding(16.dp)
+                        )
                     }
                 }
             }
@@ -526,6 +537,264 @@ private fun RelatedDestinationsErrorSection(
     }
 }
 
+@Composable
+private fun ReviewSection(
+    uiState: DestinationDetailUiState,
+    onAction: (DestinationDetailAction) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Column(modifier = modifier) {
+        ReviewSubmissionCard(
+            text = uiState.reviewText,
+            rating = uiState.reviewRating,
+            isSubmitting = uiState.isSubmittingReview,
+            onTextChanged = { onAction(DestinationDetailAction.OnReviewTextChanged(it)) },
+            onRatingChanged = { onAction(DestinationDetailAction.OnReviewRatingChanged(it)) },
+            onSubmitClicked = { onAction(DestinationDetailAction.OnSubmitReviewClicked) },
+            modifier = Modifier.padding(bottom = 24.dp)
+        )
+
+        when (val state = uiState.reviewsState) {
+            is UiState.Loading -> {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(200.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator()
+                }
+            }
+
+            is UiState.Success -> {
+                if (state.data.isEmpty()) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(200.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "No reviews yet. Be the first to review!",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                } else {
+                    state.data.forEach { review ->
+                        ReviewItem(
+                            review = review,
+                            modifier = Modifier.padding(bottom = 16.dp)
+                        )
+                    }
+                }
+            }
+
+            is UiState.Error -> {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 32.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        text = state.message,
+                        color = MaterialTheme.colorScheme.error,
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    OutlinedButton(onClick = { /* ViewModel already triggers load on init, maybe add retry action? */ }) {
+                        Text("Retry")
+                    }
+                }
+            }
+
+            else -> {}
+        }
+    }
+}
+
+@Composable
+private fun ReviewSubmissionCard(
+    text: String,
+    rating: Float,
+    isSubmitting: Boolean,
+    onTextChanged: (String) -> Unit,
+    onRatingChanged: (Float) -> Unit,
+    onSubmitClicked: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Card(
+        modifier = modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
+        )
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            InteractiveRatingBar(
+                rating = rating,
+                onRatingChanged = onRatingChanged,
+                modifier = Modifier.padding(bottom = 16.dp)
+            )
+
+            OutlinedTextField(
+                value = text,
+                onValueChange = onTextChanged,
+                placeholder = { Text("Write your review...") },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(100.dp),
+                shape = RoundedCornerShape(12.dp),
+                colors = TextFieldDefaults.colors(
+                    focusedContainerColor = Color.Transparent,
+                    unfocusedContainerColor = Color.Transparent,
+                    disabledContainerColor = Color.Transparent
+                ),
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done)
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Button(
+                onClick = onSubmitClicked,
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(12.dp),
+                enabled = !isSubmitting && text.isNotBlank() && rating > 0
+            ) {
+                if (isSubmitting) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(24.dp),
+                        color = MaterialTheme.colorScheme.onPrimary,
+                        strokeWidth = 2.dp
+                    )
+                } else {
+                    Text("Submit Review")
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun InteractiveRatingBar(
+    rating: Float,
+    onRatingChanged: (Float) -> Unit,
+    modifier: Modifier = Modifier,
+    starCount: Int = 5
+) {
+    Row(
+        modifier = modifier,
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        repeat(starCount) { index ->
+            val starRating = index + 1f
+            Icon(
+                imageVector = if (rating >= starRating) Icons.Filled.Star else Icons.Outlined.Star,
+                contentDescription = null,
+                tint = if (rating >= starRating) Color(0xFFFFD700) else MaterialTheme.colorScheme.outline,
+                modifier = Modifier
+                    .size(32.dp)
+                    .clickable { onRatingChanged(starRating) }
+            )
+        }
+    }
+}
+
+@Composable
+private fun ReviewItem(
+    review: Review,
+    modifier: Modifier = Modifier
+) {
+    Card(
+        modifier = modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f)
+        )
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                AsyncImage(
+                    model = ImageRequest.Builder(LocalContext.current)
+                        .data(review.authorAvatarUrl)
+                        .crossfade(true)
+                        .build(),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .size(40.dp)
+                        .clip(CircleShape),
+                    contentScale = ContentScale.Crop
+                )
+                Spacer(modifier = Modifier.width(12.dp))
+                Column {
+                    Text(
+                        text = review.authorName,
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold
+                    )
+                    val dateText = review.createdAt.atZone(ZoneId.systemDefault())
+                        .format(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM))
+                    val subTitle = if (review.authorLocation != null) {
+                        "${review.authorLocation} • $dateText"
+                    } else {
+                        dateText
+                    }
+                    Text(
+                        text = subTitle,
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                repeat(5) { index ->
+                    Icon(
+                        imageVector = Icons.Filled.Star,
+                        contentDescription = null,
+                        tint = if (index < review.rating) Color(0xFFFFD700) else MaterialTheme.colorScheme.outline.copy(alpha = 0.3f),
+                        modifier = Modifier.size(16.dp)
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            val title = review.title
+            if (title != null) {
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.titleSmall,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.padding(bottom = 4.dp)
+                )
+            }
+
+            Text(
+                text = review.content,
+                style = MaterialTheme.typography.bodyMedium
+            )
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    text = "Helpful (${review.helpfulCount})",
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.primary,
+                    fontWeight = FontWeight.SemiBold
+                )
+            }
+        }
+    }
+}
+
 @Preview(showBackground = true)
 @Composable
 fun DestinationDetailScreenPreview() {
@@ -549,14 +818,44 @@ fun DestinationDetailScreenPreview() {
 
     val sampleUiState = DestinationDetailUiState(
         detailState = UiState.Success(sampleDestination),
-        isFavorite = true
+        isFavorite = true,
+        reviewsState = UiState.Success(
+            listOf(
+                Review(
+                    id = 1,
+                    authorName = "Sarah Anderson",
+                    authorAvatarUrl = null,
+                    authorLocation = "USA",
+                    rating = 5f,
+                    title = "Absolutely breathtaking!",
+                    content = "Cairo exceeded all my expectations! The pyramids are even more impressive in person.",
+                    createdAt = Instant.now(),
+                    helpfulCount = 142
+                ),
+                Review(
+                    id = 2,
+                    authorName = "Mohamed Ali",
+                    authorAvatarUrl = null,
+                    authorLocation = "UAE",
+                    rating = 5f,
+                    title = "A trip of a lifetime",
+                    content = "The history here is unmatched. Walking through Khan el-Khalili at night was magical.",
+                    createdAt = Instant.now(),
+                    helpfulCount = 98
+                )
+            )
+        )
     )
 
     TravioTheme {
-        DestinationDetailContent(
-            uiState = sampleUiState,
-            onAction = {},
-            snackbarHostState = remember { SnackbarHostState() }
-        )
+        Scaffold { padding ->
+            DestinationDetailContent(
+                uiState = sampleUiState,
+                onAction = {},
+                modifier = Modifier.padding(padding),
+                snackbarHostState = remember { SnackbarHostState() },
+                initialTabIndex = 1
+            )
+        }
     }
 }

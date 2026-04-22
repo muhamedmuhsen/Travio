@@ -6,14 +6,17 @@ import com.example.domain.model.destination.Destination
 import com.example.domain.model.destination.DestinationsPage
 import com.example.domain.model.destination.Interest
 import com.example.domain.model.favorite.Place
+import com.example.domain.model.review.Review
 import com.example.domain.repository.destinations.DestinationsRepository
 import com.example.domain.repository.favorite.FavoritePlaceRepository
+import com.example.domain.repository.review.ReviewRepository
 import com.example.domain.usecase.destinations.GetAllDestinationsUseCase
 import com.example.domain.usecase.destinations.GetDestinationByIdUseCase
 import com.example.domain.usecase.favorite.place.FavoritePlaceUseCase
 import com.example.domain.usecase.favorite.place.GetAllPlacesUseCase
 import com.example.domain.utils.DataError
 import com.example.domain.utils.Result
+import java.time.Instant
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.async
@@ -44,6 +47,7 @@ class DestinationDetailViewModelTest {
     private lateinit var getAllPlacesUseCase: GetAllPlacesUseCase
     private lateinit var fakeDestinationsRepository: FakeDestinationsRepository
     private lateinit var fakeFavoritePlaceRepository: FakeFavoritePlaceRepository
+    private lateinit var fakeReviewRepository: FakeReviewRepository
 
     private val sampleDestination = Destination(
         cityName = "Paris",
@@ -67,6 +71,7 @@ class DestinationDetailViewModelTest {
             addDestinationFavoriteUseCase = null,
             observeFavoriteDestinationIdsUseCase = null,
             getAllPlacesUseCase = getAllPlacesUseCase,
+            reviewRepository = fakeReviewRepository,
             savedStateHandle = savedStateHandle
         )
     }
@@ -76,6 +81,7 @@ class DestinationDetailViewModelTest {
         Dispatchers.setMain(testDispatcher)
         fakeDestinationsRepository = FakeDestinationsRepository()
         fakeFavoritePlaceRepository = FakeFavoritePlaceRepository()
+        fakeReviewRepository = FakeReviewRepository()
         getDestinationByIdUseCase = GetDestinationByIdUseCase(fakeDestinationsRepository)
         getAllDestinationsUseCase = GetAllDestinationsUseCase(fakeDestinationsRepository)
         favoritePlaceUseCase = FavoritePlaceUseCase(fakeFavoritePlaceRepository)
@@ -251,6 +257,68 @@ class DestinationDetailViewModelTest {
         val ids = (relatedState as UiState.Success).data.map { it.destinationID }
         assertEquals(listOf(2), ids)
         assertEquals(listOf(1, null), fakeDestinationsRepository.requestedInterestIds)
+    }
+
+    @Test
+    fun should_setReviewsSuccess_when_viewModelInitialized_andReviewsLoad() = runTest {
+        val reviews = listOf(
+            Review(1, "User 1", null, 5f, "Great!", Instant.now(), 10),
+            Review(2, "User 2", null, 4f, "Good", Instant.now(), 5)
+        )
+        fakeReviewRepository.reviewsResult = Result.Success(reviews)
+
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+
+        val state = viewModel.uiState.value.reviewsState
+        assertTrue(state is UiState.Success)
+        assertEquals(2, (state as UiState.Success).data.size)
+    }
+
+    @Test
+    fun should_clearInputAndReloadReviews_when_reviewSubmittedSuccessfully() = runTest {
+        fakeReviewRepository.reviewsResult = Result.Success(emptyList())
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+
+        viewModel.onAction(DestinationDetailAction.OnReviewTextChanged("My review"))
+        viewModel.onAction(DestinationDetailAction.OnReviewRatingChanged(4.5f))
+        
+        fakeReviewRepository.submitResult = Result.Success(Unit)
+        // After submission, it should reload reviews
+        val newReviews = listOf(Review(1, "Me", null, 4.5f, "My review", Instant.now(), 0))
+        fakeReviewRepository.reviewsResult = Result.Success(newReviews)
+
+        viewModel.onAction(DestinationDetailAction.OnSubmitReviewClicked)
+        advanceUntilIdle()
+
+        assertEquals("", viewModel.uiState.value.reviewText)
+        assertEquals(0f, viewModel.uiState.value.reviewRating)
+        
+        val reviewsState = viewModel.uiState.value.reviewsState
+        assertTrue(reviewsState is UiState.Success)
+        assertEquals(1, (reviewsState as UiState.Success).data.size)
+    }
+
+    private class FakeReviewRepository : ReviewRepository {
+        var reviewsResult: Result<List<Review>, DataError> = Result.Success(emptyList())
+        var submitResult: Result<Unit, DataError> = Result.Success(Unit)
+        var lastSubmittedId: Int? = null
+        var lastSubmittedRating: Float? = null
+        var lastSubmittedContent: String? = null
+
+        override suspend fun getReviewsByDestinationId(destinationId: Int): Result<List<Review>, DataError> = reviewsResult
+
+        override suspend fun submitReview(
+            destinationId: Int,
+            rating: Float,
+            content: String
+        ): Result<Unit, DataError> {
+            lastSubmittedId = destinationId
+            lastSubmittedRating = rating
+            lastSubmittedContent = content
+            return submitResult
+        }
     }
 
     private class FakeDestinationsRepository : DestinationsRepository {
