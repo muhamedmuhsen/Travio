@@ -80,6 +80,7 @@ class HomeViewModel @Inject constructor(
             HomeAction.OnRefresh -> onRefresh()
             is HomeAction.OnDestinationItemVisible -> onDestinationItemVisible(action.index)
             is HomeAction.OnLocationPermissionResult -> onLocationPermissionResult(action.granted)
+            HomeAction.OnSeeAllFlightsClicked -> navigateToSeeAllFlights()
         }
     }
 
@@ -107,7 +108,11 @@ class HomeViewModel @Inject constructor(
         when (section) {
             HomeSection.Countries -> loadFamousCountries()
             HomeSection.Recommended,
-            HomeSection.Destinations -> fetchDestinationPage(pageIndex = FIRST_PAGE, isInitialLoad = true)
+            HomeSection.Destinations -> fetchDestinationPage(
+                pageIndex = FIRST_PAGE,
+                isInitialLoad = true
+            )
+
             HomeSection.Nearby -> requestLocationPermission()
             HomeSection.RecentlyViewed -> observeRecentlyViewed()
             HomeSection.Flights -> loadFlightsSectionData()
@@ -252,6 +257,10 @@ class HomeViewModel @Inject constructor(
 
     private fun navigateToSearch() {
         viewModelScope.launch { _event.send(HomeEvent.NavigateToSearch) }
+    }
+
+    private fun navigateToSeeAllFlights() {
+        viewModelScope.launch { _event.send(HomeEvent.NavigateToSeeAllFlights) }
     }
 
     private fun navigateToDestination(id: String) {

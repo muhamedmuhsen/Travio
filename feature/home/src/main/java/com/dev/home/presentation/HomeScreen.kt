@@ -61,6 +61,7 @@ import com.dev.home.components.LoadingCountryCard
 import com.dev.home.components.LoadingDestinationCard
 import com.dev.home.components.LoadingRecentViewedCard
 import com.dev.home.components.RecentViewedCard
+import com.dev.home.presentation.HomeAction.OnLocationPermissionResult
 import com.dev.home.presentation.flights.FlightsSectionUiState
 import com.dev.utils.uistate.UiState
 import com.example.designsystem.components.AppBottomBar
@@ -87,6 +88,7 @@ fun HomeScreen(
     navigateToFavorite: () -> Unit = {},
     navigateToCommunity: () -> Unit = {},
     navigateToAi: () -> Unit = {},
+    navigateToSeeAllFlights: () -> Unit = {},
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
@@ -99,8 +101,9 @@ fun HomeScreen(
             Manifest.permission.ACCESS_COARSE_LOCATION
         )
     ) { permissionsResult ->
-        val granted = permissionsResult[Manifest.permission.ACCESS_FINE_LOCATION] == true ||
-            permissionsResult[Manifest.permission.ACCESS_COARSE_LOCATION] == true
+        val granted =
+            permissionsResult[Manifest.permission.ACCESS_FINE_LOCATION] == true ||
+                permissionsResult[Manifest.permission.ACCESS_COARSE_LOCATION] == true
         viewModel.onAction(HomeAction.OnLocationPermissionResult(granted))
     }
 
@@ -118,20 +121,24 @@ fun HomeScreen(
                         icon = Icons.Default.ErrorOutline
                     )
                 }
+
                 is HomeEvent.ShowSuccessSnackbar -> {
                     snackbarHostState.showAppSnackbar(
                         message = event.message.asString(context),
                         type = SnackBarType.SUCCESS
                     )
                 }
+
                 HomeEvent.RequestLocationPermission -> {
                     if (locationPermissions.allPermissionsGranted) {
                         // Permission is already granted — inform the ViewModel directly.
-                        viewModel.onAction(HomeAction.OnLocationPermissionResult(granted = true))
+                        viewModel.onAction(OnLocationPermissionResult(granted = true))
                     } else {
                         locationPermissions.launchMultiplePermissionRequest()
                     }
                 }
+
+                HomeEvent.NavigateToSeeAllFlights -> navigateToSeeAllFlights()
             }
         }
     }
@@ -226,7 +233,13 @@ private fun HomeContent(
                         favoriteIds = state.favoriteIds,
                         favoriteMutationInFlightIds = state.favoriteMutationInFlightIds,
                         onAction = onAction,
-                        onItemVisible = { index -> onAction(HomeAction.OnDestinationItemVisible(index)) },
+                        onItemVisible = { index ->
+                            onAction(
+                                HomeAction.OnDestinationItemVisible(
+                                    index
+                                )
+                            )
+                        },
                         onRetry = { onAction(HomeAction.OnRetrySection(HomeSection.Destinations)) },
                         onRetryLoadMore = { onAction(HomeAction.OnRetryLoadMoreDestinations) }
                     )
@@ -272,7 +285,8 @@ private fun FlightsStateHandling(
                 },
                 onCtaClick = { flightId ->
                     onAction(HomeAction.OnFlightCtaClicked(flightId))
-                }
+                },
+                onSeeAllClick = { onAction(HomeAction.OnSeeAllFlightsClicked) }
             )
         }
     }
@@ -402,6 +416,7 @@ private fun CountryStateHandling(
             title = stringResource(R.string.section_famous_places),
             onRetry = onRetry
         )
+
         UiState.Idle -> Unit
         UiState.Loading -> {
             HorizontalSection(title = stringResource(R.string.section_famous_countries)) {
@@ -494,10 +509,12 @@ private fun DestinationStateHandling(
                 ErrorSection(title = title, onRetry = onRetry)
             }
         }
+
         UiState.Idle -> Unit
         UiState.Loading -> {
             HorizontalSection(title) { items(3) { LoadingDestinationCard() } }
         }
+
         is UiState.Success -> {
             val destinations = state.data ?: emptyList()
             if (destinations.isEmpty()) {
@@ -511,7 +528,10 @@ private fun DestinationStateHandling(
                 )
             } else {
                 HorizontalSection(title = title) {
-                    itemsIndexed(destinations, key = { _, destination -> destination.destinationID }) { index, destination ->
+                    itemsIndexed(
+                        destinations,
+                        key = { _, destination -> destination.destinationID }
+                    ) { index, destination ->
                         LaunchedEffect(index) {
                             onItemVisible(index)
                         }
