@@ -22,11 +22,13 @@ sealed class Screen(val route: String) {
 
         fun createRoute(destinationId: Int): String = "$route/$destinationId"
     }
+
     data object SearchScreen : Screen(Screens.SEARCH.name)
     data object SurveyScreen : Screen(Screens.SURVEY.name)
     data object PostDetailScreen : Screen(Screens.POST_DETAIL.name)
     data object ShareMomentScreen : Screen(Screens.SHARE_MOMENT.name)
     data object LocationPickerScreen : Screen(Screens.LOCATION_PICKER.name)
+    data object SeeAllFlightsScreen : Screen(Screens.SEE_ALL_FLIGHTS.name)
 }
 
 enum class Screens {
@@ -50,5 +52,6 @@ enum class Screens {
     SURVEY,
     POST_DETAIL,
     SHARE_MOMENT,
-    LOCATION_PICKER
+    LOCATION_PICKER,
+    SEE_ALL_FLIGHTS
 }

@@ -176,8 +176,14 @@ fun TravioNavHost(
                     id.toIntOrNull()?.let { destinationId ->
                         navController.navigate(DestinationDetailRoute(destinationId))
                     }
+                },
+                navigateToSeeAllFlights = {
+                    navController.navigate(Screen.SeeAllFlightsScreen.route)
                 }
             )
+        }
+        composable(Screen.SeeAllFlightsScreen.route) {
+            AllFlightsScreen()
         }
         composable(Screen.ProfileScreen.route) {
             ProfileScreen(
