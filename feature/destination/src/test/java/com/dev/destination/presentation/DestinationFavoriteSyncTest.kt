@@ -9,9 +9,11 @@ import com.example.domain.model.favorite.FavoriteDestination
 import com.example.domain.model.favorite.FavoriteMutationResult
 import com.example.domain.model.favorite.FavoritesPage
 import com.example.domain.model.favorite.Place
+import com.example.domain.model.review.Review
 import com.example.domain.repository.destinations.DestinationsRepository
 import com.example.domain.repository.favorite.FavoriteDestinationRepository
 import com.example.domain.repository.favorite.FavoritePlaceRepository
+import com.example.domain.repository.review.ReviewRepository
 import com.example.domain.usecase.destinations.GetAllDestinationsUseCase
 import com.example.domain.usecase.destinations.GetDestinationByIdUseCase
 import com.example.domain.usecase.favorite.destination.AddDestinationFavoriteUseCase
@@ -65,6 +67,7 @@ class DestinationFavoriteSyncTest {
             removeDestinationFavoriteUseCase = RemoveDestinationFavoriteUseCase(favoriteRepo),
             observeFavoriteDestinationIdsUseCase = ObserveFavoriteDestinationIdsUseCase(favoriteRepo),
             getAllPlacesUseCase = GetAllPlacesUseCase(FakeFavoritePlaceRepository()),
+            reviewRepository = FakeReviewRepository(),
             savedStateHandle = SavedStateHandle(mapOf("id" to 1))
         )
 
@@ -78,6 +81,11 @@ class DestinationFavoriteSyncTest {
         favoriteRepo.favoriteIds.value = emptySet()
         advanceUntilIdle()
         assertFalse(viewModel.uiState.value.isFavorite)
+    }
+
+    private class FakeReviewRepository : ReviewRepository {
+        override suspend fun getReviewsByDestinationId(destinationId: Int): Result<List<Review>, DataError> = Result.Success(emptyList())
+        override suspend fun submitReview(destinationId: Int, rating: Float, content: String): Result<Unit, DataError> = Result.Success(Unit)
     }
 
     private class FakeFavoriteDestinationRepository : FavoriteDestinationRepository {

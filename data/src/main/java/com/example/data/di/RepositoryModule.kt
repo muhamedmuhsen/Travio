@@ -15,6 +15,7 @@ import com.example.data.repository.favorite.FavoriteDestinationRepositoryImpl
 import com.example.data.repository.favorite.FavoritePlaceRepositoryImpl
 import com.example.data.repository.favorite.FavoritePostRepositoryImpl
 import com.example.data.repository.favorite.FavoriteTripRepositoryImpl
+import com.example.data.repository.review.ReviewRepositoryImpl
 import com.example.data.repository.search.RecentSearchRepositoryImpl
 import com.example.data.repository.survey.SurveyPreferencesRepositoryImpl
 import com.example.domain.repository.auth.EmailVerificationRepository
@@ -32,6 +33,7 @@ import com.example.domain.repository.favorite.FavoritePlaceRepository
 import com.example.domain.repository.favorite.FavoritePostRepository
 import com.example.domain.repository.favorite.FavoriteTabPreferenceRepository
 import com.example.domain.repository.favorite.FavoriteTripRepository
+import com.example.domain.repository.review.ReviewRepository
 import com.example.domain.repository.search.RecentSearchRepository
 import com.example.domain.repository.survey.SurveyPreferencesRepository
 import dagger.Binds
@@ -119,4 +121,8 @@ abstract class RepositoryModule {
     abstract fun bindSurveyPreferencesRepository(
         surveyPreferencesRepositoryImpl: SurveyPreferencesRepositoryImpl
     ): SurveyPreferencesRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindReviewRepository(reviewRepositoryImpl: ReviewRepositoryImpl): ReviewRepository
 }
