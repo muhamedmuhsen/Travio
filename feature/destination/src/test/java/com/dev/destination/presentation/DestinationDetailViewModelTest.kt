@@ -7,6 +7,7 @@ import com.example.domain.model.destination.DestinationsPage
 import com.example.domain.model.destination.Interest
 import com.example.domain.model.favorite.Place
 import com.example.domain.model.review.Review
+import com.example.domain.model.review.ReviewsPage
 import com.example.domain.repository.destinations.DestinationsRepository
 import com.example.domain.repository.favorite.FavoritePlaceRepository
 import com.example.domain.repository.review.ReviewRepository
@@ -262,10 +263,10 @@ class DestinationDetailViewModelTest {
     @Test
     fun should_setReviewsSuccess_when_viewModelInitialized_andReviewsLoad() = runTest {
         val reviews = listOf(
-            Review(1, "User 1", null, 5f, "Great!", Instant.now(), 10),
-            Review(2, "User 2", null, 4f, "Good", Instant.now(), 5)
+            Review(1, "User 1", null, 5, "Great!", Instant.now(), 10),
+            Review(2, "User 2", null, 4, "Good", Instant.now(), 5)
         )
-        fakeReviewRepository.reviewsResult = Result.Success(reviews)
+        fakeReviewRepository.reviewsResult = Result.Success(ReviewsPage(1, 10, 2, reviews))
 
         val viewModel = createViewModel()
         advanceUntilIdle()
@@ -277,48 +278,59 @@ class DestinationDetailViewModelTest {
 
     @Test
     fun should_clearInputAndReloadReviews_when_reviewSubmittedSuccessfully() = runTest {
-        fakeReviewRepository.reviewsResult = Result.Success(emptyList())
+        fakeReviewRepository.reviewsResult = Result.Success(ReviewsPage(1, 10, 0, emptyList()))
         val viewModel = createViewModel()
         advanceUntilIdle()
 
         viewModel.onAction(DestinationDetailAction.OnReviewTextChanged("My review"))
-        viewModel.onAction(DestinationDetailAction.OnReviewRatingChanged(4.5f))
-        
-        fakeReviewRepository.submitResult = Result.Success(Unit)
+        viewModel.onAction(DestinationDetailAction.OnReviewRatingChanged(4))
+
+        val newReview = Review(1, "Me", null, 4, "My review", Instant.now(), 0)
+        fakeReviewRepository.submitResult = Result.Success(newReview)
         // After submission, it should reload reviews
-        val newReviews = listOf(Review(1, "Me", null, 4.5f, "My review", Instant.now(), 0))
-        fakeReviewRepository.reviewsResult = Result.Success(newReviews)
+        val newReviews = listOf(newReview)
+        fakeReviewRepository.reviewsResult = Result.Success(ReviewsPage(1, 10, 1, newReviews))
 
         viewModel.onAction(DestinationDetailAction.OnSubmitReviewClicked)
         advanceUntilIdle()
 
         assertEquals("", viewModel.uiState.value.reviewText)
-        assertEquals(0f, viewModel.uiState.value.reviewRating)
-        
+        assertEquals(0, viewModel.uiState.value.reviewRating)
+
         val reviewsState = viewModel.uiState.value.reviewsState
         assertTrue(reviewsState is UiState.Success)
         assertEquals(1, (reviewsState as UiState.Success).data.size)
     }
 
     private class FakeReviewRepository : ReviewRepository {
-        var reviewsResult: Result<List<Review>, DataError> = Result.Success(emptyList())
-        var submitResult: Result<Unit, DataError> = Result.Success(Unit)
+        var reviewsResult: Result<ReviewsPage, DataError> = Result.Success(ReviewsPage(1, 10, 0, emptyList()))
+        var submitResult: Result<Review, DataError> = Result.Error(DataError.UnknownError)
+        var deleteResult: Result<Unit, DataError> = Result.Success(Unit)
         var lastSubmittedId: Int? = null
-        var lastSubmittedRating: Float? = null
+        var lastSubmittedRating: Int? = null
         var lastSubmittedContent: String? = null
 
-        override suspend fun getReviewsByDestinationId(destinationId: Int): Result<List<Review>, DataError> = reviewsResult
+        override suspend fun getReviewsByDestinationId(
+            destinationId: Int,
+            pageIndex: Int,
+            pageSize: Int
+        ): Result<ReviewsPage, DataError> = reviewsResult
 
         override suspend fun submitReview(
             destinationId: Int,
-            rating: Float,
+            rating: Int,
             content: String
-        ): Result<Unit, DataError> {
+        ): Result<Review, DataError> {
             lastSubmittedId = destinationId
             lastSubmittedRating = rating
             lastSubmittedContent = content
             return submitResult
         }
+
+        override suspend fun deleteReview(
+            destinationId: Int,
+            reviewId: Int
+        ): Result<Unit, DataError> = deleteResult
     }
 
     private class FakeDestinationsRepository : DestinationsRepository {

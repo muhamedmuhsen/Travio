@@ -22,5 +22,6 @@
     <string name="destination_explore">Explore</string>
 
     <string name="destination_error_icon_cd">Error</string>
+    <string name="delete_review">Delete review</string>
 </resources>
 

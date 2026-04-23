@@ -60,6 +60,7 @@ class FavoriteViewModel @Inject constructor(
     private val activeMutationIntents = mutableMapOf<Int, MutationIntent>()
 
     init {
+        warmSharedFavoriteSync()
         observeSharedFavoriteIds()
         viewModelScope.launch {
             val restoredTab = mapToSectionTab(getFavoriteSelectedTabUseCase())
@@ -75,13 +76,17 @@ class FavoriteViewModel @Inject constructor(
                 .catch { throwable ->
                     System.err.println("FavoriteViewModel observer failed: ${throwable.message}")
                     _effect.trySend(FavoriteEffect.ShowMessage(UiText.StringResource(R.string.favorite_sync_unavailable)))
-                    if (_state.value.loadedDestinations.isEmpty()) {
-                        loadDestinationsIfNeeded(force = true)
-                    }
                 }
                 .collect { ids ->
                     _state.update { it.copy(favoriteIds = ids) }
                 }
+        }
+    }
+
+    private fun warmSharedFavoriteSync() {
+        val pageUseCase = getFavoriteDestinationsPageUseCase ?: return
+        viewModelScope.launch {
+            pageUseCase(pageIndex = FIRST_PAGE, pageSize = PAGE_SIZE)
         }
     }
 

@@ -63,13 +63,12 @@ class DestinationDetailViewModel @Inject constructor(
         loadReviews()
     }
 
-    private fun loadReviews() {
+    fun loadReviews() {
         val id = destinationId ?: return
         viewModelScope.launch {
             _uiState.update { it.copy(reviewsState = UiState.Loading) }
             when (val result = reviewRepository.getReviewsByDestinationId(id)) {
                 is Result.Success -> _uiState.update {
-                    val currentUserReview = result.data.reviews.find { it.isOwnedByCurrentUser }
                     val averageRating =
                         if (result.data.totalCount == 0) {
                             0
@@ -81,10 +80,7 @@ class DestinationDetailViewModel @Inject constructor(
                         reviewSummary = ReviewSummary(
                             averageRating = averageRating,
                             totalReviews = result.data.totalCount
-                        ),
-                        currentUserReview = currentUserReview,
-                        reviewText = currentUserReview?.content ?: "",
-                        reviewRating = currentUserReview?.rating ?: 0
+                        )
                     )
                 }
                 is Result.Error -> _uiState.update { it.copy(reviewsState = UiState.Error("Failed to load reviews")) }
@@ -92,7 +88,7 @@ class DestinationDetailViewModel @Inject constructor(
         }
     }
 
-    private fun submitReview() {
+    fun submitReview() {
         val id = destinationId ?: return
         val text = uiState.value.reviewText
         val rating = uiState.value.reviewRating
@@ -103,18 +99,11 @@ class DestinationDetailViewModel @Inject constructor(
             _uiState.update { it.copy(isSubmittingReview = true) }
             when (val result = reviewRepository.submitReviewWithAggregate(id, rating, text)) {
                 is Result.Success -> {
-                    val newReview = result.data.review!!
+                    val newReview = result.data.review
                     val aggregate = result.data.aggregate
                     _uiState.update { state ->
                         val currentReviews = (state.reviewsState as? UiState.Success)?.data.orEmpty()
-                        val existingUserReviewIndex = currentReviews.indexOfFirst { it.isOwnedByCurrentUser }
-                        val mergedReviews = if (existingUserReviewIndex >= 0) {
-                            currentReviews.toMutableList().apply {
-                                set(existingUserReviewIndex, newReview)
-                            }
-                        } else {
-                            listOf(newReview) + currentReviews
-                        }
+                        val mergedReviews = listOf(newReview) + currentReviews
                         val resolvedSummary = aggregate?.let {
                             ReviewSummary(
                                 averageRating = it.averageRating.toInt(),
@@ -140,7 +129,6 @@ class DestinationDetailViewModel @Inject constructor(
 
                         state.copy(
                             isSubmittingReview = false,
-                            currentUserReview = newReview,
                             reviewText = "",
                             reviewRating = 0,
                             detailState = updatedDetailState,
@@ -159,46 +147,7 @@ class DestinationDetailViewModel @Inject constructor(
         }
     }
 
-    private fun deleteReview() {
-        val id = destinationId ?: return
-        val currentReviews = (_uiState.value.reviewsState as? UiState.Success)?.data
-        val currentUserReview = currentReviews?.find { it.isOwnedByCurrentUser } ?: return
-        val reviewId = currentUserReview.id
-
-        viewModelScope.launch {
-            _uiState.update { it.copy(isSubmittingReview = true) }
-            when (val result = reviewRepository.deleteReviewWithAggregate(id, reviewId)) {
-                is Result.Success -> {
-                    _uiState.update { state ->
-                        val updatedReviews = state.reviewsState.let { rs ->
-                            when (rs) {
-                                is UiState.Success -> UiState.Success(rs.data.filter { it.id != reviewId })
-                                else -> rs
-                            }
-                        }
-                        state.copy(
-                            isSubmittingReview = false,
-                            currentUserReview = null,
-                            reviewText = "",
-                            reviewRating = 0,
-                            reviewsState = updatedReviews,
-                            reviewSummary = state.reviewSummary?.copy(
-                                totalReviews = (state.reviewSummary?.totalReviews ?: 1) - 1
-                            )
-                        )
-                    }
-                    _events.send(DestinationDetailEvent.ShowSuccessSnackbar("Review deleted"))
-                }
-
-                is Result.Error -> {
-                    _uiState.update { it.copy(isSubmittingReview = false) }
-                    _events.send(DestinationDetailEvent.ShowErrorSnackbar("Failed to delete review"))
-                }
-            }
-        }
-    }
-
-    private fun retryReviews() {
+    fun retryReviews() {
         loadReviews()
     }
 
@@ -244,7 +193,6 @@ class DestinationDetailViewModel @Inject constructor(
                     loadRelatedDestinations(result.data)
                 }
                 is Result.Error -> {
-                    // Handling Not Found vs Error later (Task US3), but for now generic Error
                     _uiState.value = _uiState.value.copy(detailState = UiState.Error("Could not load destination details"))
                 }
             }
@@ -252,7 +200,7 @@ class DestinationDetailViewModel @Inject constructor(
     }
 
     private fun loadRelatedDestinations(destination: com.example.domain.model.destination.Destination) {
-        val interestId = destination.interests.firstOrNull()?.interestID ?: return // If no interest, skip
+        val interestId = destination.interests.firstOrNull()?.interestID ?: return
 
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(relatedDestinationsState = UiState.Loading)
@@ -274,7 +222,6 @@ class DestinationDetailViewModel @Inject constructor(
 
                 is Result.Error -> {
                     if (result.error == DataError.Network.Timeout) {
-                        // Fallback: avoid blocking UI on slow category-filter endpoint.
                         when (
                             val fallback = getAllDestinationsUseCase(
                                 pageIndex = 1,
@@ -383,10 +330,6 @@ class DestinationDetailViewModel @Inject constructor(
             DestinationDetailAction.OnSubmitReviewClicked -> {
                 submitReview()
             }
-
-            is DestinationDetailAction.OnDeleteReviewClicked -> {
-                deleteReview()
-            }
         }
     }
 
@@ -449,7 +392,6 @@ class DestinationDetailViewModel @Inject constructor(
                         _events.send(DestinationDetailEvent.ShowSuccessSnackbar(message))
                     }
                     is Result.Error -> {
-                        // Revert
                         _uiState.value = _uiState.value.copy(isFavorite = !newState)
                         _events.send(DestinationDetailEvent.ShowErrorSnackbar(mapFavoriteMutationError(result.error)))
                     }

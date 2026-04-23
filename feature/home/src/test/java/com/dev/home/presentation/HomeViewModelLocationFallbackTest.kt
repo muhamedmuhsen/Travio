@@ -1,5 +1,6 @@
 package com.dev.home.presentation
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dev.home.presentation.flights.FlightCardFallbackStrings
@@ -55,7 +56,6 @@ class HomeViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(HomeUiState())
     val uiState: StateFlow<HomeUiState> = _uiState.asStateFlow()
 
-    // Channel.UNLIMITED prevents event loss when multiple errors arrive in quick succession.
     private val _event = Channel<HomeEvent>(Channel.UNLIMITED)
     val event = _event.receiveAsFlow()
 
@@ -135,7 +135,7 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    private fun toggleFavorite(destination: Destination) {
+    fun toggleFavorite(destination: Destination) {
         viewModelScope.launch {
             val place = destination.toPlace()
             val destinationId = destination.destinationID
@@ -257,7 +257,6 @@ class HomeViewModel @Inject constructor(
 
     private fun navigateToDestination(id: String) {
         viewModelScope.launch {
-            // Record the view using the destination already loaded in state.
             val destination = findDestinationById(id)
             if (destination != null) {
                 addToRecentlyViewedUseCase(destination)
@@ -278,7 +277,6 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    /** Searches all loaded destination lists for a matching ID. */
     private fun findDestinationById(id: String): Destination? {
         val intId = id.toIntOrNull() ?: return null
         val s = _uiState.value
@@ -551,15 +549,6 @@ class HomeViewModel @Inject constructor(
         )
     }
 
-    /**
-     * Generic loader that eliminates the boilerplate shared by all three section loaders:
-     * set Loading → launch → on Error set Error + send event → on Success set Success.
-     *
-     * @param setLoading  Produces a new state with the section in Loading.
-     * @param setError    Produces a new state with the section in Error.
-     * @param setSuccess  Produces a new state with the section in Success.
-     * @param load        The suspending network/DB call that returns a [Result].
-     */
     private fun <T> launchLoad(
         setLoading: (HomeUiState) -> HomeUiState,
         setError: (HomeUiState, UiText) -> HomeUiState,
