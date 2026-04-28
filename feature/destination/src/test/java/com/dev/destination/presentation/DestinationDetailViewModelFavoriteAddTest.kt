@@ -123,11 +123,11 @@ class DestinationDetailViewModelFavoriteAddTest {
         ): Result<ReviewsPage, DataError> =
             Result.Success(ReviewsPage(1, 10, 0, emptyList()))
 
-        override suspend fun submitReview(
+        override suspend fun submitReviewWithAggregate(
             destinationId: Int,
             rating: Int,
             content: String
-        ): Result<Review, DataError> = Result.Error(DataError.UnknownError)
+        ): Result<com.example.domain.model.review.ReviewMutationPayload, DataError> = Result.Error(DataError.UnknownError)
 
         override suspend fun deleteReview(
             destinationId: Int,

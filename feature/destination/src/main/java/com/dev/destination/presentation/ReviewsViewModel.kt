@@ -7,6 +7,7 @@ import com.dev.utils.uitext.asUiText
 import com.example.domain.model.review.Review
 import com.example.domain.model.review.ReviewAggregate
 import com.example.domain.model.review.ReviewSummary
+import com.example.domain.repository.usermanagement.UserManagementRepository
 import com.example.domain.usecase.review.DeleteReviewUseCase
 import com.example.domain.usecase.review.GetReviewsPageUseCase
 import com.example.domain.usecase.review.UpsertReviewUseCase
@@ -18,12 +19,14 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.math.roundToInt
 
 @HiltViewModel
 class ReviewsViewModel @Inject constructor(
     private val getReviewsPageUseCase: GetReviewsPageUseCase,
     private val upsertReviewUseCase: UpsertReviewUseCase,
     private val deleteReviewUseCase: DeleteReviewUseCase,
+    private val userManagementRepository: UserManagementRepository,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -84,8 +87,10 @@ class ReviewsViewModel @Inject constructor(
                     val page = result.data
                     _state.update {
                         val newReviews = (it.reviews + page.reviews).distinctBy { review -> review.id }
+                        val foundOwned = page.reviews.find { it.isOwnedByCurrentUser }
                         it.copy(
                             reviews = newReviews,
+                            currentUserReview = it.currentUserReview ?: foundOwned,
                             pagination = it.pagination.copy(
                                 pageIndex = nextPageIndex,
                                 isLoadingMore = false,
@@ -117,23 +122,43 @@ class ReviewsViewModel @Inject constructor(
 
         viewModelScope.launch {
             _state.update { it.copy(isSubmitting = true, submitError = null) }
+
+            // Fetch user profile if we don't have metadata yet
+            val userProfileResult = if (_state.value.currentUserReview == null) {
+                userManagementRepository.getUser()
+            } else {
+                null
+            }
+            val userProfile = (userProfileResult as? Result.Success)?.data
+
             when (val result = upsertReviewUseCase.invokeWithAggregate(destinationId, rating, content)) {
                 is Result.Success -> {
                     val updatedReview = result.data.review!!
                     val aggregate = result.data.aggregate
                     _state.update {
+                        val enrichedReview = updatedReview.copy(
+                            authorName = it.currentUserReview?.authorName?.takeIf { n -> n.isNotBlank() }
+                                ?: userProfile?.let { u -> "${u.firstName} ${u.lastName}".trim() }.takeIf { n -> !n.isNullOrBlank() }
+                                ?: userProfile?.username
+                                ?: updatedReview.authorName,
+                            authorAvatarUrl = it.currentUserReview?.authorAvatarUrl
+                                ?: userProfile?.profilePictureUrl
+                                ?: updatedReview.authorAvatarUrl,
+                            rating = updatedReview.rating.takeIf { r -> r > 0 } ?: rating,
+                            content = updatedReview.content.takeIf { c -> c.isNotBlank() } ?: content
+                        )
                         val isNew = it.currentUserReview == null
                         val updatedList = if (isNew) {
-                            listOf(updatedReview!!) + it.reviews
+                            listOf(enrichedReview) + it.reviews
                         } else {
-                            it.reviews.map { r -> if (r.id == updatedReview!!.id) updatedReview!! else r }
+                            it.reviews.map { r -> if (r.id == enrichedReview.id) enrichedReview else r }
                         }
                         val fallbackTotalCount = if (isNew) it.pagination.totalCount + 1 else it.pagination.totalCount
                         val newTotalCount = aggregate?.totalReviews ?: fallbackTotalCount
                         val newSummary = calculateSummary(updatedList, newTotalCount, aggregate)
                         it.copy(
                             isSubmitting = false,
-                            currentUserReview = updatedReview,
+                            currentUserReview = enrichedReview,
                             reviews = updatedList,
                             pagination = it.pagination.copy(totalCount = newTotalCount),
                             summary = newSummary,
@@ -159,12 +184,18 @@ class ReviewsViewModel @Inject constructor(
                     _state.update {
                         val updatedList = it.reviews.filter { r -> r.id != currentUserReview.id }
                         val newTotalCount = it.pagination.totalCount - 1
+                        val isFullyLoaded = updatedList.size >= newTotalCount
+                        val newSummary = if (isFullyLoaded) {
+                            calculateSummary(updatedList, newTotalCount, null)
+                        } else {
+                            it.summary?.copy(totalReviews = newTotalCount)
+                        }
                         it.copy(
                             isDeleting = false,
                             currentUserReview = null,
                             reviews = updatedList,
                             pagination = it.pagination.copy(totalCount = newTotalCount),
-                            summary = calculateSummary(updatedList, newTotalCount, aggregate = null),
+                            summary = newSummary,
                             isSummarySyncedFromServer = false
                         )
                     }
@@ -183,12 +214,12 @@ class ReviewsViewModel @Inject constructor(
     ): ReviewSummary {
         if (aggregate != null) {
             return ReviewSummary(
-                averageRating = aggregate.averageRating.toInt(),
+                averageRating = aggregate.averageRating.roundToInt(),
                 totalReviews = aggregate.totalReviews
             )
         }
         if (totalCount == 0) return ReviewSummary(0, 0)
-        val avg = reviews.map { it.rating }.average().toInt()
+        val avg = reviews.map { it.rating }.average().roundToInt()
         return ReviewSummary(avg, totalCount)
     }
 }

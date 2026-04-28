@@ -1,6 +1,5 @@
 package com.example.domain.repository.review
 
-import com.example.domain.model.review.Review
 import com.example.domain.model.review.ReviewMutationPayload
 import com.example.domain.model.review.ReviewsPage
 import com.example.domain.utils.DataError
@@ -13,22 +12,11 @@ interface ReviewRepository {
         pageSize: Int = 10
     ): Result<ReviewsPage, DataError>
 
-    suspend fun submitReview(
-        destinationId: Int,
-        rating: Int,
-        content: String
-    ): Result<Review, DataError>
-
     suspend fun submitReviewWithAggregate(
         destinationId: Int,
         rating: Int,
         content: String
-    ): Result<ReviewMutationPayload, DataError> {
-        return when (val result = submitReview(destinationId, rating, content)) {
-            is Result.Success -> Result.Success(ReviewMutationPayload(review = result.data, aggregate = null))
-            is Result.Error -> Result.Error(result.error)
-        }
-    }
+    ): Result<ReviewMutationPayload, DataError>
 
     suspend fun deleteReview(
         destinationId: Int,

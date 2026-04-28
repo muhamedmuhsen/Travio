@@ -14,13 +14,13 @@ data class ReviewDto(
 )
 
 data class ReviewSubmitResponseDto(
-    val reviewId: Int,
-    val destinationId: Int,
-    val rating: Int,
-    val comment: String,
-    val updatedAtUtc: String?,
-    val averageRating: Int,
-    val totalReviews: Int
+    @SerializedName("reviewId") val reviewId: Int,
+    @SerializedName("destinationId") val destinationId: Int,
+    @SerializedName("rating") val rating: Int,
+    @SerializedName("comment") val comment: String,
+    @SerializedName("updatedAtUtc") val updatedAtUtc: String?,
+    @SerializedName("averageRating") val averageRating: Double?,
+    @SerializedName("totalReviews") val totalReviews: Int?
 )
 
 data class ReviewSubmitResponseWrapper(

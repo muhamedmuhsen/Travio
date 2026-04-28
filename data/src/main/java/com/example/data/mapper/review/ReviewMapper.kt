@@ -83,7 +83,7 @@ fun ReviewSubmitResponseWrapper?.toReviewMutationPayload(): ReviewMutationPayloa
             isOwnedByCurrentUser = true
         ),
         aggregate = ReviewAggregate(
-            averageRating = (data.averageRating ?: 0).toDouble(),
+            averageRating = data.averageRating ?: 0.0,
             totalReviews = data.totalReviews ?: 0
         )
     )
@@ -103,8 +103,8 @@ fun ReviewSubmitResponseDto.toReview(): Review =
 
 fun ReviewSubmitResponseDto.toAggregate(): ReviewAggregate =
     ReviewAggregate(
-        averageRating = averageRating.toDouble(),
-        totalReviews = totalReviews
+        averageRating = averageRating ?: 0.0,
+        totalReviews = totalReviews ?: 0
     )
 
 private fun resolveImageUrl(path: String): String {

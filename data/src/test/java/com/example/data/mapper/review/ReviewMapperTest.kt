@@ -28,7 +28,7 @@ class ReviewMapperTest {
         assertEquals(1, review.id)
         assertEquals("John Doe", review.authorName)
         assertTrue(review.authorAvatarUrl?.contains("/images/avatar.jpg") == true)
-        assertEquals(4.5f, review.rating)
+        assertEquals(4, review.rating)
         assertEquals("I loved it here!", review.content)
         assertEquals(Instant.parse("2026-04-22T10:00:00Z"), review.createdAt)
         assertEquals(5, review.helpfulCount)

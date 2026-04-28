@@ -60,11 +60,13 @@ class FavoriteViewModel @Inject constructor(
     private val activeMutationIntents = mutableMapOf<Int, MutationIntent>()
 
     init {
-        warmSharedFavoriteSync()
         observeSharedFavoriteIds()
         viewModelScope.launch {
             val restoredTab = mapToSectionTab(getFavoriteSelectedTabUseCase())
             _state.update { it.copy(selectedTab = restoredTab) }
+            if (restoredTab != SectionTab.Destinations) {
+                warmSharedFavoriteSync()
+            }
             loadSelectedTabIfNeeded()
         }
     }

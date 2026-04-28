@@ -9,6 +9,7 @@ import com.example.domain.model.favorite.FavoriteMutationResult
 import com.example.domain.model.favorite.toPlace
 import com.example.domain.model.review.ReviewSummary
 import com.example.domain.repository.review.ReviewRepository
+import com.example.domain.repository.usermanagement.UserManagementRepository
 import com.example.domain.usecase.destinations.GetAllDestinationsUseCase
 import com.example.domain.usecase.destinations.GetDestinationByIdUseCase
 import com.example.domain.usecase.favorite.destination.AddDestinationFavoriteUseCase
@@ -29,6 +30,7 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.math.roundToInt
 
 @HiltViewModel
 class DestinationDetailViewModel @Inject constructor(
@@ -40,6 +42,7 @@ class DestinationDetailViewModel @Inject constructor(
     private val observeFavoriteDestinationIdsUseCase: ObserveFavoriteDestinationIdsUseCase? = null,
     private val getAllPlacesUseCase: GetAllPlacesUseCase,
     private val reviewRepository: ReviewRepository,
+    private val userManagementRepository: UserManagementRepository,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -74,7 +77,7 @@ class DestinationDetailViewModel @Inject constructor(
                         if (result.data.totalCount == 0) {
                             0
                         } else {
-                            result.data.reviews.map { review -> review.rating }.average().toInt()
+                            result.data.reviews.map { review -> review.rating }.average().roundToInt()
                         }
                     it.copy(
                         reviewsState = UiState.Success(result.data.reviews),
@@ -103,25 +106,46 @@ class DestinationDetailViewModel @Inject constructor(
             _uiState.update { it.copy(isSubmittingReview = true) }
             when (val result = reviewRepository.submitReviewWithAggregate(id, rating, text)) {
                 is Result.Success -> {
-                    val newReview = result.data.review!!
+                    val updatedReview = result.data.review!!
                     val aggregate = result.data.aggregate
+
+                    // Fetch user profile if we don't have metadata yet
+                    val userProfileResult = if (uiState.value.currentUserReview == null) {
+                        userManagementRepository.getUser()
+                    } else {
+                        null
+                    }
+                    val userProfile = (userProfileResult as? Result.Success)?.data
+
                     _uiState.update { state ->
+                        val enrichedReview = updatedReview.copy(
+                            authorName = state.currentUserReview?.authorName?.takeIf { n -> n.isNotBlank() }
+                                ?: userProfile?.let { u -> "${u.firstName} ${u.lastName}".trim() }.takeIf { n -> !n.isNullOrBlank() }
+                                ?: userProfile?.username
+                                ?: updatedReview.authorName,
+                            authorAvatarUrl = state.currentUserReview?.authorAvatarUrl
+                                ?: userProfile?.profilePictureUrl
+                                ?: updatedReview.authorAvatarUrl,
+                            rating = updatedReview.rating.takeIf { r -> r > 0 } ?: rating,
+                            content = updatedReview.content.takeIf { c -> c.isNotBlank() } ?: text
+                        )
+
                         val currentReviews = (state.reviewsState as? UiState.Success)?.data.orEmpty()
                         val existingUserReviewIndex = currentReviews.indexOfFirst { it.isOwnedByCurrentUser }
                         val mergedReviews = if (existingUserReviewIndex >= 0) {
                             currentReviews.toMutableList().apply {
-                                set(existingUserReviewIndex, newReview)
+                                set(existingUserReviewIndex, enrichedReview)
                             }
                         } else {
-                            listOf(newReview) + currentReviews
+                            listOf(enrichedReview) + currentReviews
                         }
                         val resolvedSummary = aggregate?.let {
                             ReviewSummary(
-                                averageRating = it.averageRating.toInt(),
+                                averageRating = it.averageRating.roundToInt(),
                                 totalReviews = it.totalReviews
                             )
                         } ?: ReviewSummary(
-                            averageRating = mergedReviews.map { review -> review.rating }.average().toInt(),
+                            averageRating = mergedReviews.map { review -> review.rating }.average().roundToInt(),
                             totalReviews = mergedReviews.size
                         )
 
@@ -140,7 +164,7 @@ class DestinationDetailViewModel @Inject constructor(
 
                         state.copy(
                             isSubmittingReview = false,
-                            currentUserReview = newReview,
+                            currentUserReview = enrichedReview,
                             reviewText = "",
                             reviewRating = 0,
                             detailState = updatedDetailState,

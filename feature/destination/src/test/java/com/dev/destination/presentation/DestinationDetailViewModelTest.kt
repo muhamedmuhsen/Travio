@@ -1,6 +1,7 @@
 package com.dev.destination.presentation
 
 import androidx.lifecycle.SavedStateHandle
+import com.example.domain.model.auth.User
 import com.example.domain.model.destination.Country
 import com.example.domain.model.destination.Destination
 import com.example.domain.model.destination.DestinationsPage
@@ -11,6 +12,7 @@ import com.example.domain.model.review.ReviewsPage
 import com.example.domain.repository.destinations.DestinationsRepository
 import com.example.domain.repository.favorite.FavoritePlaceRepository
 import com.example.domain.repository.review.ReviewRepository
+import com.example.domain.repository.usermanagement.UserManagementRepository
 import com.example.domain.usecase.destinations.GetAllDestinationsUseCase
 import com.example.domain.usecase.destinations.GetDestinationByIdUseCase
 import com.example.domain.usecase.favorite.place.FavoritePlaceUseCase
@@ -49,6 +51,7 @@ class DestinationDetailViewModelTest {
     private lateinit var fakeDestinationsRepository: FakeDestinationsRepository
     private lateinit var fakeFavoritePlaceRepository: FakeFavoritePlaceRepository
     private lateinit var fakeReviewRepository: FakeReviewRepository
+    private lateinit var fakeUserManagementRepository: FakeUserManagementRepository
 
     private val sampleDestination = Destination(
         cityName = "Paris",
@@ -70,9 +73,11 @@ class DestinationDetailViewModelTest {
             getAllDestinationsUseCase = getAllDestinationsUseCase,
             favoritePlaceUseCase = favoritePlaceUseCase,
             addDestinationFavoriteUseCase = null,
+            removeDestinationFavoriteUseCase = null,
             observeFavoriteDestinationIdsUseCase = null,
             getAllPlacesUseCase = getAllPlacesUseCase,
             reviewRepository = fakeReviewRepository,
+            userManagementRepository = fakeUserManagementRepository,
             savedStateHandle = savedStateHandle
         )
     }
@@ -83,6 +88,7 @@ class DestinationDetailViewModelTest {
         fakeDestinationsRepository = FakeDestinationsRepository()
         fakeFavoritePlaceRepository = FakeFavoritePlaceRepository()
         fakeReviewRepository = FakeReviewRepository()
+        fakeUserManagementRepository = FakeUserManagementRepository()
         getDestinationByIdUseCase = GetDestinationByIdUseCase(fakeDestinationsRepository)
         getAllDestinationsUseCase = GetAllDestinationsUseCase(fakeDestinationsRepository)
         favoritePlaceUseCase = FavoritePlaceUseCase(fakeFavoritePlaceRepository)
@@ -316,21 +322,31 @@ class DestinationDetailViewModelTest {
             pageSize: Int
         ): Result<ReviewsPage, DataError> = reviewsResult
 
-        override suspend fun submitReview(
+        override suspend fun submitReviewWithAggregate(
             destinationId: Int,
             rating: Int,
             content: String
-        ): Result<Review, DataError> {
+        ): Result<com.example.domain.model.review.ReviewMutationPayload, DataError> {
             lastSubmittedId = destinationId
             lastSubmittedRating = rating
             lastSubmittedContent = content
-            return submitResult
+            return when (val current = submitResult) {
+                is Result.Success -> Result.Success(com.example.domain.model.review.ReviewMutationPayload(review = current.data, aggregate = null))
+                is Result.Error -> Result.Error(current.error)
+            }
         }
 
         override suspend fun deleteReview(
             destinationId: Int,
             reviewId: Int
         ): Result<Unit, DataError> = deleteResult
+    }
+
+    private class FakeUserManagementRepository : UserManagementRepository {
+        var userResult: Result<User, DataError> = Result.Error(DataError.UnknownError)
+        override suspend fun getUser(): Result<User, DataError> = userResult
+        override suspend fun updateProfile(firstName: String, lastName: String, username: String): Result<User, DataError> = Result.Error(DataError.UnknownError)
+        override suspend fun updateProfilePic(imageUri: String): Result<String, DataError> = Result.Error(DataError.UnknownError)
     }
 
     private class FakeDestinationsRepository : DestinationsRepository {
@@ -440,4 +456,3 @@ class DestinationDetailViewModelTest {
         }
     }
 }
-

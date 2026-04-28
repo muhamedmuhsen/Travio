@@ -1,10 +1,8 @@
 package com.example.data.repository.review
 
-import com.example.data.mapper.review.toNewReview
 import com.example.data.mapper.review.toReviewMutationPayload
 import com.example.data.mapper.review.toReviewsPage
 import com.example.data.utils.safeApiCall
-import com.example.domain.model.review.Review
 import com.example.domain.model.review.ReviewMutationPayload
 import com.example.domain.model.review.ReviewsPage
 import com.example.domain.repository.review.ReviewRepository
@@ -28,22 +26,6 @@ class ReviewRepositoryImpl @Inject constructor(
                 pageIndex = pageIndex,
                 pageSize = pageSize
             ).toReviewsPage()
-        }
-
-    override suspend fun submitReview(
-        destinationId: Int,
-        rating: Int,
-        content: String
-    ): Result<Review, DataError> =
-        safeApiCall {
-            val response = api.submitReview(
-                destinationId = destinationId,
-                request = SubmitReviewRequest(
-                    rating = rating,
-                    comment = content
-                )
-            )
-            response.toNewReview()
         }
 
     override suspend fun submitReviewWithAggregate(

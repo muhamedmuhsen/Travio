@@ -9,6 +9,7 @@ import com.example.network.dto.review.ReviewsResponseDto
 import com.example.network.dto.review.SubmitReviewRequest
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
@@ -27,7 +28,7 @@ class ReviewRepositoryImplTest {
     }
 
     @Test
-    fun `should return Review when submit succeeds`() = runTest {
+    fun `should return ReviewMutationPayload when submit succeeds`() = runTest {
         val submitDto = ReviewSubmitResponseDto(
             reviewId = 1,
             destinationId = 1,
@@ -41,10 +42,13 @@ class ReviewRepositoryImplTest {
         val api = FakeReviewsApi(submitResponse = BaseResponse(wrapper, true, "", emptyList()))
         val repository = ReviewRepositoryImpl(api)
 
-        val result = repository.submitReview(1, 5, "Great")
+        val result = repository.submitReviewWithAggregate(1, 5, "Great")
 
         assertTrue(result is Result.Success)
-        assertEquals(1, (result as Result.Success).data.id)
+        val data = (result as Result.Success).data
+        assertEquals(1, data.review?.id)
+        assertNotNull(data.aggregate)
+        assertEquals(10, data.aggregate?.totalReviews)
     }
 
     @Test
