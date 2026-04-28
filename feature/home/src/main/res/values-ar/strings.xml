@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="search_placeholder">استكشف الوجهات</string>
+    <string name="error_image_description">صورة الخطأ</string>
+    <string name="failed_to_load">فشل في التحميل</string>
+    <string name="tap_to_retry">حدث خطأ ما. يرجى المحاولة مرة أخرى.</string>
+    <string name="retry">إعادة المحاولة</string>
+
+    <!-- Section Titles -->
+    <string name="section_famous_places">الأماكن الشهيرة</string>
+    <string name="section_famous_countries">الدول الشهيرة</string>
+    <string name="section_recently_viewed">المعروضة حديثاً</string>
+    <string name="section_recommended_destinations">الوجهات الموصى بها</string>
+    <string name="section_nearby_destinations">الوجهات القريبة</string>
+
+    <!-- Snackbar Messages -->
+    <string name="saved_to_favourites">تمت الإضافة إلى المفضلة</string>
+    <string name="removed_from_favourites">تمت الإزالة من المفضلة</string>
+
+    <!-- Destination Card -->
+    <string name="add_to_favorites">إضافة إلى المفضلة</string>
+    <string name="remove_from_favorites">إزالة من المفضلة</string>
+    <string name="price_from_prefix">من </string>
+    <string name="country_destination_cd">الوجهة: %s</string>
+
+    <!-- Empty States -->
+    <string name="no_destinations_found">لم يتم العثور على وجهات.</string>
+    <string name="nearby_no_destinations_found">لم يتم العثور على وجهات بالقرب من موقعك.</string>
+    <string name="nearby_location_permission_rationale">اسمح بالوصول إلى الموقع لعرض الوجهات القريبة منك.</string>
+    <string name="recently_viewed_empty">لم يتم عرض وجهات بعد. ابدأ بالاستكشاف!</string>
+
+    <!-- Pagination -->
+    <string name="destinations_load_more_retry_label">إعادة المحاولة</string>
+    <string name="destinations_load_more_retry_content_description">إعادة تحميل المزيد من الوجهات</string>
+
+    <!-- Flights Section -->
+    <string name="section_flights">الرحلات</string>
+    <string name="section_see_all">عرض الكل</string>
+    <string name="flight_status_unknown">غير معروف</string>
+    <string name="flight_city_unavailable">المدينة غير متاحة</string>
+    <string name="flight_value_unavailable">غير متاح</string>
+    <string name="flight_stops_default">مباشر</string>
+    <string name="flight_book_now">احجز الآن</string>
+    <string name="flight_airline_logo_cd">شعار %1$s</string>
+    <string name="flight_card_cd">الرحلة %1$s %2$s من %3$s إلى %4$s</string>
+    <string name="flight_status_badge_cd">حالة الرحلة: %1$s</string>
+    <string name="flight_path_icon_cd">أيقونة مسار الرحلة</string>
+</resources>

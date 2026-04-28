@@ -6,12 +6,14 @@ sealed interface DestinationDetailAction {
     data object OnFavoriteClicked : DestinationDetailAction
     data object OnViewOnMapClicked : DestinationDetailAction
     data object OnRetry : DestinationDetailAction
+    data object OnRetryReviews : DestinationDetailAction
     data object OnRetryRelatedDestinations : DestinationDetailAction
     data class OnImagePageChanged(val index: Int) : DestinationDetailAction
     data class OnRelatedDestinationClicked(val destinationId: Int) : DestinationDetailAction
     data class OnReviewTextChanged(val text: String) : DestinationDetailAction
-    data class OnReviewRatingChanged(val rating: Float) : DestinationDetailAction
+    data class OnReviewRatingChanged(val rating: Int) : DestinationDetailAction
     data object OnSubmitReviewClicked : DestinationDetailAction
+    data object OnDeleteReviewClicked : DestinationDetailAction
 }
 
 sealed interface DestinationDetailEvent {

@@ -100,6 +100,8 @@ dependencies {
     implementation(libs.androidx.navigation.runtime.ktx)
 
     // Unit Tests
+    testImplementation(project(":core:common"))
+    testImplementation(project(":core:network"))
     testImplementation(libs.junit)
     testImplementation(libs.kotlinx.coroutines.test)
 

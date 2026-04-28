@@ -25,6 +25,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.LocationOn
@@ -175,6 +176,8 @@ private fun DestinationDetailContent(
                                 model = ImageRequest.Builder(LocalContext.current)
                                     .data(heroImage)
                                     .crossfade(true)
+                                    .placeholder(com.example.designsystem.R.drawable.image_placeholder)
+                                    .error(com.example.designsystem.R.drawable.image_placeholder)
                                     .build(),
                                 contentDescription = stringResource(id = R.string.destination_hero_image_cd),
                                 contentScale = ContentScale.Crop,
@@ -288,6 +291,7 @@ private fun DestinationDetailContent(
                             Spacer(modifier = Modifier.height(8.dp))
 
                             // Rating Pill Container
+                            val displayedSummary = uiState.reviewSummary
                             Surface(
                                 shape = CircleShape,
                                 color = MaterialTheme.colorScheme.surface.copy(alpha = 0.2f),
@@ -305,7 +309,9 @@ private fun DestinationDetailContent(
                                     )
                                     Spacer(modifier = Modifier.width(4.dp))
                                     Text(
-                                        text = "${destination.rating} (${destination.totalReviews} reviews)",
+                                        text =
+                                        "${displayedSummary?.averageRating ?: destination.rating.toInt()} " +
+                                            "(${displayedSummary?.totalReviews ?: destination.totalReviews} reviews)",
                                         style = MaterialTheme.typography.labelLarge,
                                         color = overlayContentColor
                                     )
@@ -584,6 +590,11 @@ private fun ReviewSection(
                     state.data.forEach { review ->
                         ReviewItem(
                             review = review,
+                            onDelete = if (review.isOwnedByCurrentUser) {
+                                { onAction(DestinationDetailAction.OnDeleteReviewClicked) }
+                            } else {
+                                null
+                            },
                             modifier = Modifier.padding(bottom = 16.dp)
                         )
                     }
@@ -617,10 +628,10 @@ private fun ReviewSection(
 @Composable
 private fun ReviewSubmissionCard(
     text: String,
-    rating: Float,
+    rating: Int,
     isSubmitting: Boolean,
     onTextChanged: (String) -> Unit,
-    onRatingChanged: (Float) -> Unit,
+    onRatingChanged: (Int) -> Unit,
     onSubmitClicked: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -681,8 +692,8 @@ private fun ReviewSubmissionCard(
 
 @Composable
 private fun InteractiveRatingBar(
-    rating: Float,
-    onRatingChanged: (Float) -> Unit,
+    rating: Int,
+    onRatingChanged: (Int) -> Unit,
     modifier: Modifier = Modifier,
     starCount: Int = 5
 ) {
@@ -691,7 +702,7 @@ private fun InteractiveRatingBar(
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         repeat(starCount) { index ->
-            val starRating = index + 1f
+            val starRating = index + 1
             Icon(
                 imageVector = if (rating >= starRating) Icons.Filled.Star else Icons.Outlined.Star,
                 contentDescription = null,
@@ -707,6 +718,7 @@ private fun InteractiveRatingBar(
 @Composable
 private fun ReviewItem(
     review: Review,
+    onDelete: (() -> Unit)? = null,
     modifier: Modifier = Modifier
 ) {
     Card(
@@ -717,37 +729,50 @@ private fun ReviewItem(
         )
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                AsyncImage(
-                    model = ImageRequest.Builder(LocalContext.current)
-                        .data(review.authorAvatarUrl)
-                        .crossfade(true)
-                        .build(),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .size(40.dp)
-                        .clip(CircleShape),
-                    contentScale = ContentScale.Crop
-                )
-                Spacer(modifier = Modifier.width(12.dp))
-                Column {
-                    Text(
-                        text = review.authorName,
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    AsyncImage(
+                        model = ImageRequest.Builder(LocalContext.current)
+                            .data(review.authorAvatarUrl)
+                            .crossfade(true)
+                            .error(com.example.designsystem.R.drawable.profile_fill)
+                            .placeholder(com.example.designsystem.R.drawable.profile_fill)
+                            .build(),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(40.dp)
+                            .clip(CircleShape),
+                        contentScale = ContentScale.Crop
                     )
-                    val dateText = review.createdAt.atZone(ZoneId.systemDefault())
-                        .format(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM))
-                    val subTitle = if (review.authorLocation != null) {
-                        "${review.authorLocation} • $dateText"
-                    } else {
-                        dateText
+                    Spacer(modifier = Modifier.width(12.dp))
+                    Column {
+                        Text(
+                            text = review.authorName,
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold
+                        )
+                        val dateText = review.createdAt.atZone(ZoneId.systemDefault())
+                            .format(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM))
+                        Text(
+                            text = dateText,
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
                     }
-                    Text(
-                        text = subTitle,
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
+                }
+
+                if (review.isOwnedByCurrentUser && onDelete != null) {
+                    IconButton(onClick = onDelete) {
+                        Icon(
+                            imageVector = Icons.Default.Delete,
+                            contentDescription = stringResource(R.string.delete_review),
+                            tint = MaterialTheme.colorScheme.error
+                        )
+                    }
                 }
             }
 
@@ -765,16 +790,6 @@ private fun ReviewItem(
             }
 
             Spacer(modifier = Modifier.height(12.dp))
-
-            val title = review.title
-            if (title != null) {
-                Text(
-                    text = title,
-                    style = MaterialTheme.typography.titleSmall,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(bottom = 4.dp)
-                )
-            }
 
             Text(
                 text = review.content,
@@ -825,9 +840,7 @@ fun DestinationDetailScreenPreview() {
                     id = 1,
                     authorName = "Sarah Anderson",
                     authorAvatarUrl = null,
-                    authorLocation = "USA",
-                    rating = 5f,
-                    title = "Absolutely breathtaking!",
+                    rating = 5,
                     content = "Cairo exceeded all my expectations! The pyramids are even more impressive in person.",
                     createdAt = Instant.now(),
                     helpfulCount = 142
@@ -836,9 +849,7 @@ fun DestinationDetailScreenPreview() {
                     id = 2,
                     authorName = "Mohamed Ali",
                     authorAvatarUrl = null,
-                    authorLocation = "UAE",
-                    rating = 5f,
-                    title = "A trip of a lifetime",
+                    rating = 5,
                     content = "The history here is unmatched. Walking through Khan el-Khalili at night was magical.",
                     createdAt = Instant.now(),
                     helpfulCount = 98

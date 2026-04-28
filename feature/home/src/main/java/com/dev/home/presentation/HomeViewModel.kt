@@ -121,24 +121,16 @@ class HomeViewModel @Inject constructor(
 
     private fun observeFavoriteIds() {
         val sharedObserver = observeFavoriteDestinationIdsUseCase
-        if (sharedObserver != null) {
-            viewModelScope.launch {
-                sharedObserver()
-                    .catch { e -> Timber.e(e, "observeFavoriteIds(shared): failed") }
-                    .collect { favoriteIds ->
-                        _uiState.update { it.copy(favoriteIds = favoriteIds) }
-                    }
-            }
+        if (sharedObserver == null) {
+            Timber.e("observeFavoriteIds: shared observer is not available")
             return
         }
 
         viewModelScope.launch {
-            getAllPlacesUseCase()
-                .catch { e -> Timber.e(e, "observeFavoriteIds: failed to observe favorites") }
-                .collect { places ->
-                    _uiState.update { state ->
-                        state.copy(favoriteIds = places.map { it.id }.toSet())
-                    }
+            sharedObserver()
+                .catch { e -> Timber.e(e, "observeFavoriteIds(shared): failed") }
+                .collect { favoriteIds ->
+                    _uiState.update { it.copy(favoriteIds = favoriteIds) }
                 }
         }
     }

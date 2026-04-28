@@ -150,6 +150,7 @@ dependencies {
 
     // Testing
     testImplementation(project(":core:common"))
+    testImplementation(project(":core:network"))
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     testImplementation(libs.junit)

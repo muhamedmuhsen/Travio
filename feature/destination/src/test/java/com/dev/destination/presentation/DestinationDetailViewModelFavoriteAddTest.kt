@@ -10,6 +10,7 @@ import com.example.domain.model.favorite.FavoriteMutationResult
 import com.example.domain.model.favorite.FavoritesPage
 import com.example.domain.model.favorite.Place
 import com.example.domain.model.review.Review
+import com.example.domain.model.review.ReviewsPage
 import com.example.domain.repository.destinations.DestinationsRepository
 import com.example.domain.repository.favorite.FavoriteDestinationRepository
 import com.example.domain.repository.favorite.FavoritePlaceRepository
@@ -115,8 +116,24 @@ class DestinationDetailViewModelFavoriteAddTest {
     }
 
     private class FakeReviewRepository : ReviewRepository {
-        override suspend fun getReviewsByDestinationId(destinationId: Int): Result<List<Review>, DataError> = Result.Success(emptyList())
-        override suspend fun submitReview(destinationId: Int, rating: Float, content: String): Result<Unit, DataError> = Result.Success(Unit)
+        override suspend fun getReviewsByDestinationId(
+            destinationId: Int,
+            pageIndex: Int,
+            pageSize: Int
+        ): Result<ReviewsPage, DataError> =
+            Result.Success(ReviewsPage(1, 10, 0, emptyList()))
+
+        override suspend fun submitReviewWithAggregate(
+            destinationId: Int,
+            rating: Int,
+            content: String
+        ): Result<com.example.domain.model.review.ReviewMutationPayload, DataError> = Result.Error(DataError.UnknownError)
+
+        override suspend fun deleteReview(
+            destinationId: Int,
+            reviewId: Int
+        ): Result<Unit, DataError> =
+            Result.Success(Unit)
     }
 
     private class FakeFavoriteDestinationRepository : FavoriteDestinationRepository {

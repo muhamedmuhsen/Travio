@@ -10,12 +10,15 @@ import com.example.domain.utils.DataError
 import com.example.domain.utils.Result
 import com.example.network.api.FavoritesApi
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.onStart
+import java.util.concurrent.atomic.AtomicBoolean
 import javax.inject.Inject
 
 class FavoriteDestinationRepositoryImpl @Inject constructor(
     private val favoritesApi: FavoritesApi,
     private val syncStore: FavoriteSyncStore
 ) : FavoriteDestinationRepository {
+    private val bootstrapCompleted = AtomicBoolean(false)
 
     override suspend fun getFavoriteDestinationsPage(
         pageIndex: Int,
@@ -74,5 +77,17 @@ class FavoriteDestinationRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun observeFavoriteDestinationIds(): Flow<Set<Int>> = syncStore.observeFavoriteIds()
+    override fun observeFavoriteDestinationIds(): Flow<Set<Int>> =
+        syncStore.observeFavoriteIds().onStart {
+            if (bootstrapCompleted.compareAndSet(false, true)) {
+                when (val bootstrapResult = getFavoriteDestinationsPage(pageIndex = 1, pageSize = DEFAULT_BOOTSTRAP_PAGE_SIZE)) {
+                    is Result.Success -> Unit
+                    is Result.Error -> bootstrapCompleted.set(false)
+                }
+            }
+        }
+
+    private companion object {
+        const val DEFAULT_BOOTSTRAP_PAGE_SIZE = 50
+    }
 }
