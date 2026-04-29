@@ -35,6 +35,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.dev.home.presentation.flights.FlightCardContent
 import com.dev.home.presentation.flights.FlightStatusTone
 import com.example.designsystem.theme.elevation
@@ -42,7 +43,8 @@ import com.example.designsystem.theme.spacing
 import com.example.designsystem.theme.success
 import com.example.feature.home.R
 
-internal val FlightCardMinWidth = 332.dp
+internal val FlightCardMinWidth = 240.dp
+internal val FlightCardMinHeight = 340.dp
 
 @Composable
 fun FlightCard(
@@ -62,6 +64,7 @@ fun FlightCard(
     Card(
         modifier = modifier
             .width(FlightCardMinWidth)
+            .height(FlightCardMinHeight)
             .clip(MaterialTheme.shapes.extraLarge)
             .clickable(onClick = { onCardClick(content.id) })
             .semantics {
@@ -87,24 +90,26 @@ fun FlightCard(
             FlightPathDivider()
             Spacer(modifier = Modifier.height(MaterialTheme.spacing.md))
             FlightSummaryPrice(content = content)
-            Spacer(modifier = Modifier.height(MaterialTheme.spacing.lg))
+            Spacer(modifier = Modifier.height(MaterialTheme.spacing.sm))
             Button(
                 onClick = { onCtaClick(content.id) },
                 enabled = content.cta.enabled,
                 modifier = Modifier
                     .fillMaxWidth()
                     .clip(MaterialTheme.shapes.small)
-                    .heightIn(min = MaterialTheme.spacing.xxxl + MaterialTheme.spacing.xs),
+                    .heightIn(min = MaterialTheme.spacing.xxxl)
+                    .padding(horizontal = MaterialTheme.spacing.md),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.primary,
                     contentColor = MaterialTheme.colorScheme.onPrimary
                 ),
-                shape = MaterialTheme.shapes.extraLarge
+                shape = MaterialTheme.shapes.large
             ) {
                 Text(
                     text = content.cta.label,
                     style = MaterialTheme.typography.headlineSmall,
-                    fontWeight = FontWeight.SemiBold
+                    fontWeight = FontWeight.SemiBold,
+                    fontSize = 14.sp
                 )
             }
         }
@@ -124,7 +129,7 @@ private fun FlightCardHeader(content: FlightCardContent) {
         Surface(
             shape = MaterialTheme.shapes.extraLarge,
             color = MaterialTheme.colorScheme.primary,
-            modifier = Modifier.size(MaterialTheme.spacing.xxxl + MaterialTheme.spacing.xxs)
+            modifier = Modifier.size(MaterialTheme.spacing.xl)
         ) {
             Box(contentAlignment = Alignment.Center) {
                 Icon(
@@ -142,6 +147,7 @@ private fun FlightCardHeader(content: FlightCardContent) {
                 text = content.airlineName,
                 style = MaterialTheme.typography.headlineSmall,
                 color = MaterialTheme.colorScheme.onSurface,
+                fontSize = 12.sp,
                 fontWeight = FontWeight.Bold,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
@@ -150,6 +156,7 @@ private fun FlightCardHeader(content: FlightCardContent) {
                 text = content.flightNumber,
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
+                fontSize = 10.sp,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
@@ -195,10 +202,12 @@ private fun FlightStatusBadge(content: FlightCardContent) {
             text = content.status.label,
             style = MaterialTheme.typography.labelLarge,
             color = contentColor,
+            fontWeight = FontWeight.Medium,
             maxLines = 1,
+            fontSize = 10.sp,
             overflow = TextOverflow.Ellipsis,
             modifier = Modifier.padding(
-                horizontal = MaterialTheme.spacing.md,
+                horizontal = MaterialTheme.spacing.sm,
                 vertical = MaterialTheme.spacing.xxs
             )
         )
@@ -214,27 +223,20 @@ private fun FlightScheduleRow(content: FlightCardContent) {
         Text(
             text = content.schedule.departureTime,
             style = MaterialTheme.typography.displaySmall,
+            fontSize = 20.sp,
             color = MaterialTheme.colorScheme.onSurface,
             fontWeight = FontWeight.Bold,
             maxLines = 1,
             modifier = Modifier.weight(0.34f),
             textAlign = TextAlign.Center
         )
-        Text(
-            text = content.schedule.durationText,
-            style = MaterialTheme.typography.titleLarge,
-            color = MaterialTheme.colorScheme.onSurface,
-            fontWeight = FontWeight.Bold,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-            modifier = Modifier.weight(0.32f),
-            textAlign = TextAlign.Center
-        )
+        Spacer(modifier = Modifier.weight(0.32f))
         Text(
             text = content.schedule.arrivalTime,
             style = MaterialTheme.typography.displaySmall,
             color = MaterialTheme.colorScheme.onSurface,
             fontWeight = FontWeight.Bold,
+            fontSize = 20.sp,
             maxLines = 1,
             modifier = Modifier.weight(0.34f),
             textAlign = TextAlign.Center
@@ -254,6 +256,7 @@ private fun FlightRouteBlock(content: FlightCardContent) {
                 style = MaterialTheme.typography.headlineMedium,
                 color = MaterialTheme.colorScheme.onSurface,
                 fontWeight = FontWeight.Bold,
+                fontSize = 14.sp,
                 modifier = Modifier.weight(0.34f),
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
@@ -273,6 +276,7 @@ private fun FlightRouteBlock(content: FlightCardContent) {
                 style = MaterialTheme.typography.headlineMedium,
                 color = MaterialTheme.colorScheme.onSurface,
                 fontWeight = FontWeight.Bold,
+                fontSize = 14.sp,
                 modifier = Modifier.weight(0.34f),
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
@@ -290,6 +294,7 @@ private fun FlightRouteBlock(content: FlightCardContent) {
                 text = content.route.departureCityName,
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
+                fontSize = 10.sp,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 modifier = Modifier.weight(0.34f),
@@ -302,7 +307,9 @@ private fun FlightRouteBlock(content: FlightCardContent) {
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 modifier = Modifier.weight(0.32f),
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
+                fontSize = 10.sp
+
             )
             Text(
                 text = content.route.arrivalCityName,
@@ -311,7 +318,9 @@ private fun FlightRouteBlock(content: FlightCardContent) {
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 modifier = Modifier.weight(0.34f),
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
+                fontSize = 10.sp
+
             )
         }
     }
@@ -336,14 +345,14 @@ private fun FlightPathDivider() {
             Surface(
                 color = MaterialTheme.colorScheme.primary,
                 shape = MaterialTheme.shapes.extraLarge,
-                modifier = Modifier.size(MaterialTheme.spacing.xl + MaterialTheme.spacing.xs)
+                modifier = Modifier.size(MaterialTheme.spacing.lg)
             ) {
                 Box(contentAlignment = Alignment.Center) {
                     Icon(
                         imageVector = Icons.Filled.AirplanemodeActive,
                         contentDescription = null,
                         tint = MaterialTheme.colorScheme.onPrimary,
-                        modifier = Modifier.size(MaterialTheme.spacing.lg)
+                        modifier = Modifier.size(MaterialTheme.spacing.md)
                     )
                 }
             }
@@ -365,7 +374,8 @@ private fun FlightSummaryPrice(content: FlightCardContent) {
         Text(
             text = content.summary.durationSummary,
             style = MaterialTheme.typography.labelMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            fontWeight = FontWeight.Medium
         )
         Text(
             text = content.summary.tripTypeSummary,
@@ -378,6 +388,7 @@ private fun FlightSummaryPrice(content: FlightCardContent) {
                 style = MaterialTheme.typography.displaySmall,
                 color = MaterialTheme.colorScheme.primary,
                 fontWeight = FontWeight.Bold,
+                fontSize = 21.sp,
                 maxLines = 1
             )
             Text(
@@ -385,6 +396,7 @@ private fun FlightSummaryPrice(content: FlightCardContent) {
                 style = MaterialTheme.typography.displayMedium,
                 color = MaterialTheme.colorScheme.primary,
                 fontWeight = FontWeight.Bold,
+                fontSize = 21.sp,
                 maxLines = 1
             )
         }
