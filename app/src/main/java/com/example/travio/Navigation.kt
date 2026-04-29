@@ -23,6 +23,7 @@ import com.dev.onboarding.starterlogin.StarterLogin
 import com.dev.profile.editProfile.EditProfileScreen
 import com.dev.profile.profile.ProfileScreen
 import com.dev.search.presentation.AllFlightsScreen
+import com.dev.search.presentation.FlightDetailScreen
 import com.dev.survey.presentation.SurveyScreen
 import com.example.common.navigation.DestinationDetailRoute
 import com.example.common.navigation.Screen
@@ -177,6 +178,10 @@ fun TravioNavHost(
                         navController.navigate(DestinationDetailRoute(destinationId))
                     }
                 },
+                navigateToFlightDetails = { offerId ->
+                    // Navigate to flight detail screen using a typed route
+                    navController.navigate(com.example.common.navigation.Screen.FlightDetailScreen.createRoute(offerId))
+                },
                 navigateToSeeAllFlights = {
                     navController.navigate(Screen.SeeAllFlightsScreen.route)
                 }
@@ -184,6 +189,14 @@ fun TravioNavHost(
         }
         composable(Screen.SeeAllFlightsScreen.route) {
             AllFlightsScreen()
+        }
+        // Flight detail route: receives offerId as a path argument
+        composable(route = Screen.FlightDetailScreen.route + "/{${Screen.FlightDetailScreen.ARG_OFFER_ID}}") { backStackEntry ->
+            val offerId = backStackEntry.arguments?.getString(Screen.FlightDetailScreen.ARG_OFFER_ID) ?: ""
+            FlightDetailScreen(
+                offerId = offerId,
+                onBack = { navController.popBackStack() }
+            )
         }
         composable(Screen.ProfileScreen.route) {
             ProfileScreen(

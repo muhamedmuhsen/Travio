@@ -44,6 +44,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -58,6 +59,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.designsystem.theme.TravioTheme
 import com.example.designsystem.theme.elevation
 import com.example.designsystem.theme.spacing
@@ -111,7 +113,8 @@ fun AllFlightsScreen(
     uiState: AllFlightsUiState = AllFlightsUiState.Success(sampleAllFlightsData()),
     onBackClick: () -> Unit = {},
     onSearchClick: () -> Unit = {},
-    onBookNowClick: () -> Unit = {}
+    onBookNowClick: () -> Unit = {},
+    onRetry: () -> Unit = {}
 ) {
     var selectedTab by remember { mutableStateOf(BottomNavTab.Explore) }
 
@@ -138,18 +141,24 @@ fun AllFlightsScreen(
             }
 
             is AllFlightsUiState.Error -> {
-                Box(
+                Column(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(paddingValues)
                         .padding(MaterialTheme.spacing.md),
-                    contentAlignment = Alignment.Center
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
                 ) {
                     Text(
                         text = uiState.message,
                         style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.error
+                        color = MaterialTheme.colorScheme.error,
+                        textAlign = TextAlign.Center
                     )
+                    Spacer(modifier = Modifier.height(MaterialTheme.spacing.md))
+                    Button(onClick = onRetry) {
+                        Text(text = stringResource(R.string.retry))
+                    }
                 }
             }
 
@@ -164,6 +173,93 @@ fun AllFlightsScreen(
                     onBookNowClick = onBookNowClick
                 )
             }
+        }
+    }
+}
+
+@Composable
+fun AllFlightsScreenRoute(
+    modifier: Modifier = Modifier,
+    viewModel: AllFlightsViewModel = hiltViewModel(),
+    onBackClick: () -> Unit = {},
+    onSearchClick: () -> Unit = {},
+    onBookNowClick: () -> Unit = {}
+) {
+    val topOffersState by viewModel.uiState.collectAsState()
+
+    // Map TopOffersUiState -> AllFlightsUiState
+    when (topOffersState) {
+        is TopOffersUiState.Loading -> AllFlightsScreen(
+            modifier = modifier,
+            uiState = AllFlightsUiState.Loading,
+            onBackClick = onBackClick,
+            onSearchClick = onSearchClick,
+            onBookNowClick = onBookNowClick,
+            onRetry = viewModel::onRetry
+        )
+
+        is TopOffersUiState.Error -> {
+            val message = (topOffersState as TopOffersUiState.Error).message
+            AllFlightsScreen(
+                modifier = modifier,
+                uiState = AllFlightsUiState.Error(message.asString()),
+                onBackClick = onBackClick,
+                onSearchClick = onSearchClick,
+                onBookNowClick = onBookNowClick,
+                onRetry = viewModel::onRetry
+            )
+        }
+
+        is TopOffersUiState.Success -> {
+            val offers = (topOffersState as TopOffersUiState.Success).offers
+            val data = if (offers.isNotEmpty()) {
+                val first = offers.first()
+                AllFlightsData(
+                    title = "All Flights",
+                    fields = listOf(
+                        FlightFieldUi(Icons.Filled.FlightTakeoff, first.origin ?: ""),
+                        FlightFieldUi(Icons.Filled.FlightLand, first.destination ?: ""),
+                        FlightFieldUi(Icons.Filled.CalendarMonth, first.travelDate ?: ""),
+                        FlightFieldUi(Icons.Filled.Groups, "1 Passenger, Economy")
+                    ),
+                    flightCard = FlightCardUi(
+                        airline = first.airlineName.ifBlank { "" },
+                        flightCode = first.flightNumber ?: "",
+                        departureTime = first.travelDate ?: "",
+                        departureCode = first.origin ?: "",
+                        departureCity = "",
+                        duration = "",
+                        arrivalTime = "",
+                        arrivalCode = first.destination ?: "",
+                        arrivalCity = first.destinationName.ifBlank { "" },
+                        price = if (first.cheapestPrice > 0) "${first.cheapestPrice}" else "",
+                        status = first.status ?: ""
+                    )
+                )
+            } else {
+                sampleAllFlightsData()
+            }
+
+            AllFlightsScreen(
+                modifier = modifier,
+                uiState = AllFlightsUiState.Success(data),
+                onBackClick = onBackClick,
+                onSearchClick = onSearchClick,
+                onBookNowClick = onBookNowClick,
+                onRetry = viewModel::onRetry
+            )
+        }
+
+        is TopOffersUiState.Idle -> {
+            // Show loading by default
+            AllFlightsScreen(
+                modifier = modifier,
+                uiState = AllFlightsUiState.Loading,
+                onBackClick = onBackClick,
+                onSearchClick = onSearchClick,
+                onBookNowClick = onBookNowClick,
+                onRetry = viewModel::onRetry
+            )
         }
     }
 }

@@ -71,6 +71,12 @@ object DataStoreModule {
         return PreferencesManagerImpl(context)
     }
 
+    @Provides
+    @Singleton
+    fun provideTopFlightOffersCache(): com.example.data.repository.flights.TopFlightOffersCache {
+        return com.example.data.repository.flights.TopFlightOffersCache()
+    }
+
     @WebClientId
     @Provides
     @Singleton

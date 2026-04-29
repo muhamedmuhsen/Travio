@@ -10,6 +10,7 @@ import com.example.domain.repository.destinations.LocationRepository
 import com.example.domain.repository.destinations.RecentlyViewedRepository
 import com.example.domain.repository.favorite.FavoritePlaceRepository
 import com.example.domain.usecase.destinations.AddToRecentlyViewedUseCase
+import com.example.domain.usecase.flights.GetTopFlightOffersUseCase
 import com.example.domain.usecase.destinations.GetDestinationsPageUseCase
 import com.example.domain.usecase.destinations.GetFamousCountriesUseCase
 import com.example.domain.usecase.destinations.GetNearbyDestinationsUseCase
@@ -19,6 +20,7 @@ import com.example.domain.usecase.favorite.place.GetAllPlacesUseCase
 import com.example.domain.utils.DataError
 import com.example.domain.utils.Result
 import com.dev.home.presentation.HomeViewModel
+import com.dev.home.presentation.FakeGetTopOffersUseCase
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf
@@ -119,6 +121,8 @@ fun createNearbyReviewHomeViewModel(
     locationRepository: FakeNearbyLocationRepository = FakeNearbyLocationRepository(),
     favoritePlaceRepository: FakeNearbyFavoritePlaceRepository = FakeNearbyFavoritePlaceRepository(),
     recentlyViewedRepository: FakeNearbyRecentlyViewedRepository = FakeNearbyRecentlyViewedRepository()
+,
+    getTopFlightOffersUseCase: GetTopFlightOffersUseCase = FakeGetTopOffersUseCase()
 ): HomeViewModel {
     return HomeViewModel(
         getDestinationsPageUseCase = GetDestinationsPageUseCase(destinationsRepository),
@@ -127,7 +131,11 @@ fun createNearbyReviewHomeViewModel(
         favoritePlaceUseCase = FavoritePlaceUseCase(favoritePlaceRepository),
         getAllPlacesUseCase = GetAllPlacesUseCase(favoritePlaceRepository),
         getRecentlyViewedUseCase = GetRecentlyViewedUseCase(recentlyViewedRepository),
-        addToRecentlyViewedUseCase = AddToRecentlyViewedUseCase(recentlyViewedRepository)
+        addToRecentlyViewedUseCase = AddToRecentlyViewedUseCase(recentlyViewedRepository),
+        getTopFlightOffersUseCase = getTopFlightOffersUseCase
     )
 }
+
+
+
 

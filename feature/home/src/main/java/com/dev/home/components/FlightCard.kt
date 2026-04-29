@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
@@ -38,6 +39,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.dev.home.presentation.flights.FlightCardContent
 import com.dev.home.presentation.flights.FlightStatusTone
+import com.example.designsystem.components.shimmerEffect
 import com.example.designsystem.theme.elevation
 import com.example.designsystem.theme.spacing
 import com.example.designsystem.theme.success
@@ -113,6 +115,27 @@ fun FlightCard(
                 )
             }
         }
+    }
+}
+
+@Composable
+fun LoadingFlightCard(modifier: Modifier = Modifier) {
+    Card(
+        modifier = modifier
+            .width(FlightCardMinWidth)
+            .height(FlightCardMinHeight)
+            .clip(MaterialTheme.shapes.extraLarge),
+        shape = MaterialTheme.shapes.extraLarge,
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceContainer
+        ),
+        elevation = CardDefaults.cardElevation(defaultElevation = MaterialTheme.elevation.md)
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .shimmerEffect()
+        )
     }
 }
 

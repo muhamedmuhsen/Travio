@@ -113,6 +113,16 @@ private fun FlightCardEdgeCaseMatrixPreview() {
     }
 }
 
+@Preview(name = "Loading Flight Card")
+@Composable
+private fun LoadingFlightCardPreview() {
+    TravioTheme(dynamicColor = false) {
+        Column(modifier = Modifier.padding(MaterialTheme.spacing.md)) {
+            LoadingFlightCard()
+        }
+    }
+}
+
 internal fun previewFlightCard(
     id: String = "flight-vs003",
     amount: String = "489",
