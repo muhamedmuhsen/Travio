@@ -98,6 +98,7 @@ data class PriceDisplayInfo(
 }
 
 sealed interface FlightsSectionUiState {
+    data object Idle : FlightsSectionUiState
     data object Loading : FlightsSectionUiState
     data class Success(val cards: List<FlightCardContent>) : FlightsSectionUiState
     data class Error(val message: UiText) : FlightsSectionUiState

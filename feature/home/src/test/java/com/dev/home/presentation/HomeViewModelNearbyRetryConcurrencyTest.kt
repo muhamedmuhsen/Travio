@@ -70,7 +70,8 @@ class HomeViewModelNearbyRetryConcurrencyTest {
             favoritePlaceUseCase = FavoritePlaceUseCase(favoritePlaceRepository),
             getAllPlacesUseCase = GetAllPlacesUseCase(favoritePlaceRepository),
             getRecentlyViewedUseCase = GetRecentlyViewedUseCase(recentlyViewedRepository),
-            addToRecentlyViewedUseCase = AddToRecentlyViewedUseCase(recentlyViewedRepository)
+            addToRecentlyViewedUseCase = AddToRecentlyViewedUseCase(recentlyViewedRepository),
+            getTopFlightOffersUseCase = FakeGetTopOffersUseCase()
         )
     }
 

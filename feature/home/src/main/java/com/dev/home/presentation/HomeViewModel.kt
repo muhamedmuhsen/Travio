@@ -2,9 +2,7 @@ package com.dev.home.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.dev.home.presentation.flights.FlightCardFallbackStrings
 import com.dev.home.presentation.flights.FlightsSectionUiState
-import com.dev.home.presentation.flights.RawFlightCardPayload
 import com.dev.home.presentation.flights.toFlightCardContent
 import com.dev.utils.uistate.UiState
 import com.dev.utils.uitext.UiText
@@ -12,6 +10,7 @@ import com.dev.utils.uitext.asUiText
 import com.example.domain.model.destination.Destination
 import com.example.domain.model.destination.DestinationsPage
 import com.example.domain.model.favorite.toPlace
+import com.example.domain.model.flights.TopFlightOffer
 import com.example.domain.usecase.destinations.AddToRecentlyViewedUseCase
 import com.example.domain.usecase.destinations.GetDestinationsPageUseCase
 import com.example.domain.usecase.destinations.GetFamousCountriesUseCase
@@ -22,6 +21,7 @@ import com.example.domain.usecase.favorite.destination.ObserveFavoriteDestinatio
 import com.example.domain.usecase.favorite.destination.RemoveDestinationFavoriteUseCase
 import com.example.domain.usecase.favorite.place.FavoritePlaceUseCase
 import com.example.domain.usecase.favorite.place.GetAllPlacesUseCase
+import com.example.domain.usecase.flights.GetTopFlightOffersUseCase
 import com.example.domain.utils.DataError
 import com.example.domain.utils.Result
 import com.example.feature.home.R
@@ -49,7 +49,8 @@ class HomeViewModel @Inject constructor(
     private val observeFavoriteDestinationIdsUseCase: ObserveFavoriteDestinationIdsUseCase? = null,
     private val getAllPlacesUseCase: GetAllPlacesUseCase,
     private val getRecentlyViewedUseCase: GetRecentlyViewedUseCase,
-    private val addToRecentlyViewedUseCase: AddToRecentlyViewedUseCase
+    private val addToRecentlyViewedUseCase: AddToRecentlyViewedUseCase,
+    private val getTopFlightOffersUseCase: GetTopFlightOffersUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(HomeUiState())
@@ -115,7 +116,7 @@ class HomeViewModel @Inject constructor(
 
             HomeSection.Nearby -> requestLocationPermission()
             HomeSection.RecentlyViewed -> observeRecentlyViewed()
-            HomeSection.Flights -> loadFlightsSectionData()
+            HomeSection.Flights -> loadFlightsSectionData(forceRefresh = false)
         }
     }
 
@@ -316,51 +317,60 @@ class HomeViewModel @Inject constructor(
         loadFlightsSectionData()
     }
 
-    private fun loadFlightsSectionData() {
-        val fallbackStrings = FlightCardFallbackStrings()
-        val cards = listOf(
-            RawFlightCardPayload(
-                id = "flight-vs003",
-                airlineName = "Virgin Atlantic",
-                flightNumber = "VS003",
-                statusLabel = "On Time",
-                departureTime = "10:15",
-                durationText = "8H 10M",
-                arrivalTime = "13:25",
-                departureAirportCode = "LHR",
-                departureCityName = "London",
-                arrivalAirportCode = "JFK",
-                arrivalCityName = "New York",
-                stopsText = "Non-stop",
-                durationSummary = "Duration: 8h 10m",
-                tripTypeSummary = "Total (Round Trip)",
-                currencySymbol = "$",
-                amountText = "489",
-                qualifierText = "round trip"
-            ),
-            RawFlightCardPayload(
-                id = "flight-ba117",
-                airlineName = "British Airways",
-                flightNumber = "BA117",
-                statusLabel = "Boarding",
-                departureTime = "12:40",
-                durationText = "7H 50M",
-                arrivalTime = "15:30",
-                departureAirportCode = "LHR",
-                departureCityName = "London",
-                arrivalAirportCode = "JFK",
-                arrivalCityName = "New York",
-                stopsText = "Non-stop",
-                durationSummary = "Duration: 7h 50m",
-                tripTypeSummary = "Total (Round Trip)",
-                currencySymbol = "$",
-                amountText = "529",
-                qualifierText = "round trip"
-            )
-        ).map { it.toFlightCardContent(fallback = fallbackStrings) }
+    // In-memory cache of the last fetched domain offers so detail navigation can access full data
+    private var lastTopFlightOffers: List<TopFlightOffer> = emptyList()
 
-        _uiState.update {
-            it.copy(flightsState = FlightsSectionUiState.Success(cards))
+    /**
+     * Find a previously-loaded TopFlightOffer by its offerId without performing a network call.
+     */
+    private fun findTopOfferById(offerId: String): TopFlightOffer? {
+        return lastTopFlightOffers.firstOrNull { it.offerId == offerId }
+    }
+
+    private fun loadFlightsSectionData(forceRefresh: Boolean = false) {
+        // Prevent duplicate concurrent loads.
+        // We only allow proceeding if state is NOT Loading.
+        if (_uiState.value.flightsState is FlightsSectionUiState.Loading) return
+
+        _uiState.update { it.copy(flightsState = FlightsSectionUiState.Loading) }
+
+        viewModelScope.launch {
+            when (val result = getTopFlightOffersUseCase(forceRefresh = forceRefresh, limit = HOME_PREVIEW_LIMIT)) {
+                is Result.Error -> {
+                    _uiState.update {
+                        it.copy(
+                            flightsState = FlightsSectionUiState.Error(
+                                UiText.StringResource(R.string.no_flight_offers_available)
+                            )
+                        )
+                    }
+                    Timber.w("HomeViewModel: failed to load top flight offers -> ${result.error}")
+                }
+
+                is Result.Success -> {
+                    val offers = result.data
+                    if (offers.isEmpty()) {
+                        _uiState.update {
+                            it.copy(
+                                flightsState = FlightsSectionUiState.Error(
+                                    UiText.StringResource(R.string.no_flight_offers_available)
+                                )
+                            )
+                        }
+                        return@launch
+                    }
+
+                    // keep domain models for detail navigation
+                    lastTopFlightOffers = offers
+
+                    val cards = offers.map { offer ->
+                        // Use existing mapper to convert domain model to FlightCardContent
+                        offer.toFlightCardContent()
+                    }
+
+                    _uiState.update { it.copy(flightsState = FlightsSectionUiState.Success(cards)) }
+                }
+            }
         }
     }
 
@@ -506,6 +516,8 @@ class HomeViewModel @Inject constructor(
                     loadFamousCountries()
                     observeRecentlyViewed()
                     requestLocationPermission()
+                    // refresh offers as part of pull-to-refresh
+                    loadFlightsSectionData(forceRefresh = true)
                 }
 
                 is Result.Error -> {
@@ -585,5 +597,6 @@ class HomeViewModel @Inject constructor(
         const val FIRST_PAGE = 1
         const val PAGE_SIZE = 10
         const val PREFETCH_THRESHOLD = 3
+        const val HOME_PREVIEW_LIMIT = 5
     }
 }

@@ -125,4 +125,10 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindReviewRepository(reviewRepositoryImpl: ReviewRepositoryImpl): ReviewRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindTopFlightOffersRepository(
+        topFlightOffersRepositoryImpl: com.example.data.repository.flights.TopFlightOffersRepositoryImpl
+    ): com.example.domain.repository.flights.TopFlightOffersRepository
 }

@@ -30,6 +30,7 @@
     <string name="all_flights_search_button">Search Flight</string>
     <string name="all_flights_non_stop">Non-stop</string>
     <string name="all_flights_book_now">Book Now</string>
+    <string name="retry">Retry</string>
     <string name="all_flights_tab_explore">Explore</string>
     <string name="all_flights_tab_favorite">Favorite</string>
     <string name="all_flights_tab_community">Community</string>

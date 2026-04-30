@@ -1,5 +1,6 @@
 package com.dev.home.presentation
 
+import com.dev.home.presentation.fakes.FakeGetTopOffersUseCase
 import com.example.domain.model.destination.Country
 import com.example.domain.model.destination.Destination
 import com.example.domain.model.destination.DestinationsPage
@@ -90,7 +91,8 @@ class HomeViewModelFavoriteAddTest {
             observeFavoriteDestinationIdsUseCase = ObserveFavoriteDestinationIdsUseCase(favoriteDestinationRepository),
             getAllPlacesUseCase = GetAllPlacesUseCase(favoritePlaceRepository),
             getRecentlyViewedUseCase = GetRecentlyViewedUseCase(recentlyViewedRepository),
-            addToRecentlyViewedUseCase = AddToRecentlyViewedUseCase(recentlyViewedRepository)
+            addToRecentlyViewedUseCase = AddToRecentlyViewedUseCase(recentlyViewedRepository),
+            getTopFlightOffersUseCase = FakeGetTopOffersUseCase()
         )
     }
 

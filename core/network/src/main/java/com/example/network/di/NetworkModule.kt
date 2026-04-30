@@ -165,6 +165,12 @@ object NetworkModule {
 
     @Provides
     @Singleton
+    fun provideFlightBookingApi(retrofit: Retrofit): com.example.network.api.FlightBookingApi {
+        return retrofit.create(com.example.network.api.FlightBookingApi::class.java)
+    }
+
+    @Provides
+    @Singleton
     @BaseUrl
     fun provideBaseUrl(environmentConfig: EnvironmentConfig): String {
         return environmentConfig.baseUrl

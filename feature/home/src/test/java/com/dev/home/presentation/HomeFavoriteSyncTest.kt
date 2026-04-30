@@ -69,7 +69,8 @@ class HomeFavoriteSyncTest {
             observeFavoriteDestinationIdsUseCase = ObserveFavoriteDestinationIdsUseCase(favoriteDestinationRepository),
             getAllPlacesUseCase = GetAllPlacesUseCase(favoritePlaceRepository),
             getRecentlyViewedUseCase = GetRecentlyViewedUseCase(recentlyViewedRepository),
-            addToRecentlyViewedUseCase = AddToRecentlyViewedUseCase(recentlyViewedRepository)
+            addToRecentlyViewedUseCase = AddToRecentlyViewedUseCase(recentlyViewedRepository),
+            getTopFlightOffersUseCase = FakeGetTopOffersUseCase()
         )
     }
 

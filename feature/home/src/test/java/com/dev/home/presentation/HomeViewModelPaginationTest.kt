@@ -349,6 +349,7 @@ class HomeViewModelPaginationTest {
             getAllPlacesUseCase = GetAllPlacesUseCase(favoritePlaceRepository),
             getRecentlyViewedUseCase = GetRecentlyViewedUseCase(recentlyViewedRepository),
             addToRecentlyViewedUseCase = AddToRecentlyViewedUseCase(recentlyViewedRepository)
+            ,getTopFlightOffersUseCase = FakeGetTopOffersUseCase()
         )
     }
 

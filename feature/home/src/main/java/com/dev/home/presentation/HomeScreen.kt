@@ -1,6 +1,7 @@
 package com.dev.home.presentation
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.res.Configuration
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -59,6 +60,7 @@ import com.dev.home.components.FlightsSection
 import com.dev.home.components.HomeSearchBar
 import com.dev.home.components.LoadingCountryCard
 import com.dev.home.components.LoadingDestinationCard
+import com.dev.home.components.LoadingFlightCard
 import com.dev.home.components.LoadingRecentViewedCard
 import com.dev.home.components.RecentViewedCard
 import com.dev.home.presentation.HomeAction.OnLocationPermissionResult
@@ -75,6 +77,7 @@ import com.example.domain.model.destination.Destination
 import com.example.feature.home.R
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
+import timber.log.Timber
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
@@ -154,6 +157,7 @@ fun HomeScreen(
     )
 }
 
+@SuppressLint("TimberArgCount")
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
 private fun HomeContent(
@@ -252,6 +256,7 @@ private fun HomeContent(
                         onRetry = { onAction(HomeAction.OnRetrySection(HomeSection.Nearby)) },
                         isNearby = true
                     )
+                    Timber.w("state: ", state.flightsState)
                     FlightsStateHandling(
                         state = state.flightsState,
                         onAction = onAction,
@@ -271,7 +276,17 @@ private fun FlightsStateHandling(
     onRetry: () -> Unit
 ) {
     when (state) {
-        FlightsSectionUiState.Loading -> Unit
+        FlightsSectionUiState.Idle,
+        FlightsSectionUiState.Loading -> {
+            HorizontalSection(
+                title = stringResource(R.string.section_flights)
+            ) {
+                items(3) {
+                    LoadingFlightCard()
+                }
+            }
+        }
+
         is FlightsSectionUiState.Error -> ErrorSection(
             title = stringResource(R.string.section_flights),
             onRetry = onRetry

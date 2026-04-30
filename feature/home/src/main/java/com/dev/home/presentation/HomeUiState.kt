@@ -12,7 +12,7 @@ data class HomeUiState(
     val loadedDestinations: List<Destination> = emptyList(),
     val destinationsPagination: HomePaginationState = HomePaginationState(),
     val isRefreshing: Boolean = false,
-    val flightsState: FlightsSectionUiState = FlightsSectionUiState.Loading,
+    val flightsState: FlightsSectionUiState = FlightsSectionUiState.Idle,
     val recentViewedDestinationsState: UiState<List<Destination>> = UiState.Idle,
     val nearbyDestinationsState: UiState<List<Destination>> = UiState.Idle,
     val favoriteIds: Set<Int> = emptySet(),

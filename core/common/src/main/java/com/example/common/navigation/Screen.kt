@@ -29,6 +29,12 @@ sealed class Screen(val route: String) {
     data object ShareMomentScreen : Screen(Screens.SHARE_MOMENT.name)
     data object LocationPickerScreen : Screen(Screens.LOCATION_PICKER.name)
     data object SeeAllFlightsScreen : Screen(Screens.SEE_ALL_FLIGHTS.name)
+    data object FlightDetailScreen : Screen(Screens.FLIGHT_DETAIL.name) {
+        const val ARG_OFFER_ID = "offerId"
+        val routePattern = "$route/{$ARG_OFFER_ID}"
+
+        fun createRoute(offerId: String): String = "$route/$offerId"
+    }
 }
 
 enum class Screens {
@@ -53,5 +59,6 @@ enum class Screens {
     POST_DETAIL,
     SHARE_MOMENT,
     LOCATION_PICKER,
-    SEE_ALL_FLIGHTS
+    SEE_ALL_FLIGHTS,
+    FLIGHT_DETAIL
 }
