@@ -1,6 +1,6 @@
 package com.dev.search.presentation
 
-import android.content.res.Configuration
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -14,11 +14,12 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.AirlineSeatReclineExtra
 import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.ChatBubble
 import androidx.compose.material.icons.filled.Favorite
@@ -34,16 +35,24 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDialog
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SelectableDates
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -53,51 +62,54 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.designsystem.theme.TravioTheme
+import com.dev.search.presentation.flights.FlightSearchAction
+import com.dev.search.presentation.flights.FlightSearchEvent
+import com.dev.search.presentation.flights.FlightSearchUiState
+import com.dev.search.presentation.flights.FlightSearchViewModel
+import com.dev.search.presentation.flights.SearchStatus
 import com.example.designsystem.theme.elevation
 import com.example.designsystem.theme.spacing
+import com.example.domain.model.flights.search.FlightOffer
 import com.example.feature.search.R
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
-@Immutable
-data class FlightFieldUi(
-    val icon: androidx.compose.ui.graphics.vector.ImageVector,
-    val value: String
+private val AIRPORTS = listOf(
+    "CAI - Cairo", "HBE - Alexandria", "LXR - Luxor", "ASW - Aswan",
+    "SSH - Sharm El Sheikh", "HRG - Hurghada", "SSH - Dahab", "RMF - Marsa Alam",
+    "SPX - Giza", "SEW - Siwa", "RAK - Marrakech", "CMN - Casablanca",
+    "FEZ - Fes", "AGA - Agadir", "TNG - Tangier", "RBA - Rabat",
+    "TNG - Chefchaouen", "ESU - Essaouira", "DXB - Dubai", "AUH - Abu Dhabi",
+    "SHJ - Sharjah", "AAN - Al Ain", "RUH - Riyadh", "JED - Jeddah",
+    "JED - Mecca", "MED - Medina", "ULH - Al-Ula", "HND - Tokyo",
+    "ITM - Kyoto", "KIX - Osaka", "ITM - Nara", "CGK - Jakarta",
+    "DPS - Bali", "DPS - Ubud", "YIA - Yogyakarta", "LOP - Lombok",
+    "FCO - Rome", "VCE - Venice", "MXP - Milan", "FLR - Florence",
+    "NAP - Amalfi", "CDG - Paris", "NCE - Nice", "LYS - Lyon",
+    "BOD - Bordeaux", "JFK - New York", "LAX - Los Angeles", "MIA - Miami",
+    "LAS - Las Vegas", "SFO - San Francisco", "GIG - Rio de Janeiro",
+    "GRU - Sao Paulo", "SSA - Salvador", "BSB - Brasilia", "MAO - Manaus",
+    "GIG - Buzios", "FLN - Florianopolis", "EZE - Buenos Aires",
+    "MDZ - Mendoza", "BRC - Bariloche", "USH - Ushuaia", "COR - Cordoba",
+    "IGR - Iguazu Falls", "LIM - Lima", "CUZ - Cusco", "AQP - Arequipa",
+    "CUZ - Machu Picchu Village", "IQT - Iquitos", "BOG - Bogota",
+    "MDE - Medellin", "CTG - Cartagena", "CLO - Cali", "SMR - Santa Marta",
+    "SCL - Santiago", "SCL - Valparaiso", "SCL - Vina del Mar",
+    "CJC - San Pedro de Atacama", "PNT - Puerto Natales", "SYD - Sydney",
+    "MEL - Melbourne", "BNE - Brisbane", "PER - Perth", "OOL - Gold Coast"
 )
 
-@Immutable
-data class FlightCardUi(
-    val airline: String,
-    val flightCode: String,
-    val departureTime: String,
-    val departureCode: String,
-    val departureCity: String,
-    val duration: String,
-    val arrivalTime: String,
-    val arrivalCode: String,
-    val arrivalCity: String,
-    val price: String,
-    val status: String
-)
-
-@Immutable
-data class AllFlightsData(
-    val title: String,
-    val fields: List<FlightFieldUi>,
-    val flightCard: FlightCardUi
-)
-
-sealed interface AllFlightsUiState {
-    data object Loading : AllFlightsUiState
-    data class Success(val data: AllFlightsData) : AllFlightsUiState
-    data class Error(val message: String) : AllFlightsUiState
-}
+private val CABIN_CLASSES = listOf("ECONOMY", "PREMIUM_ECONOMY", "BUSINESS", "FIRST")
+private val ADULT_COUNTS = (1..9).map { it.toString() }
 
 private enum class BottomNavTab {
     Explore,
@@ -108,13 +120,39 @@ private enum class BottomNavTab {
 }
 
 @Composable
+fun AllFlightsScreenRoute(
+    modifier: Modifier = Modifier,
+    viewModel: FlightSearchViewModel = hiltViewModel(),
+    onBackClick: () -> Unit = {},
+    onBookNowClick: (offerId: String) -> Unit = {}
+) {
+    val uiState by viewModel.uiState.collectAsState()
+    val context = LocalContext.current
+
+    LaunchedEffect(Unit) {
+        viewModel.events.collect { event ->
+            when (event) {
+                is FlightSearchEvent.NavigateBack -> onBackClick()
+                is FlightSearchEvent.NavigateToFlightDetails -> onBookNowClick(event.offerId)
+                is FlightSearchEvent.ShowSnackbar -> {
+                    Toast.makeText(context, event.message.asString(context), Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
+
+    AllFlightsScreen(
+        modifier = modifier,
+        uiState = uiState,
+        onAction = viewModel::onAction
+    )
+}
+
+@Composable
 fun AllFlightsScreen(
     modifier: Modifier = Modifier,
-    uiState: AllFlightsUiState = AllFlightsUiState.Success(sampleAllFlightsData()),
-    onBackClick: () -> Unit = {},
-    onSearchClick: () -> Unit = {},
-    onBookNowClick: () -> Unit = {},
-    onRetry: () -> Unit = {}
+    uiState: FlightSearchUiState,
+    onAction: (FlightSearchAction) -> Unit
 ) {
     var selectedTab by remember { mutableStateOf(BottomNavTab.Explore) }
 
@@ -128,199 +166,117 @@ fun AllFlightsScreen(
             )
         }
     ) { paddingValues ->
-        when (uiState) {
-            AllFlightsUiState.Loading -> {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(paddingValues),
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator()
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(MaterialTheme.spacing.md),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                IconButton(onClick = { onAction(FlightSearchAction.OnBackClicked) }) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = stringResource(R.string.all_flights_back),
+                        tint = MaterialTheme.colorScheme.onSurface
+                    )
                 }
+                Text(
+                    text = "All Flights",
+                    style = MaterialTheme.typography.headlineSmall,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.weight(1f),
+                    textAlign = TextAlign.Center,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+                Spacer(modifier = Modifier.width(MaterialTheme.spacing.xxxl))
             }
 
-            is AllFlightsUiState.Error -> {
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(paddingValues)
-                        .padding(MaterialTheme.spacing.md),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    Text(
-                        text = uiState.message,
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.error,
-                        textAlign = TextAlign.Center
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = MaterialTheme.spacing.md),
+                contentPadding = androidx.compose.foundation.layout.PaddingValues(bottom = MaterialTheme.spacing.lg),
+                verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.md)
+            ) {
+                item {
+                    SearchCriteriaCard(
+                        uiState = uiState,
+                        onAction = onAction
                     )
-                    Spacer(modifier = Modifier.height(MaterialTheme.spacing.md))
-                    Button(onClick = onRetry) {
-                        Text(text = stringResource(R.string.retry))
+                }
+
+                when (val status = uiState.searchStatus) {
+                    is SearchStatus.Idle -> {
+                        item {
+                            // Show empty prompt or just space
+                        }
+                    }
+                    is SearchStatus.Loading -> {
+                        item {
+                            Box(modifier = Modifier.fillMaxWidth().padding(MaterialTheme.spacing.xl), contentAlignment = Alignment.Center) {
+                                CircularProgressIndicator()
+                            }
+                        }
+                    }
+                    is SearchStatus.Error -> {
+                        item {
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(MaterialTheme.spacing.md),
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                Text(
+                                    text = status.message.asString(),
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.error,
+                                    textAlign = TextAlign.Center
+                                )
+                                if (status.isRetryable) {
+                                    Spacer(modifier = Modifier.height(MaterialTheme.spacing.md))
+                                    Button(onClick = { onAction(FlightSearchAction.OnRetrySearch) }) {
+                                        Text(text = stringResource(R.string.retry))
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    is SearchStatus.Success -> {
+                        if (status.offers.isEmpty()) {
+                            item {
+                                Box(
+                                    modifier = Modifier.fillMaxWidth().padding(MaterialTheme.spacing.xl),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Text("No flights found.", color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                }
+                            }
+                        } else {
+                            items(status.offers) { offer ->
+                                FlightResultCard(
+                                    offer = offer,
+                                    onBookNowClick = {
+                                        // TODO: dispatch navigate action
+                                    }
+                                )
+                            }
+                        }
                     }
                 }
             }
-
-            is AllFlightsUiState.Success -> {
-                AllFlightsContent(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(paddingValues),
-                    data = uiState.data,
-                    onBackClick = onBackClick,
-                    onSearchClick = onSearchClick,
-                    onBookNowClick = onBookNowClick
-                )
-            }
         }
     }
 }
 
-@Composable
-fun AllFlightsScreenRoute(
-    modifier: Modifier = Modifier,
-    viewModel: AllFlightsViewModel = hiltViewModel(),
-    onBackClick: () -> Unit = {},
-    onSearchClick: () -> Unit = {},
-    onBookNowClick: () -> Unit = {}
-) {
-    val topOffersState by viewModel.uiState.collectAsState()
-
-    // Map TopOffersUiState -> AllFlightsUiState
-    when (topOffersState) {
-        is TopOffersUiState.Loading -> AllFlightsScreen(
-            modifier = modifier,
-            uiState = AllFlightsUiState.Loading,
-            onBackClick = onBackClick,
-            onSearchClick = onSearchClick,
-            onBookNowClick = onBookNowClick,
-            onRetry = viewModel::onRetry
-        )
-
-        is TopOffersUiState.Error -> {
-            val message = (topOffersState as TopOffersUiState.Error).message
-            AllFlightsScreen(
-                modifier = modifier,
-                uiState = AllFlightsUiState.Error(message.asString()),
-                onBackClick = onBackClick,
-                onSearchClick = onSearchClick,
-                onBookNowClick = onBookNowClick,
-                onRetry = viewModel::onRetry
-            )
-        }
-
-        is TopOffersUiState.Success -> {
-            val offers = (topOffersState as TopOffersUiState.Success).offers
-            val data = if (offers.isNotEmpty()) {
-                val first = offers.first()
-                AllFlightsData(
-                    title = "All Flights",
-                    fields = listOf(
-                        FlightFieldUi(Icons.Filled.FlightTakeoff, first.origin ?: ""),
-                        FlightFieldUi(Icons.Filled.FlightLand, first.destination ?: ""),
-                        FlightFieldUi(Icons.Filled.CalendarMonth, first.travelDate ?: ""),
-                        FlightFieldUi(Icons.Filled.Groups, "1 Passenger, Economy")
-                    ),
-                    flightCard = FlightCardUi(
-                        airline = first.airlineName.ifBlank { "" },
-                        flightCode = first.flightNumber ?: "",
-                        departureTime = first.travelDate ?: "",
-                        departureCode = first.origin ?: "",
-                        departureCity = "",
-                        duration = "",
-                        arrivalTime = "",
-                        arrivalCode = first.destination ?: "",
-                        arrivalCity = first.destinationName.ifBlank { "" },
-                        price = if (first.cheapestPrice > 0) "${first.cheapestPrice}" else "",
-                        status = first.status ?: ""
-                    )
-                )
-            } else {
-                sampleAllFlightsData()
-            }
-
-            AllFlightsScreen(
-                modifier = modifier,
-                uiState = AllFlightsUiState.Success(data),
-                onBackClick = onBackClick,
-                onSearchClick = onSearchClick,
-                onBookNowClick = onBookNowClick,
-                onRetry = viewModel::onRetry
-            )
-        }
-
-        is TopOffersUiState.Idle -> {
-            // Show loading by default
-            AllFlightsScreen(
-                modifier = modifier,
-                uiState = AllFlightsUiState.Loading,
-                onBackClick = onBackClick,
-                onSearchClick = onSearchClick,
-                onBookNowClick = onBookNowClick,
-                onRetry = viewModel::onRetry
-            )
-        }
-    }
-}
-
-@Composable
-private fun AllFlightsContent(
-    modifier: Modifier = Modifier,
-    data: AllFlightsData,
-    onBackClick: () -> Unit,
-    onSearchClick: () -> Unit,
-    onBookNowClick: () -> Unit
-) {
-    Column(
-        modifier = modifier
-            .verticalScroll(rememberScrollState())
-            .padding(horizontal = MaterialTheme.spacing.md)
-            .padding(top = MaterialTheme.spacing.sm),
-        verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.md)
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = MaterialTheme.spacing.sm),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            IconButton(onClick = onBackClick) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = stringResource(R.string.all_flights_back),
-                    tint = MaterialTheme.colorScheme.onSurface
-                )
-            }
-            Text(
-                text = data.title,
-                style = MaterialTheme.typography.headlineSmall,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.weight(1f),
-                textAlign = TextAlign.Center,
-                color = MaterialTheme.colorScheme.onSurface
-            )
-            Spacer(modifier = Modifier.width(MaterialTheme.spacing.xxxl)) // To balance the back button
-        }
-
-        SearchCriteriaCard(
-            fields = data.fields,
-            onSearchClick = onSearchClick
-        )
-
-        FlightResultCard(
-            card = data.flightCard,
-            onBookNowClick = onBookNowClick
-        )
-
-        Spacer(modifier = Modifier.height(MaterialTheme.spacing.md))
-    }
-}
-
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun SearchCriteriaCard(
-    fields: List<FlightFieldUi>,
-    onSearchClick: () -> Unit
+    uiState: FlightSearchUiState,
+    onAction: (FlightSearchAction) -> Unit
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -332,22 +288,41 @@ private fun SearchCriteriaCard(
             modifier = Modifier.padding(MaterialTheme.spacing.lg),
             verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.md)
         ) {
+            val params = uiState.searchParams
+
             Box(modifier = Modifier.fillMaxWidth()) {
                 Column(verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.sm)) {
-                    FlightFieldRow(
+                    FlightDropdownRow(
                         modifier = Modifier.fillMaxWidth(),
-                        field = fields[0]
+                        icon = Icons.Filled.FlightTakeoff,
+                        value = params.origin.ifBlank { "Origin" },
+                        options = AIRPORTS,
+                        onValueChange = {
+                            val iata = it.substringBefore(" -").trim()
+                            onAction(FlightSearchAction.OnOriginChanged(iata))
+                        }
                     )
-                    FlightFieldRow(
+                    FlightDropdownRow(
                         modifier = Modifier.fillMaxWidth(),
-                        field = fields[1]
+                        icon = Icons.Filled.FlightLand,
+                        value = params.destination.ifBlank { "Destination" },
+                        options = AIRPORTS,
+                        onValueChange = {
+                            val iata = it.substringBefore(" -").trim()
+                            onAction(FlightSearchAction.OnDestinationChanged(iata))
+                        }
                     )
                 }
                 Surface(
                     modifier = Modifier
                         .align(Alignment.CenterEnd)
                         .padding(end = MaterialTheme.spacing.md)
-                        .size(MaterialTheme.spacing.xl),
+                        .size(MaterialTheme.spacing.xl)
+                        .clickable {
+                            val temp = params.origin
+                            onAction(FlightSearchAction.OnOriginChanged(params.destination))
+                            onAction(FlightSearchAction.OnDestinationChanged(temp))
+                        },
                     shape = CircleShape,
                     color = MaterialTheme.colorScheme.primary,
                     shadowElevation = MaterialTheme.elevation.md
@@ -363,17 +338,78 @@ private fun SearchCriteriaCard(
                 }
             }
 
-            FlightFieldRow(
+            var showDatePicker by remember { mutableStateOf(false) }
+            if (showDatePicker) {
+                val datePickerState = rememberDatePickerState(
+                    selectableDates = object : SelectableDates {
+                        override fun isSelectableDate(utcTimeMillis: Long): Boolean {
+                            return utcTimeMillis >= System.currentTimeMillis() - 86400000
+                        }
+                    }
+                )
+                DatePickerDialog(
+                    onDismissRequest = { showDatePicker = false },
+                    confirmButton = {
+                        TextButton(onClick = {
+                            datePickerState.selectedDateMillis?.let { millis ->
+                                val formatter = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+                                val formattedDate = formatter.format(Date(millis))
+                                onAction(FlightSearchAction.OnDepartureDateChanged(formattedDate))
+                            }
+                            showDatePicker = false
+                        }) {
+                            Text("OK")
+                        }
+                    },
+                    dismissButton = {
+                        TextButton(onClick = { showDatePicker = false }) {
+                            Text("Cancel")
+                        }
+                    }
+                ) {
+                    DatePicker(state = datePickerState)
+                }
+            }
+
+            FlightClickableRow(
                 modifier = Modifier.fillMaxWidth(),
-                field = fields[2]
-            )
-            FlightFieldRow(
-                modifier = Modifier.fillMaxWidth(),
-                field = fields[3]
+                icon = Icons.Filled.CalendarMonth,
+                value = params.departureDate.ifBlank { "Select Date" },
+                onClick = { showDatePicker = true }
             )
 
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.sm)
+            ) {
+                FlightDropdownRow(
+                    modifier = Modifier.weight(1f),
+                    icon = Icons.Filled.Groups,
+                    value = "${params.adults} Passenger${if (params.adults > 1) "s" else ""}",
+                    options = ADULT_COUNTS,
+                    onValueChange = { onAction(FlightSearchAction.OnAdultsChanged(it.toInt())) }
+                )
+                FlightDropdownRow(
+                    modifier = Modifier.weight(1f),
+                    icon = Icons.Filled.AirlineSeatReclineExtra,
+                    value = params.cabinClass.ifBlank { "Class" }.lowercase().replace("_", " ").replaceFirstChar { it.uppercase() },
+                    options = CABIN_CLASSES,
+                    onValueChange = { onAction(FlightSearchAction.OnCabinClassChanged(it)) }
+                )
+            }
+
+            // Display validation errors if any
+            if (uiState.validationErrors.isNotEmpty()) {
+                Text(
+                    text = uiState.validationErrors.values.first().asString(),
+                    color = MaterialTheme.colorScheme.error,
+                    style = MaterialTheme.typography.bodySmall,
+                    modifier = Modifier.padding(top = MaterialTheme.spacing.xs)
+                )
+            }
+
             Button(
-                onClick = onSearchClick,
+                onClick = { onAction(FlightSearchAction.OnSearchClicked) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(56.dp),
@@ -394,12 +430,88 @@ private fun SearchCriteriaCard(
 }
 
 @Composable
-private fun FlightFieldRow(
+private fun FlightDropdownRow(
     modifier: Modifier = Modifier,
-    field: FlightFieldUi
+    icon: ImageVector,
+    value: String,
+    options: List<String>,
+    onValueChange: (String) -> Unit
+) {
+    var expanded by remember { mutableStateOf(false) }
+
+    val displayValue = if (options === AIRPORTS) {
+        options.find { it.startsWith(value) } ?: value
+    } else {
+        value
+    }
+
+    Box(modifier = modifier) {
+        OutlinedCard(
+            modifier = Modifier.fillMaxWidth().clickable { expanded = true },
+            shape = MaterialTheme.shapes.medium,
+            colors = CardDefaults.outlinedCardColors(containerColor = MaterialTheme.colorScheme.surface),
+            border = CardDefaults.outlinedCardBorder().copy(
+                width = MaterialTheme.elevation.xs,
+                brush = SolidColor(MaterialTheme.colorScheme.outlineVariant)
+            )
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(MaterialTheme.spacing.md),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Box(
+                    contentAlignment = Alignment.Center,
+                    modifier = Modifier
+                        .size(32.dp)
+                        .clip(MaterialTheme.shapes.extraLarge)
+                        .background(MaterialTheme.colorScheme.surfaceContainer)
+                ) {
+                    Icon(
+                        imageVector = icon,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(MaterialTheme.spacing.md)
+                    )
+                }
+                Spacer(modifier = Modifier.width(MaterialTheme.spacing.md))
+                Text(
+                    text = displayValue,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
+        }
+
+        DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false }
+        ) {
+            options.forEach { option ->
+                DropdownMenuItem(
+                    text = { Text(option) },
+                    onClick = {
+                        onValueChange(option)
+                        expanded = false
+                    }
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun FlightClickableRow(
+    modifier: Modifier = Modifier,
+    icon: ImageVector,
+    value: String,
+    onClick: () -> Unit
 ) {
     OutlinedCard(
-        modifier = modifier,
+        modifier = modifier.clickable { onClick() },
         shape = MaterialTheme.shapes.medium,
         colors = CardDefaults.outlinedCardColors(containerColor = MaterialTheme.colorScheme.surface),
         border = CardDefaults.outlinedCardBorder().copy(
@@ -421,7 +533,7 @@ private fun FlightFieldRow(
                     .background(MaterialTheme.colorScheme.surfaceContainer)
             ) {
                 Icon(
-                    imageVector = field.icon,
+                    imageVector = icon,
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.size(MaterialTheme.spacing.md)
@@ -429,7 +541,7 @@ private fun FlightFieldRow(
             }
             Spacer(modifier = Modifier.width(MaterialTheme.spacing.md))
             Text(
-                text = field.value,
+                text = value,
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 maxLines = 1,
@@ -441,10 +553,17 @@ private fun FlightFieldRow(
 
 @Composable
 private fun FlightResultCard(
-    card: FlightCardUi,
+    offer: FlightOffer,
     onBookNowClick: () -> Unit
 ) {
-    val tealColor = MaterialTheme.colorScheme.primaryContainer
+    val firstSegment = offer.segments.firstOrNull()
+    val lastSegment = offer.segments.lastOrNull()
+    if (firstSegment == null || lastSegment == null) return
+
+    val durationParts = offer.departureTime.substringAfter(
+        "T"
+    ).substring(0, 5) + " - " + offer.arrivalTime.substringAfter("T").substring(0, 5) // simplified duration string
+
     Card(
         shape = MaterialTheme.shapes.extraLarge,
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
@@ -477,13 +596,13 @@ private fun FlightResultCard(
                     Spacer(modifier = Modifier.width(MaterialTheme.spacing.sm))
                     Column {
                         Text(
-                            text = card.airline,
+                            text = firstSegment.airlineName,
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.onSurface
                         )
                         Text(
-                            text = card.flightCode,
+                            text = firstSegment.flightNumber,
                             style = MaterialTheme.typography.labelSmall,
                             color = MaterialTheme.colorScheme.outline
                         )
@@ -494,7 +613,7 @@ private fun FlightResultCard(
                     color = MaterialTheme.colorScheme.secondaryContainer
                 ) {
                     Text(
-                        text = card.status,
+                        text = "Available",
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.padding(
@@ -512,9 +631,9 @@ private fun FlightResultCard(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 FlightTimeBlock(
-                    time = card.departureTime,
-                    code = card.departureCode,
-                    city = card.departureCity
+                    time = firstSegment.departureTime.substringAfter("T").substring(0, 5),
+                    code = firstSegment.origin,
+                    city = firstSegment.originName
                 )
 
                 Column(
@@ -549,7 +668,7 @@ private fun FlightResultCard(
                         )
                     }
                     Text(
-                        text = stringResource(R.string.all_flights_non_stop),
+                        text = if (offer.stops == 0) "Non-Stop" else "${offer.stops} Stop(s)",
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.outline,
                         fontWeight = FontWeight.Medium
@@ -557,9 +676,9 @@ private fun FlightResultCard(
                 }
 
                 FlightTimeBlock(
-                    time = card.arrivalTime,
-                    code = card.arrivalCode,
-                    city = card.arrivalCity,
+                    time = lastSegment.arrivalTime.substringAfter("T").substring(0, 5),
+                    code = lastSegment.destination,
+                    city = lastSegment.destinationName,
                     alignment = Alignment.End
                 )
             }
@@ -571,7 +690,7 @@ private fun FlightResultCard(
             ) {
                 Column {
                     Text(
-                        text = "Duration: ${card.duration}",
+                        text = "Flight: $durationParts",
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         fontWeight = FontWeight.Medium
@@ -584,7 +703,7 @@ private fun FlightResultCard(
                 }
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(
-                        text = card.price,
+                        text = "${offer.currency} ${offer.totalPrice}",
                         style = MaterialTheme.typography.headlineSmall,
                         color = MaterialTheme.colorScheme.primary,
                         fontWeight = FontWeight.Bold
@@ -687,64 +806,5 @@ private fun BottomBar(
                 }
             }
         }
-    }
-}
-
-private fun sampleAllFlightsData() =
-    AllFlightsData(
-        title = "All Flights",
-        fields = listOf(
-            FlightFieldUi(Icons.Filled.FlightTakeoff, "Jaipur (JAI), Pakistan"),
-            FlightFieldUi(Icons.Filled.FlightLand, "Dubai (DXB), United Arab Emirates"),
-            FlightFieldUi(Icons.Filled.CalendarMonth, "March 9, 2024 - 12:00 PM"),
-            FlightFieldUi(Icons.Filled.Groups, "1 Passenger, Economy")
-        ),
-        flightCard = FlightCardUi(
-            airline = "Emirates",
-            flightCode = "EK015",
-            departureTime = "14:30",
-            departureCode = "DXB",
-            departureCity = "Dubai",
-            duration = "7h 15m",
-            arrivalTime = "19:45",
-            arrivalCode = "LHR",
-            arrivalCity = "London",
-            price = "$650",
-            status = "On Time"
-        )
-    )
-
-@Preview(showBackground = true)
-@Composable
-private fun AllFlightsScreenPreview() {
-    TravioTheme {
-        AllFlightsScreen()
-    }
-}
-
-@Preview(
-    showBackground = true,
-    uiMode = Configuration.UI_MODE_NIGHT_YES or Configuration.UI_MODE_TYPE_NORMAL
-)
-@Composable
-private fun AllFlightsScreenDarkPreview() {
-    TravioTheme(darkTheme = true) {
-        AllFlightsScreen()
-    }
-}
-
-@Preview(showBackground = true, name = "Loading")
-@Composable
-private fun AllFlightsScreenLoadingPreview() {
-    TravioTheme {
-        AllFlightsScreen(uiState = AllFlightsUiState.Loading)
-    }
-}
-
-@Preview(showBackground = true, name = "Error")
-@Composable
-private fun AllFlightsScreenErrorPreview() {
-    TravioTheme {
-        AllFlightsScreen(uiState = AllFlightsUiState.Error("Unable to load flights"))
     }
 }

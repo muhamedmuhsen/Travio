@@ -23,5 +23,30 @@
     <!-- Recent searches -->
     <string name="search_clear_all">مسح الكل</string>
     <string name="search_empty_recent_searches">لا توجد عمليات بحث حديثة. ابدأ الاستكشاف!</string>
+
+    <!-- All Flights screen -->
+    <string name="all_flights_back">رجوع</string>
+    <string name="all_flights_swap_airports">تبديل مطاري المغادرة والوصول</string>
+    <string name="all_flights_search_button">بحث عن رحلة</string>
+    <string name="all_flights_non_stop">بدون توقف</string>
+    <string name="all_flights_book_now">احجز الآن</string>
+    <string name="retry">إعادة المحاولة</string>
+    <string name="all_flights_tab_explore">استكشاف</string>
+    <string name="all_flights_tab_favorite">المفضلة</string>
+    <string name="all_flights_tab_community">المجتمع</string>
+    <string name="all_flights_tab_chat_ai">مساعد ذكي</string>
+    <string name="all_flights_tab_profile">الملف الشخصي</string>
+
+    <!-- Flight Search Error Messages -->
+    <string name="flight_search_error_network">حدث خطأ ما. يرجى التحقق من اتصالك والمحاولة مرة أخرى.</string>
+    <string name="flight_search_error_route_unavailable">هذا المسار غير متاح.</string>
+    <string name="flight_search_error_no_flights">لم يتم العثور على رحلات لبحثك.</string>
+    
+    <!-- Flight Search Validation Messages -->
+    <string name="flight_search_validation_origin_required">مطار المغادرة مطلوب</string>
+    <string name="flight_search_validation_destination_required">مطار الوصول مطلوب</string>
+    <string name="flight_search_validation_origin_destination_same">يجب أن يكون مطار المغادرة والوصول مختلفين</string>
+    <string name="flight_search_validation_date_required">يرجى تحديد تاريخ المغادرة</string>
+    <string name="flight_search_validation_adults_required">مطلوب بالغ واحد على الأقل</string>
 </resources>
 

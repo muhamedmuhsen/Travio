@@ -131,4 +131,10 @@ abstract class RepositoryModule {
     abstract fun bindTopFlightOffersRepository(
         topFlightOffersRepositoryImpl: com.example.data.repository.flights.TopFlightOffersRepositoryImpl
     ): com.example.domain.repository.flights.TopFlightOffersRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindFlightSearchRepository(
+        flightSearchRepositoryImpl: com.example.data.repository.flights.FlightSearchRepositoryImpl
+    ): com.example.domain.repository.flights.FlightSearchRepository
 }

@@ -36,4 +36,16 @@
     <string name="all_flights_tab_community">Community</string>
     <string name="all_flights_tab_chat_ai">Chat AI</string>
     <string name="all_flights_tab_profile">Profile</string>
+
+    <!-- Flight Search Error Messages -->
+    <string name="flight_search_error_network">Something went wrong. Please check your connection and try again.</string>
+    <string name="flight_search_error_route_unavailable">This route is not available.</string>
+    <string name="flight_search_error_no_flights">No flights found for your search.</string>
+    
+    <!-- Flight Search Validation Messages -->
+    <string name="flight_search_validation_origin_required">Origin is required</string>
+    <string name="flight_search_validation_destination_required">Destination is required</string>
+    <string name="flight_search_validation_origin_destination_same">Origin and destination must be different</string>
+    <string name="flight_search_validation_date_required">Please select a departure date</string>
+    <string name="flight_search_validation_adults_required">At least 1 adult is required</string>
 </resources>
