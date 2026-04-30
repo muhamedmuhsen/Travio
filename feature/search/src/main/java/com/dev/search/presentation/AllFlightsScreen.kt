@@ -28,7 +28,6 @@ import androidx.compose.material.icons.filled.FlightTakeoff
 import androidx.compose.material.icons.filled.Groups
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.SwapHoriz
 import androidx.compose.material.icons.filled.SwapVert
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -68,7 +67,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.dev.search.presentation.flights.FlightSearchAction
 import com.dev.search.presentation.flights.FlightSearchEvent
@@ -78,6 +79,7 @@ import com.dev.search.presentation.flights.SearchStatus
 import com.example.designsystem.theme.elevation
 import com.example.designsystem.theme.spacing
 import com.example.domain.model.flights.search.FlightOffer
+import com.example.domain.model.flights.search.FlightSegment
 import com.example.feature.search.R
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -268,6 +270,40 @@ fun AllFlightsScreen(
                     }
                 }
             }
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun FlightResultCardPreview() {
+    MaterialTheme {
+        Box(modifier = Modifier.padding(16.dp)) {
+            FlightResultCard(
+                offer = FlightOffer(
+                    offerId = "1",
+                    origin = "CAI",
+                    destination = "CMN",
+                    departureTime = "2024-05-01T22:27:00",
+                    arrivalTime = "2024-05-02T01:56:00",
+                    totalPrice = 152.82,
+                    currency = "GBP",
+                    stops = 0,
+                    segments = listOf(
+                        FlightSegment(
+                            origin = "CAI",
+                            originName = "Unknown City",
+                            destination = "CMN",
+                            destinationName = "Unknown City",
+                            departureTime = "2024-05-01T22:27:00",
+                            arrivalTime = "2024-05-02T01:56:00",
+                            airlineName = "Duffel Airways",
+                            flightNumber = "1807"
+                        )
+                    )
+                ),
+                onBookNowClick = {}
+            )
         }
     }
 }
@@ -560,9 +596,21 @@ private fun FlightResultCard(
     val lastSegment = offer.segments.lastOrNull()
     if (firstSegment == null || lastSegment == null) return
 
-    val durationParts = offer.departureTime.substringAfter(
-        "T"
-    ).substring(0, 5) + " - " + offer.arrivalTime.substringAfter("T").substring(0, 5) // simplified duration string
+    val durationText = try {
+        val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
+        val depDate = sdf.parse(offer.departureTime)
+        val arrDate = sdf.parse(offer.arrivalTime)
+        if (depDate != null && arrDate != null) {
+            val diff = arrDate.time - depDate.time
+            val hours = diff / (1000 * 60 * 60)
+            val minutes = (diff % (1000 * 60 * 60)) / (1000 * 60)
+            "${hours}h ${minutes}m"
+        } else {
+            "7h 15m"
+        }
+    } catch (_: Exception) {
+        "7h 15m"
+    }
 
     Card(
         shape = MaterialTheme.shapes.extraLarge,
@@ -574,6 +622,7 @@ private fun FlightResultCard(
             modifier = Modifier.padding(MaterialTheme.spacing.lg),
             verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.md)
         ) {
+            // Header Row
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -599,11 +648,14 @@ private fun FlightResultCard(
                             text = firstSegment.airlineName,
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold,
+                            fontSize = 12.sp,
                             color = MaterialTheme.colorScheme.onSurface
                         )
                         Text(
                             text = firstSegment.flightNumber,
                             style = MaterialTheme.typography.labelSmall,
+                            fontSize = 10.sp,
+                            fontWeight = FontWeight.Normal,
                             color = MaterialTheme.colorScheme.outline
                         )
                     }
@@ -613,7 +665,7 @@ private fun FlightResultCard(
                     color = MaterialTheme.colorScheme.secondaryContainer
                 ) {
                     Text(
-                        text = "Available",
+                        text = "On Time",
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.padding(
@@ -625,102 +677,138 @@ private fun FlightResultCard(
                 }
             }
 
+            // Main Content Row
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                FlightTimeBlock(
-                    time = firstSegment.departureTime.substringAfter("T").substring(0, 5),
-                    code = firstSegment.origin,
-                    city = firstSegment.originName
-                )
-
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier.weight(1f)
+                // Times Section
+                Row(
+                    modifier = Modifier.weight(1f),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(0.7f),
-                        verticalAlignment = Alignment.CenterVertically
+                    FlightTimeBlock(
+                        time = firstSegment.departureTime.substringAfter("T").substring(0, 5),
+                        code = firstSegment.origin,
+                        city = firstSegment.originName,
+                        modifier = Modifier.width(55.dp)
+                    )
+
+                    // Line with Plane Icon
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier.weight(1f)
                     ) {
-                        HorizontalDivider(
-                            modifier = Modifier.weight(1f),
-                            color = MaterialTheme.colorScheme.outlineVariant
+                        Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxWidth()) {
+                            HorizontalDivider(
+                                modifier = Modifier.fillMaxWidth(0.6f),
+                                color = MaterialTheme.colorScheme.outlineVariant
+                            )
+                            Icon(
+                                imageVector = Icons.Default.FlightTakeoff,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.outline,
+                                modifier = Modifier
+                                    .size(16.dp)
+                                    .background(MaterialTheme.colorScheme.surface)
+                            )
+                        }
+                        Text(
+                            text = if (offer.stops == 0) "Non-stop" else "${offer.stops} stop",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.outline,
+                            fontSize = 10.sp
+                        )
+                    }
+
+                    FlightTimeBlock(
+                        time = lastSegment.arrivalTime.substringAfter("T").substring(0, 5),
+                        code = lastSegment.destination,
+                        city = lastSegment.destinationName,
+                        alignment = Alignment.Start,
+                        modifier = Modifier.width(55.dp)
+                    )
+                }
+
+                // Vertical Divider Section with Icon
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.padding(horizontal = MaterialTheme.spacing.sm)
+                ) {
+                    Box(contentAlignment = Alignment.Center) {
+                        Box(
+                            modifier = Modifier
+                                .width(0.5.dp)
+                                .height(60.dp)
+                                .background(MaterialTheme.colorScheme.outlineVariant)
                         )
                         Surface(
-                            modifier = Modifier.size(MaterialTheme.spacing.lg),
+                            modifier = Modifier.size(24.dp),
                             shape = CircleShape,
                             color = MaterialTheme.colorScheme.primary
                         ) {
                             Box(contentAlignment = Alignment.Center) {
                                 Icon(
-                                    imageVector = Icons.Default.SwapHoriz,
+                                    imageVector = Icons.Default.FlightTakeoff,
                                     contentDescription = null,
                                     tint = MaterialTheme.colorScheme.onPrimary,
-                                    modifier = Modifier.size(MaterialTheme.spacing.sm)
+                                    modifier = Modifier.size(12.dp)
                                 )
                             }
                         }
-                        HorizontalDivider(
-                            modifier = Modifier.weight(1f),
-                            color = MaterialTheme.colorScheme.outlineVariant
-                        )
                     }
-                    Text(
-                        text = if (offer.stops == 0) "Non-Stop" else "${offer.stops} Stop(s)",
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.outline,
-                        fontWeight = FontWeight.Medium
-                    )
                 }
 
-                FlightTimeBlock(
-                    time = lastSegment.arrivalTime.substringAfter("T").substring(0, 5),
-                    code = lastSegment.destination,
-                    city = lastSegment.destinationName,
-                    alignment = Alignment.End
-                )
-            }
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.Bottom
-            ) {
-                Column {
+                // Price Section
+                Column(
+                    modifier = Modifier.width(95.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.xxs)
+                ) {
                     Text(
-                        text = "Flight: $durationParts",
+                        text = "Duration: $durationText",
                         style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        fontWeight = FontWeight.Medium
+                        fontWeight = FontWeight.Normal,
+                        fontSize = 10.sp,
+                        color = MaterialTheme.colorScheme.outline,
+                        textAlign = TextAlign.Center
                     )
                     Text(
                         text = "Total (One Way)",
                         style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.outline
+                        color = MaterialTheme.colorScheme.outline,
+                        fontWeight = FontWeight.Normal,
+                        fontSize = 10.sp,
+                        textAlign = TextAlign.Center
                     )
-                }
-                Row(verticalAlignment = Alignment.CenterVertically) {
+                    val currencySymbol = when (offer.currency) {
+                        "USD" -> "$"
+                        "GBP" -> "£"
+                        else -> offer.currency
+                    }
                     Text(
-                        text = "${offer.currency} ${offer.totalPrice}",
+                        text = "$currencySymbol${offer.totalPrice}",
                         style = MaterialTheme.typography.headlineSmall,
                         color = MaterialTheme.colorScheme.primary,
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 22.sp
                     )
-                    Spacer(modifier = Modifier.width(MaterialTheme.spacing.md))
+                    Spacer(modifier = Modifier.height(MaterialTheme.spacing.xs))
                     Button(
                         onClick = onBookNowClick,
-                        shape = MaterialTheme.shapes.small,
+                        shape = MaterialTheme.shapes.extraLarge,
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = MaterialTheme.colorScheme.primary,
-                            contentColor = MaterialTheme.colorScheme.onPrimary
+                            containerColor = MaterialTheme.colorScheme.primary
                         ),
-                        modifier = Modifier.height(MaterialTheme.spacing.xxl)
+                        modifier = Modifier.fillMaxWidth().height(36.dp),
+                        contentPadding = androidx.compose.foundation.layout.PaddingValues(0.dp)
                     ) {
                         Text(
-                            text = stringResource(R.string.all_flights_book_now),
-                            fontWeight = FontWeight.Bold
+                            text = "Book Now",
+                            style = MaterialTheme.typography.labelLarge,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 12.sp
                         )
                     }
                 }
@@ -734,25 +822,31 @@ private fun FlightTimeBlock(
     time: String,
     code: String,
     city: String,
-    alignment: Alignment.Horizontal = Alignment.Start
+    alignment: Alignment.Horizontal = Alignment.Start,
+    modifier: Modifier = Modifier
 ) {
-    Column(horizontalAlignment = alignment) {
+    Column(horizontalAlignment = alignment, modifier = modifier) {
         Text(
             text = time,
             style = MaterialTheme.typography.titleLarge,
             fontWeight = FontWeight.Bold,
+            fontSize = 18.sp,
             color = MaterialTheme.colorScheme.onSurface
         )
         Text(
             text = code,
             style = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.Bold,
+            fontSize = 18.sp,
             color = MaterialTheme.colorScheme.onSurface
         )
         Text(
             text = city,
             style = MaterialTheme.typography.labelSmall,
-            color = MaterialTheme.colorScheme.outline
+            fontSize = 10.sp,
+            color = MaterialTheme.colorScheme.outline,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
         )
     }
 }
