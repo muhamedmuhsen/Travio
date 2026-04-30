@@ -12,14 +12,16 @@ class TopFlightOffersCacheTest {
         offerId = id,
         airlineName = "A",
         imageUrl = null,
-        destinationName = "D",
         origin = null,
+        originCityName = null,
         destination = null,
-        cheapestPrice = 10.0,
-        currency = "USD",
-        travelDate = null,
+        destinationCityName = "D",
+        duration = null,
         flightNumber = null,
-        status = null
+        airlineLogoUrl = null,
+        stops = 0,
+        cheapestPrice = 10.0,
+        currency = "USD"
     )
 
     @Test
@@ -60,4 +62,3 @@ class TopFlightOffersCacheTest {
         assertNull(got)
     }
 }
-

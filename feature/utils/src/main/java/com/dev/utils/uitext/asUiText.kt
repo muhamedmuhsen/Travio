@@ -8,6 +8,7 @@ import com.example.domain.utils.Result
 fun DataError.asUiText(): UiText {
     return when (this) {
         DataError.UnknownError -> StringResource(R.string.error_unknown)
+        is DataError.Logical -> this.message?.let { UiText.DynamicString(it) } ?: StringResource(R.string.error_unknown)
 
         DataError.Authentication.UserCancelled -> StringResource(R.string.error_user_cancelled)
         DataError.Authentication.UnauthorizedAccess -> StringResource(R.string.error_invalid_credentials)

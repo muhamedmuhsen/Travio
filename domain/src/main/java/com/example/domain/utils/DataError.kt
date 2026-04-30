@@ -3,6 +3,8 @@ package com.example.domain.utils
 sealed interface DataError : Error {
 
     object UnknownError : DataError
+    data class Logical(val message: String?) : DataError
+
     enum class Network : DataError {
         BadRequest,
         NoInternetConnection,

@@ -126,26 +126,15 @@ fun DestinationCard(
                     .fillMaxWidth()
                     .padding(MaterialTheme.spacing.md)
             ) {
-                Row(
+                Text(
+                    text = title,
+                    color = overlayContentColor,
+                    style = MaterialTheme.typography.headlineMedium,
+                    fontWeight = FontWeight.Bold,
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = title,
-                        color = overlayContentColor,
-                        style = MaterialTheme.typography.headlineMedium,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.weight(1f),
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                    RatingBadge(
-                        rating = rating,
-                        reviewCount = reviewCount,
-                        contentColor = overlayContentColor
-                    )
-                }
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
 
                 Spacer(modifier = Modifier.height(MaterialTheme.spacing.xxs))
 
@@ -159,7 +148,11 @@ fun DestinationCard(
 
                 Spacer(modifier = Modifier.height(MaterialTheme.spacing.xs))
 
-                PriceText(price = price, contentColor = overlayContentColor)
+                RatingBadge(
+                    rating = rating,
+                    reviewCount = reviewCount,
+                    contentColor = overlayContentColor
+                )
 
                 Spacer(modifier = Modifier.height(MaterialTheme.spacing.md))
 
@@ -221,6 +214,13 @@ fun LoadingDestinationCard(modifier: Modifier = Modifier) {
                     modifier = Modifier
                         .fillMaxWidth(0.4f)
                         .height(20.dp)
+                        .clip(MaterialTheme.shapes.extraSmall)
+                        .shimmerEffect()
+                )
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth(0.3f)
+                        .height(18.dp)
                         .clip(MaterialTheme.shapes.extraSmall)
                         .shimmerEffect()
                 )

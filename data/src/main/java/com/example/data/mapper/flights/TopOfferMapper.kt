@@ -7,21 +7,22 @@ fun TopOfferDto.toDomain(): TopFlightOffer? {
     val id = this.offerId ?: return null
     val airline = this.airlineName ?: "Unknown Airline"
     val image = this.imageUrl
-    val destinationName = if (this.destinationName.isNullOrBlank()) "Unknown Destination" else this.destinationName!!
     val price = this.cheapestPrice ?: 0.0
     val currency = this.currency ?: ""
 
     return TopFlightOffer(
         offerId = id,
         airlineName = airline,
-        imageUrl = image,
-        destinationName = destinationName,
-        origin = this.origin,
-        destination = this.destination,
+        imageUrl = this.imageUrl ?: "",
+        origin = this.origin ?: "",
+        originCityName = this.originCityName ?: "",
+        destination = this.destination ?: "",
+        destinationCityName = this.destinationCityName ?: "",
+        duration = this.duration ?: "",
+        flightNumber = this.flightNumber ?: "",
+        airlineLogoUrl = this.airlineLogoUrl ?: "",
+        stops = this.stops ?: 0,
         cheapestPrice = price,
-        currency = currency,
-        travelDate = this.travelDate,
-        flightNumber = this.flightNumber,
-        status = this.status
+        currency = currency
     )
 }

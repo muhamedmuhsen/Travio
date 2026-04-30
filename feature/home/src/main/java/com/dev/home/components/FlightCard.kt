@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AirplanemodeActive
 import androidx.compose.material3.Button
@@ -37,6 +38,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
 import com.dev.home.presentation.flights.FlightCardContent
 import com.dev.home.presentation.flights.FlightStatusTone
 import com.example.designsystem.components.shimmerEffect
@@ -150,17 +152,15 @@ private fun FlightCardHeader(content: FlightCardContent) {
         horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.sm)
     ) {
         Surface(
-            shape = MaterialTheme.shapes.extraLarge,
-            color = MaterialTheme.colorScheme.primary,
+            shape = CircleShape,
+            color = MaterialTheme.colorScheme.surface,
             modifier = Modifier.size(MaterialTheme.spacing.xl)
         ) {
-            Box(contentAlignment = Alignment.Center) {
-                Icon(
-                    imageVector = Icons.Filled.AirplanemodeActive,
-                    contentDescription = logoContentDescription,
-                    tint = MaterialTheme.colorScheme.onPrimary
-                )
-            }
+            AsyncImage(
+                model = content.airlineLogoUrl,
+                contentDescription = logoContentDescription,
+                modifier = Modifier.fillMaxSize()
+            )
         }
 
         Column(

@@ -1,9 +1,21 @@
 package com.example.network.api
 
 import com.example.network.dto.flights.TopOffersResponseDto
+import com.example.network.dto.flights.search.FlightSearchResponseDto
 import retrofit2.http.GET
+import retrofit2.http.Query
 
 interface FlightBookingApi {
     @GET("FlightBooking/top-offers")
     suspend fun getTopOffers(): TopOffersResponseDto
+
+    @GET("FlightBooking/flights/search")
+    suspend fun searchFlights(
+        @Query("Origin") origin: String,
+        @Query("Destination") destination: String,
+        @Query("DepartureDate") departureDate: String,
+        @Query("Adults") adults: Int,
+        @Query("CabinClass") cabinClass: String,
+        @Query("MaxStops") maxStops: Int? = null
+    ): FlightSearchResponseDto
 }
