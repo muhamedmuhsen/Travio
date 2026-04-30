@@ -28,14 +28,38 @@ fun String.isValidOTP(): Boolean {
 }
 
 fun String.toFlightDuration(): String {
-    // PT4H51M -> 4h 51m
-    val regex = "PT(?:(\\d+)H)?(?:(\\d+)M)?".toRegex()
+    // P1DT4H55M -> 1d 4h 55m
+    val regex = "P(?:(\\d+)D)?T?(?:(\\d+)H)?(?:(\\d+)M)?".toRegex()
     val match = regex.find(this) ?: return this
-    val hours = match.groups[1]?.value
-    val minutes = match.groups[2]?.value
+    val days = match.groups[1]?.value
+    val hours = match.groups[2]?.value
+    val minutes = match.groups[3]?.value
 
     return buildString {
+        if (days != null) append("${days}d ")
         if (hours != null) append("${hours}h ")
         if (minutes != null) append("${minutes}m")
     }.trim().ifBlank { this }
+}
+
+fun String.toCurrencySymbol(): String {
+    return when (this.uppercase()) {
+        "USD" -> "$"
+        "EUR" -> "€"
+        "GBP" -> "£"
+        "EGP" -> "EGP"
+        "JPY" -> "¥"
+        "SAR" -> "SAR"
+        "AED" -> "AED"
+        "KWD" -> "KWD"
+        "QAR" -> "QAR"
+        "OMR" -> "OMR"
+        "BHD" -> "BHD"
+        "JOD" -> "JOD"
+        "MAD" -> "MAD"
+        "TND" -> "TND"
+        "DZD" -> "DZD"
+        "TRY" -> "₺"
+        else -> this
+    }
 }

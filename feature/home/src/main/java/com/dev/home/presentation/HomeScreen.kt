@@ -555,7 +555,7 @@ private fun DestinationStateHandling(
                             rating = destination.rating,
                             reviewCount = destination.totalReviews,
                             description = destination.description,
-                            price = "1250/ adult",
+                            price = stringResource(R.string.home_price_per_adult, "1250"),
                             imageUrl = destination.imageUrls.firstOrNull().orEmpty(),
                             isFavorite = favoriteIds.contains(destination.destinationID),
                             isFavoriteActionEnabled = destination.destinationID !in favoriteMutationInFlightIds,

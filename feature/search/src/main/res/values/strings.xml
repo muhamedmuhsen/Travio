@@ -48,4 +48,22 @@
     <string name="flight_search_validation_origin_destination_same">Origin and destination must be different</string>
     <string name="flight_search_validation_date_required">Please select a departure date</string>
     <string name="flight_search_validation_adults_required">At least 1 adult is required</string>
+
+    <!-- Flight Result Card -->
+    <string name="all_flights_on_time">On Time</string>
+    <string name="all_flights_duration_label">Duration: %1$s</string>
+    <string name="all_flights_total_one_way">Total (One Way)</string>
+    <string name="all_flights_loading">Loading...</string>
+    <string name="all_flights_one_stop">1 stop</string>
+    <string name="all_flights_multiple_stops">%1$d stops</string>
+    <string name="all_flights_title">All Flights</string>
+    <string name="all_flights_no_results">No flights found.</string>
+    <string name="all_flights_origin_placeholder">Origin</string>
+    <string name="all_flights_destination_placeholder">Destination</string>
+    <string name="all_flights_ok">OK</string>
+    <string name="all_flights_cancel">Cancel</string>
+    <string name="all_flights_select_date">Select Date</string>
+    <string name="all_flights_passenger">%1$d Passenger</string>
+    <string name="all_flights_passengers">%1$d Passengers</string>
+    <string name="all_flights_class_placeholder">Class</string>
 </resources>

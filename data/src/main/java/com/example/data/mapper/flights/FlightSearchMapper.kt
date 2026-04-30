@@ -8,13 +8,14 @@ import com.example.network.dto.flights.search.FlightSegmentDto
 fun FlightSegmentDto.toDomain(): FlightSegment {
     return FlightSegment(
         origin = origin ?: "Unknown",
-        originName = originName ?: "Unknown City",
+        originCityName = originCityName ?: "Unknown City",
         destination = destination ?: "Unknown",
-        destinationName = destinationName ?: "Unknown City",
+        destinationCityName = destinationCityName ?: "Unknown City",
         departureTime = departureTime ?: "Time unavailable",
         arrivalTime = arrivalTime ?: "Time unavailable",
         airlineName = airlineName ?: "Unknown Airline",
         flightNumber = flightNumber ?: "Unknown",
+        segmentDuration = segmentDuration ?: "PT0H0M",
         airlineLogoUrl = airlineLogoUrl
     )
 }
@@ -25,18 +26,20 @@ fun FlightOfferDto.toDomain(): FlightOffer? {
     if (safeSegments.isNullOrEmpty()) return null
 
     val domainSegments = safeSegments.map { it.toDomain() }
-    val firstSegment = domainSegments.first()
-    val lastSegment = domainSegments.last()
 
     return FlightOffer(
         offerId = id,
-        origin = firstSegment.origin,
-        destination = lastSegment.destination,
-        departureTime = firstSegment.departureTime,
-        arrivalTime = lastSegment.arrivalTime,
+        origin = totalOrigin ?: domainSegments.first().origin,
+        destination = totalDestination ?: domainSegments.last().destination,
+        originCityName = originCityName ?: domainSegments.first().originCityName,
+        destinationCityName = destinationCityName ?: domainSegments.last().destinationCityName,
+        departureTime = domainSegments.first().departureTime,
+        arrivalTime = domainSegments.last().arrivalTime,
         totalPrice = totalPrice ?: 0.0,
         currency = currency ?: "USD",
-        stops = domainSegments.size - 1,
+        stops = stops ?: (domainSegments.size - 1),
+        totalDuration = totalDuration ?: "PT0H0M",
+        airlineLogoUrl = airlineLogoUrl ?: domainSegments.firstOrNull()?.airlineLogoUrl,
         segments = domainSegments
     )
 }

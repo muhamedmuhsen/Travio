@@ -16,6 +16,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dev.utils.uitext.UiText
 import com.dev.utils.uitext.asUiText
+import com.example.common.extensions.toCurrencySymbol
 import com.example.common.extensions.toFlightDuration
 import com.example.common.navigation.Screen
 import com.example.designsystem.theme.TravioTheme
@@ -98,7 +99,10 @@ fun FlightDetailScreen(
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(text = "Airline: ${offer.airlineName}", style = MaterialTheme.typography.bodyMedium)
                     Spacer(modifier = Modifier.height(4.dp))
-                    Text(text = "Price: ${offer.cheapestPrice} ${offer.currency}", style = MaterialTheme.typography.bodyMedium)
+                    Text(
+                        text = "Price: ${offer.currency.toCurrencySymbol()}${offer.cheapestPrice}",
+                        style = MaterialTheme.typography.bodyMedium
+                    )
                 }
             }
         }

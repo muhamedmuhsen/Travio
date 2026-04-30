@@ -21,13 +21,9 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.AirlineSeatReclineExtra
 import androidx.compose.material.icons.filled.CalendarMonth
-import androidx.compose.material.icons.filled.ChatBubble
-import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FlightLand
 import androidx.compose.material.icons.filled.FlightTakeoff
 import androidx.compose.material.icons.filled.Groups
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.SwapVert
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -78,6 +74,9 @@ import com.dev.search.presentation.flights.FlightSearchEvent
 import com.dev.search.presentation.flights.FlightSearchUiState
 import com.dev.search.presentation.flights.FlightSearchViewModel
 import com.dev.search.presentation.flights.SearchStatus
+import com.example.common.extensions.toCurrencySymbol
+import com.example.common.extensions.toFlightDuration
+import com.example.designsystem.components.AppBottomBar
 import com.example.designsystem.theme.elevation
 import com.example.designsystem.theme.spacing
 import com.example.domain.model.flights.search.FlightOffer
@@ -115,14 +114,6 @@ private val AIRPORTS = listOf(
 private val CABIN_CLASSES = listOf("ECONOMY", "PREMIUM_ECONOMY", "BUSINESS", "FIRST")
 private val ADULT_COUNTS = (1..9).map { it.toString() }
 
-private enum class BottomNavTab {
-    Explore,
-    Favorite,
-    Community,
-    ChatAi,
-    Profile
-}
-
 @Composable
 fun AllFlightsScreenRoute(
     modifier: Modifier = Modifier,
@@ -158,15 +149,15 @@ fun AllFlightsScreen(
     uiState: FlightSearchUiState,
     onAction: (FlightSearchAction) -> Unit
 ) {
-    var selectedTab by remember { mutableStateOf(BottomNavTab.Explore) }
+    var selectedItem by remember { mutableStateOf(0) }
 
     Scaffold(
         modifier = modifier,
         containerColor = MaterialTheme.colorScheme.background,
         bottomBar = {
-            BottomBar(
-                selectedTab = selectedTab,
-                onTabSelected = { selectedTab = it }
+            AppBottomBar(
+                selectedItem = selectedItem,
+                onItemSelected = { selectedItem = it }
             )
         }
     ) { paddingValues ->
@@ -189,7 +180,7 @@ fun AllFlightsScreen(
                     )
                 }
                 Text(
-                    text = "All Flights",
+                    text = stringResource(R.string.all_flights_title),
                     style = MaterialTheme.typography.headlineSmall,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.weight(1f),
@@ -256,7 +247,10 @@ fun AllFlightsScreen(
                                     modifier = Modifier.fillMaxWidth().padding(MaterialTheme.spacing.xl),
                                     contentAlignment = Alignment.Center
                                 ) {
-                                    Text("No flights found.", color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                    Text(
+                                        stringResource(R.string.all_flights_no_results),
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
                                 }
                             }
                         } else {
@@ -264,7 +258,7 @@ fun AllFlightsScreen(
                                 FlightResultCard(
                                     offer = offer,
                                     onBookNowClick = {
-                                        // TODO: dispatch navigate action
+                                        onAction(FlightSearchAction.OnFlightClicked(offer.offerId))
                                     }
                                 )
                             }
@@ -286,21 +280,26 @@ private fun FlightResultCardPreview() {
                     offerId = "1",
                     origin = "CAI",
                     destination = "CMN",
+                    originCityName = "Cairo",
+                    destinationCityName = "Casablanca",
                     departureTime = "2024-05-01T22:27:00",
                     arrivalTime = "2024-05-02T01:56:00",
                     totalPrice = 152.82,
                     currency = "GBP",
                     stops = 0,
+                    totalDuration = "PT7H15M",
+                    airlineLogoUrl = null,
                     segments = listOf(
                         FlightSegment(
                             origin = "CAI",
-                            originName = "Unknown City",
+                            originCityName = "Cairo",
                             destination = "CMN",
-                            destinationName = "Unknown City",
+                            destinationCityName = "Casablanca",
                             departureTime = "2024-05-01T22:27:00",
                             arrivalTime = "2024-05-02T01:56:00",
                             airlineName = "Duffel Airways",
                             flightNumber = "1807",
+                            segmentDuration = "PT7H15M",
                             airlineLogoUrl = null
                         )
                     )
@@ -334,7 +333,7 @@ private fun SearchCriteriaCard(
                     FlightDropdownRow(
                         modifier = Modifier.fillMaxWidth(),
                         icon = Icons.Filled.FlightTakeoff,
-                        value = params.origin.ifBlank { "Origin" },
+                        value = params.origin.ifBlank { stringResource(R.string.all_flights_origin_placeholder) },
                         options = AIRPORTS,
                         onValueChange = {
                             val iata = it.substringBefore(" -").trim()
@@ -344,7 +343,7 @@ private fun SearchCriteriaCard(
                     FlightDropdownRow(
                         modifier = Modifier.fillMaxWidth(),
                         icon = Icons.Filled.FlightLand,
-                        value = params.destination.ifBlank { "Destination" },
+                        value = params.destination.ifBlank { stringResource(R.string.all_flights_destination_placeholder) },
                         options = AIRPORTS,
                         onValueChange = {
                             val iata = it.substringBefore(" -").trim()
@@ -397,12 +396,12 @@ private fun SearchCriteriaCard(
                             }
                             showDatePicker = false
                         }) {
-                            Text("OK")
+                            Text(stringResource(R.string.all_flights_ok))
                         }
                     },
                     dismissButton = {
                         TextButton(onClick = { showDatePicker = false }) {
-                            Text("Cancel")
+                            Text(stringResource(R.string.all_flights_cancel))
                         }
                     }
                 ) {
@@ -413,7 +412,7 @@ private fun SearchCriteriaCard(
             FlightClickableRow(
                 modifier = Modifier.fillMaxWidth(),
                 icon = Icons.Filled.CalendarMonth,
-                value = params.departureDate.ifBlank { "Select Date" },
+                value = params.departureDate.ifBlank { stringResource(R.string.all_flights_select_date) },
                 onClick = { showDatePicker = true }
             )
 
@@ -424,14 +423,23 @@ private fun SearchCriteriaCard(
                 FlightDropdownRow(
                     modifier = Modifier.weight(1f),
                     icon = Icons.Filled.Groups,
-                    value = "${params.adults} Passenger${if (params.adults > 1) "s" else ""}",
+                    value = if (params.adults == 1) {
+                        stringResource(
+                            R.string.all_flights_passenger,
+                            params.adults
+                        )
+                    } else {
+                        stringResource(R.string.all_flights_passengers, params.adults)
+                    },
                     options = ADULT_COUNTS,
                     onValueChange = { onAction(FlightSearchAction.OnAdultsChanged(it.toInt())) }
                 )
                 FlightDropdownRow(
                     modifier = Modifier.weight(1f),
                     icon = Icons.Filled.AirlineSeatReclineExtra,
-                    value = params.cabinClass.ifBlank { "Class" }.lowercase().replace("_", " ").replaceFirstChar { it.uppercase() },
+                    value = params.cabinClass.ifBlank {
+                        stringResource(R.string.all_flights_class_placeholder)
+                    }.lowercase().replace("_", " ").replaceFirstChar { it.uppercase() },
                     options = CABIN_CLASSES,
                     onValueChange = { onAction(FlightSearchAction.OnCabinClassChanged(it)) }
                 )
@@ -599,21 +607,7 @@ private fun FlightResultCard(
     val lastSegment = offer.segments.lastOrNull()
     if (firstSegment == null || lastSegment == null) return
 
-    val durationText = try {
-        val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
-        val depDate = sdf.parse(offer.departureTime)
-        val arrDate = sdf.parse(offer.arrivalTime)
-        if (depDate != null && arrDate != null) {
-            val diff = arrDate.time - depDate.time
-            val hours = diff / (1000 * 60 * 60)
-            val minutes = (diff % (1000 * 60 * 60)) / (1000 * 60)
-            "${hours}h ${minutes}m"
-        } else {
-            "7h 15m"
-        }
-    } catch (_: Exception) {
-        "7h 15m"
-    }
+    val durationText = offer.totalDuration.toFlightDuration()
 
     Card(
         shape = MaterialTheme.shapes.extraLarge,
@@ -639,9 +633,10 @@ private fun FlightResultCard(
                             .clip(CircleShape),
                         contentAlignment = Alignment.Center
                     ) {
-                        if (firstSegment.airlineLogoUrl != null) {
+                        val logoUrl = offer.airlineLogoUrl ?: firstSegment.airlineLogoUrl
+                        if (logoUrl != null) {
                             AsyncImage(
-                                model = firstSegment.airlineLogoUrl,
+                                model = logoUrl,
                                 contentDescription = "${firstSegment.airlineName} logo",
                                 modifier = Modifier
                                     .fillMaxSize()
@@ -688,7 +683,7 @@ private fun FlightResultCard(
                     color = MaterialTheme.colorScheme.secondaryContainer
                 ) {
                     Text(
-                        text = "On Time",
+                        text = stringResource(R.string.all_flights_on_time),
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.padding(
@@ -714,7 +709,7 @@ private fun FlightResultCard(
                     FlightTimeBlock(
                         time = firstSegment.departureTime.substringAfter("T").substring(0, 5),
                         code = firstSegment.origin,
-                        city = firstSegment.originName,
+                        city = firstSegment.originCityName,
                         modifier = Modifier.width(55.dp)
                     )
 
@@ -738,7 +733,13 @@ private fun FlightResultCard(
                             )
                         }
                         Text(
-                            text = if (offer.stops == 0) "Non-stop" else "${offer.stops} stop",
+                            text = if (offer.stops == 0) {
+                                stringResource(R.string.all_flights_non_stop)
+                            } else if (offer.stops == 1) {
+                                stringResource(R.string.all_flights_one_stop)
+                            } else {
+                                stringResource(R.string.all_flights_multiple_stops, offer.stops)
+                            },
                             style = MaterialTheme.typography.labelSmall,
                             color = MaterialTheme.colorScheme.outline,
                             fontSize = 10.sp
@@ -748,7 +749,7 @@ private fun FlightResultCard(
                     FlightTimeBlock(
                         time = lastSegment.arrivalTime.substringAfter("T").substring(0, 5),
                         code = lastSegment.destination,
-                        city = lastSegment.destinationName,
+                        city = lastSegment.destinationCityName,
                         alignment = Alignment.Start,
                         modifier = Modifier.width(55.dp)
                     )
@@ -790,7 +791,7 @@ private fun FlightResultCard(
                     verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.xxs)
                 ) {
                     Text(
-                        text = "Duration: $durationText",
+                        text = stringResource(R.string.all_flights_duration_label, durationText),
                         style = MaterialTheme.typography.labelSmall,
                         fontWeight = FontWeight.Normal,
                         fontSize = 10.sp,
@@ -798,18 +799,14 @@ private fun FlightResultCard(
                         textAlign = TextAlign.Center
                     )
                     Text(
-                        text = "Total (One Way)",
+                        text = stringResource(R.string.all_flights_total_one_way),
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.outline,
                         fontWeight = FontWeight.Normal,
                         fontSize = 10.sp,
                         textAlign = TextAlign.Center
                     )
-                    val currencySymbol = when (offer.currency) {
-                        "USD" -> "$"
-                        "GBP" -> "£"
-                        else -> offer.currency
-                    }
+                    val currencySymbol = offer.currency.toCurrencySymbol()
                     Text(
                         text = "$currencySymbol${offer.totalPrice}",
                         style = MaterialTheme.typography.headlineSmall,
@@ -828,7 +825,7 @@ private fun FlightResultCard(
                         contentPadding = androidx.compose.foundation.layout.PaddingValues(0.dp)
                     ) {
                         Text(
-                            text = "Book Now",
+                            text = stringResource(R.string.all_flights_book_now),
                             style = MaterialTheme.typography.labelLarge,
                             fontWeight = FontWeight.Bold,
                             fontSize = 12.sp
@@ -845,7 +842,7 @@ private fun FlightTimeBlock(
     time: String,
     code: String,
     city: String,
-    alignment: Alignment.Horizontal = Alignment.Start,
+    alignment: Alignment.Horizontal = Alignment.CenterHorizontally,
     modifier: Modifier = Modifier
 ) {
     Column(horizontalAlignment = alignment, modifier = modifier) {
@@ -871,57 +868,5 @@ private fun FlightTimeBlock(
             maxLines = 1,
             overflow = TextOverflow.Ellipsis
         )
-    }
-}
-
-@Composable
-private fun BottomBar(
-    selectedTab: BottomNavTab,
-    onTabSelected: (BottomNavTab) -> Unit
-) {
-    val accentColor = MaterialTheme.colorScheme.primary
-    val items = listOf(
-        Triple(BottomNavTab.Explore, Icons.Filled.Home, "Explore"),
-        Triple(BottomNavTab.Favorite, Icons.Filled.Favorite, "Favorite"),
-        Triple(BottomNavTab.Community, Icons.Filled.Groups, "Community"),
-        Triple(BottomNavTab.ChatAi, Icons.Filled.ChatBubble, "Chat AI"),
-        Triple(BottomNavTab.Profile, Icons.Filled.Person, "Profile")
-    )
-
-    Surface(
-        color = MaterialTheme.colorScheme.surface,
-        shadowElevation = MaterialTheme.elevation.xxl
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = MaterialTheme.spacing.sm),
-            horizontalArrangement = Arrangement.SpaceEvenly
-        ) {
-            items.forEach { (tab, icon, label) ->
-                val selected = selectedTab == tab
-                val color = if (selected) accentColor else MaterialTheme.colorScheme.outline
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier
-                        .clickable { onTabSelected(tab) }
-                        .padding(horizontal = MaterialTheme.spacing.xxs)
-                ) {
-                    Icon(
-                        imageVector = icon,
-                        contentDescription = label,
-                        tint = color,
-                        modifier = Modifier.size(MaterialTheme.spacing.lg)
-                    )
-                    Spacer(modifier = Modifier.height(MaterialTheme.spacing.xxs))
-                    Text(
-                        text = label,
-                        style = MaterialTheme.typography.labelSmall,
-                        color = color,
-                        fontWeight = if (selected) FontWeight.Bold else FontWeight.Medium
-                    )
-                }
-            }
-        }
     }
 }

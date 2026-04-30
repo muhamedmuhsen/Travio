@@ -1,5 +1,6 @@
 package com.dev.home.presentation.flights
 
+import com.example.common.extensions.toCurrencySymbol
 import com.example.common.extensions.toFlightDuration
 import com.example.domain.model.flights.TopFlightOffer
 
@@ -29,7 +30,7 @@ fun TopFlightOffer.toFlightCardContent(): FlightCardContent {
         stopsText = if (this.stops == 0) "Non-stop" else "${this.stops} stop${if (this.stops > 1) "s" else ""}",
         durationSummary = durationText,
         tripTypeSummary = "One Way",
-        currencySymbol = this.currency,
+        currencySymbol = this.currency.toCurrencySymbol(),
         amountText = amountText,
         qualifierText = null
     )
