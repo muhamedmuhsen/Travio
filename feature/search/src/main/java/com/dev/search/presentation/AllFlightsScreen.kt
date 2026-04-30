@@ -119,7 +119,12 @@ fun AllFlightsScreenRoute(
     modifier: Modifier = Modifier,
     viewModel: FlightSearchViewModel = hiltViewModel(),
     onBackClick: () -> Unit = {},
-    onBookNowClick: (offerId: String) -> Unit = {}
+    onBookNowClick: (offerId: String) -> Unit = {},
+    navigateToHome: () -> Unit = {},
+    navigateToFavorite: () -> Unit = {},
+    navigateToCommunity: () -> Unit = {},
+    navigateToAi: () -> Unit = {},
+    navigateToProfile: () -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val context = LocalContext.current
@@ -139,7 +144,12 @@ fun AllFlightsScreenRoute(
     AllFlightsScreen(
         modifier = modifier,
         uiState = uiState,
-        onAction = viewModel::onAction
+        onAction = viewModel::onAction,
+        navigateToHome = navigateToHome,
+        navigateToFavorite = navigateToFavorite,
+        navigateToCommunity = navigateToCommunity,
+        navigateToAi = navigateToAi,
+        navigateToProfile = navigateToProfile
     )
 }
 
@@ -147,17 +157,29 @@ fun AllFlightsScreenRoute(
 fun AllFlightsScreen(
     modifier: Modifier = Modifier,
     uiState: FlightSearchUiState,
-    onAction: (FlightSearchAction) -> Unit
+    onAction: (FlightSearchAction) -> Unit,
+    navigateToHome: () -> Unit = {},
+    navigateToFavorite: () -> Unit = {},
+    navigateToCommunity: () -> Unit = {},
+    navigateToAi: () -> Unit = {},
+    navigateToProfile: () -> Unit = {}
 ) {
-    var selectedItem by remember { mutableStateOf(0) }
-
     Scaffold(
         modifier = modifier,
         containerColor = MaterialTheme.colorScheme.background,
         bottomBar = {
             AppBottomBar(
-                selectedItem = selectedItem,
-                onItemSelected = { selectedItem = it }
+                // Since we usually come from Home/Search which is index 0
+                selectedItem = 0,
+                onItemSelected = { index ->
+                    when (index) {
+                        0 -> navigateToHome()
+                        1 -> navigateToFavorite()
+                        2 -> navigateToCommunity()
+                        3 -> navigateToAi()
+                        4 -> navigateToProfile()
+                    }
+                }
             )
         }
     ) { paddingValues ->

@@ -192,6 +192,32 @@ fun TravioNavHost(
                 onBackClick = { navController.popBackStack() },
                 onBookNowClick = { offerId ->
                     navController.navigate(com.example.common.navigation.Screen.FlightDetailScreen.createRoute(offerId))
+                },
+                navigateToHome = {
+                    navController.navigate(Screen.HomeScreen.route) {
+                        popUpTo(Screen.HomeScreen.route) { inclusive = false }
+                        launchSingleTop = true
+                    }
+                },
+                navigateToFavorite = {
+                    navController.navigate(Screen.FavoriteScreen.route) {
+                        launchSingleTop = true
+                    }
+                },
+                navigateToCommunity = {
+                    navController.navigate(Screen.CommunityScreen.route) {
+                        launchSingleTop = true
+                    }
+                },
+                navigateToAi = {
+                    navController.navigate(Screen.AiChatScreen.route) {
+                        launchSingleTop = true
+                    }
+                },
+                navigateToProfile = {
+                    navController.navigate(Screen.ProfileScreen.route) {
+                        launchSingleTop = true
+                    }
                 }
             )
         }
@@ -295,6 +321,32 @@ fun TravioNavHost(
                 onBackClick = { navController.popBackStack() },
                 onBookNowClick = { offerId ->
                     navController.navigate(com.example.common.navigation.Screen.FlightDetailScreen.createRoute(offerId))
+                },
+                navigateToHome = {
+                    navController.navigate(Screen.HomeScreen.route) {
+                        popUpTo(Screen.HomeScreen.route) { inclusive = false }
+                        launchSingleTop = true
+                    }
+                },
+                navigateToFavorite = {
+                    navController.navigate(Screen.FavoriteScreen.route) {
+                        launchSingleTop = true
+                    }
+                },
+                navigateToCommunity = {
+                    navController.navigate(Screen.CommunityScreen.route) {
+                        launchSingleTop = true
+                    }
+                },
+                navigateToAi = {
+                    navController.navigate(Screen.AiChatScreen.route) {
+                        launchSingleTop = true
+                    }
+                },
+                navigateToProfile = {
+                    navController.navigate(Screen.ProfileScreen.route) {
+                        launchSingleTop = true
+                    }
                 }
             )
         }

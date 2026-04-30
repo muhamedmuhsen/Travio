@@ -63,6 +63,9 @@ class FlightSearchViewModel @Inject constructor(
             FlightSearchAction.OnBackClicked -> {
                 viewModelScope.launch { _events.send(FlightSearchEvent.NavigateBack) }
             }
+            is FlightSearchAction.OnFlightClicked -> {
+                viewModelScope.launch { _events.send(FlightSearchEvent.NavigateToFlightDetails(action.offerId)) }
+            }
         }
     }
 
