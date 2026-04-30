@@ -14,7 +14,8 @@ fun FlightSegmentDto.toDomain(): FlightSegment {
         departureTime = departureTime ?: "Time unavailable",
         arrivalTime = arrivalTime ?: "Time unavailable",
         airlineName = airlineName ?: "Unknown Airline",
-        flightNumber = flightNumber ?: "Unknown"
+        flightNumber = flightNumber ?: "Unknown",
+        airlineLogoUrl = airlineLogoUrl
     )
 }
 

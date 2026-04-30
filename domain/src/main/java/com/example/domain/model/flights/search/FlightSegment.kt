@@ -8,5 +8,6 @@ data class FlightSegment(
     val departureTime: String,
     val arrivalTime: String,
     val airlineName: String,
-    val flightNumber: String
+    val flightNumber: String,
+    val airlineLogoUrl: String?
 )

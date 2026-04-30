@@ -16,6 +16,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dev.utils.uitext.UiText
 import com.dev.utils.uitext.asUiText
+import com.example.common.extensions.toFlightDuration
 import com.example.common.navigation.Screen
 import com.example.designsystem.theme.TravioTheme
 import com.example.domain.model.flights.TopFlightOffer
@@ -89,11 +90,11 @@ fun FlightDetailScreen(
             is FlightDetailUiState.Success -> {
                 val offer = (state as FlightDetailUiState.Success).offer
                 Column {
-                    Text(text = offer.destinationName, style = MaterialTheme.typography.headlineSmall)
+                    Text(text = offer.destinationCityName, style = MaterialTheme.typography.headlineSmall)
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(text = "From: ${offer.origin} → To: ${offer.destination}", style = MaterialTheme.typography.bodyMedium)
                     Spacer(modifier = Modifier.height(4.dp))
-                    Text(text = "Date: ${offer.travelDate}", style = MaterialTheme.typography.bodyMedium)
+                    Text(text = "Duration: ${offer.duration.toFlightDuration()}", style = MaterialTheme.typography.bodyMedium)
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(text = "Airline: ${offer.airlineName}", style = MaterialTheme.typography.bodyMedium)
                     Spacer(modifier = Modifier.height(4.dp))

@@ -4,5 +4,7 @@ import com.google.gson.annotations.SerializedName
 
 data class TopOffersResponseDto(
     @SerializedName("success") val success: Boolean,
-    @SerializedName("data") val data: List<TopOfferDto>?
+    @SerializedName("data") val data: List<TopOfferDto>?,
+    @SerializedName("message") val message: String?,
+    @SerializedName("errors") val errors: List<String>?
 )

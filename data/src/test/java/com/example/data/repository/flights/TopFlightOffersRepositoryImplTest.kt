@@ -18,14 +18,16 @@ class TopFlightOffersRepositoryImplTest {
         offerId = id,
         airlineName = "Air",
         imageUrl = null,
-        destinationName = "City",
         origin = "AAA",
+        originCityName = "Origin",
         destination = "BBB",
+        destinationCityName = "City",
+        duration = "2h",
+        flightNumber = "FL123",
+        airlineLogoUrl = "logo",
+        stops = 0,
         cheapestPrice = 10.0,
-        currency = "USD",
-        travelDate = null,
-        flightNumber = null,
-        status = null
+        currency = "USD"
     )
 
     @Test
@@ -34,7 +36,7 @@ class TopFlightOffersRepositoryImplTest {
         val api = object : com.example.network.api.FlightBookingApi {
             override suspend fun getTopOffers(): TopOffersResponseDto {
                 apiCalled = true
-                return TopOffersResponseDto(true, listOf(sampleDto("1")))
+                return TopOffersResponseDto(true, listOf(sampleDto("1")), "OK", null)
             }
         }
 
@@ -43,14 +45,16 @@ class TopFlightOffersRepositoryImplTest {
             offerId = "cached",
             airlineName = "Air",
             imageUrl = null,
-            destinationName = "D",
             origin = null,
+            originCityName = null,
             destination = null,
-            cheapestPrice = 5.0,
-            currency = "USD",
-            travelDate = null,
+            destinationCityName = "D",
+            duration = null,
             flightNumber = null,
-            status = null
+            airlineLogoUrl = null,
+            stops = 0,
+            cheapestPrice = 5.0,
+            currency = "USD"
         )
         cache.set(listOf(domain))
 
@@ -70,7 +74,7 @@ class TopFlightOffersRepositoryImplTest {
         val api = object : com.example.network.api.FlightBookingApi {
             override suspend fun getTopOffers(): TopOffersResponseDto {
                 apiCalled = true
-                return TopOffersResponseDto(true, listOf(sampleDto("a"), sampleDto("a")))
+                return TopOffersResponseDto(true, listOf(sampleDto("a"), sampleDto("a")), "OK", null)
             }
         }
 
@@ -97,12 +101,12 @@ class TopFlightOffersRepositoryImplTest {
         val api = object : com.example.network.api.FlightBookingApi {
             override suspend fun getTopOffers(): TopOffersResponseDto {
                 apiCalled = true
-                return TopOffersResponseDto(true, listOf(sampleDto("x")))
+                return TopOffersResponseDto(true, listOf(sampleDto("x")), "OK", null)
             }
         }
 
         val cache = TopFlightOffersCache()
-        cache.set(listOf(TopFlightOffer("old", "a", null, "d", null, null, 1.0, "USD", null, null, null)))
+        cache.set(listOf(TopFlightOffer("old", "a", null, null, null, null, "d", null, null, null, 0, 1.0, "USD")))
 
         val repo = TopFlightOffersRepositoryImpl(api, cache)
         val res = repo.getTopFlightOffers(forceRefresh = true, limit = null)
@@ -114,7 +118,7 @@ class TopFlightOffersRepositoryImplTest {
     fun given_successFalse_when_getOffers_then_returnsError() = runTest {
         val api = object : com.example.network.api.FlightBookingApi {
             override suspend fun getTopOffers(): TopOffersResponseDto {
-                return TopOffersResponseDto(false, null)
+                return TopOffersResponseDto(false, null, "Error", listOf("Error"))
             }
         }
         val cache = TopFlightOffersCache()
@@ -123,4 +127,3 @@ class TopFlightOffersRepositoryImplTest {
         assertTrue(res is Result.Error)
     }
 }
-

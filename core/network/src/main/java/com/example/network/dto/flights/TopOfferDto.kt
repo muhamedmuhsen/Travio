@@ -6,12 +6,14 @@ data class TopOfferDto(
     @SerializedName("offerId") val offerId: String?,
     @SerializedName("airlineName") val airlineName: String?,
     @SerializedName("imageUrl") val imageUrl: String?,
-    @SerializedName("destinationName") val destinationName: String?,
     @SerializedName("origin") val origin: String?,
+    @SerializedName("originCityName") val originCityName: String?,
     @SerializedName("destination") val destination: String?,
-    @SerializedName("cheapestPrice") val cheapestPrice: Double?,
-    @SerializedName("currency") val currency: String?,
-    @SerializedName("travelDate") val travelDate: String?,
+    @SerializedName("destinationCityName") val destinationCityName: String?,
+    @SerializedName("duration") val duration: String?,
     @SerializedName("flightNumber") val flightNumber: String?,
-    @SerializedName("status") val status: String?
+    @SerializedName("airlineLogoUrl") val airlineLogoUrl: String?,
+    @SerializedName("stops") val stops: Int?,
+    @SerializedName("cheapestPrice") val cheapestPrice: Double?,
+    @SerializedName("currency") val currency: String?
 )

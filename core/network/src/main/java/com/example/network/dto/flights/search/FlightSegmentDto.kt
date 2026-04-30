@@ -10,5 +10,6 @@ data class FlightSegmentDto(
     @SerializedName("departureTime") val departureTime: String?,
     @SerializedName("arrivalTime") val arrivalTime: String?,
     @SerializedName("airlineName") val airlineName: String?,
-    @SerializedName("flightNumber") val flightNumber: String?
+    @SerializedName("flightNumber") val flightNumber: String?,
+    @SerializedName("airlineLogoUrl") val airlineLogoUrl: String?
 )

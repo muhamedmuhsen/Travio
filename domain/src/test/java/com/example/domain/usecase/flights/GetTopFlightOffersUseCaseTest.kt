@@ -30,14 +30,16 @@ class GetTopFlightOffersUseCaseTest {
             offerId = id,
             airlineName = "Airline",
             imageUrl = null,
-            destinationName = "Dest",
             origin = "AAA",
+            originCityName = "Origin",
             destination = "BBB",
+            destinationCityName = "Dest",
+            duration = "2h",
+            flightNumber = "FL123",
+            airlineLogoUrl = "logo",
+            stops = 0,
             cheapestPrice = price,
-            currency = currency,
-            travelDate = null,
-            flightNumber = null,
-            status = null
+            currency = currency
         )
     }
 
@@ -106,4 +108,3 @@ class GetTopFlightOffersUseCaseTest {
         assertEquals(2, list.size)
     }
 }
-

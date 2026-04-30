@@ -62,6 +62,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -71,6 +72,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import coil.compose.AsyncImage
 import com.dev.search.presentation.flights.FlightSearchAction
 import com.dev.search.presentation.flights.FlightSearchEvent
 import com.dev.search.presentation.flights.FlightSearchUiState
@@ -298,7 +300,8 @@ private fun FlightResultCardPreview() {
                             departureTime = "2024-05-01T22:27:00",
                             arrivalTime = "2024-05-02T01:56:00",
                             airlineName = "Duffel Airways",
-                            flightNumber = "1807"
+                            flightNumber = "1807",
+                            airlineLogoUrl = null
                         )
                     )
                 ),
@@ -632,15 +635,35 @@ private fun FlightResultCard(
                     Box(
                         modifier = Modifier
                             .size(MaterialTheme.spacing.xxl)
-                            .background(MaterialTheme.colorScheme.primary, CircleShape),
+                            .background(MaterialTheme.colorScheme.primary, CircleShape)
+                            .clip(CircleShape),
                         contentAlignment = Alignment.Center
                     ) {
-                        Icon(
-                            imageVector = Icons.Default.FlightTakeoff,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.onPrimary,
-                            modifier = Modifier.size(MaterialTheme.spacing.md)
-                        )
+                        if (firstSegment.airlineLogoUrl != null) {
+                            AsyncImage(
+                                model = firstSegment.airlineLogoUrl,
+                                contentDescription = "${firstSegment.airlineName} logo",
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(MaterialTheme.spacing.xxs),
+                                error = rememberVectorPainter(Icons.Default.FlightTakeoff)
+                            )
+                        } else {
+                            Surface(
+                                modifier = Modifier.fillMaxSize(),
+                                color = MaterialTheme.colorScheme.primary,
+                                shape = CircleShape
+                            ) {
+                                Box(contentAlignment = Alignment.Center) {
+                                    Icon(
+                                        imageVector = Icons.Default.FlightTakeoff,
+                                        contentDescription = null,
+                                        tint = MaterialTheme.colorScheme.onPrimary,
+                                        modifier = Modifier.size(MaterialTheme.spacing.md)
+                                    )
+                                }
+                            }
+                        }
                     }
                     Spacer(modifier = Modifier.width(MaterialTheme.spacing.sm))
                     Column {
