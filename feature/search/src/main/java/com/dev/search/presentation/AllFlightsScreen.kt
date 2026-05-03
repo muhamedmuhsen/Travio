@@ -635,7 +635,9 @@ private fun FlightResultCard(
         shape = MaterialTheme.shapes.extraLarge,
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         elevation = CardDefaults.cardElevation(defaultElevation = MaterialTheme.elevation.sm),
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onBookNowClick() }
     ) {
         Column(
             modifier = Modifier.padding(MaterialTheme.spacing.lg),

@@ -104,7 +104,7 @@ private fun FlightDetailsContent(
         topBar = {
             FlightDetailsTopBar(onBack = onBack)
         },
-        containerColor = MaterialTheme.colorScheme.primaryContainer,
+        containerColor = MaterialTheme.colorScheme.primary,
         modifier = modifier.fillMaxSize()
     ) { padding ->
         Box(
@@ -144,7 +144,7 @@ private fun FlightDetailsContent(
 @Composable
 private fun FlightDetailsTopBar(onBack: () -> Unit) {
     Surface(
-        color = MaterialTheme.colorScheme.primaryContainer,
+        color = MaterialTheme.colorScheme.primary,
         modifier = Modifier
             .fillMaxWidth()
             .statusBarsPadding()
@@ -587,7 +587,7 @@ private fun FlightInformationCard(
                 LargeFlightInfoItem(
                     label = stringResource(R.string.flight_details_flight_number),
                     value = info.flightNumber,
-                    valueColor = MaterialTheme.colorScheme.primaryContainer,
+                    valueColor = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.weight(1f)
                 )
                 LargeFlightInfoItem(
