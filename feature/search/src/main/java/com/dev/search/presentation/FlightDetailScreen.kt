@@ -187,7 +187,7 @@ private fun FlightDetailsList(data: FlightDetailsUiModel) {
         item { PriceBreakdownCard(data.price) }
         item { FlightInformationCard(data.flightInfo, data.summary.totalDuration) }
         item { FlightRouteSegmentsCard(data.timeline) }
-        item { BaggageCancelRow(data.extras) }
+        item { BaggageCancelRow(data) }
     }
 }
 
@@ -380,16 +380,36 @@ private fun FlightSummaryCard(data: FlightDetailsUiModel) {
                 FeatureIcon(
                     icon = painterResource(R.drawable.plane_icon),
                     title = data.summary.stopsLabel.asString(),
-                    subtitle = if (data.summary.stopsLabel.asString().contains("0") || data.summary.stopsLabel.asString().contains("Non")) "Direct" else "Transit"
+                    subtitle = if (data.summary.stopsLabel.asString().contains(
+                            "0"
+                        ) || data.summary.stopsLabel.asString().contains("Non")
+                    ) {
+                        "Direct"
+                    } else {
+                        "Transit"
+                    }
                 )
                 FeatureIcon(
                     icon = painterResource(R.drawable.bag_icon),
-                    title = if (data.extras.checkedBags == 1) stringResource(R.string.flight_details_checked_bag, 1) else stringResource(R.string.flight_details_checked_bags, data.extras.checkedBags),
+                    title = if (data.extras.checkedBags == 1) {
+                        stringResource(
+                            R.string.flight_details_checked_bag,
+                            1
+                        )
+                    } else {
+                        stringResource(R.string.flight_details_checked_bags, data.extras.checkedBags)
+                    },
                     subtitle = stringResource(R.string.flight_details_included)
                 )
                 FeatureIcon(
                     icon = painterResource(R.drawable.refund_icon),
-                    title = if (data.extras.refundable) stringResource(R.string.flight_details_refundable) else stringResource(R.string.flight_details_non_refundable),
+                    title = if (data.extras.refundable) {
+                        stringResource(
+                            R.string.flight_details_refundable
+                        )
+                    } else {
+                        stringResource(R.string.flight_details_non_refundable)
+                    },
                     subtitle = if (data.extras.refundable) {
                         val fee = data.extras.penaltyAmount?.toFormattedPrice() ?: "0.00"
                         "${data.price.currency.toCurrencySymbol()}$fee fee"
@@ -909,7 +929,11 @@ private fun TimelineItem(
 }
 
 @Composable
-private fun BaggageCancelRow(extras: ExtrasUi) {
+private fun BaggageCancelRow(data: FlightDetailsUiModel) {
+    val extras = data.extras
+    val price = data.price
+    val currencySymbol = price.currency.toCurrencySymbol()
+
     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.sm)) {
         BottomInfoCard(
             title = stringResource(R.string.flight_details_baggage),
@@ -931,38 +955,49 @@ private fun BaggageCancelRow(extras: ExtrasUi) {
         ) {
             Text(
                 text = if (extras.refundable) {
-                    stringResource(
-                        R.string.flight_details_refundable
-                    )
+                    stringResource(R.string.flight_details_refundable)
                 } else {
                     stringResource(R.string.flight_details_non_refundable)
                 },
                 style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.primary,
+                color = if (extras.refundable) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error,
                 fontWeight = FontWeight.Bold
             )
-            Text(
-                text = stringResource(R.string.flight_details_penalty),
-                style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-            Text(
-                text = "$22.42",
-                style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.errorContainer,
-                fontWeight = FontWeight.Bold
-            )
-            Text(
-                text = stringResource(R.string.flight_details_est_refund),
-                style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-            Text(
-                text = "-$151.36",
-                style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.primary,
-                fontWeight = FontWeight.Bold
-            )
+
+            if (extras.refundable) {
+                Spacer(modifier = Modifier.height(MaterialTheme.spacing.xxs))
+                Text(
+                    text = stringResource(R.string.flight_details_penalty),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                Text(
+                    text = "$currencySymbol${extras.penaltyAmount?.toFormattedPrice() ?: "0.00"}",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.errorContainer,
+                    fontWeight = FontWeight.Bold
+                )
+                Spacer(modifier = Modifier.height(MaterialTheme.spacing.xxs))
+                Text(
+                    text = stringResource(R.string.flight_details_est_refund),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                val estRefund = (price.totalPrice - (extras.penaltyAmount ?: 0.0)).coerceAtLeast(0.0)
+                Text(
+                    text = "$currencySymbol${estRefund.toFormattedPrice()}",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.primary,
+                    fontWeight = FontWeight.Bold
+                )
+            } else {
+                Spacer(modifier = Modifier.height(MaterialTheme.spacing.xxs))
+                Text(
+                    text = "No refund available for this offer.",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
         }
     }
 }
