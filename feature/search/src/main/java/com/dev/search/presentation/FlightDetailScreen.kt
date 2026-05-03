@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.KeyboardArrowDown
@@ -41,7 +42,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -470,13 +475,30 @@ private fun PriceRow(
 ) {
     Row(
         modifier = Modifier.fillMaxWidth().padding(vertical = MaterialTheme.spacing.xxs),
-        horizontalArrangement = Arrangement.SpaceBetween
+        verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
             text = label,
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
+        Spacer(modifier = Modifier.width(MaterialTheme.spacing.xs))
+        Box(
+            modifier = Modifier
+                .weight(1f)
+                .height(1.dp)
+                .drawWithContent {
+                    val pathEffect = PathEffect.dashPathEffect(floatArrayOf(5f, 5f), 0f)
+                    drawLine(
+                        color = Color.LightGray.copy(alpha = 0.5f),
+                        start = androidx.compose.ui.geometry.Offset(0f, size.height / 2),
+                        end = androidx.compose.ui.geometry.Offset(size.width, size.height / 2),
+                        pathEffect = pathEffect,
+                        strokeWidth = 2f
+                    )
+                }
+        )
+        Spacer(modifier = Modifier.width(MaterialTheme.spacing.xs))
         Text(
             text = amount,
             style = MaterialTheme.typography.bodyMedium,
@@ -504,35 +526,48 @@ private fun FlightInformationCard(
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onSurface
             )
-            Spacer(modifier = Modifier.height(MaterialTheme.spacing.sm))
-            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.xs)) {
-                InfoBox(stringResource(R.string.flight_details_flight_number), info.flightNumber, modifier = Modifier.weight(1f))
-                InfoBox(stringResource(R.string.flight_details_aircraft), info.aircraftName, modifier = Modifier.weight(1f))
-            }
-            Spacer(modifier = Modifier.height(MaterialTheme.spacing.xs))
-            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.xs)) {
-                InfoBox(stringResource(R.string.flight_details_travel_class), info.cabinClass ?: "Economy", modifier = Modifier.weight(1f))
-                InfoBox(
-                    stringResource(R.string.flight_details_flight_type),
-                    info.stopsLabel.asString(),
-                    isBadge = true,
+            Spacer(modifier = Modifier.height(MaterialTheme.spacing.md))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.sm)
+            ) {
+                LargeFlightInfoItem(
+                    label = stringResource(R.string.flight_details_flight_number),
+                    value = info.flightNumber,
+                    valueColor = Color(0xFF006D77),
+                    modifier = Modifier.weight(1f)
+                )
+                LargeFlightInfoItem(
+                    label = stringResource(R.string.flight_details_aircraft),
+                    value = info.aircraftName,
                     modifier = Modifier.weight(1f)
                 )
             }
-            Spacer(modifier = Modifier.height(MaterialTheme.spacing.xs))
-            Text(
-                text = stringResource(R.string.flight_details_total_duration),
-                style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-            Text(
-                text = duration,
-                style = MaterialTheme.typography.bodyMedium,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onSurface
+            Spacer(modifier = Modifier.height(MaterialTheme.spacing.lg))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.md)
+            ) {
+                FlightLabelWithPill(
+                    label = stringResource(R.string.flight_details_travel_class),
+                    value = info.cabinClass ?: "Economy",
+                    modifier = Modifier.weight(1f)
+                )
+                FlightLabelWithPill(
+                    label = stringResource(R.string.flight_details_flight_type),
+                    value = info.stopsLabel.asString(),
+                    pillColor = MaterialTheme.colorScheme.error,
+                    textColor = MaterialTheme.colorScheme.onError,
+                    modifier = Modifier.weight(1f)
+                )
+            }
+            Spacer(modifier = Modifier.height(MaterialTheme.spacing.lg))
+            FlightLabelWithValue(
+                label = stringResource(R.string.flight_details_total_duration),
+                value = duration
             )
 
-            Spacer(modifier = Modifier.height(MaterialTheme.spacing.sm))
+            Spacer(modifier = Modifier.height(MaterialTheme.spacing.md))
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -540,7 +575,10 @@ private fun FlightInformationCard(
                     .clip(MaterialTheme.shapes.small)
                     .background(
                         brush = Brush.horizontalGradient(
-                            colors = listOf(MaterialTheme.colorScheme.surfaceVariant, MaterialTheme.colorScheme.surface)
+                            colors = listOf(
+                                MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
+                                MaterialTheme.colorScheme.surface
+                            )
                         )
                     )
                     .border(1.dp, MaterialTheme.colorScheme.outlineVariant, MaterialTheme.shapes.small)
@@ -567,50 +605,84 @@ private fun FlightInformationCard(
 }
 
 @Composable
-private fun InfoBox(
+private fun LargeFlightInfoItem(
     label: String,
     value: String,
-    isBadge: Boolean = false,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    valueColor: Color = MaterialTheme.colorScheme.onSurface
 ) {
     Column(
         modifier = modifier
-            .background(MaterialTheme.colorScheme.background, MaterialTheme.shapes.small)
-            .padding(MaterialTheme.spacing.xs)
+            .background(
+                color = MaterialTheme.colorScheme.primary.copy(alpha = 0.05f),
+                shape = RoundedCornerShape(24.dp)
+            )
+            .padding(MaterialTheme.spacing.md)
     ) {
         Text(
             text = label,
-            style = MaterialTheme.typography.labelSmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
+            style = MaterialTheme.typography.labelMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
         )
-        if (isBadge) {
-            Box(
-                modifier = Modifier
-                    .background(MaterialTheme.colorScheme.error, MaterialTheme.shapes.extraSmall)
-                    .padding(horizontal = 6.dp, vertical = 2.dp)
-            ) {
-                Text(
-                    text = value,
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.onError,
-                    fontWeight = FontWeight.Bold
-                )
-            }
-        } else {
+        Spacer(modifier = Modifier.height(MaterialTheme.spacing.xs))
+        Text(
+            text = value,
+            style = MaterialTheme.typography.titleLarge,
+            fontWeight = FontWeight.Bold,
+            color = valueColor
+        )
+    }
+}
+
+@Composable
+private fun FlightLabelWithPill(
+    label: String,
+    value: String,
+    modifier: Modifier = Modifier,
+    pillColor: Color = MaterialTheme.colorScheme.primary.copy(alpha = 0.05f),
+    textColor: Color = MaterialTheme.colorScheme.onSurface
+) {
+    Column(modifier = modifier) {
+        Text(
+            text = label,
+            style = MaterialTheme.typography.labelMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
+        )
+        Spacer(modifier = Modifier.height(MaterialTheme.spacing.xs))
+        Box(
+            modifier = Modifier
+                .background(color = pillColor, shape = MaterialTheme.shapes.medium)
+                .padding(horizontal = MaterialTheme.spacing.sm, vertical = 4.dp)
+        ) {
             Text(
                 text = value,
-                style = MaterialTheme.typography.bodyMedium,
+                style = MaterialTheme.typography.labelLarge,
                 fontWeight = FontWeight.Bold,
-                color = if (label == stringResource(
-                        R.string.flight_details_flight_number
-                    )
-                ) {
-                    MaterialTheme.colorScheme.primary
-                } else {
-                    MaterialTheme.colorScheme.onSurface
-                }
+                color = textColor
             )
         }
+    }
+}
+
+@Composable
+private fun FlightLabelWithValue(
+    label: String,
+    value: String,
+    modifier: Modifier = Modifier
+) {
+    Column(modifier = modifier) {
+        Text(
+            text = label,
+            style = MaterialTheme.typography.labelMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
+        )
+        Spacer(modifier = Modifier.height(MaterialTheme.spacing.xs))
+        Text(
+            text = value,
+            style = MaterialTheme.typography.headlineSmall,
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.onSurface
+        )
     }
 }
 
@@ -915,6 +987,62 @@ private fun BaggageItem(
         }
     }
 }
+
+@Composable
+private fun Modifier.accentBorder(): Modifier =
+    this.then(
+        Modifier.drawWithContent {
+            drawContent()
+            val maxWidth = 4.dp.toPx()
+            val minWidth = 0.5.dp.toPx()
+            val cornerRadius = 12.dp.toPx()
+
+            val path = Path().apply {
+                val centerX = cornerRadius
+                val topY = cornerRadius
+                val bottomY = size.height - cornerRadius
+                val controlY1 = size.height * 0.15f
+                val controlY2 = size.height * 0.85f
+
+                moveTo(centerX, topY)
+
+                cubicTo(
+                    centerX - maxWidth / 2,
+                    controlY1,
+                    centerX - maxWidth / 2,
+                    controlY2,
+                    centerX,
+                    bottomY
+                )
+
+                lineTo(centerX + minWidth / 2, bottomY)
+
+                cubicTo(
+                    centerX + maxWidth / 2,
+                    controlY2,
+                    centerX + maxWidth / 2,
+                    controlY1,
+                    centerX + minWidth / 2,
+                    topY
+                )
+
+                close()
+            }
+
+            drawPath(
+                path = path,
+                brush = Brush.verticalGradient(
+                    colors = listOf(
+                        Color(0xFF006D77),
+                        Color(0xFF006D77),
+                        Color(0xFF006D77)
+                    ),
+                    startY = 0f,
+                    endY = size.height
+                )
+            )
+        }
+    )
 
 @Preview(showBackground = true)
 @Composable
