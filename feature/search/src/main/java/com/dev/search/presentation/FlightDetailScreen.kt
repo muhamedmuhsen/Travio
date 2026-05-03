@@ -46,7 +46,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -536,6 +535,7 @@ private fun PriceRow(
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
         Spacer(modifier = Modifier.width(MaterialTheme.spacing.xs))
+        val dashColor = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
         Box(
             modifier = Modifier
                 .weight(1f)
@@ -543,7 +543,7 @@ private fun PriceRow(
                 .drawWithContent {
                     val pathEffect = PathEffect.dashPathEffect(floatArrayOf(5f, 5f), 0f)
                     drawLine(
-                        color = Color.LightGray.copy(alpha = 0.5f),
+                        color = dashColor,
                         start = androidx.compose.ui.geometry.Offset(0f, size.height / 2),
                         end = androidx.compose.ui.geometry.Offset(size.width, size.height / 2),
                         pathEffect = pathEffect,
@@ -587,7 +587,7 @@ private fun FlightInformationCard(
                 LargeFlightInfoItem(
                     label = stringResource(R.string.flight_details_flight_number),
                     value = info.flightNumber,
-                    valueColor = Color(0xFF006D77),
+                    valueColor = MaterialTheme.colorScheme.primaryContainer,
                     modifier = Modifier.weight(1f)
                 )
                 LargeFlightInfoItem(
@@ -1055,62 +1055,6 @@ private fun BaggageItem(
         }
     }
 }
-
-@Composable
-private fun Modifier.accentBorder(): Modifier =
-    this.then(
-        Modifier.drawWithContent {
-            drawContent()
-            val maxWidth = 4.dp.toPx()
-            val minWidth = 0.5.dp.toPx()
-            val cornerRadius = 12.dp.toPx()
-
-            val path = Path().apply {
-                val centerX = cornerRadius
-                val topY = cornerRadius
-                val bottomY = size.height - cornerRadius
-                val controlY1 = size.height * 0.15f
-                val controlY2 = size.height * 0.85f
-
-                moveTo(centerX, topY)
-
-                cubicTo(
-                    centerX - maxWidth / 2,
-                    controlY1,
-                    centerX - maxWidth / 2,
-                    controlY2,
-                    centerX,
-                    bottomY
-                )
-
-                lineTo(centerX + minWidth / 2, bottomY)
-
-                cubicTo(
-                    centerX + maxWidth / 2,
-                    controlY2,
-                    centerX + maxWidth / 2,
-                    controlY1,
-                    centerX + minWidth / 2,
-                    topY
-                )
-
-                close()
-            }
-
-            drawPath(
-                path = path,
-                brush = Brush.verticalGradient(
-                    colors = listOf(
-                        Color(0xFF006D77),
-                        Color(0xFF006D77),
-                        Color(0xFF006D77)
-                    ),
-                    startY = 0f,
-                    endY = size.height
-                )
-            )
-        }
-    )
 
 @Preview(showBackground = true)
 @Composable
