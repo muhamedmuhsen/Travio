@@ -66,4 +66,41 @@
     <string name="all_flights_passenger">%1$d Passenger</string>
     <string name="all_flights_passengers">%1$d Passengers</string>
     <string name="all_flights_class_placeholder">Class</string>
+
+    <!-- Flight Details -->
+    <string name="flight_details_title">Flight Details</string>
+    <string name="flight_details_loading">Loading flight details...</string>
+    <string name="flight_details_price_breakdown">Price Breakdown</string>
+    <string name="flight_details_base_fare">Base Fare</string>
+    <string name="flight_details_taxes_fees">Taxes &amp; Fees</string>
+    <string name="flight_details_total_amount">Total Amount</string>
+    <string name="flight_details_offer_not_found">Offer not found</string>
+    <string name="flight_details_time_warning">Some flight times could not be verified. Please double-check with the airline.</string>
+    <string name="flight_details_non_stop">Non-stop</string>
+    <string name="flight_details_one_stop">1 Stop</string>
+    <string name="flight_details_transit">Transit</string>
+    <string name="flight_details_price_disclaimer">Price in %1$s · Per passenger</string>
+    <string name="flight_details_flight_info">Flight Information</string>
+    <string name="flight_details_flight_number">Flight Number</string>
+    <string name="flight_details_aircraft">Aircraft</string>
+    <string name="flight_details_travel_class">Travel Class</string>
+    <string name="flight_details_flight_type">Flight Type</string>
+    <string name="flight_details_total_duration">Total Duration</string>
+    <string name="flight_details_operated_by">Operated by %1$s</string>
+    <string name="flight_details_route_segments">Flight Route &amp; Segments</string>
+    <string name="flight_details_departure">DEPARTURE</string>
+    <string name="flight_details_arrival">ARRIVAL</string>
+    <string name="flight_details_layover_label">LAYOVER</string>
+    <string name="flight_details_wait">%1$s wait</string>
+    <string name="flight_details_flight_time_label">Flight time: %1$s</string>
+    <string name="flight_details_baggage">Baggage</string>
+    <string name="flight_details_cancel">Cancel</string>
+    <string name="flight_details_checked_bag">%1$d Checked bag</string>
+    <string name="flight_details_checked_bags">%1$d Checked bags</string>
+    <string name="flight_details_carry_on">Carry-on</string>
+    <string name="flight_details_included">Included</string>
+    <string name="flight_details_refundable">REFUNDABLE</string>
+    <string name="flight_details_non_refundable">NON-REFUNDABLE</string>
+    <string name="flight_details_penalty">Penalty</string>
+    <string name="flight_details_est_refund">Est. Refund</string>
 </resources>

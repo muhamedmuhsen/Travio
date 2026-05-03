@@ -1,8 +1,10 @@
 package com.example.network.api
 
 import com.example.network.dto.flights.TopOffersResponseDto
+import com.example.network.dto.flights.details.FlightDetailsResponseDto
 import com.example.network.dto.flights.search.FlightSearchResponseDto
 import retrofit2.http.GET
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface FlightBookingApi {
@@ -18,4 +20,7 @@ interface FlightBookingApi {
         @Query("CabinClass") cabinClass: String,
         @Query("MaxStops") maxStops: Int? = null
     ): FlightSearchResponseDto
+
+    @GET("FlightBooking/{offerId}")
+    suspend fun getFlightDetails(@Path("offerId") offerId: String): FlightDetailsResponseDto
 }

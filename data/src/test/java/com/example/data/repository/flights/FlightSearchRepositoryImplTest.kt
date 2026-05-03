@@ -17,7 +17,7 @@ import org.mockito.kotlin.whenever
 
 class FlightSearchRepositoryImplTest {
 
-    private lateinit classUnderTest: FlightSearchRepositoryImpl
+    private lateinit var classUnderTest: FlightSearchRepositoryImpl
     private val api = mock<FlightBookingApi>()
 
     @Before
