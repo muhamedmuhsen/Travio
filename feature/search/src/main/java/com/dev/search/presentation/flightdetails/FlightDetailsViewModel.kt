@@ -6,6 +6,9 @@ import androidx.lifecycle.viewModelScope
 import com.dev.utils.uitext.UiText
 import com.dev.utils.uitext.asUiText
 import com.example.common.extensions.toFlightDuration
+import com.example.common.extensions.toFormattedDate
+import com.example.common.extensions.toFormattedTime
+import com.example.common.extensions.toFullDate
 import com.example.common.navigation.Screen
 import com.example.domain.model.flights.details.FlightDetails
 import com.example.domain.usecase.flights.GetFlightDetailsUseCase
@@ -100,8 +103,12 @@ class FlightDetailsViewModel @Inject constructor(
         val summary = FlightDetailsSummaryUi(
             airlineName = segments.first().airlineName,
             flightNumber = segments.first().flightNumber,
-            departureTime = departureTime,
-            arrivalTime = arrivalTime,
+            departureTime = departureTime.toFormattedTime(),
+            departureDate = departureTime.toFormattedDate(),
+            departureDateFull = departureTime.toFullDate(),
+            arrivalTime = arrivalTime.toFormattedTime(),
+            arrivalDate = arrivalTime.toFormattedDate(),
+            arrivalDateFull = arrivalTime.toFullDate(),
             origin = originAirport,
             destination = destinationAirport,
             stopsLabel = stopsLabel,
@@ -126,14 +133,26 @@ class FlightDetailsViewModel @Inject constructor(
 
         val timeline = buildList {
             segments.forEachIndexed { index, segment ->
-                add(TimelineItemUi.Departure(segment.originAirport, segment.departureTime))
+                add(
+                    TimelineItemUi.Departure(
+                        segment.originAirport,
+                        segment.departureTime.toFormattedTime(),
+                        segment.departureTime.toFullDate()
+                    )
+                )
                 add(TimelineItemUi.Flight("${segment.airlineName} ${segment.flightNumber}", segment.segmentDuration.toFlightDuration()))
                 if (index < layovers.size) {
                     val layover = layovers[index]
                     add(TimelineItemUi.Layover(layover.duration.toFlightDuration(), layover.location))
                 }
                 if (index == segments.lastIndex) {
-                    add(TimelineItemUi.Arrival(segment.destinationAirport, segment.arrivalTime))
+                    add(
+                        TimelineItemUi.Arrival(
+                            segment.destinationAirport,
+                            segment.arrivalTime.toFormattedTime(),
+                            segment.arrivalTime.toFullDate()
+                        )
+                    )
                 }
             }
         }

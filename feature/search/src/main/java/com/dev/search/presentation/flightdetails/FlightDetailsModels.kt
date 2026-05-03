@@ -14,7 +14,11 @@ data class FlightDetailsSummaryUi(
     val airlineName: String,
     val flightNumber: String,
     val departureTime: String,
+    val departureDate: String,
+    val departureDateFull: String,
     val arrivalTime: String,
+    val arrivalDate: String,
+    val arrivalDateFull: String,
     val origin: String,
     val destination: String,
     val stopsLabel: UiText,
@@ -40,7 +44,8 @@ data class FlightInfoUi(
 sealed interface TimelineItemUi {
     data class Departure(
         val airport: String,
-        val time: String
+        val time: String,
+        val date: String
     ) : TimelineItemUi
 
     data class Flight(
@@ -55,7 +60,8 @@ sealed interface TimelineItemUi {
 
     data class Arrival(
         val airport: String,
-        val time: String
+        val time: String,
+        val date: String
     ) : TimelineItemUi
 }
 

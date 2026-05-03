@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
@@ -65,6 +66,7 @@ import com.dev.search.presentation.flightdetails.PriceSectionUi
 import com.dev.search.presentation.flightdetails.TimelineItemUi
 import com.dev.utils.uitext.UiText
 import com.example.common.extensions.toCurrencySymbol
+import com.example.common.extensions.toFormattedPrice
 import com.example.designsystem.theme.TravioTheme
 import com.example.designsystem.theme.spacing
 import com.example.feature.search.R
@@ -144,11 +146,13 @@ private fun FlightDetailsContent(
 private fun FlightDetailsTopBar(onBack: () -> Unit) {
     Surface(
         color = MaterialTheme.colorScheme.primaryContainer,
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier
+            .fillMaxWidth()
+            .statusBarsPadding()
     ) {
         Row(
             modifier = Modifier
-                .padding(horizontal = MaterialTheme.spacing.xs, vertical = MaterialTheme.spacing.sm),
+                .padding(horizontal = MaterialTheme.spacing.xs, vertical = MaterialTheme.spacing.xxs),
             verticalAlignment = Alignment.CenterVertically
         ) {
             IconButton(onClick = onBack) {
@@ -244,32 +248,36 @@ private fun FlightSummaryCard(data: FlightDetailsUiModel) {
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Column(
+                    modifier = Modifier.weight(1f),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
                     Text(
                         text = data.summary.departureTime,
                         style = MaterialTheme.typography.headlineSmall,
                         fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onSurface
+                        color = MaterialTheme.colorScheme.onSurface,
+                        textAlign = TextAlign.Center
                     )
                     Text(
                         text = data.summary.origin,
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.primary
+                        color = MaterialTheme.colorScheme.primary,
+                        textAlign = TextAlign.Center
                     )
                     Text(
-                        text = "Cairo",
+                        text = data.summary.departureDate,
                         style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                    Text(
-                        text = "May 30",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        textAlign = TextAlign.Center
                     )
                 }
 
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Column(
+                    modifier = Modifier.padding(horizontal = MaterialTheme.spacing.xs),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
                     Text(
                         text = data.summary.totalDuration,
                         style = MaterialTheme.typography.labelSmall,
@@ -311,30 +319,32 @@ private fun FlightSummaryCard(data: FlightDetailsUiModel) {
                     }
                 }
 
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Column(
+                    modifier = Modifier.weight(1f),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
                     Text(
                         text = data.summary.arrivalTime,
                         style = MaterialTheme.typography.headlineSmall,
                         fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onSurface
+                        color = MaterialTheme.colorScheme.onSurface,
+                        textAlign = TextAlign.Center
                     )
                     Text(
                         text = data.summary.destination,
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.primary
+                        color = MaterialTheme.colorScheme.primary,
+                        textAlign = TextAlign.Center
                     )
-                    Text(
-                        text = "Paris",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                    Row {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
                         Text(
-                            text = "May 31 ",
+                            text = data.summary.arrivalDate,
                             style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            textAlign = TextAlign.Center
                         )
+                        Spacer(modifier = Modifier.width(MaterialTheme.spacing.xxs))
                         Text(
                             text = "+1",
                             style = MaterialTheme.typography.bodySmall,
@@ -354,7 +364,7 @@ private fun FlightSummaryCard(data: FlightDetailsUiModel) {
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = "Saturday, May 30, 2026 -> Sunday, May 31, 2026",
+                    text = "${data.summary.departureDateFull} -> ${data.summary.arrivalDateFull}",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.primary,
                     textAlign = TextAlign.Center
@@ -367,9 +377,26 @@ private fun FlightSummaryCard(data: FlightDetailsUiModel) {
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceAround
             ) {
-                FeatureIcon(painterResource(R.drawable.plane_icon), "1.23 kg", "via IST")
-                FeatureIcon(painterResource(R.drawable.bag_icon), "1 Bag", stringResource(R.string.flight_details_included))
-                FeatureIcon(painterResource(R.drawable.refund_icon), stringResource(R.string.flight_details_refundable), "$15 fee")
+                FeatureIcon(
+                    icon = painterResource(R.drawable.plane_icon),
+                    title = data.summary.stopsLabel.asString(),
+                    subtitle = if (data.summary.stopsLabel.asString().contains("0") || data.summary.stopsLabel.asString().contains("Non")) "Direct" else "Transit"
+                )
+                FeatureIcon(
+                    icon = painterResource(R.drawable.bag_icon),
+                    title = if (data.extras.checkedBags == 1) stringResource(R.string.flight_details_checked_bag, 1) else stringResource(R.string.flight_details_checked_bags, data.extras.checkedBags),
+                    subtitle = stringResource(R.string.flight_details_included)
+                )
+                FeatureIcon(
+                    icon = painterResource(R.drawable.refund_icon),
+                    title = if (data.extras.refundable) stringResource(R.string.flight_details_refundable) else stringResource(R.string.flight_details_non_refundable),
+                    subtitle = if (data.extras.refundable) {
+                        val fee = data.extras.penaltyAmount?.toFormattedPrice() ?: "0.00"
+                        "${data.price.currency.toCurrencySymbol()}$fee fee"
+                    } else {
+                        stringResource(R.string.flight_details_non_refundable).lowercase().replaceFirstChar { it.uppercase() }
+                    }
+                )
             }
         }
     }
@@ -434,8 +461,14 @@ private fun PriceBreakdownCard(price: PriceSectionUi) {
 
             if (expanded) {
                 Spacer(modifier = Modifier.height(MaterialTheme.spacing.sm))
-                PriceRow(stringResource(R.string.flight_details_base_fare), "${price.currency.toCurrencySymbol()}${price.basePrice}")
-                PriceRow(stringResource(R.string.flight_details_taxes_fees), "${price.currency.toCurrencySymbol()}${price.taxes}")
+                PriceRow(
+                    stringResource(R.string.flight_details_base_fare),
+                    "${price.currency.toCurrencySymbol()}${price.basePrice.toFormattedPrice()}"
+                )
+                PriceRow(
+                    stringResource(R.string.flight_details_taxes_fees),
+                    "${price.currency.toCurrencySymbol()}${price.taxes.toFormattedPrice()}"
+                )
                 Spacer(modifier = Modifier.height(MaterialTheme.spacing.sm))
             }
 
@@ -451,7 +484,7 @@ private fun PriceBreakdownCard(price: PriceSectionUi) {
                     color = MaterialTheme.colorScheme.onSurface
                 )
                 Text(
-                    text = "${price.currency.toCurrencySymbol()}${price.totalPrice}",
+                    text = "${price.currency.toCurrencySymbol()}${price.totalPrice.toFormattedPrice()}",
                     style = MaterialTheme.typography.headlineSmall,
                     color = MaterialTheme.colorScheme.error,
                     fontWeight = FontWeight.ExtraBold
@@ -754,7 +787,7 @@ private fun TimelineItem(
                         color = MaterialTheme.colorScheme.onSurface
                     )
                     Text(
-                        text = "May 30, 2026",
+                        text = item.date,
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -837,7 +870,7 @@ private fun TimelineItem(
                         color = MaterialTheme.colorScheme.onSurface
                     )
                     Text(
-                        text = "May 31, 2026",
+                        text = item.date,
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -1067,7 +1100,11 @@ private fun FlightDetailPreviewContent() {
             airlineName = "British Airways",
             flightNumber = "BA 0189",
             departureTime = "22:27",
+            departureDate = "May 30",
+            departureDateFull = "Saturday, May 30, 2026",
             arrivalTime = "06:42",
+            arrivalDate = "May 31",
+            arrivalDateFull = "Sunday, May 31, 2026",
             origin = "CAI",
             destination = "CDG",
             stopsLabel = UiText.DynamicString("1 Stop"),
@@ -1088,10 +1125,10 @@ private fun FlightDetailPreviewContent() {
             airlineName = "British Airways"
         ),
         timeline = listOf(
-            TimelineItemUi.Departure("Cairo International Airport (CAI)", "10:27 PM"),
+            TimelineItemUi.Departure("Cairo International Airport (CAI)", "10:27 PM", "May 30, 2026"),
             TimelineItemUi.Flight("British Airways BA 0189", "2 hours 30 minutes"),
             TimelineItemUi.Layover("2h 00m", "Istanbul Airport (IST)"),
-            TimelineItemUi.Arrival("Paris Charles de Gaulle (CDG)", "06:42 AM")
+            TimelineItemUi.Arrival("Paris Charles de Gaulle (CDG)", "06:42 AM", "May 31, 2026")
         ),
         extras = ExtrasUi(
             checkedBags = 1,
