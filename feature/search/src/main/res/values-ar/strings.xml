@@ -1,69 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Top bar -->
-    <string name="search_navigate_back">رجوع</string>
-    <string name="search_clear_query">مسح البحث</string>
-    <string name="search_placeholder">استكشاف</string>
-
-    <!-- Section titles -->
-    <string name="search_section_recent">عمليات البحث الأخيرة</string>
-    <string name="search_section_suggestions">اقتراحات</string>
-    <string name="search_see_all">عرض الكل</string>
-
-    <!-- Empty / error states -->
-    <string name="search_no_results_title">لم يتم العثور على نتائج</string>
-    <string name="search_no_results_message">لم نتمكن من العثور على أي شيء لـ \"%1$s\". جرب كلمة رئيسية مختلفة.</string>
-    <string name="search_empty_recent">لا توجد وجهات حديثة بعد. ابدأ الاستكشاف!</string>
-
-    <!-- Content descriptions -->
-    <string name="search_destination_image_cd">صورة الوجهة %s</string>
-    <string name="search_location_pin_cd">دبوس الموقع</string>
-    <string name="search_delete_recent_cd">حذف البحث الأخير</string>
-
-    <!-- Recent searches -->
-    <string name="search_clear_all">مسح الكل</string>
-    <string name="search_empty_recent_searches">لا توجد عمليات بحث حديثة بعد. ابدأ الاستكشاف!</string>
-
-    <!-- All Flights screen -->
-    <string name="all_flights_back">رجوع</string>
-    <string name="all_flights_swap_airports">تبديل مطارات المغادرة والوصول</string>
-    <string name="all_flights_search_button">بحث عن رحلة</string>
-    <string name="all_flights_non_stop">بدون توقف</string>
-    <string name="all_flights_book_now">احجز الآن</string>
-    <string name="retry">إعادة المحاولة</string>
-    <string name="all_flights_tab_explore">استكشاف</string>
-    <string name="all_flights_tab_favorite">المفضلة</string>
-    <string name="all_flights_tab_community">المجتمع</string>
-    <string name="all_flights_tab_chat_ai">الدردشة بالذكاء الاصطناعي</string>
-    <string name="all_flights_tab_profile">الملف الشخصي</string>
-
-    <!-- Flight Search Error Messages -->
-    <string name="flight_search_error_network">حدث خطأ ما. يرجى التحقق من اتصالك والمحاولة مرة أخرى.</string>
-    <string name="flight_search_error_route_unavailable">هذا المسار غير متاح.</string>
-    <string name="flight_search_error_no_flights">لم يتم العثور على رحلات لبحثك.</string>
-    
-    <!-- Flight Search Validation Messages -->
-    <string name="flight_search_validation_origin_required">نقطة الانطلاق مطلوبة</string>
-    <string name="flight_search_validation_destination_required">الوجهة مطلوبة</string>
-    <string name="flight_search_validation_origin_destination_same">يجب أن تكون نقطة الانطلاق والوجهة مختلفتين</string>
-    <string name="flight_search_validation_date_required">يرجى اختيار تاريخ المغادرة</string>
-    <string name="flight_search_validation_adults_required">مطلوب شخص بالغ واحد على الأقل</string>
-
-    <!-- Flight Result Card -->
-    <string name="all_flights_on_time">في الوقت المحدد</string>
-    <string name="all_flights_duration_label">المدة: %1$s</string>
-    <string name="all_flights_total_one_way">الإجمالي (ذهاب فقط)</string>
-    <string name="all_flights_loading">جارٍ التحميل...</string>
-    <string name="all_flights_one_stop">توقف واحد</string>
-    <string name="all_flights_multiple_stops">%1$d توقفات</string>
-    <string name="all_flights_title">كل الرحلات</string>
-    <string name="all_flights_no_results">لم يتم العثور على رحلات.</string>
-    <string name="all_flights_origin_placeholder">نقطة الانطلاق</string>
-    <string name="all_flights_destination_placeholder">الوجهة</string>
-    <string name="all_flights_ok">موافق</string>
-    <string name="all_flights_cancel">إلغاء</string>
-    <string name="all_flights_select_date">اختر التاريخ</string>
-    <string name="all_flights_passenger">%1$d مسافر</string>
-    <string name="all_flights_passengers">%1$d مسافرين</string>
-    <string name="all_flights_class_placeholder">الدرجة</string>
+    <!-- Flight Details -->
+    <string name="flight_details_title">تفاصيل الرحلة</string>
+    <string name="flight_details_loading">جاري تحميل تفاصيل الرحلة...</string>
+    <string name="flight_details_price_breakdown">تفاصيل السعر</string>
+    <string name="flight_details_base_fare">السعر الأساسي</string>
+    <string name="flight_details_taxes_fees">الضرائب والرسوم</string>
+    <string name="flight_details_total_amount">المبلغ الإجمالي</string>
+    <string name="flight_details_price_disclaimer">السعر بـ %1$s · لكل مسافر</string>
+    <string name="flight_details_flight_info">معلومات الرحلة</string>
+    <string name="flight_details_flight_number">رقم الرحلة</string>
+    <string name="flight_details_aircraft">الطائرة</string>
+    <string name="flight_details_travel_class">درجة السفر</string>
+    <string name="flight_details_flight_type">نوع الرحلة</string>
+    <string name="flight_details_total_duration">المدة الإجمالية</string>
+    <string name="flight_details_operated_by">بواسطة %1$s</string>
+    <string name="flight_details_route_segments">مسار الرحلة والقطاعات</string>
+    <string name="flight_details_departure">المغادرة</string>
+    <string name="flight_details_arrival">الوصول</string>
+    <string name="flight_details_layover_label">توقف</string>
+    <string name="flight_details_wait">انتظار %1$s</string>
+    <string name="flight_details_flight_time_label">وقت الرحلة: %1$s</string>
+    <string name="flight_details_baggage">الأمتعة</string>
+    <string name="flight_details_cancel">إلغاء</string>
+    <string name="flight_details_checked_bag">%1$d حقيبة مسجلة</string>
+    <string name="flight_details_checked_bags">%1$d حقائب مسجلة</string>
+    <string name="flight_details_carry_on">حقيبة يد</string>
+    <string name="flight_details_included">مشمول</string>
+    <string name="flight_details_refundable">قابل للاسترداد</string>
+    <string name="flight_details_non_refundable">غير قابل للاسترداد</string>
+    <string name="flight_details_penalty">غرامة</string>
+    <string name="flight_details_offer_not_found">العرض غير موجود</string>
+    <string name="flight_details_time_warning">تعذر التحقق من بعض أوقات الرحلة. يرجى المراجعة مع شركة الطيران.</string>
+    <string name="flight_details_non_stop">بدون توقف</string>
+    <string name="flight_details_one_stop">توقف واحد</string>
+    <string name="flight_details_transit">ترانزيت</string>
+    <string name="flight_details_est_refund">الاسترداد المتوقع</string>
 </resources>
