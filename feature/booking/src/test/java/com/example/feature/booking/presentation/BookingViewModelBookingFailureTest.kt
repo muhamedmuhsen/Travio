@@ -1,8 +1,11 @@
+
 package com.example.feature.booking.presentation
 
+import com.example.feature.booking.presentation.BookingViewModel
 import androidx.lifecycle.SavedStateHandle
 import com.example.domain.model.booking.BookingRequest
 import com.example.domain.model.booking.BookingResult
+import com.example.domain.model.booking.Passenger
 import com.example.domain.model.booking.PaymentIntentInfo
 import com.example.domain.repository.booking.BookingRepository
 import com.example.domain.usecase.booking.ConfirmFlightOrderUseCase
@@ -30,8 +33,8 @@ class BookingViewModelBookingFailureTest {
         Dispatchers.setMain(testDispatcher)
         
         val fakeRepo = object : BookingRepository {
-            override suspend fun createPaymentIntent(offerId: String) = Result.success(PaymentIntentInfo("secret", "pi_123"))
-            override suspend fun confirmFlightOrder(request: BookingRequest) = Result.failure<BookingResult>(Exception("Booking failed after payment"))
+            override suspend fun createPaymentIntent(offerId: String, passengers: List<Passenger>) = Result.success(PaymentIntentInfo("secret", "pi_123"))
+            override suspend fun confirmFlightOrder(request: BookingRequest) = Result.failure<BookingResult>(Exception("Booking failed"))
         }
 
         val validatePassengersUseCase = ValidatePassengersUseCase()
@@ -62,7 +65,7 @@ class BookingViewModelBookingFailureTest {
         // Mock successful payment result from Stripe
         viewModel.onPaymentResult(success = true)
         
-        assertEquals("Booking failed after payment", viewModel.uiState.value.error)
+        assertEquals("Booking failed", viewModel.uiState.value.error)
         assertEquals(false, viewModel.uiState.value.isProcessing)
     }
 }

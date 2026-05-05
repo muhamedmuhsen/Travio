@@ -4,6 +4,7 @@ import com.example.data.mapper.booking.toDomain
 import com.example.data.mapper.booking.toDto
 import com.example.domain.model.booking.BookingRequest
 import com.example.domain.model.booking.BookingResult
+import com.example.domain.model.booking.Passenger
 import com.example.domain.model.booking.PaymentIntentInfo
 import com.example.domain.repository.booking.BookingRepository
 import com.example.network.api.FlightBookingApi
@@ -15,9 +16,12 @@ class BookingRepositoryImpl @Inject constructor(
     private val api: FlightBookingApi
 ) : BookingRepository {
 
-    override suspend fun createPaymentIntent(offerId: String): Result<PaymentIntentInfo> {
+    override suspend fun createPaymentIntent(
+        offerId: String,
+        passengers: List<Passenger>
+    ): Result<PaymentIntentInfo> {
         return runCatching {
-            api.createPaymentIntent(PaymentIntentRequestDto(offerId)).toDomain()
+            api.createPaymentIntent(PaymentIntentRequestDto(offerId, passengers.map { it.toDto() })).toDomain()
         }
     }
 

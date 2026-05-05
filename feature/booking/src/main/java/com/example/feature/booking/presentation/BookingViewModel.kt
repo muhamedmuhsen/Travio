@@ -79,7 +79,7 @@ class BookingViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.update { it.copy(isProcessing = true, paymentStatus = PaymentStatus.CreatingIntent, error = null) }
 
-            createPaymentIntentUseCase(offerId)
+            createPaymentIntentUseCase(offerId, passengers)
                 .onSuccess { intentInfo ->
                     currentPaymentIntentId = intentInfo.paymentIntentId
                     _uiState.update { it.copy(paymentStatus = PaymentStatus.AwaitingConfirmation) }

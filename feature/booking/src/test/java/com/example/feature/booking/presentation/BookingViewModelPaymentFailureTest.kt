@@ -3,6 +3,7 @@ package com.example.feature.booking.presentation
 import androidx.lifecycle.SavedStateHandle
 import com.example.domain.model.booking.BookingRequest
 import com.example.domain.model.booking.BookingResult
+import com.example.domain.model.booking.Passenger
 import com.example.domain.model.booking.PaymentIntentInfo
 import com.example.domain.repository.booking.BookingRepository
 import com.example.domain.usecase.booking.ConfirmFlightOrderUseCase
@@ -30,7 +31,7 @@ class BookingViewModelPaymentFailureTest {
         Dispatchers.setMain(testDispatcher)
         
         val fakeRepo = object : BookingRepository {
-            override suspend fun createPaymentIntent(offerId: String) = Result.success(PaymentIntentInfo("secret", "pi_123"))
+            override suspend fun createPaymentIntent(offerId: String, passengers: List<Passenger>) = Result.success(PaymentIntentInfo("secret", "pi_123"))
             override suspend fun confirmFlightOrder(request: BookingRequest) = Result.success(BookingResult("ord_123", "ABCDEF", "confirmed"))
         }
 

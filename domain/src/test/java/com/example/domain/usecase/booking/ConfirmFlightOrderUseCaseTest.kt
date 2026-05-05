@@ -2,6 +2,7 @@ package com.example.domain.usecase.booking
 
 import com.example.domain.model.booking.BookingRequest
 import com.example.domain.model.booking.BookingResult
+import com.example.domain.model.booking.Passenger
 import com.example.domain.model.booking.PaymentIntentInfo
 import com.example.domain.repository.booking.BookingRepository
 import kotlinx.coroutines.test.runTest
@@ -12,8 +13,8 @@ import org.junit.Test
 class ConfirmFlightOrderUseCaseTest {
 
     private val fakeRepository = object : BookingRepository {
-        override suspend fun createPaymentIntent(offerId: String): Result<PaymentIntentInfo> {
-            TODO("Not needed for this test")
+        override suspend fun createPaymentIntent(offerId: String, passengers: List<Passenger>): Result<PaymentIntentInfo> {
+            TODO("Not needed")
         }
 
         override suspend fun confirmFlightOrder(request: BookingRequest): Result<BookingResult> {
