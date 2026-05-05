@@ -75,6 +75,14 @@ fun GenderSelector(
                 }
             }
         }
+        if (isError) {
+            Text(
+                text = stringResource(id = R.string.error_gender_required),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.error,
+                modifier = Modifier.padding(start = MaterialTheme.spacing.xxs)
+            )
+        }
     }
 }
 
@@ -117,6 +125,14 @@ fun TitleSelector(
                     Text(text = title, fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal)
                 }
             }
+        }
+        if (isError) {
+            Text(
+                text = stringResource(id = R.string.error_title_required),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.error,
+                modifier = Modifier.padding(start = MaterialTheme.spacing.xxs)
+            )
         }
     }
 }

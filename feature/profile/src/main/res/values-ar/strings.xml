@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Profile Screen -->
+    <string name="logout">تسجيل الخروج</string>
+    <string name="logout_dialog_title">هل أنت متأكد أنك تريد تسجيل الخروج؟</string>
+    <string name="cancel">إلغاء</string>
+    <string name="sure">تأكيد</string>
+
+    <!-- Edit Profile Screen -->
+    <string name="edit_profile">تعديل الملف الشخصي</string>
+    <string name="update">تحديث</string>
+    <string name="first_name_placeholder">الاسم الأول</string>
+    <string name="last_name_placeholder">اسم العائلة</string>
+    <string name="username_placeholder">اسم المستخدم</string>
+
+    <!-- Content Descriptions -->
+    <string name="profile_picture">صورة الملف الشخصي</string>
+    <string name="default_profile_picture">صورة الملف الشخصي الافتراضية</string>
+    <string name="change_profile_picture">تغيير صورة الملف الشخصي</string>
+
+    <!-- Profile Categories -->
+    <string name="account_settings">إعدادات الحساب</string>
+    <string name="preferences">التفضيلات</string>
+    <string name="support_help">الدعم والمساعدة</string>
+
+    <!-- Profile Options -->
+    <string name="my_profile">ملفي الشخصي</string>
+    <string name="addresses">العناوين</string>
+    <string name="language">اللغة</string>
+    <string name="dark_mode">الوضع الداكن</string>
+    <string name="help_center">مركز المساعدة</string>
+    <string name="user_default">مستخدم</string>
+</resources>

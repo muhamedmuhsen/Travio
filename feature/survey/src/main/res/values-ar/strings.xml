@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Survey question strings -->
+    <string name="survey_question_travel_type">ما هو نوع السفر الذي تفضله؟</string>
+    <string name="survey_question_travel_with">كيف تفضل السفر؟</string>
+    <string name="survey_question_activities">ماذا تفضل أن تفعل في الرحلات؟</string>
+    <string name="survey_question_budget">ما هو تفضيل ميزانيتك؟</string>
+
+    <!-- Category labels — Step 1 -->
+    <string name="survey_beaches">الشواطئ</string>
+    <string name="survey_city_life">حياة المدينة</string>
+    <string name="survey_hotels">الفنادق</string>
+    <string name="survey_safari_desert">سفاري صحراوية</string>
+    <string name="survey_nature">الطبيعة</string>
+    <string name="survey_shopping_malls">مراكز التسوق</string>
+
+    <!-- Category labels — Step 2 -->
+    <string name="survey_solo_travel">سفر منفرد</string>
+    <string name="survey_with_partner">مع شريك</string>
+    <string name="survey_family_trip">رحلة عائلية</string>
+    <string name="survey_with_friends">مع الأصدقاء</string>
+
+    <!-- Category labels — Step 3 -->
+    <string name="survey_relaxed">استرخاء</string>
+    <string name="survey_diving">غوص</string>
+    <string name="survey_adventurous">مغامرة</string>
+    <string name="survey_photography">تصوير فوتوغرافي</string>
+
+    <!-- Category labels — Step 4 -->
+    <string name="survey_budget_traveler">مسافر بميزانية محدودة</string>
+    <string name="survey_mid_range">ميزانية متوسطة</string>
+    <string name="survey_premium">مميز</string>
+    <string name="survey_ultra_luxury">فائق الفخامة</string>
+
+    <!-- Buttons -->
+    <string name="survey_next">التالي</string>
+    <string name="survey_enjoy">استمتع</string>
+    <string name="survey_retry">إعادة المحاولة</string>
+
+    <!-- Step indicator -->
+    <string name="survey_step_indicator">الخطوة %1$d من %2$d</string>
+
+    <!-- Submission/validation -->
+    <string name="survey_validation_empty">يرجى الاختيار قبل المتابعة.</string>
+    <string name="survey_validation_partial">يرجى إكمال جميع خطوات الاستطلاع أولاً.</string>
+    <string name="survey_validation_duplicate">لا يسمح باختيارات مكررة.</string>
+    <string name="survey_validation_conflict">اختر خيارًا واحدًا فقط لكل خطوة.</string>
+    <string name="survey_validation_invalid_category">اختيار فئة غير صالح.</string>
+    <string name="survey_validation_invalid_option">اختيار خيار غير صالح.</string>
+</resources>
