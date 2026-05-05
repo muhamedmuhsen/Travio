@@ -34,7 +34,7 @@ data class FlightCardContent(
 
 @Immutable
 data class FlightStatusDisplay(
-    val label: String,
+    val label: UiText,
     val tone: FlightStatusTone,
     val source: FlightStatusSource
 ) {
@@ -59,10 +59,10 @@ data class FlightScheduleDisplay(
 @Immutable
 data class FlightRouteDisplay(
     val departureAirportCode: String,
-    val departureCityName: String,
+    val departureCityName: UiText,
     val arrivalAirportCode: String,
-    val arrivalCityName: String,
-    val stopsText: String
+    val arrivalCityName: UiText,
+    val stopsText: UiText
 ) {
     init {
         require(departureAirportCode.isNotBlank()) { "departureAirportCode cannot be blank" }
@@ -74,7 +74,7 @@ data class FlightRouteDisplay(
 @Immutable
 data class FlightSummaryDisplay(
     val durationSummary: String,
-    val tripTypeSummary: String
+    val tripTypeSummary: UiText
 ) {
     init {
         require(durationSummary.isNotBlank()) { "durationSummary cannot be blank" }

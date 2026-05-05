@@ -67,6 +67,7 @@ import com.dev.utils.uitext.UiText
 import com.example.common.extensions.toCurrencySymbol
 import com.example.common.extensions.toFormattedPrice
 import com.example.designsystem.theme.TravioTheme
+import com.example.designsystem.theme.elevation
 import com.example.designsystem.theme.spacing
 import com.example.feature.search.R
 
@@ -159,7 +160,7 @@ private fun FlightDetailsTopBar(onBack: () -> Unit) {
                     imageVector = Icons.Default.ArrowBackIosNew,
                     contentDescription = stringResource(R.string.search_navigate_back),
                     tint = MaterialTheme.colorScheme.onPrimary,
-                    modifier = Modifier.size(20.dp)
+                    modifier = Modifier.size(MaterialTheme.spacing.lg)
                 )
             }
             Text(
@@ -195,7 +196,7 @@ private fun AirlineHeaderCard(summary: FlightDetailsSummaryUi) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = MaterialTheme.elevation.xs),
         shape = MaterialTheme.shapes.large
     ) {
         Row(
@@ -204,7 +205,7 @@ private fun AirlineHeaderCard(summary: FlightDetailsSummaryUi) {
         ) {
             Box(
                 modifier = Modifier
-                    .size(48.dp)
+                    .size(MaterialTheme.spacing.xxxl)
                     .clip(CircleShape)
                     .background(MaterialTheme.colorScheme.surfaceVariant),
                 contentAlignment = Alignment.Center
@@ -238,7 +239,7 @@ private fun FlightSummaryCard(data: FlightDetailsUiModel) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = MaterialTheme.elevation.xs),
         shape = MaterialTheme.shapes.large
     ) {
         Column(modifier = Modifier.padding(MaterialTheme.spacing.md)) {
@@ -285,13 +286,25 @@ private fun FlightSummaryCard(data: FlightDetailsUiModel) {
                     Spacer(modifier = Modifier.height(MaterialTheme.spacing.xxs))
                     Box(contentAlignment = Alignment.Center) {
                         Row(verticalAlignment = Alignment.CenterVertically) {
-                            Box(modifier = Modifier.size(6.dp).background(MaterialTheme.colorScheme.secondaryContainer, CircleShape))
-                            Box(modifier = Modifier.width(60.dp).height(1.dp).background(MaterialTheme.colorScheme.secondaryContainer))
-                            Box(modifier = Modifier.size(6.dp).background(MaterialTheme.colorScheme.errorContainer, CircleShape))
+                            Box(
+                                modifier = Modifier.size(
+                                    MaterialTheme.spacing.xxs
+                                ).background(MaterialTheme.colorScheme.secondaryContainer, CircleShape)
+                            )
+                            Box(
+                                modifier = Modifier.width(
+                                    MaterialTheme.spacing.xxxl + MaterialTheme.spacing.md
+                                ).height(MaterialTheme.spacing.xxs).background(MaterialTheme.colorScheme.secondaryContainer)
+                            )
+                            Box(
+                                modifier = Modifier.size(
+                                    MaterialTheme.spacing.xxs
+                                ).background(MaterialTheme.colorScheme.errorContainer, CircleShape)
+                            )
                         }
                         Box(
                             modifier = Modifier
-                                .size(24.dp)
+                                .size(MaterialTheme.spacing.lg)
                                 .background(MaterialTheme.colorScheme.primary, CircleShape),
                             contentAlignment = Alignment.Center
                         ) {
@@ -299,7 +312,7 @@ private fun FlightSummaryCard(data: FlightDetailsUiModel) {
                                 painter = painterResource(R.drawable.plane_icon),
                                 contentDescription = null,
                                 tint = MaterialTheme.colorScheme.onPrimary,
-                                modifier = Modifier.size(14.dp)
+                                modifier = Modifier.size(MaterialTheme.spacing.sm + MaterialTheme.spacing.xxs)
                             )
                         }
                     }
@@ -432,7 +445,7 @@ private fun FeatureIcon(
             painter = icon,
             contentDescription = null,
             tint = MaterialTheme.colorScheme.primary,
-            modifier = Modifier.size(24.dp)
+            modifier = Modifier.size(MaterialTheme.spacing.lg)
         )
         Text(
             text = title,
@@ -454,7 +467,7 @@ private fun PriceBreakdownCard(price: PriceSectionUi) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = MaterialTheme.elevation.xs),
         shape = MaterialTheme.shapes.large
     ) {
         Column(modifier = Modifier.padding(MaterialTheme.spacing.md)) {
@@ -569,7 +582,7 @@ private fun FlightInformationCard(
     Card(
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = MaterialTheme.elevation.xs),
         shape = MaterialTheme.shapes.large
     ) {
         Column(modifier = Modifier.padding(MaterialTheme.spacing.md)) {
@@ -624,7 +637,7 @@ private fun FlightInformationCard(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(50.dp)
+                    .height(MaterialTheme.spacing.xxxl + MaterialTheme.spacing.xxs)
                     .clip(MaterialTheme.shapes.small)
                     .background(
                         brush = Brush.horizontalGradient(
@@ -643,7 +656,7 @@ private fun FlightInformationCard(
                         imageVector = Icons.Outlined.ConfirmationNumber,
                         contentDescription = null,
                         tint = MaterialTheme.colorScheme.error,
-                        modifier = Modifier.size(16.dp)
+                        modifier = Modifier.size(MaterialTheme.spacing.md)
                     )
                     Spacer(modifier = Modifier.width(MaterialTheme.spacing.xs))
                     Text(
@@ -668,7 +681,7 @@ private fun LargeFlightInfoItem(
         modifier = modifier
             .background(
                 color = MaterialTheme.colorScheme.primary.copy(alpha = 0.05f),
-                shape = RoundedCornerShape(24.dp)
+                shape = RoundedCornerShape(MaterialTheme.spacing.lg)
             )
             .padding(MaterialTheme.spacing.md)
     ) {
@@ -744,7 +757,7 @@ private fun FlightRouteSegmentsCard(timeline: List<TimelineItemUi>) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = MaterialTheme.elevation.xs),
         shape = MaterialTheme.shapes.large
     ) {
         Column(modifier = Modifier.padding(MaterialTheme.spacing.md)) {
@@ -778,15 +791,15 @@ private fun TimelineItem(
             }
             Box(
                 modifier = Modifier
-                    .size(12.dp)
+                    .size(MaterialTheme.spacing.sm)
                     .background(color, CircleShape)
-                    .border(2.dp, color.copy(alpha = 0.3f), CircleShape)
+                    .border(MaterialTheme.spacing.xxs, color.copy(alpha = 0.3f), CircleShape)
             )
             if (!isLast) {
                 Box(
                     modifier = Modifier
-                        .width(2.dp)
-                        .height(60.dp)
+                        .width(MaterialTheme.spacing.xxs)
+                        .height(MaterialTheme.spacing.xxxl + MaterialTheme.spacing.md)
                         .background(color.copy(alpha = 0.3f))
                 )
             }
@@ -1011,7 +1024,7 @@ private fun BottomInfoCard(
     Card(
         modifier = modifier,
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = MaterialTheme.elevation.xs),
         shape = MaterialTheme.shapes.large
     ) {
         Column(modifier = Modifier.padding(MaterialTheme.spacing.sm)) {

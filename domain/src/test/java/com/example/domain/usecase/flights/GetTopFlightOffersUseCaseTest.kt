@@ -29,7 +29,7 @@ class GetTopFlightOffersUseCaseTest {
         return TopFlightOffer(
             offerId = id,
             airlineName = "Airline",
-            imageUrl = null,
+            imageUrl = "",
             origin = "AAA",
             originCityName = "Origin",
             destination = "BBB",

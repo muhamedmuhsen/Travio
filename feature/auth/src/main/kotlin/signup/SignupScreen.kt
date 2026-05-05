@@ -43,7 +43,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.dev.utils.auth.GoogleCredentialHelper
@@ -169,12 +168,12 @@ fun SignupScreenContent(
                         Icon(
                             imageVector = Icons.Default.Close,
                             contentDescription = stringResource(id = DesignSystemR.string.close),
-                            modifier = Modifier.size(20.dp)
+                            modifier = Modifier.size(MaterialTheme.spacing.lg)
                         )
                     }
                 },
                 actions = {
-                    Spacer(modifier = Modifier.size(56.dp))
+                    Spacer(modifier = Modifier.size(MaterialTheme.spacing.xxxl + MaterialTheme.spacing.xs))
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.surface
@@ -187,7 +186,7 @@ fun SignupScreenContent(
                 .fillMaxSize()
                 .padding(innerPadding)
                 .verticalScroll(rememberScrollState())
-                .padding(horizontal = 20.dp),
+                .padding(horizontal = MaterialTheme.spacing.lg),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Spacer(modifier = Modifier.height(MaterialTheme.spacing.lg))

@@ -1,16 +1,22 @@
 package com.dev.home.presentation.flights
 
+import com.dev.utils.uitext.UiText
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Test
 
 class FlightCardFallbacksTest {
 
+    private val testFallback = FlightCardFallbackStrings(
+        unknownStatus = UiText.DynamicString("Unknown"),
+        unknownCity = UiText.DynamicString("City unavailable")
+    )
+
     @Test
     fun givenUnknownStatus_whenMapped_thenStatusUsesUnknownNeutralFallback() {
-        val content = payload(statusLabel = null).toFlightCardContent()
+        val content = payload(statusLabel = null).toFlightCardContent(testFallback)
 
-        assertEquals("Unknown", content.status.label)
+        assertEquals(testFallback.unknownStatus, content.status.label)
         assertEquals(FlightStatusTone.NEUTRAL, content.status.tone)
         assertEquals(FlightStatusSource.FALLBACK_UNKNOWN, content.status.source)
     }
@@ -20,10 +26,10 @@ class FlightCardFallbacksTest {
         val content = payload(
             departureCityName = "",
             arrivalCityName = null
-        ).toFlightCardContent()
+        ).toFlightCardContent(testFallback)
 
-        assertEquals("City unavailable", content.route.departureCityName)
-        assertEquals("City unavailable", content.route.arrivalCityName)
+        assertEquals(testFallback.unknownCity, content.route.departureCityName)
+        assertEquals(testFallback.unknownCity, content.route.arrivalCityName)
     }
 
     @Test

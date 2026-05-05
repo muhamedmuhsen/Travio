@@ -3,6 +3,8 @@ package com.example.data.repository.flights
 import com.example.domain.model.flights.TopFlightOffer
 import com.example.network.dto.flights.TopOfferDto
 import com.example.network.dto.flights.TopOffersResponseDto
+import com.example.network.dto.flights.booking.FlightOrderRequestDto
+import com.example.network.dto.flights.booking.PaymentIntentRequestDto
 import com.example.domain.utils.DataError
 import com.example.domain.utils.Result
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -38,20 +40,24 @@ class TopFlightOffersRepositoryImplTest {
                 apiCalled = true
                 return TopOffersResponseDto(true, listOf(sampleDto("1")), "OK", null)
             }
+            override suspend fun searchFlights(origin: String, destination: String, departureDate: String, adults: Int, cabinClass: String, maxStops: Int?) = throw NotImplementedError()
+            override suspend fun getFlightDetails(offerId: String) = throw NotImplementedError()
+            override suspend fun createPaymentIntent(request: PaymentIntentRequestDto) = throw NotImplementedError()
+            override suspend fun confirmFlightOrder(idempotencyKey: String, request: FlightOrderRequestDto) = throw NotImplementedError()
         }
 
         val cache = TopFlightOffersCache()
         val domain = TopFlightOffer(
             offerId = "cached",
             airlineName = "Air",
-            imageUrl = null,
-            origin = null,
-            originCityName = null,
-            destination = null,
+            imageUrl = "",
+            origin = "AAA",
+            originCityName = "Origin",
+            destination = "BBB",
             destinationCityName = "D",
-            duration = null,
-            flightNumber = null,
-            airlineLogoUrl = null,
+            duration = "2h",
+            flightNumber = "FL123",
+            airlineLogoUrl = "",
             stops = 0,
             cheapestPrice = 5.0,
             currency = "USD"
@@ -76,6 +82,10 @@ class TopFlightOffersRepositoryImplTest {
                 apiCalled = true
                 return TopOffersResponseDto(true, listOf(sampleDto("a"), sampleDto("a")), "OK", null)
             }
+            override suspend fun searchFlights(origin: String, destination: String, departureDate: String, adults: Int, cabinClass: String, maxStops: Int?) = throw NotImplementedError()
+            override suspend fun getFlightDetails(offerId: String) = throw NotImplementedError()
+            override suspend fun createPaymentIntent(request: PaymentIntentRequestDto) = throw NotImplementedError()
+            override suspend fun confirmFlightOrder(idempotencyKey: String, request: FlightOrderRequestDto) = throw NotImplementedError()
         }
 
         val cache = TopFlightOffersCache()
@@ -103,10 +113,14 @@ class TopFlightOffersRepositoryImplTest {
                 apiCalled = true
                 return TopOffersResponseDto(true, listOf(sampleDto("x")), "OK", null)
             }
+            override suspend fun searchFlights(origin: String, destination: String, departureDate: String, adults: Int, cabinClass: String, maxStops: Int?) = throw NotImplementedError()
+            override suspend fun getFlightDetails(offerId: String) = throw NotImplementedError()
+            override suspend fun createPaymentIntent(request: PaymentIntentRequestDto) = throw NotImplementedError()
+            override suspend fun confirmFlightOrder(idempotencyKey: String, request: FlightOrderRequestDto) = throw NotImplementedError()
         }
 
         val cache = TopFlightOffersCache()
-        cache.set(listOf(TopFlightOffer("old", "a", null, null, null, null, "d", null, null, null, 0, 1.0, "USD")))
+        cache.set(listOf(TopFlightOffer("old", "a", "", "AAA", "O", "BBB", "d", "1h", "FL1", "", 0, 1.0, "USD")))
 
         val repo = TopFlightOffersRepositoryImpl(api, cache)
         val res = repo.getTopFlightOffers(forceRefresh = true, limit = null)
@@ -120,6 +134,10 @@ class TopFlightOffersRepositoryImplTest {
             override suspend fun getTopOffers(): TopOffersResponseDto {
                 return TopOffersResponseDto(false, null, "Error", listOf("Error"))
             }
+            override suspend fun searchFlights(origin: String, destination: String, departureDate: String, adults: Int, cabinClass: String, maxStops: Int?) = throw NotImplementedError()
+            override suspend fun getFlightDetails(offerId: String) = throw NotImplementedError()
+            override suspend fun createPaymentIntent(request: PaymentIntentRequestDto) = throw NotImplementedError()
+            override suspend fun confirmFlightOrder(idempotencyKey: String, request: FlightOrderRequestDto) = throw NotImplementedError()
         }
         val cache = TopFlightOffersCache()
         val repo = TopFlightOffersRepositoryImpl(api, cache)

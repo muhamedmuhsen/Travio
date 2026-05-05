@@ -28,7 +28,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.example.designsystem.components.shimmerEffect
 import com.example.designsystem.theme.TravioTheme
@@ -107,7 +106,7 @@ fun LoadingRecentViewedCard(modifier: Modifier = Modifier) {
             ) {
                 Box(
                     modifier = Modifier
-                        .size(110.dp)
+                        .size(MaterialTheme.spacing.xxxl * 2 + MaterialTheme.spacing.md)
                         .shimmerEffect()
                 )
                 Column(
@@ -118,7 +117,7 @@ fun LoadingRecentViewedCard(modifier: Modifier = Modifier) {
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(14.dp)
+                            .height(MaterialTheme.spacing.sm + MaterialTheme.spacing.xxs)
                             .clip(MaterialTheme.shapes.extraSmall)
                             .shimmerEffect()
                     )
@@ -126,7 +125,7 @@ fun LoadingRecentViewedCard(modifier: Modifier = Modifier) {
                     Box(
                         modifier = Modifier
                             .fillMaxWidth(0.7f)
-                            .height(14.dp)
+                            .height(MaterialTheme.spacing.sm + MaterialTheme.spacing.xxs)
                             .clip(MaterialTheme.shapes.extraSmall)
                             .shimmerEffect()
                     )
@@ -135,8 +134,8 @@ fun LoadingRecentViewedCard(modifier: Modifier = Modifier) {
 
                     Box(
                         modifier = Modifier
-                            .width(80.dp)
-                            .height(16.dp)
+                            .width(MaterialTheme.spacing.xxxl + MaterialTheme.spacing.xlg)
+                            .height(MaterialTheme.spacing.md)
                             .clip(MaterialTheme.shapes.extraSmall)
                             .shimmerEffect()
                     )
@@ -155,7 +154,7 @@ private fun CardThumbnail(imageUrl: String) {
         placeholder = painterResource(id = R.drawable.error_place_icon),
         error = painterResource(id = R.drawable.error_place_icon),
         modifier = Modifier
-            .size(110.dp)
+            .size(MaterialTheme.spacing.xxxl * 2 + MaterialTheme.spacing.md)
             .clip(MaterialTheme.shapes.medium)
     )
 }
@@ -185,7 +184,7 @@ private fun CardContent(
                 imageVector = Icons.Filled.Star,
                 contentDescription = null,
                 tint = Color(0xFFFFD700),
-                modifier = Modifier.size(18.dp)
+                modifier = Modifier.size(MaterialTheme.spacing.md + MaterialTheme.spacing.xxs)
             )
 
             Spacer(modifier = Modifier.width(MaterialTheme.spacing.xs))

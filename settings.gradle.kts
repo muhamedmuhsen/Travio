@@ -40,5 +40,6 @@ include(":feature:utils")
 include(":feature:search")
 include(":feature:destination")
 include(":feature")
+include(":feature:booking")
 include(":core:database")
 

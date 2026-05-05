@@ -28,10 +28,11 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.designsystem.theme.TravioTheme
+import com.example.designsystem.theme.elevation
+import com.example.designsystem.theme.spacing
 import com.example.feature.favorite.R
 
 @Composable
@@ -48,8 +49,8 @@ fun PlaceCard(
     Card(
         modifier = modifier.fillMaxWidth(),
         shape = MaterialTheme.shapes.small,
-        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
-        border = BorderStroke(width = 1.dp, color = MaterialTheme.colorScheme.surface),
+        elevation = CardDefaults.cardElevation(defaultElevation = MaterialTheme.elevation.xs),
+        border = BorderStroke(width = MaterialTheme.spacing.xxs, color = MaterialTheme.colorScheme.surface),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer),
         onClick = onClick
     ) {
@@ -76,14 +77,14 @@ private fun PlaceContent(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(12.dp),
+            .padding(MaterialTheme.spacing.sm),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Row(
             modifier = Modifier.weight(1f),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
+            horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.sm)
         ) {
             AsyncImage(
                 model = if (imageUrl.isBlank()) {
@@ -99,7 +100,7 @@ private fun PlaceContent(
                 },
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
-                    .size(96.dp)
+                    .size(MaterialTheme.spacing.xxxl * 2)
                     .clip(MaterialTheme.shapes.medium)
             )
             PlaceDetails(country = country, city = city)
@@ -120,14 +121,14 @@ private fun FavoriteIcon(
 ) {
     Box(
         modifier = Modifier
-            .size(48.dp)
+            .size(MaterialTheme.spacing.xxxl)
             .semantics { role = Role.Button }
             .clickable(enabled = enabled, onClick = onFavoriteClick),
         contentAlignment = Alignment.Center
     ) {
         Box(
             modifier = Modifier
-                .size(28.dp)
+                .size(MaterialTheme.spacing.xlg)
                 .background(
                     MaterialTheme.colorScheme.surfaceContainerHighest,
                     shape = CircleShape
@@ -144,7 +145,7 @@ private fun FavoriteIcon(
                     }
                 ),
                 tint = Color(0xFFCB2323),
-                modifier = Modifier.size(14.dp)
+                modifier = Modifier.size(MaterialTheme.spacing.sm)
             )
         }
     }
@@ -155,7 +156,7 @@ private fun PlaceDetails(
     country: String,
     city: String
 ) {
-    Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+    Column(verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.xxs)) {
         Text(
             text = country,
             style = MaterialTheme.typography.titleMedium,

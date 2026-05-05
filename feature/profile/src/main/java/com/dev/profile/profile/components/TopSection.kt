@@ -33,6 +33,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.designsystem.theme.TravioTheme
+import com.example.designsystem.theme.elevation
 import com.example.designsystem.theme.spacing
 import com.example.feature.profile.R
 
@@ -57,8 +58,8 @@ fun TopSection(
 ) {
     Card(
         modifier = modifier.fillMaxWidth(),
-        elevation = CardDefaults.cardElevation(0.5.dp),
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.5f)),
+        elevation = CardDefaults.cardElevation(MaterialTheme.elevation.xs),
+        border = BorderStroke(MaterialTheme.spacing.xxs, MaterialTheme.colorScheme.outline.copy(alpha = 0.5f)),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface
         )
@@ -88,8 +89,8 @@ fun TopSectionWithSwitch(
 ) {
     Card(
         modifier = modifier.fillMaxWidth(),
-        elevation = CardDefaults.cardElevation(0.5.dp),
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.5f)),
+        elevation = CardDefaults.cardElevation(MaterialTheme.elevation.xs),
+        border = BorderStroke(MaterialTheme.spacing.xxs, MaterialTheme.colorScheme.outline.copy(alpha = 0.5f)),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface
         )
@@ -133,7 +134,7 @@ fun ProfileLanguageButton(
         modifier = modifier
             .clip(MaterialTheme.shapes.small)
             .background(MaterialTheme.colorScheme.primaryContainer)
-            .padding(horizontal = 14.dp, vertical = 4.dp)
+            .padding(horizontal = MaterialTheme.spacing.sm, vertical = MaterialTheme.spacing.xxs)
     ) {
         Text(
             text = text,
@@ -169,7 +170,7 @@ fun DetailsCard(
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.onBackground,
                 modifier = Modifier
-                    .size(18.dp)
+                    .size(MaterialTheme.spacing.md + MaterialTheme.spacing.xxs)
             )
         }
     }
@@ -215,7 +216,7 @@ private fun DetailsRowSection(
     ) {
         Box(
             modifier = Modifier
-                .size(40.dp)
+                .size(MaterialTheme.spacing.xxl)
                 .clip(CircleShape)
                 .background(MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.15f)),
             contentAlignment = Alignment.Center

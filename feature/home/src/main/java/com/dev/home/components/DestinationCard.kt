@@ -77,7 +77,7 @@ fun DestinationCard(
             .height(DESTINATION_CARD_HEIGHT)
             .clickable(onClick = onCardClicked),
         shape = MaterialTheme.shapes.extraLarge,
-        border = BorderStroke(2.dp, MaterialTheme.colorScheme.surfaceContainer),
+        border = BorderStroke(MaterialTheme.spacing.xxs / 2, MaterialTheme.colorScheme.surfaceContainer),
         elevation = CardDefaults.cardElevation(
             defaultElevation = MaterialTheme.elevation.xs
         )
@@ -129,7 +129,7 @@ fun DestinationCard(
                 Text(
                     text = title,
                     color = overlayContentColor,
-                    style = MaterialTheme.typography.headlineMedium,
+                    style = MaterialTheme.typography.headlineSmall,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.fillMaxWidth(),
                     maxLines = 1,
@@ -141,7 +141,7 @@ fun DestinationCard(
                 Text(
                     text = description,
                     color = overlayContentColor.copy(alpha = 0.9f),
-                    style = MaterialTheme.typography.bodyMedium,
+                    style = MaterialTheme.typography.bodySmall,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
@@ -168,10 +168,9 @@ fun DestinationCard(
                     shape = CircleShape
                 ) {
                     Text(
-                        text = "Explore",
-                        style = MaterialTheme.typography.titleMedium,
+                        text = stringResource(R.string.home_explore),
+                        style = MaterialTheme.typography.labelLarge,
                         fontWeight = FontWeight.SemiBold
-                        // modifier = Modifier.padding(vertical = MaterialTheme.spacing.xs)
                     )
                 }
             }
@@ -206,21 +205,21 @@ fun LoadingDestinationCard(modifier: Modifier = Modifier) {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth(0.6f)
-                        .height(28.dp)
+                        .height(MaterialTheme.spacing.xlg)
                         .clip(MaterialTheme.shapes.extraSmall)
                         .shimmerEffect()
                 )
                 Box(
                     modifier = Modifier
                         .fillMaxWidth(0.4f)
-                        .height(20.dp)
+                        .height(MaterialTheme.spacing.md + MaterialTheme.spacing.xxs)
                         .clip(MaterialTheme.shapes.extraSmall)
                         .shimmerEffect()
                 )
                 Box(
                     modifier = Modifier
                         .fillMaxWidth(0.3f)
-                        .height(18.dp)
+                        .height(MaterialTheme.spacing.md + MaterialTheme.spacing.xxs / 2)
                         .clip(MaterialTheme.shapes.extraSmall)
                         .shimmerEffect()
                 )
@@ -228,7 +227,7 @@ fun LoadingDestinationCard(modifier: Modifier = Modifier) {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(48.dp)
+                        .height(MaterialTheme.spacing.xxxl)
                         .clip(CircleShape)
                         .shimmerEffect()
                 )
@@ -245,7 +244,7 @@ private fun FavoriteButton(
     enabled: Boolean
 ) {
     Surface(
-        modifier = modifier.size(36.dp),
+        modifier = modifier.size(MaterialTheme.spacing.xl + MaterialTheme.spacing.xxs),
         shape = CircleShape,
         color = Color.White,
         shadowElevation = MaterialTheme.elevation.xs
@@ -264,7 +263,7 @@ private fun FavoriteButton(
                     stringResource(R.string.add_to_favorites)
                 },
                 tint = if (isFavorite) Color(0xFFCB2323) else Color.Gray,
-                modifier = Modifier.size(20.dp)
+                modifier = Modifier.size(MaterialTheme.spacing.lg - MaterialTheme.spacing.xxs)
             )
         }
     }
@@ -278,18 +277,18 @@ private fun RatingBadge(
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(4.dp)
+        horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.xxs)
     ) {
         Icon(
             imageVector = Icons.Filled.Star,
             contentDescription = null,
             tint = Color(0xFFFFD700),
-            modifier = Modifier.size(20.dp)
+            modifier = Modifier.size(MaterialTheme.spacing.lg - MaterialTheme.spacing.xxs)
         )
         Text(
             text = "$rating ($reviewCount)",
             color = contentColor,
-            style = MaterialTheme.typography.bodyLarge,
+            style = MaterialTheme.typography.bodySmall,
             fontWeight = FontWeight.Medium
         )
     }

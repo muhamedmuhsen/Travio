@@ -49,6 +49,7 @@ import com.dev.profile.profile.components.TopSectionWithSwitch
 import com.example.designsystem.components.AppBottomBar
 import com.example.designsystem.components.ErrorSnackBar
 import com.example.designsystem.theme.TravioTheme
+import com.example.designsystem.theme.spacing
 import com.example.feature.profile.R
 
 @SuppressLint("StateFlowValueCalledInComposition")
@@ -180,8 +181,8 @@ private fun ProfileContent(
             modifier = Modifier
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(24.dp)
+                .padding(MaterialTheme.spacing.md),
+            verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.lg)
         ) {
             // Account Settings Section
             ProfileCategory(
@@ -273,7 +274,7 @@ fun ProfileCategory(
 ) {
     Column(
         modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(12.dp)
+        verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.sm)
     ) {
         Text(
             text = title,
@@ -295,7 +296,7 @@ fun ProfileCategoryWithSwitch(
 ) {
     Column(
         modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(12.dp)
+        verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.sm)
     ) {
         Text(
             text = title,
@@ -321,13 +322,13 @@ fun SectionHeader(
         modifier = modifier
             .fillMaxWidth()
             .background(MaterialTheme.colorScheme.primaryContainer)
-            .padding(horizontal = 16.dp, vertical = 20.dp),
+            .padding(horizontal = MaterialTheme.spacing.md, vertical = MaterialTheme.spacing.lg),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(16.dp)
+        horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.md)
     ) {
         Box(
             modifier = Modifier
-                .size(56.dp)
+                .size(MaterialTheme.spacing.xxxl + MaterialTheme.spacing.xs)
                 .clip(CircleShape)
                 .background(MaterialTheme.colorScheme.surfaceVariant)
         ) {

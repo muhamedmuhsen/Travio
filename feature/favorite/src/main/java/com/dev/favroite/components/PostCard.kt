@@ -25,9 +25,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.example.designsystem.theme.TravioTheme
+import com.example.designsystem.theme.elevation
+import com.example.designsystem.theme.spacing
 import com.example.feature.favorite.R
 
 @Composable
@@ -43,8 +44,8 @@ fun TripCard(
     Card(
         modifier = modifier.fillMaxWidth(),
         shape = MaterialTheme.shapes.small,
-        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
-        border = BorderStroke(width = 1.dp, color = MaterialTheme.colorScheme.surface),
+        elevation = CardDefaults.cardElevation(defaultElevation = MaterialTheme.elevation.xs),
+        border = BorderStroke(width = MaterialTheme.spacing.xxs, color = MaterialTheme.colorScheme.surface),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer),
         onClick = onClick
     ) {
@@ -69,21 +70,21 @@ private fun PostContent(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(12.dp),
+            .padding(MaterialTheme.spacing.sm),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Row(
             modifier = Modifier.weight(1f),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
+            horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.sm)
         ) {
             AsyncImage(
                 model = imageUrl,
                 contentDescription = title,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
-                    .size(96.dp)
+                    .size(MaterialTheme.spacing.xxxl * 2)
                     .clip(MaterialTheme.shapes.medium)
             )
             PostDetails(title = title, ownerName = ownerName)
@@ -99,13 +100,13 @@ private fun PostFavoriteIcon(
 ) {
     Box(
         modifier = Modifier
-            .size(48.dp)
+            .size(MaterialTheme.spacing.xxxl)
             .clickable(onClick = onFavoriteClick),
         contentAlignment = Alignment.Center
     ) {
         Box(
             modifier = Modifier
-                .size(28.dp)
+                .size(MaterialTheme.spacing.xlg)
                 .background(
                     color = if (isFavorite) {
                         MaterialTheme.colorScheme.errorContainer
@@ -124,7 +125,7 @@ private fun PostFavoriteIcon(
                 } else {
                     MaterialTheme.colorScheme.onSurfaceVariant
                 },
-                modifier = Modifier.size(14.dp)
+                modifier = Modifier.size(MaterialTheme.spacing.sm)
             )
         }
     }
@@ -135,7 +136,7 @@ private fun PostDetails(
     title: String,
     ownerName: String
 ) {
-    Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+    Column(verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.xxs)) {
         Text(
             text = title,
             style = MaterialTheme.typography.titleMedium,

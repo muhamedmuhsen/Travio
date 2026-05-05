@@ -192,6 +192,7 @@ dependencies {
     implementation(project(":feature:survey"))
     implementation(project(":feature:search"))
     implementation(project(":feature:destination"))
+    implementation(project(":feature:booking"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)

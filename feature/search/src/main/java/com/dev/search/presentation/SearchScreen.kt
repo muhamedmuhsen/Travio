@@ -36,7 +36,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.dev.home.components.ErrorView
@@ -268,7 +267,7 @@ private fun EmptyResultsState() {
         Icon(
             imageVector = Icons.Outlined.SearchOff,
             contentDescription = null,
-            modifier = Modifier.size(64.dp),
+            modifier = Modifier.size(MaterialTheme.spacing.xxxl + MaterialTheme.spacing.md),
             tint = MaterialTheme.colorScheme.onSurfaceVariant
         )
         Spacer(Modifier.height(MaterialTheme.spacing.md))

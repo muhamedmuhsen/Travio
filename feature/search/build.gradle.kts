@@ -86,4 +86,19 @@ dependencies {
     implementation(libs.timber)
     // Coroutines
     implementation(libs.kotlinx.coroutines)
+
+    // Unit Tests
+    testImplementation(libs.junit)
+    testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.mockito.core)
+    testImplementation(libs.mockito.kotlin)
+
+    // UI Tests
+    androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation(libs.androidx.espresso.core)
+    androidTestImplementation(libs.androidx.compose.ui.test.junit4)
+    debugImplementation(libs.androidx.compose.ui.test.manifest)
+
+    // We also need compose-test-junit4 for unit tests if we use createComposeRule in src/test
+    testImplementation(libs.androidx.compose.ui.test.junit4)
 }

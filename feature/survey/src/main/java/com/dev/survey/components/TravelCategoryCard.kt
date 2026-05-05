@@ -29,12 +29,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.designsystem.theme.TravioTheme
+import com.example.designsystem.theme.elevation
 import com.example.designsystem.theme.spacing
 
-private val CardHeight = 150.dp
-private val BorderWidth = 2.dp
-private val IndicatorSize = 28.dp
-private val SelectedColor = Color(0xFF00B4C5)
+private val CardHeight @Composable get() = MaterialTheme.spacing.xxxl * 3
+private val BorderWidth @Composable get() = MaterialTheme.elevation.xs
+private val IndicatorSize @Composable get() = MaterialTheme.spacing.xl
+private val SelectedColor @Composable get() = MaterialTheme.colorScheme.primary
 
 @Composable
 fun TravelCategoryCard(
@@ -105,7 +106,7 @@ fun TravelCategoryCard(
                     if (isSelected) SelectedColor else Color.Transparent
                 )
                 .border(
-                    width = 2.dp,
+                    width = MaterialTheme.elevation.xs,
                     color = if (isSelected) Color.Transparent else Color.White,
                     shape = CircleShape
                 )
@@ -115,7 +116,7 @@ fun TravelCategoryCard(
                     imageVector = Icons.Default.Check,
                     contentDescription = null,
                     tint = Color.White,
-                    modifier = Modifier.size(16.dp)
+                    modifier = Modifier.size(MaterialTheme.spacing.md)
                 )
             }
         }

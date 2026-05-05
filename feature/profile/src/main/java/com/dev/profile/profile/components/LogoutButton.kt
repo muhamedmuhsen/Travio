@@ -19,8 +19,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import com.example.designsystem.theme.TravioTheme
+import com.example.designsystem.theme.spacing
 import com.example.feature.profile.R
 
 @Composable
@@ -35,7 +35,7 @@ fun LogoutButton(
         colors = ButtonDefaults.outlinedButtonColors(
             contentColor = MaterialTheme.colorScheme.onBackground
         ),
-        border = BorderStroke(width = 1.dp, color = MaterialTheme.colorScheme.error)
+        border = BorderStroke(width = MaterialTheme.spacing.xxs, color = MaterialTheme.colorScheme.error)
     ) {
         Row(
             horizontalArrangement = Arrangement.Center,
@@ -46,9 +46,9 @@ fun LogoutButton(
                 painter = painterResource(R.drawable.logout_icon),
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.error,
-                modifier = Modifier.size(12.dp)
+                modifier = Modifier.size(MaterialTheme.spacing.sm)
             )
-            Spacer(modifier = Modifier.width(8.dp))
+            Spacer(modifier = Modifier.width(MaterialTheme.spacing.xs))
             Text(
                 text = stringResource(id = R.string.logout),
                 style = MaterialTheme.typography.titleMedium,

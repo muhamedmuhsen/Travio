@@ -1,5 +1,6 @@
 package com.dev.home.presentation.flights
 
+import com.dev.utils.uitext.UiText
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -8,13 +9,18 @@ import org.junit.Test
 
 class FlightCardMapperTest {
 
+    private val testFallback = FlightCardFallbackStrings(
+        unknownStatus = UiText.DynamicString("Unknown"),
+        unknownCity = UiText.DynamicString("City unavailable")
+    )
+
     @Test
     fun givenMissingStatus_whenMapping_thenUsesUnknownStatusFallback() {
         val payload = samplePayload(statusLabel = null)
 
-        val mapped = payload.toFlightCardContent()
+        val mapped = payload.toFlightCardContent(testFallback)
 
-        assertEquals("Unknown", mapped.status.label)
+        assertEquals(testFallback.unknownStatus, mapped.status.label)
         assertEquals(FlightStatusTone.NEUTRAL, mapped.status.tone)
         assertEquals(FlightStatusSource.FALLBACK_UNKNOWN, mapped.status.source)
     }
@@ -26,10 +32,10 @@ class FlightCardMapperTest {
             arrivalCityName = ""
         )
 
-        val mapped = payload.toFlightCardContent()
+        val mapped = payload.toFlightCardContent(testFallback)
 
-        assertEquals("City unavailable", mapped.route.departureCityName)
-        assertEquals("City unavailable", mapped.route.arrivalCityName)
+        assertEquals(testFallback.unknownCity, mapped.route.departureCityName)
+        assertEquals(testFallback.unknownCity, mapped.route.arrivalCityName)
     }
 
     @Test
@@ -60,7 +66,7 @@ class FlightCardMapperTest {
     fun givenInvalidActionState_whenLoadingButEnabled_thenThrows() {
         assertThrows(IllegalArgumentException::class.java) {
             FlightCardActionState(
-                label = "Book Now",
+                label = UiText.DynamicString("Book Now"),
                 state = FlightCtaState.LOADING,
                 enabled = true,
                 loadingIndicatorVisible = true

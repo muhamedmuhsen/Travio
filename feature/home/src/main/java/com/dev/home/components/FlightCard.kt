@@ -21,7 +21,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -30,6 +30,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -37,7 +38,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.dev.home.presentation.flights.FlightCardContent
 import com.dev.home.presentation.flights.FlightStatusTone
@@ -57,6 +57,7 @@ fun FlightCard(
     onCtaClick: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val context = LocalContext.current
     val cardDescription = stringResource(
         R.string.flight_card_cd,
         content.airlineName,
@@ -110,10 +111,9 @@ fun FlightCard(
                 shape = MaterialTheme.shapes.large
             ) {
                 Text(
-                    text = content.cta.label,
-                    style = MaterialTheme.typography.headlineSmall,
-                    fontWeight = FontWeight.SemiBold,
-                    fontSize = 14.sp
+                    text = content.cta.label.asString(context),
+                    style = MaterialTheme.typography.labelLarge,
+                    fontWeight = FontWeight.SemiBold
                 )
             }
         }
@@ -143,6 +143,7 @@ fun LoadingFlightCard(modifier: Modifier = Modifier) {
 
 @Composable
 private fun FlightCardHeader(content: FlightCardContent) {
+    val context = LocalContext.current
     val logoContentDescription = content.airlineLogoContentDescription
         ?: stringResource(R.string.flight_airline_logo_cd, content.airlineName)
 
@@ -168,18 +169,16 @@ private fun FlightCardHeader(content: FlightCardContent) {
         ) {
             Text(
                 text = content.airlineName,
-                style = MaterialTheme.typography.headlineSmall,
+                style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurface,
-                fontSize = 12.sp,
                 fontWeight = FontWeight.Bold,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
             Text(
                 text = content.flightNumber,
-                style = MaterialTheme.typography.titleMedium,
+                style = MaterialTheme.typography.labelSmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
-                fontSize = 10.sp,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
@@ -191,9 +190,10 @@ private fun FlightCardHeader(content: FlightCardContent) {
 
 @Composable
 private fun FlightStatusBadge(content: FlightCardContent) {
+    val context = LocalContext.current
     val statusContentDescription = stringResource(
         R.string.flight_status_badge_cd,
-        content.status.label
+        content.status.label.asString(context)
     )
 
     val containerColor = when (content.status.tone) {
@@ -222,12 +222,11 @@ private fun FlightStatusBadge(content: FlightCardContent) {
             .semantics { contentDescription = statusContentDescription }
     ) {
         Text(
-            text = content.status.label,
-            style = MaterialTheme.typography.labelLarge,
+            text = content.status.label.asString(context),
+            style = MaterialTheme.typography.labelSmall,
             color = contentColor,
             fontWeight = FontWeight.Medium,
             maxLines = 1,
-            fontSize = 10.sp,
             overflow = TextOverflow.Ellipsis,
             modifier = Modifier.padding(
                 horizontal = MaterialTheme.spacing.sm,
@@ -245,8 +244,7 @@ private fun FlightScheduleRow(content: FlightCardContent) {
     ) {
         Text(
             text = content.schedule.departureTime,
-            style = MaterialTheme.typography.displaySmall,
-            fontSize = 20.sp,
+            style = MaterialTheme.typography.titleLarge,
             color = MaterialTheme.colorScheme.onSurface,
             fontWeight = FontWeight.Bold,
             maxLines = 1,
@@ -256,10 +254,9 @@ private fun FlightScheduleRow(content: FlightCardContent) {
         Spacer(modifier = Modifier.weight(0.32f))
         Text(
             text = content.schedule.arrivalTime,
-            style = MaterialTheme.typography.displaySmall,
+            style = MaterialTheme.typography.titleLarge,
             color = MaterialTheme.colorScheme.onSurface,
             fontWeight = FontWeight.Bold,
-            fontSize = 20.sp,
             maxLines = 1,
             modifier = Modifier.weight(0.34f),
             textAlign = TextAlign.Center
@@ -269,6 +266,7 @@ private fun FlightScheduleRow(content: FlightCardContent) {
 
 @Composable
 private fun FlightRouteBlock(content: FlightCardContent) {
+    val context = LocalContext.current
     Column(modifier = Modifier.fillMaxWidth()) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -276,10 +274,9 @@ private fun FlightRouteBlock(content: FlightCardContent) {
         ) {
             Text(
                 text = content.route.departureAirportCode,
-                style = MaterialTheme.typography.headlineMedium,
+                style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurface,
                 fontWeight = FontWeight.Bold,
-                fontSize = 14.sp,
                 modifier = Modifier.weight(0.34f),
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
@@ -296,10 +293,9 @@ private fun FlightRouteBlock(content: FlightCardContent) {
             )
             Text(
                 text = content.route.arrivalAirportCode,
-                style = MaterialTheme.typography.headlineMedium,
+                style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurface,
                 fontWeight = FontWeight.Bold,
-                fontSize = 14.sp,
                 modifier = Modifier.weight(0.34f),
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
@@ -314,36 +310,31 @@ private fun FlightRouteBlock(content: FlightCardContent) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = content.route.departureCityName,
-                style = MaterialTheme.typography.bodyLarge,
+                text = content.route.departureCityName.asString(context),
+                style = MaterialTheme.typography.labelSmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
-                fontSize = 10.sp,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 modifier = Modifier.weight(0.34f),
                 textAlign = TextAlign.Center
             )
             Text(
-                text = content.route.stopsText,
-                style = MaterialTheme.typography.bodyLarge,
+                text = content.route.stopsText.asString(context),
+                style = MaterialTheme.typography.labelSmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 modifier = Modifier.weight(0.32f),
-                textAlign = TextAlign.Center,
-                fontSize = 10.sp
-
+                textAlign = TextAlign.Center
             )
             Text(
-                text = content.route.arrivalCityName,
-                style = MaterialTheme.typography.bodyLarge,
+                text = content.route.arrivalCityName.asString(context),
+                style = MaterialTheme.typography.labelSmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 modifier = Modifier.weight(0.34f),
-                textAlign = TextAlign.Center,
-                fontSize = 10.sp
-
+                textAlign = TextAlign.Center
             )
         }
     }
@@ -361,7 +352,7 @@ private fun FlightPathDivider() {
             horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.xs),
             modifier = Modifier.fillMaxWidth()
         ) {
-            Divider(
+            HorizontalDivider(
                 modifier = Modifier.weight(1f),
                 color = MaterialTheme.colorScheme.outlineVariant
             )
@@ -379,7 +370,7 @@ private fun FlightPathDivider() {
                     )
                 }
             }
-            Divider(
+            HorizontalDivider(
                 modifier = Modifier.weight(1f),
                 color = MaterialTheme.colorScheme.outlineVariant
             )
@@ -389,6 +380,7 @@ private fun FlightPathDivider() {
 
 @Composable
 private fun FlightSummaryPrice(content: FlightCardContent) {
+    val context = LocalContext.current
     Column(
         modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -401,25 +393,23 @@ private fun FlightSummaryPrice(content: FlightCardContent) {
             fontWeight = FontWeight.Medium
         )
         Text(
-            text = content.summary.tripTypeSummary,
+            text = content.summary.tripTypeSummary.asString(context),
             style = MaterialTheme.typography.labelMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(
                 text = content.price.currencySymbol,
-                style = MaterialTheme.typography.displaySmall,
+                style = MaterialTheme.typography.titleLarge,
                 color = MaterialTheme.colorScheme.primary,
                 fontWeight = FontWeight.Bold,
-                fontSize = 21.sp,
                 maxLines = 1
             )
             Text(
                 text = content.price.amountText,
-                style = MaterialTheme.typography.displayMedium,
+                style = MaterialTheme.typography.titleLarge,
                 color = MaterialTheme.colorScheme.primary,
                 fontWeight = FontWeight.Bold,
-                fontSize = 21.sp,
                 maxLines = 1
             )
         }

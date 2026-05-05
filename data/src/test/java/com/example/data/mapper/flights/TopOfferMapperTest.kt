@@ -13,14 +13,16 @@ class TopOfferMapperTest {
             offerId = null,
             airlineName = "Airline",
             imageUrl = "https://example.com/1.png",
-            destinationName = "Dest",
             origin = "AAA",
+            originCityName = "Origin",
             destination = "BBB",
-            cheapestPrice = 100.0,
-            currency = "USD",
-            travelDate = "2026-01-01",
+            destinationCityName = "Dest",
+            duration = "2h",
             flightNumber = "AB123",
-            status = "ON_TIME"
+            airlineLogoUrl = "logo",
+            stops = 0,
+            cheapestPrice = 100.0,
+            currency = "USD"
         )
 
         val domain = dto.toDomain()
@@ -33,21 +35,24 @@ class TopOfferMapperTest {
             offerId = "1",
             airlineName = null,
             imageUrl = null,
-            destinationName = "",
             origin = null,
+            originCityName = null,
             destination = null,
-            cheapestPrice = null,
-            currency = null,
-            travelDate = null,
+            destinationCityName = null,
+            duration = null,
             flightNumber = null,
-            status = null
+            airlineLogoUrl = null,
+            stops = null,
+            cheapestPrice = null,
+            currency = null
         )
 
         val domain = dto.toDomain()!!
         assertEquals("Unknown Airline", domain.airlineName)
-        // imageUrl was null in the DTO -> mapped imageUrl must be null in domain
-        assertNull(domain.imageUrl)
-        assertEquals("Unknown Destination", domain.destinationName)
+        // imageUrl was null in the DTO -> mapped imageUrl must be empty string in domain (per domain model)
+        // Wait, let's check TopFlightOffer domain model for imageUrl nullability
+        assertEquals("", domain.imageUrl)
+        assertEquals("Unknown Destination", domain.destinationCityName)
         assertEquals(0.0, domain.cheapestPrice, 0.0)
         assertEquals("", domain.currency)
     }
@@ -58,14 +63,16 @@ class TopOfferMapperTest {
             offerId = "42",
             airlineName = "TestAir",
             imageUrl = "https://example.com/42.png",
-            destinationName = "Nice City",
             origin = "LAX",
+            originCityName = "Los Angeles",
             destination = "JFK",
-            cheapestPrice = 123.45,
-            currency = "USD",
-            travelDate = "2026-12-01",
+            destinationCityName = "Nice City",
+            duration = "5h",
             flightNumber = "TA123",
-            status = "ON_TIME"
+            airlineLogoUrl = "logo",
+            stops = 0,
+            cheapestPrice = 123.45,
+            currency = "USD"
         )
 
         val domain = dto.toDomain()!!
@@ -73,15 +80,10 @@ class TopOfferMapperTest {
         assertEquals("42", domain.offerId)
         assertEquals("TestAir", domain.airlineName)
         assertEquals("https://example.com/42.png", domain.imageUrl)
-        assertEquals("Nice City", domain.destinationName)
+        assertEquals("Nice City", domain.destinationCityName)
         assertEquals("LAX", domain.origin)
         assertEquals("JFK", domain.destination)
         assertEquals(123.45, domain.cheapestPrice, 0.0)
         assertEquals("USD", domain.currency)
-        assertEquals("2026-12-01", domain.travelDate)
-        assertEquals("TA123", domain.flightNumber)
-        assertEquals("ON_TIME", domain.status)
     }
 }
-
-

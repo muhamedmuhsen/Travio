@@ -24,6 +24,7 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.designsystem.components.shimmerEffect
 import com.example.designsystem.theme.TravioTheme
+import com.example.designsystem.theme.spacing
 import com.example.domain.model.destination.Country
 import com.example.feature.home.R
 
@@ -34,7 +35,7 @@ fun CountryCard(
 ) {
     Box(
         modifier = modifier
-            .size(140.dp)
+            .size(MaterialTheme.spacing.xxxl * 3)
             .clip(MaterialTheme.shapes.medium)
     ) {
         AsyncImage(
@@ -53,10 +54,9 @@ fun CountryCard(
 
         Text(
             text = country.name,
-            style = MaterialTheme.typography.titleLarge.copy(
-                color = Color.White,
-                fontWeight = FontWeight.Bold
-            ),
+            style = MaterialTheme.typography.titleLarge,
+            color = Color.White,
+            fontWeight = FontWeight.Bold,
             modifier = Modifier.align(Alignment.Center)
         )
     }

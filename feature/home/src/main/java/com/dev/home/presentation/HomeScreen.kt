@@ -48,7 +48,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.dev.home.components.AppendErrorRetry
@@ -77,7 +76,6 @@ import com.example.domain.model.destination.Destination
 import com.example.feature.home.R
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
-import timber.log.Timber
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
@@ -256,7 +254,6 @@ private fun HomeContent(
                         onRetry = { onAction(HomeAction.OnRetrySection(HomeSection.Nearby)) },
                         isNearby = true
                     )
-                    Timber.w("state: ", state.flightsState)
                     FlightsStateHandling(
                         state = state.flightsState,
                         onAction = onAction,
@@ -407,7 +404,7 @@ private fun EmptySection(
             Icon(
                 imageVector = icon,
                 contentDescription = null,
-                modifier = Modifier.size(48.dp),
+                modifier = Modifier.size(MaterialTheme.spacing.xxxl),
                 tint = MaterialTheme.colorScheme.onSurfaceVariant
             )
             Spacer(modifier = Modifier.height(MaterialTheme.spacing.xs))
@@ -661,7 +658,7 @@ private fun HomeScreenErrorPreview() {
             onAction = {},
             state = HomeUiState(
                 recommendedDestinationsState = UiState.Error(
-                    com.dev.utils.uitext.UiText.DynamicString("Failed to load destinations")
+                    com.dev.utils.uitext.UiText.StringResource(R.string.error_failed_load_destinations)
                 )
             ),
             snackbarHostState = SnackbarHostState(),
@@ -719,7 +716,7 @@ private fun HomeScreenAppendErrorPreview() {
                     totalCount = 30,
                     hasMore = true,
                     isLoadingMore = false,
-                    loadMoreError = com.dev.utils.uitext.UiText.DynamicString("Load more failed")
+                    loadMoreError = com.dev.utils.uitext.UiText.StringResource(R.string.error_load_more_failed)
                 )
             ),
             snackbarHostState = SnackbarHostState(),

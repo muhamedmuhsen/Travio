@@ -25,7 +25,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.example.designsystem.components.shimmerEffect
 import com.example.designsystem.theme.TravioTheme
@@ -35,7 +34,7 @@ import com.example.domain.model.destination.Interest
 import com.example.feature.search.R
 import com.example.feature.home.R as HomeR
 
-private val ThumbnailSize = 100.dp
+private val ThumbnailSize @Composable get() = MaterialTheme.spacing.xxxl * 2
 
 @Composable
 fun SearchResultItem(
@@ -148,14 +147,14 @@ fun LoadingSearchResultItem(modifier: Modifier = Modifier) {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth(0.75f)
-                        .height(14.dp)
+                        .height(MaterialTheme.spacing.sm)
                         .clip(MaterialTheme.shapes.extraSmall)
                         .shimmerEffect()
                 )
                 Box(
                     modifier = Modifier
                         .fillMaxWidth(0.45f)
-                        .height(12.dp)
+                        .height(MaterialTheme.spacing.sm)
                         .clip(MaterialTheme.shapes.extraSmall)
                         .shimmerEffect()
                 )
@@ -163,8 +162,8 @@ fun LoadingSearchResultItem(modifier: Modifier = Modifier) {
             Spacer(Modifier.height(MaterialTheme.spacing.xxs))
             Box(
                 modifier = Modifier
-                    .width(64.dp)
-                    .height(22.dp)
+                    .width(MaterialTheme.spacing.xxxl + MaterialTheme.spacing.md)
+                    .height(MaterialTheme.spacing.lg)
                     .clip(MaterialTheme.shapes.small)
                     .shimmerEffect()
             )
@@ -177,7 +176,7 @@ fun LoadingSearchResultItem(modifier: Modifier = Modifier) {
 private fun SearchResultItemPreview() {
     TravioTheme(dynamicColor = false) {
         SearchResultItem(
-            modifier = Modifier.padding(8.dp),
+            modifier = Modifier.padding(MaterialTheme.spacing.sm),
             destination = Destination(
                 destinationID = 1,
                 name = "Hilton Hotel",
@@ -199,6 +198,6 @@ private fun SearchResultItemPreview() {
 @Composable
 private fun LoadingSearchResultItemPreview() {
     TravioTheme(dynamicColor = false) {
-        LoadingSearchResultItem(modifier = Modifier.padding(8.dp))
+        LoadingSearchResultItem(modifier = Modifier.padding(MaterialTheme.spacing.sm))
     }
 }

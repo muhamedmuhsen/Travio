@@ -15,6 +15,7 @@ import com.example.domain.repository.destinations.DestinationsRepository
 import com.example.domain.repository.favorite.FavoriteDestinationRepository
 import com.example.domain.repository.favorite.FavoritePlaceRepository
 import com.example.domain.repository.review.ReviewRepository
+import com.example.domain.repository.usermanagement.UserManagementRepository
 import com.example.domain.usecase.destinations.GetAllDestinationsUseCase
 import com.example.domain.usecase.destinations.GetDestinationByIdUseCase
 import com.example.domain.usecase.favorite.destination.AddDestinationFavoriteUseCase
@@ -111,8 +112,15 @@ class DestinationDetailViewModelFavoriteAddTest {
             observeFavoriteDestinationIdsUseCase = ObserveFavoriteDestinationIdsUseCase(favoriteDestinationRepository),
             getAllPlacesUseCase = GetAllPlacesUseCase(favoritePlaceRepository),
             reviewRepository = FakeReviewRepository(),
+            userManagementRepository = FakeUserManagementRepository(),
             savedStateHandle = savedStateHandle
         )
+    }
+
+    private class FakeUserManagementRepository : UserManagementRepository {
+        override suspend fun getUser(): Result<com.example.domain.model.auth.User, DataError> = Result.Error(DataError.UnknownError)
+        override suspend fun updateProfile(firstName: String, lastName: String, username: String): Result<com.example.domain.model.auth.User, DataError> = Result.Error(DataError.UnknownError)
+        override suspend fun updateProfilePic(imageUri: String): Result<String, DataError> = Result.Error(DataError.UnknownError)
     }
 
     private class FakeReviewRepository : ReviewRepository {

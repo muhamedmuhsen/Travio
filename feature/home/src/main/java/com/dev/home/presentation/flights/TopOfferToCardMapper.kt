@@ -8,28 +8,29 @@ fun TopFlightOffer.toFlightCardContent(): FlightCardContent {
     val fallback = FlightCardFallbackStrings()
 
     val amountText = this.cheapestPrice.toString()
-
     val durationText = this.duration.toFlightDuration()
 
     val raw = RawFlightCardPayload(
         id = this.offerId,
-        airlineName = this.airlineName.ifBlank { fallback.unavailableValue },
+        airlineName = this.airlineName.ifBlank { null },
         flightNumber = this.flightNumber ?: "",
         airlineLogoUrl = this.airlineLogoUrl ?: this.imageUrl,
-        airlineLogoContentDescription = this.airlineName + " logo",
+        // Will use default in UI or fallback
+        airlineLogoContentDescription = null,
         statusLabel = null,
-        // Default as not provided in Top Offers
+        // TODO: Get actual time from domain if available
         departureTime = "12:00",
         durationText = durationText,
-        // Default as not provided in Top Offers
         arrivalTime = "14:00",
         departureAirportCode = this.origin ?: "",
         departureCityName = this.originCityName ?: "",
         arrivalAirportCode = this.destination ?: "",
         arrivalCityName = this.destinationCityName ?: "",
-        stopsText = if (this.stops == 0) "Non-stop" else "${this.stops} stop${if (this.stops > 1) "s" else ""}",
+        // Let mapper handle it with fallback
+        stopsText = if (this.stops == 0) null else null,
         durationSummary = durationText,
-        tripTypeSummary = "One Way",
+        // Let mapper handle it with fallback (One Way)
+        tripTypeSummary = null,
         currencySymbol = this.currency.toCurrencySymbol(),
         amountText = amountText,
         qualifierText = null

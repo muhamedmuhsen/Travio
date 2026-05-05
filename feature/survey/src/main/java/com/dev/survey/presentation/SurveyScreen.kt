@@ -31,7 +31,6 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.dev.feature.survey.R
@@ -156,8 +155,8 @@ fun SurveyScreenContent(
                     LazyVerticalGrid(
                         columns = GridCells.Fixed(2),
                         contentPadding = PaddingValues(bottom = MaterialTheme.spacing.md),
-                        horizontalArrangement = Arrangement.spacedBy(10.dp),
-                        verticalArrangement = Arrangement.spacedBy(10.dp),
+                        horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.sm),
+                        verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.sm),
                         modifier = Modifier.fillMaxSize()
                     ) {
                         items(step.categories) { category ->

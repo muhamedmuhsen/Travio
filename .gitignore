@@ -65,6 +65,7 @@ specs
 .github/agents
 .github/prompts
 .vscode
+.artifacts
 
 # Common temp/log/env noise
 *.log

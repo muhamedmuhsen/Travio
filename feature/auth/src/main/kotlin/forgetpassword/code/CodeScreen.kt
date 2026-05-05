@@ -43,12 +43,12 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.designsystem.components.AppButton
 import com.example.designsystem.components.ErrorSnackBar
 import com.example.designsystem.theme.TravioTheme
+import com.example.designsystem.theme.elevation
 import com.example.designsystem.theme.spacing
 import com.example.feature.auth.R
 import com.example.feature.code.CodeEvent
@@ -302,9 +302,9 @@ fun OtpCell(
 
     Box(
         modifier = modifier
-            .height(52.dp)
+            .height(MaterialTheme.spacing.xxxl + MaterialTheme.spacing.xs)
             .border(
-                width = 1.dp,
+                width = MaterialTheme.elevation.xs,
                 color = borderColor,
                 shape = RoundedCornerShape(MaterialTheme.spacing.sm)
             ),

@@ -72,21 +72,7 @@
 
 ---
 
-## 3. Testing Standards
-
-- **Use Cases & ViewModels:** All new business logic in Use Cases and ViewModels must have unit
-  tests. No exceptions.
-- **UI Smoke Tests:** Critical user flows (e.g., login, checkout, onboarding) must have at minimum a
-  Compose UI smoke test using `ComposeTestRule`.
-- **Test Naming:** Use the `given_when_then` or `should_when` convention for test function names.
-- **No Logic Without a Test:** If a function contains a conditional, a calculation, or a
-  transformation, it needs a test. Pure mapping/data class code is exempt.
-- **Mocking:** Prefer fakes over mocks for repository/data layer boundaries. Use mocks only for
-  verifying interaction-based behavior.
-
----
-
-## 4. Project Structure & Naming
+## 3. Project Structure & Naming
 
 - **Naming Conventions:** Use `PascalCase` for Composable functions and `camelCase` for variables
   and standard functions. File names must match the primary class or Composable they contain.
@@ -114,7 +100,7 @@
 
 ---
 
-## 5. Accessibility (a11y)
+## 4. Accessibility (a11y)
 
 - **Content Descriptions:** Every non-decorative image, icon, and interactive element must have a
   meaningful `contentDescription`. Decorative elements must explicitly set
@@ -128,7 +114,7 @@
 
 ---
 
-## 6. Performance
+## 5. Performance
 
 - **Recomposition First:** Before shipping any screen with complex or nested state, verify it in
   Layout Inspector and check for unintended recompositions.
@@ -143,7 +129,7 @@
 
 ---
 
-## 7. Security & Logging
+## 6. Security & Logging
 
 - **Data Privacy:** Never log sensitive information (API keys, tokens, PII) to Logcat under any
   circumstances.
@@ -158,7 +144,7 @@
 
 ---
 
-## 8. Definition of Done (DoD)
+## 7. Definition of Done (DoD)
 
 > **Note:** The checklist below is for developers. The Git metadata block is a separate instruction
 > for the AI agent and is intentionally kept distinct.

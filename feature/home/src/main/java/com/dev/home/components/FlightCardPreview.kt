@@ -22,6 +22,7 @@ import com.dev.home.presentation.flights.FlightSummaryDisplay
 import com.dev.home.presentation.flights.PriceDisplayInfo
 import com.dev.home.presentation.flights.RawFlightCardPayload
 import com.dev.home.presentation.flights.toFlightCardContent
+import com.dev.utils.uitext.UiText
 import com.example.designsystem.theme.TravioTheme
 import com.example.designsystem.theme.spacing
 
@@ -133,7 +134,7 @@ internal fun previewFlightCard(
         airlineName = "Virgin Atlantic",
         flightNumber = "VS003",
         status = FlightStatusDisplay(
-            label = status,
+            label = UiText.DynamicString(status),
             tone = FlightStatusTone.POSITIVE,
             source = FlightStatusSource.PROVIDED
         ),
@@ -144,14 +145,14 @@ internal fun previewFlightCard(
         ),
         route = FlightRouteDisplay(
             departureAirportCode = "LHR",
-            departureCityName = "London",
+            departureCityName = UiText.DynamicString("London"),
             arrivalAirportCode = "JFK",
-            arrivalCityName = "New York",
-            stopsText = "Non-stop"
+            arrivalCityName = UiText.DynamicString("New York"),
+            stopsText = UiText.DynamicString("Non-stop")
         ),
         summary = FlightSummaryDisplay(
             durationSummary = "Duration: 8h 10m",
-            tripTypeSummary = "Total (Round Trip)"
+            tripTypeSummary = UiText.DynamicString("Total (Round Trip)")
         ),
         price = PriceDisplayInfo(
             currencySymbol = "$",
@@ -160,7 +161,7 @@ internal fun previewFlightCard(
             fullPriceText = "$" + amount + " round trip"
         ),
         cta = FlightCardActionState(
-            label = "Book Now",
+            label = UiText.DynamicString("Book Now"),
             state = FlightCtaState.DEFAULT,
             enabled = true,
             loadingIndicatorVisible = false

@@ -4,9 +4,10 @@ import com.dev.utils.uitext.UiText
 import com.example.domain.usecase.flights.SearchFlightsUseCase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.After
@@ -14,14 +15,18 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
+import org.mockito.kotlin.any
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.times
+import org.mockito.kotlin.verify
+import org.mockito.kotlin.whenever
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class FlightSearchViewModelTest {
 
     private lateinit var viewModel: FlightSearchViewModel
     private val searchFlightsUseCase = mock<SearchFlightsUseCase>()
-    private val testDispatcher = StandardTestDispatcher()
+    private val testDispatcher = UnconfinedTestDispatcher()
 
     @Before
     fun setup() {
@@ -38,10 +43,13 @@ class FlightSearchViewModelTest {
     fun `OnSearchClicked with empty origin shows validation error`() = runTest {
         viewModel.onAction(FlightSearchAction.OnOriginChanged(""))
         viewModel.onAction(FlightSearchAction.OnSearchClicked)
+        advanceTimeBy(305)
+        runCurrent()
 
-        val errors = viewModel.uiState.value.validationErrors
-        assertTrue(errors.containsKey("origin"))
-        assertEquals(SearchStatus.Idle, viewModel.uiState.value.searchStatus)
+        val uiState = viewModel.uiState.value
+        val errors = uiState.validationErrors
+        assertTrue("Expected origin error in $errors. Status was ${uiState.searchStatus}", errors.containsKey("origin"))
+        assertEquals(SearchStatus.Idle, uiState.searchStatus)
     }
 
     @Test
@@ -49,9 +57,11 @@ class FlightSearchViewModelTest {
         viewModel.onAction(FlightSearchAction.OnOriginChanged("CAI"))
         viewModel.onAction(FlightSearchAction.OnDestinationChanged("CAI"))
         viewModel.onAction(FlightSearchAction.OnSearchClicked)
+        advanceTimeBy(305)
+        runCurrent()
 
         val errors = viewModel.uiState.value.validationErrors
-        assertTrue(errors.containsKey("destination"))
+        assertTrue("Expected destination error for same origin/dest in $errors", errors.containsKey("destination"))
     }
 
     @Test
@@ -59,15 +69,18 @@ class FlightSearchViewModelTest {
         viewModel.onAction(FlightSearchAction.OnOriginChanged("CAI"))
         viewModel.onAction(FlightSearchAction.OnDestinationChanged("DXB"))
         viewModel.onAction(FlightSearchAction.OnDepartureDateChanged("2026-05-01"))
+        viewModel.onAction(FlightSearchAction.OnAdultsChanged(1))
         
-        whenever(searchFlightsUseCase(org.mockito.kotlin.any())).thenReturn(
+        whenever(searchFlightsUseCase(any())).thenReturn(
             com.example.domain.utils.Result.Error(com.example.domain.utils.DataError.Logical("Route unavailable"))
         )
 
         viewModel.onAction(FlightSearchAction.OnSearchClicked)
+        advanceTimeBy(305)
+        runCurrent()
 
         val status = viewModel.uiState.value.searchStatus
-        assertTrue(status is SearchStatus.Error)
+        assertTrue("Expected Error status, got $status", status is SearchStatus.Error)
         val errorStatus = status as SearchStatus.Error
         assertEquals("Route unavailable", (errorStatus.message as UiText.DynamicString).value)
         assertEquals(false, errorStatus.isRetryable)
@@ -78,15 +91,18 @@ class FlightSearchViewModelTest {
         viewModel.onAction(FlightSearchAction.OnOriginChanged("CAI"))
         viewModel.onAction(FlightSearchAction.OnDestinationChanged("DXB"))
         viewModel.onAction(FlightSearchAction.OnDepartureDateChanged("2026-05-01"))
+        viewModel.onAction(FlightSearchAction.OnAdultsChanged(1))
         
-        whenever(searchFlightsUseCase(org.mockito.kotlin.any())).thenReturn(
+        whenever(searchFlightsUseCase(any())).thenReturn(
             com.example.domain.utils.Result.Error(com.example.domain.utils.DataError.Network.NoInternetConnection)
         )
 
         viewModel.onAction(FlightSearchAction.OnSearchClicked)
+        advanceTimeBy(305)
+        runCurrent()
 
         val status = viewModel.uiState.value.searchStatus
-        assertTrue(status is SearchStatus.Error)
+        assertTrue("Expected Error status, got $status", status is SearchStatus.Error)
         val errorStatus = status as SearchStatus.Error
         assertEquals(true, errorStatus.isRetryable)
     }
@@ -96,21 +112,24 @@ class FlightSearchViewModelTest {
         viewModel.onAction(FlightSearchAction.OnOriginChanged("CAI"))
         viewModel.onAction(FlightSearchAction.OnDestinationChanged("DXB"))
         viewModel.onAction(FlightSearchAction.OnDepartureDateChanged("2026-05-01"))
+        viewModel.onAction(FlightSearchAction.OnAdultsChanged(1))
         
-        whenever(searchFlightsUseCase(org.mockito.kotlin.any())).thenReturn(
+        whenever(searchFlightsUseCase(any())).thenReturn(
             com.example.domain.utils.Result.Error(com.example.domain.utils.DataError.Network.NoInternetConnection)
         )
         viewModel.onAction(FlightSearchAction.OnSearchClicked)
-        advanceTimeBy(300)
+        advanceTimeBy(305)
+        runCurrent()
         
-        whenever(searchFlightsUseCase(org.mockito.kotlin.any())).thenReturn(
+        whenever(searchFlightsUseCase(any())).thenReturn(
             com.example.domain.utils.Result.Success(emptyList())
         )
         viewModel.onAction(FlightSearchAction.OnRetrySearch)
-        advanceTimeBy(300)
+        advanceTimeBy(305)
+        runCurrent()
 
         val status = viewModel.uiState.value.searchStatus
-        assertTrue(status is SearchStatus.Success)
+        assertTrue("Expected Success status, got $status", status is SearchStatus.Success)
     }
 
     @Test
@@ -118,26 +137,28 @@ class FlightSearchViewModelTest {
         viewModel.onAction(FlightSearchAction.OnOriginChanged("CAI"))
         viewModel.onAction(FlightSearchAction.OnDestinationChanged("DXB"))
         viewModel.onAction(FlightSearchAction.OnDepartureDateChanged("2026-05-01"))
+        viewModel.onAction(FlightSearchAction.OnAdultsChanged(1))
         
-        whenever(searchFlightsUseCase(org.mockito.kotlin.any())).thenReturn(
+        whenever(searchFlightsUseCase(any())).thenReturn(
             com.example.domain.utils.Result.Success(emptyList())
         )
 
         // Trigger multiple times rapidly
         viewModel.onAction(FlightSearchAction.OnSearchClicked)
         advanceTimeBy(100)
+        runCurrent()
         viewModel.onAction(FlightSearchAction.OnSearchClicked)
         advanceTimeBy(100)
+        runCurrent()
         viewModel.onAction(FlightSearchAction.OnSearchClicked)
+        advanceTimeBy(100)
+        runCurrent()
         
-        // At this point, no search should be executed because 300ms haven't passed since the *last* emission.
-        // Wait, debounce waits until there's no emission for 300ms. 
-        advanceTimeBy(300)
+        advanceTimeBy(305)
+        runCurrent()
 
-        // Verify that the search was executed and we have a result.
         val status = viewModel.uiState.value.searchStatus
-        assertTrue(status is SearchStatus.Success)
-        // With mockito we can also verify the use case was called exactly once, but this is enough given the UI state change.
-        org.mockito.kotlin.verify(searchFlightsUseCase, org.mockito.kotlin.times(1)).invoke(org.mockito.kotlin.any())
+        assertTrue("Expected Success status, got $status", status is SearchStatus.Success)
+        verify(searchFlightsUseCase, times(1)).invoke(any())
     }
 }

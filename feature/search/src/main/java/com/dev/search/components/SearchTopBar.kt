@@ -34,7 +34,6 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextDirection
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.LayoutDirection
-import androidx.compose.ui.unit.dp
 import com.example.designsystem.theme.TravioTheme
 import com.example.designsystem.theme.elevation
 import com.example.designsystem.theme.spacing
@@ -77,7 +76,7 @@ fun SearchTopBar(
                 tint = MaterialTheme.colorScheme.onBackground,
                 modifier = Modifier
                     .scale(scaleX = if (isRtl) 1f else -1f, scaleY = 1f)
-                    .size(24.dp)
+                    .size(MaterialTheme.spacing.lg)
             )
         }
 
@@ -86,7 +85,7 @@ fun SearchTopBar(
         TextField(
             modifier = Modifier
                 .weight(1f)
-                .height(56.dp)
+                .height(MaterialTheme.spacing.xxxl + MaterialTheme.spacing.xs)
                 .border(
                     width = MaterialTheme.elevation.xs,
                     color = MaterialTheme.colorScheme.outline,
@@ -112,7 +111,7 @@ fun SearchTopBar(
                     painter = painterResource(HomeR.drawable.search_icon),
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.size(MaterialTheme.spacing.xs * 3)
+                    modifier = Modifier.size(MaterialTheme.spacing.lg)
                 )
             },
             trailingIcon = {

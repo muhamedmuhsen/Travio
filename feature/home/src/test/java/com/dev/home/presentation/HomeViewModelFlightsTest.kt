@@ -24,15 +24,17 @@ class HomeViewModelFlightsTest {
     private fun sampleOffer(id: String) = TopFlightOffer(
         offerId = id,
         airlineName = "A",
-        imageUrl = null,
-        destinationName = "D",
-        origin = null,
-        destination = null,
+        imageUrl = "",
+        origin = "AAA",
+        originCityName = "O",
+        destination = "BBB",
+        destinationCityName = "D",
+        duration = "1h",
+        flightNumber = "F1",
+        airlineLogoUrl = "",
+        stops = 0,
         cheapestPrice = 10.0,
-        currency = "USD",
-        travelDate = null,
-        flightNumber = null,
-        status = null
+        currency = "USD"
     )
 
     private fun createViewModelWithUseCase(getTopOffersUseCase: GetTopFlightOffersUseCase): HomeViewModel {
