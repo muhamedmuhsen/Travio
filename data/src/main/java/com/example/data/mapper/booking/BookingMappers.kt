@@ -10,7 +10,7 @@ import com.example.network.dto.flights.booking.PaymentIntentResponseDto
 fun PaymentIntentResponseDto.toDomain(): PaymentIntentInfo {
     return PaymentIntentInfo(
         clientSecret = clientSecret,
-        paymentIntentId = paymentIntentId
+        paymentIntentId = stripeIntentId
     )
 }
 

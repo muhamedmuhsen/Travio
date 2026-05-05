@@ -4,7 +4,7 @@ import com.example.network.dto.flights.TopOffersResponseDto
 import com.example.network.dto.flights.booking.FlightOrderRequestDto
 import com.example.network.dto.flights.booking.FlightOrderResponseDto
 import com.example.network.dto.flights.booking.PaymentIntentRequestDto
-import com.example.network.dto.flights.booking.PaymentIntentResponseDto
+import com.example.network.dto.flights.booking.PaymentIntentResponseWrapperDto
 import com.example.network.dto.flights.details.FlightDetailsResponseDto
 import com.example.network.dto.flights.search.FlightSearchResponseDto
 import retrofit2.http.Body
@@ -32,7 +32,7 @@ interface FlightBookingApi {
     suspend fun getFlightDetails(@Path("offerId") offerId: String): FlightDetailsResponseDto
 
     @POST("FlightBooking/checkout")
-    suspend fun createPaymentIntent(@Body request: PaymentIntentRequestDto): PaymentIntentResponseDto
+    suspend fun createPaymentIntent(@Body request: PaymentIntentRequestDto): PaymentIntentResponseWrapperDto
 
     @POST("FlightBooking/flight/order")
     suspend fun confirmFlightOrder(

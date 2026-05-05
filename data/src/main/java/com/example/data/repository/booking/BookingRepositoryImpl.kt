@@ -21,7 +21,12 @@ class BookingRepositoryImpl @Inject constructor(
         passengers: List<Passenger>
     ): Result<PaymentIntentInfo> {
         return runCatching {
-            api.createPaymentIntent(PaymentIntentRequestDto(offerId, passengers.map { it.toDto() })).toDomain()
+            val response = api.createPaymentIntent(PaymentIntentRequestDto(offerId, passengers.map { it.toDto() }))
+            val payload = response.data ?: throw IllegalStateException(response.message ?: "Payment intent response missing data")
+            if (!response.success) {
+                throw IllegalStateException(response.errors?.joinToString() ?: response.message ?: "Payment intent creation failed")
+            }
+            payload.toDomain()
         }
     }
 
