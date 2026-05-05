@@ -4,6 +4,7 @@ import android.app.Application
 import coil.Coil
 import coil.ImageLoader
 import com.example.travio.config.AppEnvironmentConfig
+import com.stripe.android.PaymentConfiguration
 import dagger.hilt.android.HiltAndroidApp
 import okhttp3.OkHttpClient
 import timber.log.Timber
@@ -29,6 +30,15 @@ class Travio : Application() {
                     .okHttpClient(buildUnsafeOkHttpClient())
                     .build()
             )
+        }
+
+        val stripePublishableKey = getString(R.string.stripe_publishable_key).trim()
+        val isStripeKeyMissing = stripePublishableKey.isBlank() || stripePublishableKey == "pk_test_replace_me"
+        require(!isStripeKeyMissing || environmentConfig.enableDebugDiagnostics) {
+            "stripe_publishable_key is missing. Set it in app/config/environment.secrets.properties."
+        }
+        if (!isStripeKeyMissing) {
+            PaymentConfiguration.init(this, stripePublishableKey)
         }
     }
 
