@@ -25,6 +25,7 @@ import com.dev.profile.editProfile.EditProfileScreen
 import com.dev.profile.profile.ProfileScreen
 import com.dev.search.presentation.AllFlightsScreenRoute
 import com.dev.search.presentation.FlightDetailScreen
+import com.dev.search.presentation.SearchScreen
 import com.dev.survey.presentation.SurveyScreen
 import com.example.common.navigation.BookingRoute
 import com.example.common.navigation.DestinationDetailRoute
@@ -196,8 +197,8 @@ fun TravioNavHost(
         composable(Screen.SeeAllFlightsScreen.route) {
             AllFlightsScreenRoute(
                 onBackClick = { navController.popBackStack() },
-                onBookNowClick = { offerId ->
-                    navController.navigate(BookingRoute(offerId))
+                onFlightClick = { offerId ->
+                    navController.navigate(com.example.common.navigation.Screen.FlightDetailScreen.createRoute(offerId))
                 },
                 navigateToHome = {
                     navController.navigate(Screen.HomeScreen.route) {
@@ -232,7 +233,8 @@ fun TravioNavHost(
             val offerId = backStackEntry.arguments?.getString(Screen.FlightDetailScreen.ARG_OFFER_ID) ?: ""
             FlightDetailScreen(
                 offerId = offerId,
-                onBack = { navController.popBackStack() }
+                onBack = { navController.popBackStack() },
+                onBookNow = { id -> navController.navigate(BookingRoute(id)) }
             )
         }
         composable(Screen.ProfileScreen.route) {
@@ -323,35 +325,11 @@ fun TravioNavHost(
         }
 
         composable(Screen.SearchScreen.route) {
-            AllFlightsScreenRoute(
-                onBackClick = { navController.popBackStack() },
-                onBookNowClick = { offerId ->
-                    navController.navigate(BookingRoute(offerId))
-                },
-                navigateToHome = {
-                    navController.navigate(Screen.HomeScreen.route) {
-                        popUpTo(Screen.HomeScreen.route) { inclusive = false }
-                        launchSingleTop = true
-                    }
-                },
-                navigateToFavorite = {
-                    navController.navigate(Screen.FavoriteScreen.route) {
-                        launchSingleTop = true
-                    }
-                },
-                navigateToCommunity = {
-                    navController.navigate(Screen.CommunityScreen.route) {
-                        launchSingleTop = true
-                    }
-                },
-                navigateToAi = {
-                    navController.navigate(Screen.AiChatScreen.route) {
-                        launchSingleTop = true
-                    }
-                },
-                navigateToProfile = {
-                    navController.navigate(Screen.ProfileScreen.route) {
-                        launchSingleTop = true
+            SearchScreen(
+                navigateBack = { navController.popBackStack() },
+                navigateToDestination = { id ->
+                    id.toIntOrNull()?.let { destinationId ->
+                        navController.navigate(DestinationDetailRoute(destinationId))
                     }
                 }
             )

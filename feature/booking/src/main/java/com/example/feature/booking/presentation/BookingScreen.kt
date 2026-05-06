@@ -148,8 +148,8 @@ fun BookingScreen(
             AppSnackBar(
                 hostState = snackbarHostState,
                 modifier = Modifier
-                    .align(Alignment.TopCenter)
-                    .padding(top = 16.dp)
+                    .align(Alignment.BottomCenter)
+                    .padding(bottom = 16.dp)
             )
         }
     }
