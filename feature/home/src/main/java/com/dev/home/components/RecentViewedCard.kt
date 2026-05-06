@@ -83,8 +83,6 @@ fun RecentViewedCard(
 fun LoadingRecentViewedCard(modifier: Modifier = Modifier) {
     Row(
         modifier = modifier
-            .fillMaxWidth()
-            .height(IntrinsicSize.Min)
             .padding(MaterialTheme.spacing.xs),
         verticalAlignment = Alignment.CenterVertically
     ) {

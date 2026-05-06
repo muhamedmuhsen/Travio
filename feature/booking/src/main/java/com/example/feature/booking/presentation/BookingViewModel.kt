@@ -8,6 +8,7 @@ import com.example.domain.model.booking.Passenger
 import com.example.domain.usecase.booking.ConfirmFlightOrderUseCase
 import com.example.domain.usecase.booking.CreatePaymentIntentUseCase
 import com.example.domain.usecase.booking.ValidatePassengersUseCase
+import com.example.domain.usecase.flights.GetFlightDetailsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -16,6 +17,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.util.Locale
 import javax.inject.Inject
 
 @HiltViewModel
@@ -23,6 +25,7 @@ class BookingViewModel @Inject constructor(
     private val validatePassengersUseCase: ValidatePassengersUseCase,
     private val createPaymentIntentUseCase: CreatePaymentIntentUseCase,
     private val confirmFlightOrderUseCase: ConfirmFlightOrderUseCase,
+    private val getFlightDetailsUseCase: GetFlightDetailsUseCase,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -35,6 +38,31 @@ class BookingViewModel @Inject constructor(
     val effect = _effect.receiveAsFlow()
 
     private var currentPaymentIntentId: String? = null
+
+    init {
+        fetchFlightDetails()
+    }
+
+    private fun fetchFlightDetails() {
+        viewModelScope.launch {
+            _uiState.update { it.copy(isProcessing = true, error = null) }
+            when (val result = getFlightDetailsUseCase(offerId, forceRefresh = false)) {
+                is com.example.domain.utils.Result.Success -> {
+                    val price = result.data.pricePerPerson ?: result.data.totalPrice
+                    _uiState.update { state ->
+                        state.copy(
+                            isProcessing = false,
+                            basePrice = price,
+                            totalPrice = calculateTotalPrice(state.passengers.size, price)
+                        )
+                    }
+                }
+                is com.example.domain.utils.Result.Error -> {
+                    _uiState.update { it.copy(isProcessing = false, error = "Failed to load flight details") }
+                }
+            }
+        }
+    }
 
     fun onPassengerUpdated(
         index: Int,
@@ -51,7 +79,11 @@ class BookingViewModel @Inject constructor(
 
     fun onAddPassenger() {
         _uiState.update { state ->
-            state.copy(passengers = state.passengers + Passenger("", "", "", "", "", "", ""))
+            val newList = state.passengers + Passenger("", "", "", "", "", "", "")
+            state.copy(
+                passengers = newList,
+                totalPrice = calculateTotalPrice(newList.size, state.basePrice)
+            )
         }
     }
 
@@ -61,7 +93,10 @@ class BookingViewModel @Inject constructor(
             if (newList.size > 1 && index in newList.indices) {
                 newList.removeAt(index)
             }
-            state.copy(passengers = newList)
+            state.copy(
+                passengers = newList,
+                totalPrice = calculateTotalPrice(newList.size, state.basePrice)
+            )
         }
     }
 
@@ -98,7 +133,9 @@ class BookingViewModel @Inject constructor(
     ) {
         if (success) {
             _uiState.update { it.copy(paymentStatus = PaymentStatus.Success) }
-            confirmBooking()
+            viewModelScope.launch {
+                _effect.send(BookingEffect.NavigateToConfirmation(""))
+            }
         } else if (canceled) {
             _uiState.update { it.copy(isProcessing = false, paymentStatus = PaymentStatus.Canceled) }
         } else {
@@ -129,5 +166,13 @@ class BookingViewModel @Inject constructor(
                     _effect.send(BookingEffect.ShowError(error.message ?: "Booking confirmation failed"))
                 }
         }
+    }
+
+    private fun calculateTotalPrice(
+        count: Int,
+        basePrice: Double
+    ): String {
+        val total = count * basePrice
+        return "$%,.2f".format(Locale.US, total)
     }
 }

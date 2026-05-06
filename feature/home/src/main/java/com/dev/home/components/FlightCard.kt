@@ -1,6 +1,7 @@
 package com.dev.home.components
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -15,14 +16,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AirplanemodeActive
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -30,7 +28,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -38,7 +39,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
 import com.dev.home.presentation.flights.FlightCardContent
 import com.dev.home.presentation.flights.FlightStatusTone
 import com.example.designsystem.components.shimmerEffect
@@ -103,7 +103,7 @@ fun FlightCard(
                     .fillMaxWidth()
                     .clip(MaterialTheme.shapes.small)
                     .heightIn(min = MaterialTheme.spacing.xxxl)
-                    .padding(horizontal = MaterialTheme.spacing.md),
+                    .padding(horizontal = MaterialTheme.spacing.sm),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.primary,
                     contentColor = MaterialTheme.colorScheme.onPrimary
@@ -154,13 +154,14 @@ private fun FlightCardHeader(content: FlightCardContent) {
     ) {
         Surface(
             shape = CircleShape,
-            color = MaterialTheme.colorScheme.surface,
+            color = MaterialTheme.colorScheme.primary,
             modifier = Modifier.size(MaterialTheme.spacing.xl)
         ) {
-            AsyncImage(
-                model = content.airlineLogoUrl,
+            Image(
+                painter = painterResource(R.drawable.plane_icon2),
                 contentDescription = logoContentDescription,
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier.fillMaxSize().padding(8.dp),
+                colorFilter = ColorFilter.tint(Color.White)
             )
         }
 
@@ -362,11 +363,10 @@ private fun FlightPathDivider() {
                 modifier = Modifier.size(MaterialTheme.spacing.lg)
             ) {
                 Box(contentAlignment = Alignment.Center) {
-                    Icon(
-                        imageVector = Icons.Filled.AirplanemodeActive,
+                    Image(
+                        painter = painterResource(R.drawable.plane_icon2),
                         contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onPrimary,
-                        modifier = Modifier.size(MaterialTheme.spacing.md)
+                        modifier = Modifier.size(MaterialTheme.spacing.md).padding(2.dp)
                     )
                 }
             }

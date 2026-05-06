@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -27,6 +28,7 @@ import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.outlined.ConfirmationNumber
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -75,6 +77,7 @@ import com.example.feature.search.R
 fun FlightDetailScreen(
     offerId: String,
     onBack: () -> Unit,
+    onBookNow: (String) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: FlightDetailsViewModel = hiltViewModel()
 ) {
@@ -91,6 +94,7 @@ fun FlightDetailScreen(
     FlightDetailsContent(
         state = state,
         onBack = onBack,
+        onBookNow = onBookNow,
         modifier = modifier
     )
 }
@@ -99,11 +103,20 @@ fun FlightDetailScreen(
 private fun FlightDetailsContent(
     state: FlightDetailsUiState,
     onBack: () -> Unit,
+    onBookNow: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Scaffold(
         topBar = {
             FlightDetailsTopBar(onBack = onBack)
+        },
+        bottomBar = {
+            if (state is FlightDetailsUiState.Success) {
+                FlightDetailsBottomBar(
+                    price = state.data.price,
+                    onBookNow = { onBookNow(state.data.summary.offerId) }
+                )
+            }
         },
         containerColor = MaterialTheme.colorScheme.primary,
         modifier = modifier.fillMaxSize()
@@ -137,6 +150,60 @@ private fun FlightDetailsContent(
                 is FlightDetailsUiState.Success -> {
                     FlightDetailsList(data = state.data)
                 }
+            }
+        }
+    }
+}
+
+@Composable
+private fun FlightDetailsBottomBar(
+    price: PriceSectionUi,
+    onBookNow: () -> Unit
+) {
+    Surface(
+        shadowElevation = MaterialTheme.elevation.sm,
+        modifier = Modifier.fillMaxWidth(),
+        color = MaterialTheme.colorScheme.surface
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .navigationBarsPadding()
+        ) {
+            HorizontalDivider(
+                thickness = 0.5.dp,
+                color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f)
+            )
+            Row(
+                modifier = Modifier
+                    .padding(MaterialTheme.spacing.lg)
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Column {
+                    Text(
+                        text = stringResource(id = R.string.flight_details_total_amount),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                    Text(
+                        text = "${price.currency.toCurrencySymbol()}${price.totalPrice.toFormattedPrice()}",
+                        style = MaterialTheme.typography.headlineMedium.copy(
+                            color = MaterialTheme.colorScheme.primary,
+                            fontWeight = FontWeight.ExtraBold
+                        )
+                    )
+                }
+                com.example.designsystem.components.AppButton(
+                    onClick = onBookNow,
+                    modifier = Modifier
+                        .height(56.dp)
+                        .width(160.dp),
+                    text = stringResource(id = R.string.all_flights_book_now),
+                    shape = MaterialTheme.shapes.medium
+                )
             }
         }
     }
@@ -1089,6 +1156,7 @@ private fun FlightDetailScreenDarkPreview() {
 private fun FlightDetailPreviewContent() {
     val mockData = FlightDetailsUiModel(
         summary = FlightDetailsSummaryUi(
+            offerId = "mock_offer_id",
             airlineName = "British Airways",
             flightNumber = "BA 0189",
             departureTime = "22:27",
@@ -1132,6 +1200,7 @@ private fun FlightDetailPreviewContent() {
 
     FlightDetailsContent(
         state = FlightDetailsUiState.Success(mockData),
-        onBack = {}
+        onBack = {},
+        onBookNow = {}
     )
 }

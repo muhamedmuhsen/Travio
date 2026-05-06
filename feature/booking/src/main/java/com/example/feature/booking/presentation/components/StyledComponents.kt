@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -21,7 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import com.example.designsystem.theme.elevation
+import androidx.compose.ui.unit.dp
 import com.example.designsystem.theme.spacing
 import com.example.feature.booking.R
 
@@ -52,26 +53,46 @@ fun GenderSelector(
         )
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.sm)
+            horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.xs)
         ) {
             genders.forEach { gender ->
                 val isSelected = selectedGender.equals(gender, ignoreCase = true)
                 OutlinedButton(
                     onClick = { onGenderSelected(gender) },
                     modifier = Modifier
-                        .height(MaterialTheme.spacing.xxxl)
+                        .height(56.dp)
                         .weight(1f),
                     shape = MaterialTheme.shapes.small,
+                    contentPadding = PaddingValues(horizontal = 4.dp),
                     border = BorderStroke(
-                        width = MaterialTheme.elevation.xs,
-                        color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline
+                        width = 1.dp,
+                        color = if (isSelected) {
+                            MaterialTheme.colorScheme.primary
+                        } else if (isError) {
+                            MaterialTheme.colorScheme.error
+                        } else {
+                            MaterialTheme.colorScheme.outline
+                        }
                     ),
                     colors = ButtonDefaults.outlinedButtonColors(
-                        containerColor = if (isSelected) MaterialTheme.colorScheme.primary.copy(alpha = 0.05f) else Color.Transparent,
-                        contentColor = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
+                        containerColor = if (isSelected) {
+                            MaterialTheme.colorScheme.primary.copy(alpha = 0.08f)
+                        } else {
+                            Color.Transparent
+                        },
+                        contentColor = if (isSelected) {
+                            MaterialTheme.colorScheme.primary
+                        } else {
+                            MaterialTheme.colorScheme.onSurfaceVariant
+                        }
                     )
                 ) {
-                    Text(text = gender, fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal)
+                    Text(
+                        text = gender,
+                        style = MaterialTheme.typography.bodyLarge,
+                        fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
+                        maxLines = 1
+                    )
                 }
             }
         }
@@ -103,26 +124,46 @@ fun TitleSelector(
         )
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.sm)
+            horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.xs)
         ) {
             titles.forEach { title ->
                 val isSelected = selectedTitle == title
                 OutlinedButton(
                     onClick = { onTitleSelected(title) },
                     modifier = Modifier
-                        .height(MaterialTheme.spacing.xxxl)
+                        .height(56.dp)
                         .weight(1f),
                     shape = MaterialTheme.shapes.small,
+                    contentPadding = PaddingValues(horizontal = 4.dp),
                     border = BorderStroke(
-                        width = MaterialTheme.elevation.xs,
-                        color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline
+                        width = 1.dp,
+                        color = if (isSelected) {
+                            MaterialTheme.colorScheme.primary
+                        } else if (isError) {
+                            MaterialTheme.colorScheme.error
+                        } else {
+                            MaterialTheme.colorScheme.outline
+                        }
                     ),
                     colors = ButtonDefaults.outlinedButtonColors(
-                        containerColor = if (isSelected) MaterialTheme.colorScheme.primary.copy(alpha = 0.05f) else Color.Transparent,
-                        contentColor = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
+                        containerColor = if (isSelected) {
+                            MaterialTheme.colorScheme.primary.copy(alpha = 0.08f)
+                        } else {
+                            Color.Transparent
+                        },
+                        contentColor = if (isSelected) {
+                            MaterialTheme.colorScheme.primary
+                        } else {
+                            MaterialTheme.colorScheme.onSurfaceVariant
+                        }
                     )
                 ) {
-                    Text(text = title, fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal)
+                    Text(
+                        text = title,
+                        style = MaterialTheme.typography.bodyLarge,
+                        fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
+                        maxLines = 1
+                    )
                 }
             }
         }

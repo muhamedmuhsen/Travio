@@ -7,8 +7,8 @@ import javax.annotation.concurrent.Immutable
 @Immutable
 data class BookingUiState(
     val passengers: List<Passenger> = listOf(Passenger("", "", "", "", "", "", "")),
-    // Default as seen in image, should be set from offer data
-    val totalPrice: String = "$1,248.50",
+    val basePrice: Double = 0.0,
+    val totalPrice: String = "",
     val isProcessing: Boolean = false,
     val paymentStatus: PaymentStatus = PaymentStatus.Idle,
     val bookingResult: BookingResult? = null,

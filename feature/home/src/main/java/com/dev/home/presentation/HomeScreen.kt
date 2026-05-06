@@ -177,10 +177,7 @@ private fun HomeContent(
                 selectedItem = 0,
                 onItemSelected = { index ->
                     when (index) {
-                        0 -> {
-                            /* already on Home, no-op */
-                        }
-
+                        0 -> {}
                         1 -> navigateToFavorite()
                         2 -> navigateToCommunity()
                         3 -> navigateToAi()
@@ -308,10 +305,11 @@ private fun FlightsStateHandling(
 private fun HomeTopSection(
     searchQuery: String,
     onSearchQueryChanged: (String) -> Unit,
-    onSearchClicked: () -> Unit
+    onSearchClicked: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     Box(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .height(MaterialTheme.spacing.xxxl * 4)
     ) {
@@ -463,7 +461,15 @@ private fun RecentViewedStateHandling(
         )
         // Not yet wired up — hide the section entirely until the use-case is ready.
         UiState.Idle -> Unit
-        UiState.Loading -> LoadingRecentViewedCard()
+        UiState.Loading -> {
+            HorizontalSection(title = stringResource(R.string.section_recently_viewed)) {
+                items(3) {
+                    LoadingRecentViewedCard(
+                        modifier = Modifier.width(MaterialTheme.spacing.xxxl * 8)
+                    )
+                }
+            }
+        }
         is UiState.Success -> {
             val destinations = state.data ?: emptyList()
             if (destinations.isEmpty()) {
