@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -37,6 +38,7 @@ import com.dev.feature.survey.R
 import com.dev.survey.components.SurveyStepProgressBar
 import com.dev.survey.components.TravelCategoryCard
 import com.example.designsystem.components.AppButton
+import com.example.designsystem.components.AppOutlinedButton
 import com.example.designsystem.theme.TravioTheme
 import com.example.designsystem.theme.spacing
 
@@ -193,21 +195,34 @@ fun SurveyScreenContent(
                         modifier = Modifier.testTag("survey_submit_loading")
                     )
                 } else {
-                    AppButton(
+                    Row(
                         modifier = Modifier.fillMaxWidth(),
-                        onClick = {
-                            onAction(
-                                if (isRetry) SurveyAction.RetrySubmission else SurveyAction.NextStep
+                        horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.md)
+                    ) {
+                        if (state.currentStep > 0) {
+                            AppOutlinedButton(
+                                modifier = Modifier.weight(1f),
+                                onClick = { onAction(SurveyAction.PreviousStep) },
+                                text = stringResource(R.string.survey_back)
                             )
-                        },
-                        text = stringResource(
-                            when {
-                                isRetry -> R.string.survey_retry
-                                isLastStep -> R.string.survey_enjoy
-                                else -> R.string.survey_next
-                            }
+                        }
+
+                        AppButton(
+                            modifier = Modifier.weight(1f),
+                            onClick = {
+                                onAction(
+                                    if (isRetry) SurveyAction.RetrySubmission else SurveyAction.NextStep
+                                )
+                            },
+                            text = stringResource(
+                                when {
+                                    isRetry -> R.string.survey_retry
+                                    isLastStep -> R.string.survey_enjoy
+                                    else -> R.string.survey_next
+                                }
+                            )
                         )
-                    )
+                    }
                 }
             }
         }

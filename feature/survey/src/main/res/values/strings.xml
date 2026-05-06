@@ -34,6 +34,7 @@
 
     <!-- Buttons -->
     <string name="survey_next">Next</string>
+    <string name="survey_back">Back</string>
     <string name="survey_enjoy">Enjoy</string>
     <string name="survey_retry">Retry</string>
 

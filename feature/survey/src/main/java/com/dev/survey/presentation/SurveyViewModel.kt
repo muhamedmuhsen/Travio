@@ -34,6 +34,7 @@ class SurveyViewModel @Inject constructor(
         when (action) {
             is SurveyAction.ToggleCategory -> toggleCategory(action.step, action.category)
             SurveyAction.NextStep -> advanceOrSubmit()
+            SurveyAction.PreviousStep -> goBack()
             SurveyAction.RetrySubmission -> retrySubmission()
         }
     }
@@ -63,6 +64,12 @@ class SurveyViewModel @Inject constructor(
             _uiState.update { it.copy(currentStep = it.currentStep + 1) }
         } else {
             submitSurvey()
+        }
+    }
+
+    private fun goBack() {
+        if (_uiState.value.currentStep > 0) {
+            _uiState.update { it.copy(currentStep = it.currentStep - 1) }
         }
     }
 

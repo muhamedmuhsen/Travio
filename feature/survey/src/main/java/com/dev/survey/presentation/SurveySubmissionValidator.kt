@@ -30,15 +30,6 @@ internal class SurveySubmissionValidator {
             return SurveySubmissionValidationResult.Invalid(error)
         }
 
-        val hasConflicts = selectedPerStep.values.any { stepSelections ->
-            stepSelections
-                .groupBy { it.categoryId }
-                .any { (_, categories) -> categories.size > 1 }
-        }
-        if (hasConflicts) {
-            return SurveySubmissionValidationResult.Invalid(ValidationError.ConflictingSelectionSameCategory)
-        }
-
         val normalizedSelections = selectedPerStep
             .mapValues { (_, categories) ->
                 categories
