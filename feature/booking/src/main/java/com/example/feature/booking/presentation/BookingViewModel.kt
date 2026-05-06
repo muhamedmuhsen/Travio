@@ -87,6 +87,7 @@ class BookingViewModel @Inject constructor(
                 }
                 .onFailure { error ->
                     _uiState.update { it.copy(isProcessing = false, paymentStatus = PaymentStatus.Failed, error = error.message) }
+                    _effect.send(BookingEffect.ShowError(error.message ?: "An error occurred"))
                 }
         }
     }
@@ -102,6 +103,7 @@ class BookingViewModel @Inject constructor(
             _uiState.update { it.copy(isProcessing = false, paymentStatus = PaymentStatus.Canceled) }
         } else {
             _uiState.update { it.copy(isProcessing = false, paymentStatus = PaymentStatus.Failed, error = "Payment failed") }
+            _effect.trySend(BookingEffect.ShowError("Payment failed"))
         }
     }
 
@@ -124,6 +126,7 @@ class BookingViewModel @Inject constructor(
                 }
                 .onFailure { error ->
                     _uiState.update { it.copy(isProcessing = false, error = error.message) }
+                    _effect.send(BookingEffect.ShowError(error.message ?: "Booking confirmation failed"))
                 }
         }
     }

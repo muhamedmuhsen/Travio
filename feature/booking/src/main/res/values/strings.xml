@@ -36,4 +36,5 @@
     <string name="error_duplicate_passenger">This passenger has already been added</string>
     <string name="error_title_required">Title is required</string>
     <string name="error_gender_required">Gender is required</string>
+    <string name="booking_payment_success">Payment Successful and the ticket will be sent on your email</string>
 </resources>

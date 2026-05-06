@@ -1,16 +1,22 @@
 package com.example.designsystem.components
 
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarDuration
@@ -18,15 +24,16 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.SnackbarVisuals
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.designsystem.theme.TravioTheme
-import com.example.designsystem.theme.onSuccess
 import com.example.designsystem.theme.success
 
 enum class SnackBarType {
@@ -78,7 +85,10 @@ fun AppSnackBar(
         val icon = appVisuals?.icon ?: if (type == SnackBarType.ERROR) Icons.Default.Warning else null
 
         when (type) {
-            SnackBarType.SUCCESS -> SuccessSnackBar(text = snackbarData.visuals.message)
+            SnackBarType.SUCCESS -> SuccessSnackBar(
+                text = snackbarData.visuals.message,
+                onDismiss = { snackbarData.dismiss() }
+            )
             SnackBarType.ERROR -> ErrorSnackBar(text = snackbarData.visuals.message, icon = icon)
             SnackBarType.INFO -> Snackbar(snackbarData = snackbarData)
         }
@@ -120,45 +130,71 @@ fun ErrorSnackBar(
 }
 
 /**
- * Success-styled snackbar that mirrors [ErrorSnackBar]'s layout but uses
- * [MaterialTheme.colorScheme.primaryContainer] as the background and
- * [MaterialTheme.colorScheme.onPrimaryContainer] as the content color,
- * producing the light-mint / dark-green appearance shown in the design.
- *
- * Usage inside a [SnackbarHost]:
- * ```
- * SnackbarHost(hostState = snackbarHostState) { data ->
- *     SuccessSnackBar(text = data.visuals.message)
- * }
- * ```
+ * Success-styled snackbar featuring a dark navy/black background,
+ * a green circular checkmark icon, white text, and an optional close button.
  */
 @Composable
 fun SuccessSnackBar(
     modifier: Modifier = Modifier,
-    text: String
+    text: String,
+    onDismiss: (() -> Unit)? = null
 ) {
-    Snackbar(
+    Surface(
         modifier = modifier.padding(16.dp),
         shape = RoundedCornerShape(14.dp),
-        contentColor = MaterialTheme.colorScheme.onSuccess,
-        containerColor = MaterialTheme.colorScheme.success
+        color = MaterialTheme.colorScheme.surfaceContainerHighest,
+        shadowElevation = 6.dp
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 14.dp)
         ) {
-            Icon(
-                imageVector = Icons.Default.Check,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.onSuccess
-            )
-            Spacer(modifier = Modifier.width(8.dp))
+            // Green circular outlined checkmark
+            Box(
+                modifier = Modifier
+                    .size(24.dp)
+                    .border(
+                        width = 1.5.dp,
+                        color = MaterialTheme.colorScheme.success,
+                        shape = CircleShape
+                    ),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Check,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.success,
+                    modifier = Modifier.size(16.dp)
+                )
+            }
+
+            Spacer(modifier = Modifier.width(12.dp))
+
             Text(
                 text = text,
-                style = MaterialTheme.typography.labelLarge,
-                color = MaterialTheme.colorScheme.onSuccess
+                style = MaterialTheme.typography.bodyMedium.copy(
+                    fontWeight = FontWeight.Medium
+                ),
+                color = MaterialTheme.colorScheme.onSurface,
+                modifier = Modifier.weight(1f)
             )
+
+            if (onDismiss != null) {
+                Spacer(modifier = Modifier.width(12.dp))
+                IconButton(
+                    onClick = onDismiss,
+                    modifier = Modifier.size(24.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Close,
+                        contentDescription = "Dismiss",
+                        tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
+                        modifier = Modifier.size(20.dp)
+                    )
+                }
+            }
         }
     }
 }
@@ -167,7 +203,10 @@ fun SuccessSnackBar(
 @Composable
 private fun SuccessSnackBarPreview() {
     TravioTheme {
-        SuccessSnackBar(text = "Verification email sent successfully!")
+        SuccessSnackBar(
+            text = "Payment Successful",
+            onDismiss = {}
+        )
     }
 }
 
@@ -175,7 +214,10 @@ private fun SuccessSnackBarPreview() {
 @Composable
 private fun SuccessSnackBarDarkPreview() {
     TravioTheme(darkTheme = true) {
-        SuccessSnackBar(text = "Verification email sent successfully!")
+        SuccessSnackBar(
+            text = "Payment Successful",
+            onDismiss = {}
+        )
     }
 }
 

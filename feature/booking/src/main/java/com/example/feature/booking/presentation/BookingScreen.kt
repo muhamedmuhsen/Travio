@@ -1,5 +1,6 @@
 package com.example.feature.booking.presentation
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,6 +20,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -26,21 +28,28 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.designsystem.components.AppSnackBar
+import com.example.designsystem.components.SnackBarType
+import com.example.designsystem.components.showAppSnackbar
 import com.example.designsystem.theme.elevation
 import com.example.designsystem.theme.spacing
 import com.example.domain.model.booking.Passenger
@@ -49,7 +58,10 @@ import com.example.feature.booking.presentation.components.BottomSheetDragHandle
 import com.example.feature.booking.presentation.components.PassengerForm
 import com.stripe.android.paymentsheet.PaymentSheetResult
 import com.stripe.android.paymentsheet.rememberPaymentSheet
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
+@SuppressLint("LocalContextGetResourceValueCall")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BookingScreen(
@@ -61,6 +73,9 @@ fun BookingScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
+    val context = LocalContext.current
 
     val paymentSheet = rememberPaymentSheet { result ->
         when (result) {
@@ -77,10 +92,22 @@ fun BookingScreen(
                     paymentSheet.presentWithPaymentIntent(effect.clientSecret)
                 }
                 is BookingEffect.NavigateToConfirmation -> {
+                    scope.launch {
+                        snackbarHostState.showAppSnackbar(
+                            message = context.getString(R.string.booking_payment_success),
+                            type = SnackBarType.SUCCESS
+                        )
+                    }
+                    delay(2500)
                     onBookingSuccess(effect.pnr)
                 }
                 is BookingEffect.ShowError -> {
-                    // Handled via uiState.error for now
+                    scope.launch {
+                        snackbarHostState.showAppSnackbar(
+                            message = effect.message,
+                            type = SnackBarType.ERROR
+                        )
+                    }
                 }
             }
         }
@@ -95,15 +122,36 @@ fun BookingScreen(
         scrimColor = Color.Black.copy(alpha = 0.4f),
         modifier = modifier
             .statusBarsPadding()
-            .padding(top = 48.dp)
     ) {
-        BookingContent(
-            uiState = uiState,
-            onBack = onBack,
-            onPassengerUpdated = viewModel::onPassengerUpdated,
-            onAddPassenger = viewModel::onAddPassenger,
-            onCheckout = viewModel::onBookNow
-        )
+        Box(modifier = Modifier.fillMaxSize()) {
+            BookingContent(
+                uiState = uiState,
+                onBack = onBack,
+                onPassengerUpdated = viewModel::onPassengerUpdated,
+                onAddPassenger = viewModel::onAddPassenger,
+                onCheckout = viewModel::onBookNow
+            )
+
+            if (uiState.isProcessing) {
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = Color.Black.copy(alpha = 0.3f)
+                ) {
+                    Box(contentAlignment = Alignment.Center) {
+                        CircularProgressIndicator(
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                    }
+                }
+            }
+
+            AppSnackBar(
+                hostState = snackbarHostState,
+                modifier = Modifier
+                    .align(Alignment.TopCenter)
+                    .padding(top = 16.dp)
+            )
+        }
     }
 }
 

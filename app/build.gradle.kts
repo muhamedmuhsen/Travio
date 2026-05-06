@@ -105,7 +105,7 @@ android {
         applicationId = "com.example.travio"
         minSdk = 29
         targetSdk = 36
-        versionCode = 10
+        versionCode = 13
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
