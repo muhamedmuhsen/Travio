@@ -54,6 +54,7 @@ import com.example.designsystem.components.AppTextField
 import com.example.designsystem.components.ErrorSnackBar
 import com.example.designsystem.components.TextFieldType
 import com.example.designsystem.theme.TravioTheme
+import com.example.designsystem.theme.elevation
 import com.example.designsystem.theme.spacing
 import com.example.feature.profile.R
 import timber.log.Timber
@@ -227,7 +228,7 @@ fun ChangeProfilePictureBox(
 ) {
     Timber.d("imageUri: ${imageUri ?: "null"}")
     Box(
-        modifier = Modifier.size(96.dp),
+        modifier = Modifier.size(MaterialTheme.spacing.xxxl * 2),
         contentAlignment = Alignment.Center
     ) {
         Box(
@@ -235,7 +236,7 @@ fun ChangeProfilePictureBox(
                 .fillMaxSize()
                 .zIndex(0f)
                 .border(
-                    width = 2.dp,
+                    width = MaterialTheme.elevation.xs,
                     color = MaterialTheme.colorScheme.outline.copy(alpha = 0.5f),
                     shape = CircleShape
                 )
@@ -265,10 +266,10 @@ fun ChangeProfilePictureBox(
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .zIndex(1f)
-                .size(32.dp)
+                .size(MaterialTheme.spacing.xl)
                 .background(MaterialTheme.colorScheme.primary, CircleShape)
                 .border(
-                    width = 2.dp,
+                    width = MaterialTheme.elevation.xs,
                     color = MaterialTheme.colorScheme.surface,
                     shape = CircleShape
                 ),
@@ -278,7 +279,7 @@ fun ChangeProfilePictureBox(
                 painter = painterResource(R.drawable.camera),
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.onPrimary,
-                modifier = Modifier.size(16.dp)
+                modifier = Modifier.size(MaterialTheme.spacing.md)
             )
         }
     }

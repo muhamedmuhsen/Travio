@@ -1,6 +1,6 @@
 package com.dev.search.presentation
 
-import android.widget.Toast
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -42,6 +42,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SelectableDates
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -56,10 +57,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -68,7 +71,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import coil.compose.AsyncImage
 import com.dev.search.presentation.flights.FlightSearchAction
 import com.dev.search.presentation.flights.FlightSearchEvent
 import com.dev.search.presentation.flights.FlightSearchUiState
@@ -77,6 +79,9 @@ import com.dev.search.presentation.flights.SearchStatus
 import com.example.common.extensions.toCurrencySymbol
 import com.example.common.extensions.toFlightDuration
 import com.example.designsystem.components.AppBottomBar
+import com.example.designsystem.components.AppSnackBar
+import com.example.designsystem.components.SnackBarType
+import com.example.designsystem.components.showAppSnackbar
 import com.example.designsystem.theme.elevation
 import com.example.designsystem.theme.spacing
 import com.example.domain.model.flights.search.FlightOffer
@@ -119,7 +124,7 @@ fun AllFlightsScreenRoute(
     modifier: Modifier = Modifier,
     viewModel: FlightSearchViewModel = hiltViewModel(),
     onBackClick: () -> Unit = {},
-    onBookNowClick: (offerId: String) -> Unit = {},
+    onFlightClick: (offerId: String) -> Unit = {},
     navigateToHome: () -> Unit = {},
     navigateToFavorite: () -> Unit = {},
     navigateToCommunity: () -> Unit = {},
@@ -128,29 +133,42 @@ fun AllFlightsScreenRoute(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val context = LocalContext.current
+    val snackbarHostState = remember { SnackbarHostState() }
 
     LaunchedEffect(Unit) {
         viewModel.events.collect { event ->
             when (event) {
                 is FlightSearchEvent.NavigateBack -> onBackClick()
-                is FlightSearchEvent.NavigateToFlightDetails -> onBookNowClick(event.offerId)
+                is FlightSearchEvent.NavigateToFlightDetails -> onFlightClick(event.offerId)
                 is FlightSearchEvent.ShowSnackbar -> {
-                    Toast.makeText(context, event.message.asString(context), Toast.LENGTH_SHORT).show()
+                    snackbarHostState.showAppSnackbar(
+                        message = event.message.asString(context),
+                        type = SnackBarType.ERROR
+                    )
                 }
             }
         }
     }
 
-    AllFlightsScreen(
-        modifier = modifier,
-        uiState = uiState,
-        onAction = viewModel::onAction,
-        navigateToHome = navigateToHome,
-        navigateToFavorite = navigateToFavorite,
-        navigateToCommunity = navigateToCommunity,
-        navigateToAi = navigateToAi,
-        navigateToProfile = navigateToProfile
-    )
+    Box(modifier = Modifier.fillMaxSize()) {
+        AllFlightsScreen(
+            modifier = modifier,
+            uiState = uiState,
+            onAction = viewModel::onAction,
+            navigateToHome = navigateToHome,
+            navigateToFavorite = navigateToFavorite,
+            navigateToCommunity = navigateToCommunity,
+            navigateToAi = navigateToAi,
+            navigateToProfile = navigateToProfile
+        )
+
+        AppSnackBar(
+            hostState = snackbarHostState,
+            modifier = Modifier
+                .align(Alignment.TopCenter)
+                .padding(top = 16.dp)
+        )
+    }
 }
 
 @Composable
@@ -279,7 +297,7 @@ fun AllFlightsScreen(
                             items(status.offers) { offer ->
                                 FlightResultCard(
                                     offer = offer,
-                                    onBookNowClick = {
+                                    onFlightClick = {
                                         onAction(FlightSearchAction.OnFlightClicked(offer.offerId))
                                     }
                                 )
@@ -326,7 +344,7 @@ private fun FlightResultCardPreview() {
                         )
                     )
                 ),
-                onBookNowClick = {}
+                onFlightClick = {}
             )
         }
     }
@@ -481,7 +499,7 @@ private fun SearchCriteriaCard(
                 onClick = { onAction(FlightSearchAction.OnSearchClicked) },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(56.dp),
+                    .height(MaterialTheme.spacing.xxxl + MaterialTheme.spacing.xs),
                 shape = MaterialTheme.shapes.extraLarge,
                 colors = ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.primary,
@@ -527,13 +545,13 @@ private fun FlightDropdownRow(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(MaterialTheme.spacing.md),
+                    .padding(horizontal = MaterialTheme.spacing.xs, vertical = MaterialTheme.spacing.md),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Box(
                     contentAlignment = Alignment.Center,
                     modifier = Modifier
-                        .size(32.dp)
+                        .size(MaterialTheme.spacing.xxl)
                         .clip(MaterialTheme.shapes.extraLarge)
                         .background(MaterialTheme.colorScheme.surfaceContainer)
                 ) {
@@ -591,13 +609,13 @@ private fun FlightClickableRow(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(MaterialTheme.spacing.md),
+                .padding(horizontal = MaterialTheme.spacing.xs, vertical = MaterialTheme.spacing.md),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Box(
                 contentAlignment = Alignment.Center,
                 modifier = Modifier
-                    .size(32.dp)
+                    .size(MaterialTheme.spacing.xxl)
                     .clip(MaterialTheme.shapes.extraLarge)
                     .background(MaterialTheme.colorScheme.surfaceContainer)
             ) {
@@ -623,7 +641,7 @@ private fun FlightClickableRow(
 @Composable
 private fun FlightResultCard(
     offer: FlightOffer,
-    onBookNowClick: () -> Unit
+    onFlightClick: () -> Unit
 ) {
     val firstSegment = offer.segments.firstOrNull()
     val lastSegment = offer.segments.lastOrNull()
@@ -637,7 +655,7 @@ private fun FlightResultCard(
         elevation = CardDefaults.cardElevation(defaultElevation = MaterialTheme.elevation.sm),
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { onBookNowClick() }
+            .clickable { onFlightClick() }
     ) {
         Column(
             modifier = Modifier.padding(MaterialTheme.spacing.lg),
@@ -657,30 +675,18 @@ private fun FlightResultCard(
                             .clip(CircleShape),
                         contentAlignment = Alignment.Center
                     ) {
-                        val logoUrl = offer.airlineLogoUrl ?: firstSegment.airlineLogoUrl
-                        if (logoUrl != null) {
-                            AsyncImage(
-                                model = logoUrl,
-                                contentDescription = "${firstSegment.airlineName} logo",
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .padding(MaterialTheme.spacing.xxs),
-                                error = rememberVectorPainter(Icons.Default.FlightTakeoff)
-                            )
-                        } else {
-                            Surface(
-                                modifier = Modifier.fillMaxSize(),
-                                color = MaterialTheme.colorScheme.primary,
-                                shape = CircleShape
-                            ) {
-                                Box(contentAlignment = Alignment.Center) {
-                                    Icon(
-                                        imageVector = Icons.Default.FlightTakeoff,
-                                        contentDescription = null,
-                                        tint = MaterialTheme.colorScheme.onPrimary,
-                                        modifier = Modifier.size(MaterialTheme.spacing.md)
-                                    )
-                                }
+                        Surface(
+                            modifier = Modifier.fillMaxSize(),
+                            color = MaterialTheme.colorScheme.primary,
+                            shape = CircleShape
+                        ) {
+                            Box(contentAlignment = Alignment.Center) {
+                                Image(
+                                    painter = painterResource(R.drawable.plane_icon2),
+                                    contentDescription = null,
+                                    modifier = Modifier.size(MaterialTheme.spacing.md),
+                                    colorFilter = ColorFilter.tint(Color.White)
+                                )
                             }
                         }
                     }
@@ -688,15 +694,12 @@ private fun FlightResultCard(
                     Column {
                         Text(
                             text = firstSegment.airlineName,
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 12.sp,
+                            style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
                             color = MaterialTheme.colorScheme.onSurface
                         )
                         Text(
                             text = firstSegment.flightNumber,
                             style = MaterialTheme.typography.labelSmall,
-                            fontSize = 10.sp,
                             fontWeight = FontWeight.Normal,
                             color = MaterialTheme.colorScheme.outline
                         )
@@ -734,7 +737,7 @@ private fun FlightResultCard(
                         time = firstSegment.departureTime.substringAfter("T").substring(0, 5),
                         code = firstSegment.origin,
                         city = firstSegment.originCityName,
-                        modifier = Modifier.width(55.dp)
+                        modifier = Modifier.width(MaterialTheme.spacing.xxxl + MaterialTheme.spacing.sm)
                     )
 
                     // Line with Plane Icon
@@ -747,13 +750,11 @@ private fun FlightResultCard(
                                 modifier = Modifier.fillMaxWidth(0.6f),
                                 color = MaterialTheme.colorScheme.outlineVariant
                             )
-                            Icon(
-                                imageVector = Icons.Default.FlightTakeoff,
+                            Image(
+                                painter = painterResource(R.drawable.plane_icon2),
                                 contentDescription = null,
-                                tint = MaterialTheme.colorScheme.outline,
-                                modifier = Modifier
-                                    .size(16.dp)
-                                    .background(MaterialTheme.colorScheme.surface)
+                                modifier = Modifier.size(MaterialTheme.spacing.md),
+                                colorFilter = ColorFilter.tint(Color.White)
                             )
                         }
                         Text(
@@ -775,7 +776,7 @@ private fun FlightResultCard(
                         code = lastSegment.destination,
                         city = lastSegment.destinationCityName,
                         alignment = Alignment.Start,
-                        modifier = Modifier.width(55.dp)
+                        modifier = Modifier.width(MaterialTheme.spacing.xxxl + MaterialTheme.spacing.sm)
                     )
                 }
 
@@ -787,12 +788,12 @@ private fun FlightResultCard(
                     Box(contentAlignment = Alignment.Center) {
                         Box(
                             modifier = Modifier
-                                .width(0.5.dp)
-                                .height(60.dp)
+                                .width(1.dp)
+                                .height(MaterialTheme.spacing.xxxl + MaterialTheme.spacing.md)
                                 .background(MaterialTheme.colorScheme.outlineVariant)
                         )
                         Surface(
-                            modifier = Modifier.size(24.dp),
+                            modifier = Modifier.size(MaterialTheme.spacing.lg),
                             shape = CircleShape,
                             color = MaterialTheme.colorScheme.primary
                         ) {
@@ -801,7 +802,7 @@ private fun FlightResultCard(
                                     imageVector = Icons.Default.FlightTakeoff,
                                     contentDescription = null,
                                     tint = MaterialTheme.colorScheme.onPrimary,
-                                    modifier = Modifier.size(12.dp)
+                                    modifier = Modifier.size(MaterialTheme.spacing.sm)
                                 )
                             }
                         }
@@ -810,7 +811,7 @@ private fun FlightResultCard(
 
                 // Price Section
                 Column(
-                    modifier = Modifier.width(95.dp),
+                    modifier = Modifier.width(MaterialTheme.spacing.xxxl * 2),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.xxs)
                 ) {
@@ -818,7 +819,6 @@ private fun FlightResultCard(
                         text = stringResource(R.string.all_flights_duration_label, durationText),
                         style = MaterialTheme.typography.labelSmall,
                         fontWeight = FontWeight.Normal,
-                        fontSize = 10.sp,
                         color = MaterialTheme.colorScheme.outline,
                         textAlign = TextAlign.Center
                     )
@@ -827,7 +827,6 @@ private fun FlightResultCard(
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.outline,
                         fontWeight = FontWeight.Normal,
-                        fontSize = 10.sp,
                         textAlign = TextAlign.Center
                     )
                     val currencySymbol = offer.currency.toCurrencySymbol()
@@ -835,24 +834,22 @@ private fun FlightResultCard(
                         text = "$currencySymbol${offer.totalPrice}",
                         style = MaterialTheme.typography.headlineSmall,
                         color = MaterialTheme.colorScheme.primary,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 22.sp
+                        fontWeight = FontWeight.Bold
                     )
                     Spacer(modifier = Modifier.height(MaterialTheme.spacing.xs))
                     Button(
-                        onClick = onBookNowClick,
+                        onClick = onFlightClick,
                         shape = MaterialTheme.shapes.extraLarge,
                         colors = ButtonDefaults.buttonColors(
                             containerColor = MaterialTheme.colorScheme.primary
                         ),
-                        modifier = Modifier.fillMaxWidth().height(36.dp),
-                        contentPadding = androidx.compose.foundation.layout.PaddingValues(0.dp)
+                        modifier = Modifier.fillMaxWidth().height(MaterialTheme.spacing.xxl),
+                        contentPadding = androidx.compose.foundation.layout.PaddingValues(MaterialTheme.spacing.none)
                     ) {
                         Text(
                             text = stringResource(R.string.all_flights_book_now),
-                            style = MaterialTheme.typography.labelLarge,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 12.sp
+                            style = MaterialTheme.typography.labelMedium,
+                            fontWeight = FontWeight.Bold
                         )
                     }
                 }
@@ -874,20 +871,17 @@ private fun FlightTimeBlock(
             text = time,
             style = MaterialTheme.typography.titleLarge,
             fontWeight = FontWeight.Bold,
-            fontSize = 18.sp,
             color = MaterialTheme.colorScheme.onSurface
         )
         Text(
             text = code,
             style = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.Bold,
-            fontSize = 18.sp,
             color = MaterialTheme.colorScheme.onSurface
         )
         Text(
             text = city,
             style = MaterialTheme.typography.labelSmall,
-            fontSize = 10.sp,
             color = MaterialTheme.colorScheme.outline,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis

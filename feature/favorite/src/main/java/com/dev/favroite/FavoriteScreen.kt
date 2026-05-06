@@ -31,7 +31,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.dev.favroite.components.PlaceCard
@@ -187,14 +186,14 @@ private fun FavoriteHeaderIcon() {
     Box(
         contentAlignment = Alignment.Center,
         modifier = Modifier
-            .size(44.dp)
+            .size(MaterialTheme.spacing.xxl)
             .background(color = MaterialTheme.colorScheme.errorContainer, shape = androidx.compose.foundation.shape.CircleShape)
     ) {
         Icon(
             painter = painterResource(id = R.drawable.favorite_icon),
             contentDescription = stringResource(R.string.favorite_icon_cd),
             tint = MaterialTheme.colorScheme.error,
-            modifier = Modifier.size(20.dp)
+            modifier = Modifier.size(MaterialTheme.spacing.md)
         )
     }
 }
@@ -281,7 +280,7 @@ private fun FavoritePaginationState(
     ) {
         when {
             paginationState.isLoadingMore -> {
-                CircularProgressIndicator(modifier = Modifier.size(24.dp))
+                CircularProgressIndicator(modifier = Modifier.size(MaterialTheme.spacing.lg))
             }
 
             paginationState.loadMoreError != null -> {
@@ -320,7 +319,7 @@ private fun FavoriteEmptyState(
             Box(
                 contentAlignment = Alignment.Center,
                 modifier = Modifier
-                    .size(96.dp)
+                    .size(MaterialTheme.spacing.xxxl * 2)
                     .background(
                         color = MaterialTheme.colorScheme.errorContainer,
                         shape = androidx.compose.foundation.shape.CircleShape
@@ -330,7 +329,7 @@ private fun FavoriteEmptyState(
                     painter = painterResource(id = R.drawable.favorite_icon),
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.error,
-                    modifier = Modifier.size(44.dp)
+                    modifier = Modifier.size(MaterialTheme.spacing.xxl)
                 )
             }
             Spacer(modifier = Modifier.height(MaterialTheme.spacing.xs))

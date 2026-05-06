@@ -47,4 +47,10 @@
     <string name="flight_status_badge_cd">Flight status: %1$s</string>
     <string name="flight_path_icon_cd">Flight path icon</string>
     <string name="no_flight_offers_available" translatable="false">No flight offers available</string>
+    <string name="home_explore">Explore</string>
+    <string name="home_one_way">One Way</string>
+    <string name="home_round_trip">Round Trip</string>
+    <string name="home_on_time">On Time</string>
+    <string name="error_failed_load_destinations">Failed to load destinations</string>
+    <string name="error_load_more_failed">Load more failed</string>
 </resources>

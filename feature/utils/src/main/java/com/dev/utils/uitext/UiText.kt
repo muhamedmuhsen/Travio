@@ -26,4 +26,11 @@ sealed class UiText {
             is StringResource -> context.getString(resId, *args)
         }
     }
+
+    fun isNotBlank(): Boolean {
+        return when (this) {
+            is DynamicString -> value.isNotBlank()
+            is StringResource -> true
+        }
+    }
 }

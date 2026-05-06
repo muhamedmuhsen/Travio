@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="booking_passenger_info">Passenger Info</string>
+    <string name="booking_total_price">Total Price</string>
+    <string name="booking_secure_ssl">Secure SSL</string>
+    <string name="booking_checkout">Checkout</string>
+    <string name="booking_processing">Processing...</string>
+    <string name="booking_lead_passenger">Lead Passenger</string>
+    <string name="booking_passenger_n">Passenger %1$d</string>
+    <string name="booking_id_details_note">Please provide details exactly as they appear on your ID.</string>
+    <string name="booking_first_name">First Name</string>
+    <string name="booking_first_name_hint">e.g. Jonathan</string>
+    <string name="booking_last_name">Last Name</string>
+    <string name="booking_last_name_hint">e.g. Doe</string>
+    <string name="booking_email">Email Address</string>
+    <string name="booking_email_hint">john.doe@example.com</string>
+    <string name="booking_email_note">Your ticket and receipt will be sent here.</string>
+    <string name="booking_title">Title</string>
+    <string name="booking_summary">Booking Summary</string>
+    <string name="booking_offer_id">Offer ID:</string>
+    <string name="booking_passengers">Passengers:</string>
+    <string name="booking_date_of_birth">Date of Birth</string>
+    <string name="booking_date_of_birth_hint">YYYY-MM-DD</string>
+    <string name="booking_gender">Gender</string>
+    <string name="booking_phone_number">Phone Number</string>
+    <string name="booking_phone_number_hint">e.g. +1234567890</string>
+    <string name="booking_add_passenger">Add Passenger</string>
+    <string name="error_first_name_required">First name is required</string>
+    <string name="error_last_name_required">Last name is required</string>
+    <string name="error_dob_required">Date of birth is required</string>
+    <string name="error_email_required">Email is required</string>
+    <string name="error_phone_required">Phone number is required</string>
+    <string name="error_invalid_email">Please enter a valid email</string>
+    <string name="error_invalid_phone">Please enter a valid phone number</string>
+    <string name="error_invalid_date">Please enter a valid date</string>
+    <string name="error_duplicate_passenger">This passenger has already been added</string>
+    <string name="error_title_required">Title is required</string>
+    <string name="error_gender_required">Gender is required</string>
+    <string name="booking_payment_success">Payment Successful and the ticket will be sent on your email</string>
+</resources>

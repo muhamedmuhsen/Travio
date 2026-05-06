@@ -11,6 +11,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import androidx.navigation.toRoute
 import com.dev.community.presentation.CommunityScreen
 import com.dev.community.presentation.LocationPickerScreen
 import com.dev.community.presentation.PostDetailScreen
@@ -24,9 +25,12 @@ import com.dev.profile.editProfile.EditProfileScreen
 import com.dev.profile.profile.ProfileScreen
 import com.dev.search.presentation.AllFlightsScreenRoute
 import com.dev.search.presentation.FlightDetailScreen
+import com.dev.search.presentation.SearchScreen
 import com.dev.survey.presentation.SurveyScreen
+import com.example.common.navigation.BookingRoute
 import com.example.common.navigation.DestinationDetailRoute
 import com.example.common.navigation.Screen
+import com.example.feature.booking.presentation.BookingScreen
 import com.example.feature.forgetpassword.ForgetPasswordScreen
 import com.example.feature.forgetpassword.code.CodeScreen
 import com.example.feature.forgetpassword.newpassword.NewPasswordScreen
@@ -182,6 +186,9 @@ fun TravioNavHost(
                     // Navigate to flight detail screen using a typed route
                     navController.navigate(com.example.common.navigation.Screen.FlightDetailScreen.createRoute(offerId))
                 },
+                startFlightBooking = { offerId ->
+                    navController.navigate(BookingRoute(offerId))
+                },
                 navigateToSeeAllFlights = {
                     navController.navigate(Screen.SeeAllFlightsScreen.route)
                 }
@@ -190,7 +197,7 @@ fun TravioNavHost(
         composable(Screen.SeeAllFlightsScreen.route) {
             AllFlightsScreenRoute(
                 onBackClick = { navController.popBackStack() },
-                onBookNowClick = { offerId ->
+                onFlightClick = { offerId ->
                     navController.navigate(com.example.common.navigation.Screen.FlightDetailScreen.createRoute(offerId))
                 },
                 navigateToHome = {
@@ -226,7 +233,8 @@ fun TravioNavHost(
             val offerId = backStackEntry.arguments?.getString(Screen.FlightDetailScreen.ARG_OFFER_ID) ?: ""
             FlightDetailScreen(
                 offerId = offerId,
-                onBack = { navController.popBackStack() }
+                onBack = { navController.popBackStack() },
+                onBookNow = { id -> navController.navigate(BookingRoute(id)) }
             )
         }
         composable(Screen.ProfileScreen.route) {
@@ -317,35 +325,11 @@ fun TravioNavHost(
         }
 
         composable(Screen.SearchScreen.route) {
-            AllFlightsScreenRoute(
-                onBackClick = { navController.popBackStack() },
-                onBookNowClick = { offerId ->
-                    navController.navigate(com.example.common.navigation.Screen.FlightDetailScreen.createRoute(offerId))
-                },
-                navigateToHome = {
-                    navController.navigate(Screen.HomeScreen.route) {
-                        popUpTo(Screen.HomeScreen.route) { inclusive = false }
-                        launchSingleTop = true
-                    }
-                },
-                navigateToFavorite = {
-                    navController.navigate(Screen.FavoriteScreen.route) {
-                        launchSingleTop = true
-                    }
-                },
-                navigateToCommunity = {
-                    navController.navigate(Screen.CommunityScreen.route) {
-                        launchSingleTop = true
-                    }
-                },
-                navigateToAi = {
-                    navController.navigate(Screen.AiChatScreen.route) {
-                        launchSingleTop = true
-                    }
-                },
-                navigateToProfile = {
-                    navController.navigate(Screen.ProfileScreen.route) {
-                        launchSingleTop = true
+            SearchScreen(
+                navigateBack = { navController.popBackStack() },
+                navigateToDestination = { id ->
+                    id.toIntOrNull()?.let { destinationId ->
+                        navController.navigate(DestinationDetailRoute(destinationId))
                     }
                 }
             )
@@ -445,6 +429,19 @@ fun TravioNavHost(
                         popUpTo(0) { inclusive = true }
                         launchSingleTop = true
                     }
+                }
+            )
+        }
+
+        composable<BookingRoute> { backStackEntry ->
+            val route: BookingRoute = backStackEntry.toRoute()
+            BookingScreen(
+                offerId = route.offerId,
+                onBack = { navController.popBackStack() },
+                onBookingSuccess = { pnr ->
+                    // For now, just pop back or show a toast
+                    // In real app, might navigate to a confirmation screen
+                    navController.popBackStack()
                 }
             )
         }

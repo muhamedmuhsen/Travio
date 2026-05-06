@@ -11,6 +11,7 @@ data class FlightDetailsUiModel(
 )
 
 data class FlightDetailsSummaryUi(
+    val offerId: String,
     val airlineName: String,
     val flightNumber: String,
     val departureTime: String,

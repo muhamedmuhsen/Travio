@@ -15,6 +15,9 @@ import com.example.data.repository.favorite.FavoriteDestinationRepositoryImpl
 import com.example.data.repository.favorite.FavoritePlaceRepositoryImpl
 import com.example.data.repository.favorite.FavoritePostRepositoryImpl
 import com.example.data.repository.favorite.FavoriteTripRepositoryImpl
+import com.example.data.repository.flights.FlightDetailsRepositoryImpl
+import com.example.data.repository.flights.FlightSearchRepositoryImpl
+import com.example.data.repository.flights.TopFlightOffersRepositoryImpl
 import com.example.data.repository.review.ReviewRepositoryImpl
 import com.example.data.repository.search.RecentSearchRepositoryImpl
 import com.example.data.repository.survey.SurveyPreferencesRepositoryImpl
@@ -33,6 +36,9 @@ import com.example.domain.repository.favorite.FavoritePlaceRepository
 import com.example.domain.repository.favorite.FavoritePostRepository
 import com.example.domain.repository.favorite.FavoriteTabPreferenceRepository
 import com.example.domain.repository.favorite.FavoriteTripRepository
+import com.example.domain.repository.flights.FlightDetailsRepository
+import com.example.domain.repository.flights.FlightSearchRepository
+import com.example.domain.repository.flights.TopFlightOffersRepository
 import com.example.domain.repository.review.ReviewRepository
 import com.example.domain.repository.search.RecentSearchRepository
 import com.example.domain.repository.survey.SurveyPreferencesRepository
@@ -128,19 +134,13 @@ abstract class RepositoryModule {
 
     @Binds
     @Singleton
-    abstract fun bindTopFlightOffersRepository(
-        topFlightOffersRepositoryImpl: com.example.data.repository.flights.TopFlightOffersRepositoryImpl
-    ): com.example.domain.repository.flights.TopFlightOffersRepository
+    abstract fun bindTopFlightOffersRepository(topFlightOffersRepositoryImpl: TopFlightOffersRepositoryImpl): TopFlightOffersRepository
 
     @Binds
     @Singleton
-    abstract fun bindFlightSearchRepository(
-        flightSearchRepositoryImpl: com.example.data.repository.flights.FlightSearchRepositoryImpl
-    ): com.example.domain.repository.flights.FlightSearchRepository
+    abstract fun bindFlightSearchRepository(flightSearchRepositoryImpl: FlightSearchRepositoryImpl): FlightSearchRepository
 
     @Binds
     @Singleton
-    abstract fun bindFlightDetailsRepository(
-        flightDetailsRepositoryImpl: com.example.data.repository.flights.FlightDetailsRepositoryImpl
-    ): com.example.domain.repository.flights.FlightDetailsRepository
+    abstract fun bindFlightDetailsRepository(flightDetailsRepositoryImpl: FlightDetailsRepositoryImpl): FlightDetailsRepository
 }

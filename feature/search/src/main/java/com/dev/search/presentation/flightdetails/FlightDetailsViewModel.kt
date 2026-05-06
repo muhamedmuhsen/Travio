@@ -101,6 +101,7 @@ class FlightDetailsViewModel @Inject constructor(
         }
 
         val summary = FlightDetailsSummaryUi(
+            offerId = offerId,
             airlineName = segments.first().airlineName,
             flightNumber = segments.first().flightNumber,
             departureTime = departureTime.toFormattedTime(),

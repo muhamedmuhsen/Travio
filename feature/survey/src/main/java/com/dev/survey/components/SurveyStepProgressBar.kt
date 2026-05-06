@@ -16,6 +16,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.designsystem.theme.TravioTheme
+import com.example.designsystem.theme.elevation
+import com.example.designsystem.theme.spacing
 
 @Composable
 fun SurveyStepProgressBar(
@@ -25,14 +27,14 @@ fun SurveyStepProgressBar(
 ) {
     Row(
         modifier = modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(6.dp)
+        horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.xxs)
     ) {
         repeat(totalSteps) { index ->
             val isActive = index <= currentStep
             Box(
                 modifier = Modifier
                     .weight(1f)
-                    .height(6.dp)
+                    .height(MaterialTheme.spacing.xxs + MaterialTheme.elevation.xs)
                     .clip(RoundedCornerShape(50))
                     .background(
                         if (isActive) {

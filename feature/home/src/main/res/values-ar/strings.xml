@@ -46,4 +46,10 @@
     <string name="flight_card_cd">رحلة %1$s %2$s من %3$s إلى %4$s</string>
     <string name="flight_status_badge_cd">حالة الرحلة: %1$s</string>
     <string name="flight_path_icon_cd">أيقونة مسار الرحلة</string>
+    <string name="home_explore">استكشاف</string>
+    <string name="home_one_way">ذهاب فقط</string>
+    <string name="home_round_trip">ذهاب وعودة</string>
+    <string name="home_on_time">في الموعد</string>
+    <string name="error_failed_load_destinations">فشل في تحميل الوجهات</string>
+    <string name="error_load_more_failed">فشل تحميل المزيد</string>
 </resources>

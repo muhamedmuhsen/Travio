@@ -31,6 +31,7 @@
 
     <!-- Buttons -->
     <string name="survey_next">التالي</string>
+    <string name="survey_back">رجوع</string>
     <string name="survey_enjoy">استمتع</string>
     <string name="survey_retry">إعادة المحاولة</string>
 

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="booking_passenger_info">معلومات المسافر</string>
+    <string name="booking_total_price">السعر الإجمالي</string>
+    <string name="booking_secure_ssl">تشفير SSL آمن</string>
+    <string name="booking_checkout">الدفع</string>
+    <string name="booking_processing">جاري المعالجة...</string>
+    <string name="booking_lead_passenger">المسافر الرئيسي</string>
+    <string name="booking_passenger_n">المسافر %1$d</string>
+    <string name="booking_id_details_note">يرجى تقديم التفاصيل تماماً كما تظهر في هويتك.</string>
+    <string name="booking_first_name">الاسم الأول</string>
+    <string name="booking_first_name_hint">مثال: محمد</string>
+    <string name="booking_last_name">اسم العائلة</string>
+    <string name="booking_last_name_hint">مثال: أحمد</string>
+    <string name="booking_email">البريد الإلكتروني</string>
+    <string name="booking_email_hint">mohammed.ahmed@example.com</string>
+    <string name="booking_email_note">سيتم إرسال تذكرتك وإيصالك إلى هنا.</string>
+    <string name="booking_title">اللقب</string>
+    <string name="booking_summary">ملخص الحجز</string>
+    <string name="booking_offer_id">رقم العرض:</string>
+    <string name="booking_passengers">المسافرون:</string>
+    <string name="booking_date_of_birth">تاريخ الميلاد</string>
+    <string name="booking_date_of_birth_hint">السنة-الشهر-اليوم</string>
+    <string name="booking_gender">الجنس</string>
+    <string name="booking_phone_number">رقم الهاتف</string>
+    <string name="booking_phone_number_hint">مثال: 966500000000+</string>
+    <string name="booking_add_passenger">إضافة مسافر</string>
+    <string name="error_first_name_required">الاسم الأول مطلوب</string>
+    <string name="error_last_name_required">اسم العائلة مطلوب</string>
+    <string name="error_dob_required">تاريخ الميلاد مطلوب</string>
+    <string name="error_email_required">البريد الإلكتروني مطلوب</string>
+    <string name="error_phone_required">رقم الهاتف مطلوب</string>
+    <string name="error_invalid_email">يرجى إدخال بريد إلكتروني صحيح</string>
+    <string name="error_invalid_phone">يرجى إدخال رقم هاتف صحيح</string>
+    <string name="error_invalid_date">يرجى إدخال تاريخ صحيح</string>
+    <string name="error_duplicate_passenger">لقد تم إضافة هذا المسافر بالفعل</string>
+    <string name="error_title_required">اللقب مطلوب</string>
+    <string name="error_gender_required">الجنس مطلوب</string>
+    <string name="booking_payment_success">تم الدفع بنجاح وسيتم إرسال التذكرة إلى بريدك الإلكتروني</string>
+</resources>

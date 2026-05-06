@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
 import com.example.designsystem.components.AppButton
 import com.example.designsystem.components.AppOutlinedButton
+import com.example.designsystem.theme.spacing
 import com.example.feature.profile.R
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -40,7 +41,7 @@ fun LogoutDialog(
     BasicAlertDialog(
         onDismissRequest = onDismiss,
         modifier = modifier
-            .padding(horizontal = 12.dp)
+            .padding(horizontal = MaterialTheme.spacing.sm)
             .fillMaxWidth(),
         properties = DialogProperties(usePlatformDefaultWidth = false),
         content = {
@@ -49,9 +50,9 @@ fun LogoutDialog(
                     .fillMaxWidth()
                     .background(
                         color = MaterialTheme.colorScheme.surface,
-                        shape = MaterialTheme.shapes.extraLarge.copy(CornerSize(20.dp))
+                        shape = MaterialTheme.shapes.extraLarge.copy(CornerSize(MaterialTheme.spacing.lg))
                     )
-                    .padding(24.dp),
+                    .padding(MaterialTheme.spacing.lg),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
@@ -96,19 +97,19 @@ private fun LogoutIcon(modifier: Modifier = Modifier) {
     Box(
         contentAlignment = Alignment.Center,
         modifier = modifier
-            .size(64.dp)
+            .size(MaterialTheme.spacing.xxxl + MaterialTheme.spacing.md)
             .clip(CircleShape)
             .background(
                 color = MaterialTheme.colorScheme.errorContainer,
                 shape = MaterialTheme.shapes.medium
             )
-            .padding(20.dp)
+            .padding(MaterialTheme.spacing.lg)
     ) {
         Icon(
             painter = painterResource(R.drawable.logout_icon),
             contentDescription = null,
             tint = MaterialTheme.colorScheme.error,
-            modifier = Modifier.size(32.dp)
+            modifier = Modifier.size(MaterialTheme.spacing.xl)
         )
     }
 }

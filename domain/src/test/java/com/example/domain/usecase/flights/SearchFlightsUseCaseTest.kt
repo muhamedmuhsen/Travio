@@ -3,23 +3,29 @@ package com.example.domain.usecase.flights
 import com.example.domain.model.flights.search.FlightOffer
 import com.example.domain.model.flights.search.FlightSearchParameters
 import com.example.domain.repository.flights.FlightSearchRepository
+import com.example.domain.utils.DataError
 import com.example.domain.utils.Result
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
-import org.mockito.kotlin.any
-import org.mockito.kotlin.mock
-import org.mockito.kotlin.whenever
 
 class SearchFlightsUseCaseTest {
 
     private lateinit var useCase: SearchFlightsUseCase
-    private val repository = mock<FlightSearchRepository>()
+    private lateinit var repository: FakeFlightSearchRepository
+
+    class FakeFlightSearchRepository : FlightSearchRepository {
+        var offersToReturn: List<FlightOffer> = emptyList()
+        override suspend fun searchFlights(parameters: FlightSearchParameters): Result<List<FlightOffer>, DataError> {
+            return Result.Success(offersToReturn)
+        }
+    }
 
     @Before
     fun setup() {
+        repository = FakeFlightSearchRepository()
         useCase = SearchFlightsUseCase(repository)
     }
 
@@ -30,7 +36,7 @@ class SearchFlightsUseCaseTest {
             createMockOffer(id = "2", stops = 1),
             createMockOffer(id = "3", stops = 2)
         )
-        whenever(repository.searchFlights(any())).thenReturn(Result.Success(mockOffers))
+        repository.offersToReturn = mockOffers
 
         val params = FlightSearchParameters(maxStops = 1)
         val result = useCase(params)
@@ -48,7 +54,7 @@ class SearchFlightsUseCaseTest {
             createMockOffer(id = "1", stops = 0),
             createMockOffer(id = "2", stops = 1)
         )
-        whenever(repository.searchFlights(any())).thenReturn(Result.Success(mockOffers))
+        repository.offersToReturn = mockOffers
 
         val params = FlightSearchParameters(maxStops = -1)
         val result = useCase(params)
@@ -63,7 +69,9 @@ class SearchFlightsUseCaseTest {
             offerId = id, origin = "A", destination = "B",
             departureTime = "10:00", arrivalTime = "12:00",
             totalPrice = 100.0, currency = "USD",
-            stops = stops, segments = emptyList()
+            stops = stops, segments = emptyList(),
+            originCityName = "Origin", destinationCityName = "Destination",
+            totalDuration = "2h", airlineLogoUrl = "url"
         )
     }
 }

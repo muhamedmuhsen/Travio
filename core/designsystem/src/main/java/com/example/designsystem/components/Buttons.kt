@@ -40,7 +40,9 @@ fun AppButton(
     style: TextStyle = MaterialTheme.typography.titleMedium.copy(
         fontWeight = FontWeight.Bold
     ),
-    containerColor: Color = MaterialTheme.colorScheme.primary
+    containerColor: Color = MaterialTheme.colorScheme.primary,
+    contentColor: Color = MaterialTheme.colorScheme.onPrimary,
+    leadingIcon: @Composable (() -> Unit)? = null
 ) {
     Button(
         modifier = modifier.height(buttonHeight.dp),
@@ -49,15 +51,24 @@ fun AppButton(
         enabled = isEnabled,
         colors = ButtonDefaults.buttonColors(
             containerColor = containerColor,
-            contentColor = MaterialTheme.colorScheme.onPrimary,
+            contentColor = contentColor,
             disabledContainerColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f),
             disabledContentColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
         )
     ) {
-        Text(
-            text = text,
-            style = style
-        )
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center
+        ) {
+            if (leadingIcon != null) {
+                leadingIcon()
+                Spacer(Modifier.width(MaterialTheme.spacing.xs))
+            }
+            Text(
+                text = text,
+                style = style
+            )
+        }
     }
 }
 

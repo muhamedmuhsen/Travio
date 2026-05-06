@@ -41,6 +41,7 @@ import com.dev.community.presentation.rememberRelativeTimeText
 import com.dev.feature.community.R
 import com.example.designsystem.components.shimmerEffect
 import com.example.designsystem.theme.TravioTheme
+import com.example.designsystem.theme.elevation
 import com.example.designsystem.theme.spacing
 import com.example.domain.model.community.CommunityPost
 import timber.log.Timber
@@ -62,7 +63,7 @@ fun CommunityPostCard(
             .fillMaxWidth()
             .clickable(onClick = onCardClicked),
         shape = MaterialTheme.shapes.large,
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = MaterialTheme.elevation.xs),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceContainer
         )
@@ -97,7 +98,7 @@ fun CommunityPostCard(
                             painter = painterResource(R.drawable.location_icon),
                             contentDescription = null,
                             tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                            modifier = Modifier.size(12.dp)
+                            modifier = Modifier.size(MaterialTheme.spacing.sm)
                         )
                         Text(
                             text = post.location,
@@ -115,7 +116,7 @@ fun CommunityPostCard(
             if (post.imageUrls.isNotEmpty()) {
                 SharedImagePager(
                     imageUrls = post.imageUrls,
-                    height = 210.dp,
+                    height = MaterialTheme.spacing.xxxl * 4 + MaterialTheme.spacing.md,
                     showArrows = false
                 )
             }
@@ -148,7 +149,7 @@ fun CommunityPostCard(
             ) {
                 // Like + Comment grouped so SpaceBetween pushes timestamp to the far end in both LTR and RTL
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    IconButton(onClick = onLikeClicked, modifier = Modifier.size(36.dp)) {
+                    IconButton(onClick = onLikeClicked, modifier = Modifier.size(MaterialTheme.spacing.xxl)) {
                         Icon(
                             imageVector = if (post.isLiked) {
                                 Icons.Filled.Favorite
@@ -161,7 +162,7 @@ fun CommunityPostCard(
                             } else {
                                 MaterialTheme.colorScheme.onSurfaceVariant
                             },
-                            modifier = Modifier.size(18.dp)
+                            modifier = Modifier.size(MaterialTheme.spacing.md)
                         )
                     }
                     Text(
@@ -172,14 +173,14 @@ fun CommunityPostCard(
 
                     Spacer(modifier = Modifier.width(MaterialTheme.spacing.sm))
 
-                    IconButton(onClick = onCommentClicked, modifier = Modifier.size(36.dp)) {
+                    IconButton(onClick = onCommentClicked, modifier = Modifier.size(MaterialTheme.spacing.xxl)) {
                         Icon(
                             painter = painterResource(R.drawable.comment_icon),
                             contentDescription = stringResource(R.string.community_comment_cd),
                             tint = MaterialTheme.colorScheme.onSurfaceVariant,
                             modifier = Modifier
                                 .padding(start = 4.dp)
-                                .size(18.dp)
+                                .size(MaterialTheme.spacing.md)
                         )
                     }
                     Text(
@@ -211,7 +212,7 @@ private fun StarBadge(rating: Float) {
         modifier = Modifier
             .clip(MaterialTheme.shapes.extraLarge)
             .background(MaterialTheme.colorScheme.primaryContainer)
-            .padding(horizontal = 8.dp, vertical = 4.dp),
+            .padding(horizontal = MaterialTheme.spacing.xs, vertical = MaterialTheme.spacing.xxs),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(3.dp)
     ) {
@@ -219,7 +220,7 @@ private fun StarBadge(rating: Float) {
             imageVector = Icons.Filled.Star,
             contentDescription = null,
             tint = MaterialTheme.colorScheme.primary,
-            modifier = Modifier.size(12.dp)
+            modifier = Modifier.size(MaterialTheme.spacing.sm)
         )
         Text(
             text = ratingText,
@@ -237,7 +238,7 @@ private fun AuthorAvatar(
     avatarUrl: String,
     authorName: String
 ) {
-    UserAvatar(avatarUrl = avatarUrl, authorName = authorName, size = 44.dp)
+    UserAvatar(avatarUrl = avatarUrl, authorName = authorName, size = MaterialTheme.spacing.xxl)
 }
 
 @Composable
@@ -245,7 +246,7 @@ fun LoadingCommunityPostCard(modifier: Modifier = Modifier) {
     Card(
         modifier = modifier.fillMaxWidth(),
         shape = MaterialTheme.shapes.large,
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = MaterialTheme.elevation.xs),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer)
     ) {
         Column {
@@ -261,7 +262,7 @@ fun LoadingCommunityPostCard(modifier: Modifier = Modifier) {
             ) {
                 Box(
                     modifier = Modifier
-                        .size(44.dp)
+                        .size(MaterialTheme.spacing.xxl)
                         .clip(MaterialTheme.shapes.extraLarge)
                         .shimmerEffect()
                 )
@@ -288,7 +289,7 @@ fun LoadingCommunityPostCard(modifier: Modifier = Modifier) {
                 // Star badge skeleton
                 Box(
                     modifier = Modifier
-                        .size(width = 44.dp, height = 24.dp)
+                        .size(width = MaterialTheme.spacing.xxl, height = MaterialTheme.spacing.xl)
                         .clip(MaterialTheme.shapes.extraLarge)
                         .shimmerEffect()
                 )
@@ -298,7 +299,7 @@ fun LoadingCommunityPostCard(modifier: Modifier = Modifier) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(210.dp)
+                    .height(MaterialTheme.spacing.xxxl * 4 + MaterialTheme.spacing.md)
                     .shimmerEffect()
             )
 

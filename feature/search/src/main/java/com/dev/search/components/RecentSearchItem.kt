@@ -21,7 +21,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import com.example.designsystem.theme.TravioTheme
 import com.example.designsystem.theme.spacing
 import com.example.feature.search.R
@@ -37,7 +36,7 @@ fun RecentSearchItem(
         modifier = modifier
             .clickable(onClick = onClick)
             .fillMaxWidth()
-            .defaultMinSize(minHeight = 48.dp)
+            .defaultMinSize(minHeight = MaterialTheme.spacing.xxxl)
             .padding(
                 start = MaterialTheme.spacing.md,
                 end = MaterialTheme.spacing.xs,
@@ -50,7 +49,7 @@ fun RecentSearchItem(
             imageVector = Icons.Outlined.Search,
             contentDescription = null,
             tint = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.size(20.dp)
+            modifier = Modifier.size(MaterialTheme.spacing.lg)
         )
 
         Spacer(Modifier.width(MaterialTheme.spacing.sm))
@@ -67,7 +66,7 @@ fun RecentSearchItem(
                 imageVector = Icons.Outlined.Close,
                 contentDescription = stringResource(R.string.search_delete_recent_cd),
                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.size(18.dp)
+                modifier = Modifier.size(MaterialTheme.spacing.md + MaterialTheme.spacing.xxs)
             )
         }
     }

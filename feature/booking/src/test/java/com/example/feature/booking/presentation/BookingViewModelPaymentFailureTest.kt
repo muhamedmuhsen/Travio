@@ -1,0 +1,71 @@
+package com.example.feature.booking.presentation
+
+import androidx.lifecycle.SavedStateHandle
+import com.example.domain.model.booking.BookingRequest
+import com.example.domain.model.booking.BookingResult
+import com.example.domain.model.booking.Passenger
+import com.example.domain.model.booking.PaymentIntentInfo
+import com.example.domain.repository.booking.BookingRepository
+import com.example.domain.usecase.booking.ConfirmFlightOrderUseCase
+import com.example.domain.usecase.booking.CreatePaymentIntentUseCase
+import com.example.domain.usecase.booking.ValidatePassengersUseCase
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.setMain
+import org.junit.After
+import org.junit.Assert.assertEquals
+import org.junit.Before
+import org.junit.Test
+
+@OptIn(ExperimentalCoroutinesApi::class)
+class BookingViewModelPaymentFailureTest {
+
+    private val testDispatcher = UnconfinedTestDispatcher()
+
+    private lateinit var viewModel: BookingViewModel
+    
+    @Before
+    fun setup() {
+        Dispatchers.setMain(testDispatcher)
+        
+        val fakeRepo = object : BookingRepository {
+            override suspend fun createPaymentIntent(offerId: String, passengers: List<Passenger>) = Result.success(PaymentIntentInfo("secret", "pi_123"))
+            override suspend fun confirmFlightOrder(request: BookingRequest) = Result.success(BookingResult("ord_123", "ABCDEF", "confirmed"))
+        }
+
+        val validatePassengersUseCase = ValidatePassengersUseCase()
+        val createPaymentIntentUseCase = CreatePaymentIntentUseCase(fakeRepo)
+        val confirmFlightOrderUseCase = ConfirmFlightOrderUseCase(fakeRepo)
+
+        viewModel = BookingViewModel(
+            validatePassengersUseCase,
+            createPaymentIntentUseCase,
+            confirmFlightOrderUseCase,
+            SavedStateHandle(mapOf("offerId" to "off_123"))
+        )
+    }
+
+    @After
+    fun tearDown() {
+        Dispatchers.resetMain()
+    }
+
+    @Test
+    fun `given payment canceled then status is Canceled`() {
+        viewModel.onPaymentResult(success = false, canceled = true)
+        
+        assertEquals(PaymentStatus.Canceled, viewModel.uiState.value.paymentStatus)
+        assertEquals(false, viewModel.uiState.value.isProcessing)
+    }
+
+    @Test
+    fun `given payment failed then status is Failed and error is set`() {
+        viewModel.onPaymentResult(success = false, canceled = false)
+        
+        assertEquals(PaymentStatus.Failed, viewModel.uiState.value.paymentStatus)
+        assertEquals("Payment failed", viewModel.uiState.value.error)
+        assertEquals(false, viewModel.uiState.value.isProcessing)
+    }
+}

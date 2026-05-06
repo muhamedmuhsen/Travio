@@ -105,13 +105,20 @@ android {
         applicationId = "com.example.travio"
         minSdk = 29
         targetSdk = 36
-        versionCode = 10
+        versionCode = 13
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
         val googleWebClientId = localProperties.getProperty("GOOGLE_WEB_CLIENT_ID", "")
         buildConfigField("String", "GOOGLE_WEB_CLIENT_ID", "\"$googleWebClientId\"")
+
+        val stripePublishableKey =
+            readConfigValue(
+                "STRIPE_PUBLISHABLE_KEY",
+                readConfigValue("stripe_publishable_key", "pk_test_replace_me"),
+            )
+        resValue("string", "stripe_publishable_key", stripePublishableKey)
     }
 
     buildTypes {
@@ -147,6 +154,8 @@ android {
 }
 
 secrets {
+    propertiesFileName = "app/config/environment.secrets.properties"
+    defaultPropertiesFileName = "app/config/environment.defaults.properties"
     // Keep endpoint selection owned by product flavors and explicit environment files.
     ignoreList +=
         listOf(
@@ -192,6 +201,7 @@ dependencies {
     implementation(project(":feature:survey"))
     implementation(project(":feature:search"))
     implementation(project(":feature:destination"))
+    implementation(project(":feature:booking"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
@@ -218,6 +228,7 @@ dependencies {
     implementation(libs.coil.compose)
     implementation(libs.okhttp)
     implementation(libs.timber)
+    implementation(libs.stripe.android)
 }
 
 firebaseAppDistribution {

@@ -1,27 +1,25 @@
 package com.dev.home.presentation.flights
 
 import androidx.compose.runtime.Immutable
+import com.dev.utils.uitext.UiText
 
 @Immutable
 data class FlightCardActionState(
-    val label: String,
+    val label: UiText,
     val state: FlightCtaState,
     val enabled: Boolean,
     val loadingIndicatorVisible: Boolean
 ) {
     init {
-        require(label.isNotBlank()) { "label cannot be blank" }
         if (state == FlightCtaState.LOADING) {
-            require(!enabled) { "loading CTA must be disabled" }
-            require(loadingIndicatorVisible) { "loading CTA must show indicator" }
+            require(!enabled) { "CTA must be disabled when in LOADING state" }
+            require(loadingIndicatorVisible) { "Loading indicator must be visible when in LOADING state" }
         }
-        if (state == FlightCtaState.DISABLED) {
-            require(!enabled) { "disabled CTA must not be enabled" }
-        }
+        require(label.isNotBlank()) { "label cannot be blank" }
     }
 
     companion object {
-        fun default(label: String): FlightCardActionState {
+        fun default(label: UiText): FlightCardActionState {
             return FlightCardActionState(
                 label = label,
                 state = FlightCtaState.DEFAULT,
@@ -30,7 +28,7 @@ data class FlightCardActionState(
             )
         }
 
-        fun disabled(label: String): FlightCardActionState {
+        fun disabled(label: UiText): FlightCardActionState {
             return FlightCardActionState(
                 label = label,
                 state = FlightCtaState.DISABLED,

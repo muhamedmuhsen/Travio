@@ -1,5 +1,6 @@
 package com.dev.home.presentation.flights
 
+import com.dev.utils.uitext.UiText
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -9,7 +10,7 @@ class FlightCardActionStateTest {
 
     @Test
     fun givenDefaultState_whenTransitionToPressed_thenStaysEnabledWithoutLoader() {
-        val initial = FlightCardActionState.default(label = "Book Now")
+        val initial = FlightCardActionState.default(label = UiText.DynamicString("Book Now"))
 
         val transitioned = FlightCardActionState.transition(initial, FlightCtaState.PRESSED)
 
@@ -20,7 +21,7 @@ class FlightCardActionStateTest {
 
     @Test
     fun givenDefaultState_whenTransitionToLoading_thenDisablesAndShowsLoader() {
-        val initial = FlightCardActionState.default(label = "Book Now")
+        val initial = FlightCardActionState.default(label = UiText.DynamicString("Book Now"))
 
         val transitioned = FlightCardActionState.transition(initial, FlightCtaState.LOADING)
 
@@ -32,7 +33,7 @@ class FlightCardActionStateTest {
     @Test
     fun givenLoadingState_whenTransitionToDefault_thenEnablesAndHidesLoader() {
         val loading = FlightCardActionState.transition(
-            current = FlightCardActionState.default("Book Now"),
+            current = FlightCardActionState.default(UiText.DynamicString("Book Now")),
             next = FlightCtaState.LOADING
         )
 
@@ -45,7 +46,7 @@ class FlightCardActionStateTest {
 
     @Test
     fun givenAnyState_whenTransitionToDisabled_thenStaysDisabledWithoutLoader() {
-        val initial = FlightCardActionState.default(label = "Book Now")
+        val initial = FlightCardActionState.default(label = UiText.DynamicString("Book Now"))
 
         val transitioned = FlightCardActionState.transition(initial, FlightCtaState.DISABLED)
 
