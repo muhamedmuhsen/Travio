@@ -366,7 +366,9 @@ private fun FlightPathDivider() {
                     Image(
                         painter = painterResource(R.drawable.plane_icon2),
                         contentDescription = null,
-                        modifier = Modifier.size(MaterialTheme.spacing.md).padding(2.dp)
+                        modifier = Modifier.size(MaterialTheme.spacing.md).padding(2.dp),
+                        colorFilter = ColorFilter.tint(Color.White)
+
                     )
                 }
             }
