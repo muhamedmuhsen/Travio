@@ -34,7 +34,8 @@ interface DestinationsRepository {
     suspend fun searchForDestinations(
         keyword: String,
         pageIndex: Int = 1,
-        pageSize: Int = 10
+        pageSize: Int = 10,
+        interestIds: List<Int>? = null
     ): Result<List<Destination>, DataError>
 
     suspend fun getFamousCountries(): Result<List<Country>, DataError>

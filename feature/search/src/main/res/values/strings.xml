@@ -103,4 +103,21 @@
     <string name="flight_details_non_refundable">NON-REFUNDABLE</string>
     <string name="flight_details_penalty">Penalty</string>
     <string name="flight_details_est_refund">Est. Refund</string>
+    <!-- Interest Filters -->
+    <string name="interest_historical">Historical</string>
+    <string name="interest_architecture">Architecture</string>
+    <string name="interest_cultural">Cultural</string>
+    <string name="interest_art">Art</string>
+    <string name="interest_religious">Religious</string>
+    <string name="interest_adventure">Adventure</string>
+    <string name="interest_relaxation">Relaxation</string>
+    <string name="interest_coastal">Coastal</string>
+    <string name="interest_shopping">Shopping</string>
+    <string name="interest_city_view">City View</string>
+    <string name="interest_entertainment">Entertainment</string>
+    <string name="interest_family">Family</string>
+    <string name="interest_nature">Nature</string>
+    <string name="interest_nightlife">Nightlife</string>
+    <string name="interest_photography">Photography</string>
+    <string name="search_interest_chip_cd">Filter by %s</string>
 </resources>

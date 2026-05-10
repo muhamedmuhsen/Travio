@@ -16,7 +16,7 @@ class ValidatePassengersUseCaseTest {
         val errors = useCase(listOf(passenger))
         
         assertEquals(1, errors.size)
-        assertTrue(errors[0]?.contains(PassengerValidationError.FieldRequired) == true)
+        assertTrue(errors[0]?.contains(PassengerValidationError.FirstNameRequired) == true)
     }
 
     @Test

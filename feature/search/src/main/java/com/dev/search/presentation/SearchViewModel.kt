@@ -1,5 +1,6 @@
 package com.dev.search.presentation
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dev.utils.uistate.UiState
@@ -31,6 +32,7 @@ import javax.inject.Inject
 @OptIn(FlowPreview::class)
 @HiltViewModel
 class SearchViewModel @Inject constructor(
+    private val savedStateHandle: SavedStateHandle,
     private val searchForDestinationsUseCase: SearchForDestinationsUseCase,
     private val addToRecentlyViewedUseCase: AddToRecentlyViewedUseCase,
     private val getRecentSearchesUseCase: GetRecentSearchesUseCase,
@@ -39,7 +41,12 @@ class SearchViewModel @Inject constructor(
     private val clearRecentSearchesUseCase: ClearRecentSearchesUseCase
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(SearchUiState())
+    private val _uiState = MutableStateFlow(
+        SearchUiState(
+            query = savedStateHandle["query"] ?: "",
+            selectedInterestIds = (savedStateHandle.get<List<Int>>("interests") ?: emptyList()).toSet()
+        )
+    )
     val uiState: StateFlow<SearchUiState> = _uiState.asStateFlow()
 
     private val _event = Channel<SearchEvent>(Channel.UNLIMITED)
@@ -56,13 +63,27 @@ class SearchViewModel @Inject constructor(
         when (action) {
             is SearchAction.OnQueryChanged -> {
                 _uiState.update { it.copy(query = action.query) }
-                searchTrigger.tryEmit(SearchTrigger(action.query, isImmediate = false))
+                savedStateHandle["query"] = action.query
+                searchTrigger.tryEmit(
+                    SearchTrigger(
+                        query = action.query,
+                        isImmediate = false,
+                        selectedInterestIds = _uiState.value.selectedInterestIds.toList()
+                    )
+                )
             }
 
             is SearchAction.OnDestinationClicked -> onDestinationClicked(action.destination)
             is SearchAction.OnRecentSearchClicked -> {
                 _uiState.update { it.copy(query = action.query) }
-                searchTrigger.tryEmit(SearchTrigger(action.query, isImmediate = true))
+                savedStateHandle["query"] = action.query
+                searchTrigger.tryEmit(
+                    SearchTrigger(
+                        query = action.query,
+                        isImmediate = true,
+                        selectedInterestIds = _uiState.value.selectedInterestIds.toList()
+                    )
+                )
             }
 
             is SearchAction.OnDeleteRecentSearch -> viewModelScope.launch {
@@ -75,15 +96,53 @@ class SearchViewModel @Inject constructor(
 
             SearchAction.OnBackClicked -> viewModelScope.launch { _event.send(SearchEvent.NavigateBack) }
             SearchAction.OnClearQuery -> {
-                _uiState.update { it.copy(query = "", searchResultsState = UiState.Idle) }
-                searchTrigger.tryEmit(SearchTrigger("", isImmediate = true))
+                _uiState.update { it.copy(query = "") }
+                savedStateHandle["query"] = ""
+                val state = _uiState.value
+                if (state.selectedInterestIds.isEmpty()) {
+                    _uiState.update { it.copy(searchResultsState = UiState.Idle) }
+                }
+                searchTrigger.tryEmit(
+                    SearchTrigger(
+                        query = "",
+                        isImmediate = true,
+                        selectedInterestIds = state.selectedInterestIds.toList()
+                    )
+                )
             }
 
             SearchAction.OnRetrySearch -> {
-                val query = _uiState.value.query
-                if (query.isNotBlank()) {
-                    searchTrigger.tryEmit(SearchTrigger(query, isImmediate = true))
+                val state = _uiState.value
+                if (state.query.isNotBlank() || state.selectedInterestIds.isNotEmpty()) {
+                    searchTrigger.tryEmit(
+                        SearchTrigger(
+                            query = state.query,
+                            isImmediate = true,
+                            selectedInterestIds = state.selectedInterestIds.toList()
+                        )
+                    )
                 }
+            }
+
+            is SearchAction.OnInterestToggled -> {
+                _uiState.update { state ->
+                    val currentInterests = state.selectedInterestIds
+                    val newInterests = if (currentInterests.contains(action.interestId)) {
+                        currentInterests - action.interestId
+                    } else {
+                        currentInterests + action.interestId
+                    }
+                    state.copy(selectedInterestIds = newInterests)
+                }
+                val state = _uiState.value
+                savedStateHandle["interests"] = state.selectedInterestIds.toList()
+                searchTrigger.tryEmit(
+                    SearchTrigger(
+                        query = state.query,
+                        isImmediate = true,
+                        selectedInterestIds = state.selectedInterestIds.toList()
+                    )
+                )
             }
         }
     }
@@ -103,22 +162,26 @@ class SearchViewModel @Inject constructor(
             searchTrigger
                 .debounce { trigger -> if (trigger.isImmediate) 0L else 300L }
                 .collectLatest { trigger ->
-                    if (trigger.query.isBlank()) {
+                    if (trigger.query.isBlank() && trigger.selectedInterestIds.isEmpty()) {
                         _uiState.update { it.copy(searchResultsState = UiState.Idle) }
                     } else {
-                        performSearch(trigger.query)
+                        performSearch(trigger.query, trigger.selectedInterestIds)
                     }
                 }
         }
     }
 
-    private suspend fun performSearch(query: String) {
+    private suspend fun performSearch(
+        query: String,
+        interestIds: List<Int>
+    ) {
         _uiState.update { it.copy(searchResultsState = UiState.Loading) }
         when (
             val result = searchForDestinationsUseCase(
                 keyword = query,
                 pageIndex = 1,
-                pageSize = 20
+                pageSize = 20,
+                interestIds = interestIds.ifEmpty { null }
             )
         ) {
             is Result.Error -> {
@@ -130,7 +193,9 @@ class SearchViewModel @Inject constructor(
 
             is Result.Success -> {
                 _uiState.update { it.copy(searchResultsState = UiState.Success(result.data)) }
-                saveRecentSearchUseCase(query)
+                if (query.isNotBlank()) {
+                    saveRecentSearchUseCase(query)
+                }
             }
         }
     }

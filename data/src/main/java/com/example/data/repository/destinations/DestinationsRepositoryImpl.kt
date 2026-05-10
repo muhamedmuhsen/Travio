@@ -75,10 +75,11 @@ class DestinationsRepositoryImpl @Inject constructor(
     override suspend fun searchForDestinations(
         keyword: String,
         pageIndex: Int,
-        pageSize: Int
+        pageSize: Int,
+        interestIds: List<Int>?
     ): Result<List<Destination>, DataError> =
         safeApiCall {
-            val response = api.searchForDestinations(keyword, pageIndex, pageSize)
+            val response = api.searchForDestinations(keyword, pageIndex, pageSize, interestIds)
             response.data.map { it.toDomain() }
         }
 

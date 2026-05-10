@@ -103,4 +103,21 @@
     <string name="all_flights_passenger">مسافر واحد</string>
     <string name="all_flights_passengers">%1$d مسافرين</string>
     <string name="all_flights_class_placeholder">الدرجة</string>
+    <!-- Interest Filters -->
+    <string name="interest_historical">تاريخي</string>
+    <string name="interest_architecture">هندسة معمارية</string>
+    <string name="interest_cultural">ثقافي</string>
+    <string name="interest_art">فن</string>
+    <string name="interest_religious">ديني</string>
+    <string name="interest_adventure">مغامرة</string>
+    <string name="interest_relaxation">استرخاء</string>
+    <string name="interest_coastal">ساحلي</string>
+    <string name="interest_shopping">تسوق</string>
+    <string name="interest_city_view">إطلالة على المدينة</string>
+    <string name="interest_entertainment">ترفيه</string>
+    <string name="interest_family">عائلي</string>
+    <string name="interest_nature">طبيعة</string>
+    <string name="interest_nightlife">حياة ليلية</string>
+    <string name="interest_photography">تصوير فوتوغرافي</string>
+    <string name="search_interest_chip_cd">تصفية حسب %s</string>
 </resources>

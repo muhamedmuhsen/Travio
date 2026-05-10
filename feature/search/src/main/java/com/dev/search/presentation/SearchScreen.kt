@@ -39,6 +39,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.dev.home.components.ErrorView
+import com.dev.search.components.InterestFilterChipsRow
 import com.dev.search.components.LoadingSearchResultItem
 import com.dev.search.components.RecentSearchItem
 import com.dev.search.components.SearchResultItem
@@ -88,8 +89,8 @@ internal fun SearchContent(
     snackbarHostState: SnackbarHostState,
     onAction: (SearchAction) -> Unit
 ) {
-    val isQueryActive by remember(state.query) {
-        derivedStateOf { state.query.isNotBlank() }
+    val isQueryActive by remember(state.query, state.selectedInterestIds) {
+        derivedStateOf { state.query.isNotBlank() || state.selectedInterestIds.isNotEmpty() }
     }
 
     Scaffold(
@@ -114,7 +115,13 @@ internal fun SearchContent(
                 onClearClicked = { onAction(SearchAction.OnClearQuery) },
                 onSearchSubmitted = { /* debounce handles it */ }
             )
-            Spacer(Modifier.height(MaterialTheme.spacing.md))
+            // Spacer(Modifier.height(MaterialTheme.spacing.sm))
+
+            InterestFilterChipsRow(
+                selectedInterestIds = state.selectedInterestIds,
+                onInterestToggled = { onAction(SearchAction.OnInterestToggled(it)) }
+            )
+
             HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
 
             if (isQueryActive) {
@@ -322,10 +329,25 @@ private fun SearchScreenLoadingPreview() {
     }
 }
 
+@Preview(showBackground = true, name = "Interests Selected")
+@Composable
+private fun SearchScreenInterestsPreview() {
+    TravioTheme {
+        SearchContent(
+            state = SearchUiState(
+                selectedInterestIds = setOf(1, 2),
+                searchResultsState = UiState.Loading
+            ),
+            snackbarHostState = remember { SnackbarHostState() },
+            onAction = {}
+        )
+    }
+}
+
 @Preview(
     showBackground = true,
     name = "Dark Mode",
-    uiMode = Configuration.UI_MODE_NIGHT_YES
+    uiMode = android.content.res.Configuration.UI_MODE_NIGHT_YES
 )
 @Composable
 private fun SearchScreenDarkPreview() {

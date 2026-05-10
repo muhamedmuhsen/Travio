@@ -1,6 +1,7 @@
 package com.dev.search.presentation
 
 import com.dev.utils.uistate.UiState
+import androidx.lifecycle.SavedStateHandle
 import com.example.domain.usecase.destinations.AddToRecentlyViewedUseCase
 import com.example.domain.usecase.destinations.SearchForDestinationsUseCase
 import com.example.domain.usecase.search.ClearRecentSearchesUseCase
@@ -23,6 +24,8 @@ import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.mockito.kotlin.any
+import org.mockito.kotlin.anyOrNull
+import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
@@ -45,6 +48,7 @@ class SearchViewModelTest {
         Dispatchers.setMain(testDispatcher)
         whenever(getRecentSearchesUseCase()).thenReturn(flowOf(emptyList()))
         viewModel = SearchViewModel(
+            SavedStateHandle(),
             searchForDestinationsUseCase,
             addToRecentlyViewedUseCase,
             getRecentSearchesUseCase,
@@ -61,7 +65,7 @@ class SearchViewModelTest {
 
     @Test
     fun `rapid typing within 300ms triggers only one search`() = runTest {
-        whenever(searchForDestinationsUseCase(any(), any(), any())).thenReturn(Result.Success(emptyList()))
+        whenever(searchForDestinationsUseCase(any(), any(), any(), anyOrNull())).thenReturn(Result.Success(emptyList()))
 
         viewModel.onAction(SearchAction.OnQueryChanged("E"))
         advanceTimeBy(100)
@@ -74,24 +78,24 @@ class SearchViewModelTest {
         advanceTimeBy(305)
         runCurrent()
 
-        verify(searchForDestinationsUseCase, times(1)).invoke(any(), any(), any())
+        verify(searchForDestinationsUseCase, times(1)).invoke(any(), any(), any(), anyOrNull())
         assertEquals("Egy", viewModel.uiState.value.query)
     }
 
     @Test
     fun `OnRecentSearchClicked triggers search immediately without debounce`() = runTest {
-        whenever(searchForDestinationsUseCase(any(), any(), any())).thenReturn(Result.Success(emptyList()))
+        whenever(searchForDestinationsUseCase(any(), any(), any(), anyOrNull())).thenReturn(Result.Success(emptyList()))
 
         viewModel.onAction(SearchAction.OnRecentSearchClicked("Egypt"))
         runCurrent() // Should trigger immediately
 
-        verify(searchForDestinationsUseCase, times(1)).invoke(any(), any(), any())
+        verify(searchForDestinationsUseCase, times(1)).invoke(any(), any(), any(), anyOrNull())
         assertEquals("Egypt", viewModel.uiState.value.query)
     }
 
     @Test
     fun `OnRetrySearch triggers search immediately`() = runTest {
-        whenever(searchForDestinationsUseCase(any(), any(), any())).thenReturn(Result.Success(emptyList()))
+        whenever(searchForDestinationsUseCase(any(), any(), any(), anyOrNull())).thenReturn(Result.Success(emptyList()))
         
         // Setup state with a query
         viewModel.onAction(SearchAction.OnQueryChanged("Egypt"))
@@ -103,12 +107,12 @@ class SearchViewModelTest {
         runCurrent()
 
         // 1 for typing, 1 for retry
-        verify(searchForDestinationsUseCase, times(2)).invoke(any(), any(), any())
+        verify(searchForDestinationsUseCase, times(2)).invoke(any(), any(), any(), anyOrNull())
     }
 
     @Test
     fun `OnClearQuery immediately clears search state and cancels pending search`() = runTest {
-        whenever(searchForDestinationsUseCase(any(), any(), any())).thenReturn(Result.Success(emptyList()))
+        whenever(searchForDestinationsUseCase(any(), any(), any(), anyOrNull())).thenReturn(Result.Success(emptyList()))
 
         viewModel.onAction(SearchAction.OnQueryChanged("Egypt"))
         advanceTimeBy(100)
@@ -120,8 +124,64 @@ class SearchViewModelTest {
         advanceTimeBy(305)
         runCurrent()
 
-        verify(searchForDestinationsUseCase, times(0)).invoke(any(), any(), any())
+        verify(searchForDestinationsUseCase, times(0)).invoke(any(), any(), any(), anyOrNull())
         assertEquals("", viewModel.uiState.value.query)
         assertTrue(viewModel.uiState.value.searchResultsState is UiState.Idle)
+    }
+
+    @Test
+    fun `given_interestSelected_when_noQuery_then_searchTriggered`() = runTest {
+        whenever(searchForDestinationsUseCase(any(), any(), any(), anyOrNull())).thenReturn(Result.Success(emptyList()))
+
+        viewModel.onAction(SearchAction.OnInterestToggled(1))
+        runCurrent()
+
+        verify(searchForDestinationsUseCase, times(1)).invoke(eq(""), any(), any(), eq(listOf(1)))
+    }
+
+    @Test
+    fun `given_interestsSelected_when_queryPresent_then_combinedSearchTriggered`() = runTest {
+        whenever(searchForDestinationsUseCase(any(), any(), any(), anyOrNull())).thenReturn(Result.Success(emptyList()))
+
+        viewModel.onAction(SearchAction.OnQueryChanged("Egypt"))
+        viewModel.onAction(SearchAction.OnInterestToggled(1))
+        runCurrent()
+
+        verify(searchForDestinationsUseCase, times(1)).invoke(eq("Egypt"), any(), any(), eq(listOf(1)))
+    }
+
+    @Test
+    fun `given_interestToggled_when_alreadySelected_then_removedFromState`() = runTest {
+        whenever(searchForDestinationsUseCase(any(), any(), any(), anyOrNull())).thenReturn(Result.Success(emptyList()))
+
+        viewModel.onAction(SearchAction.OnInterestToggled(1))
+        assertTrue(viewModel.uiState.value.selectedInterestIds.contains(1))
+
+        viewModel.onAction(SearchAction.OnInterestToggled(1))
+        assertTrue(!viewModel.uiState.value.selectedInterestIds.contains(1))
+    }
+
+    @Test
+    fun `given_allInterestsDeselected_when_noQuery_then_stateIsIdle`() = runTest {
+        whenever(searchForDestinationsUseCase(any(), any(), any(), anyOrNull())).thenReturn(Result.Success(emptyList()))
+
+        viewModel.onAction(SearchAction.OnInterestToggled(1))
+        runCurrent()
+        assertTrue(viewModel.uiState.value.searchResultsState is UiState.Success)
+
+        viewModel.onAction(SearchAction.OnInterestToggled(1))
+        runCurrent()
+        assertTrue(viewModel.uiState.value.searchResultsState is UiState.Idle)
+    }
+
+    @Test
+    fun `given_interestSelected_when_rapidToggle_then_onlyLatestSearchExecuted`() = runTest {
+        whenever(searchForDestinationsUseCase(any(), any(), any(), anyOrNull())).thenReturn(Result.Success(emptyList()))
+
+        viewModel.onAction(SearchAction.OnInterestToggled(1))
+        viewModel.onAction(SearchAction.OnInterestToggled(2))
+        runCurrent()
+
+        verify(searchForDestinationsUseCase, times(1)).invoke(any(), any(), any(), eq(listOf(1, 2)))
     }
 }
