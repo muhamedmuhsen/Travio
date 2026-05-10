@@ -15,14 +15,13 @@ import com.example.domain.utils.Result
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.debounce
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -46,16 +45,26 @@ class SearchViewModel @Inject constructor(
     private val _event = Channel<SearchEvent>(Channel.UNLIMITED)
     val event = _event.receiveAsFlow()
 
+    private val searchTrigger = MutableSharedFlow<SearchTrigger>(extraBufferCapacity = 1)
+
     init {
         observeRecentSearches()
-        observeQueryForSearch()
+        observeSearchTrigger()
     }
 
     fun onAction(action: SearchAction) {
         when (action) {
-            is SearchAction.OnQueryChanged -> _uiState.update { it.copy(query = action.query) }
+            is SearchAction.OnQueryChanged -> {
+                _uiState.update { it.copy(query = action.query) }
+                searchTrigger.tryEmit(SearchTrigger(action.query, isImmediate = false))
+            }
+
             is SearchAction.OnDestinationClicked -> onDestinationClicked(action.destination)
-            is SearchAction.OnRecentSearchClicked -> _uiState.update { it.copy(query = action.query) }
+            is SearchAction.OnRecentSearchClicked -> {
+                _uiState.update { it.copy(query = action.query) }
+                searchTrigger.tryEmit(SearchTrigger(action.query, isImmediate = true))
+            }
+
             is SearchAction.OnDeleteRecentSearch -> viewModelScope.launch {
                 deleteRecentSearchUseCase(action.query)
             }
@@ -63,13 +72,18 @@ class SearchViewModel @Inject constructor(
             SearchAction.OnClearRecentSearches -> viewModelScope.launch {
                 clearRecentSearchesUseCase()
             }
+
             SearchAction.OnBackClicked -> viewModelScope.launch { _event.send(SearchEvent.NavigateBack) }
-            SearchAction.OnClearQuery -> _uiState.update {
-                it.copy(query = "", searchResultsState = UiState.Idle)
+            SearchAction.OnClearQuery -> {
+                _uiState.update { it.copy(query = "", searchResultsState = UiState.Idle) }
+                searchTrigger.tryEmit(SearchTrigger("", isImmediate = true))
             }
+
             SearchAction.OnRetrySearch -> {
                 val query = _uiState.value.query
-                if (query.isNotBlank()) viewModelScope.launch { performSearch(query) }
+                if (query.isNotBlank()) {
+                    searchTrigger.tryEmit(SearchTrigger(query, isImmediate = true))
+                }
             }
         }
     }
@@ -84,18 +98,15 @@ class SearchViewModel @Inject constructor(
         }
     }
 
-    @OptIn(FlowPreview::class)
-    private fun observeQueryForSearch() {
+    private fun observeSearchTrigger() {
         viewModelScope.launch {
-            _uiState
-                .map { it.query }
-                .distinctUntilChanged()
-                .debounce(300L)
-                .collectLatest { query ->
-                    if (query.isBlank()) {
+            searchTrigger
+                .debounce { trigger -> if (trigger.isImmediate) 0L else 300L }
+                .collectLatest { trigger ->
+                    if (trigger.query.isBlank()) {
                         _uiState.update { it.copy(searchResultsState = UiState.Idle) }
                     } else {
-                        performSearch(query)
+                        performSearch(trigger.query)
                     }
                 }
         }
