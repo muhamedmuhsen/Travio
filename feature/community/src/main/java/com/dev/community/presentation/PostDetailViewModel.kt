@@ -68,8 +68,8 @@ class PostDetailViewModel @Inject constructor(
     }
 
     fun onLikeClicked() {
-        val post = (_uiState.value.postState as? UiState.Success)?.data ?: return
         _uiState.update { state ->
+            val post = (state.postState as? UiState.Success)?.data ?: return@update state
             state.copy(
                 postState = UiState.Success(
                     post.copy(
@@ -83,8 +83,8 @@ class PostDetailViewModel @Inject constructor(
     }
 
     fun onBookmarkClicked() {
-        val post = (_uiState.value.postState as? UiState.Success)?.data ?: return
         _uiState.update { state ->
+            val post = (state.postState as? UiState.Success)?.data ?: return@update state
             state.copy(postState = UiState.Success(post.copy(isBookmarked = !post.isBookmarked)))
         }
         viewModelScope.launch { toggleBookmark(postId) }
@@ -97,19 +97,21 @@ class PostDetailViewModel @Inject constructor(
     fun onCommentSubmitted() {
         val text = commentText.value.trim()
         if (text.isBlank()) return
-        val post = (_uiState.value.postState as? UiState.Success)?.data ?: return
-        val newComment = Comment(
-            id = System.currentTimeMillis().toInt(),
-            authorName = commentAuthorName,
-            text = text,
-            createdAt = Instant.now()
-        )
+
         _uiState.update { state ->
+            val post = (state.postState as? UiState.Success)?.data ?: return@update state
+            val newComment = Comment(
+                id = System.currentTimeMillis().toInt(),
+                authorName = commentAuthorName,
+                text = text,
+                createdAt = Instant.now()
+            )
+            val updatedComments = post.comments + newComment
             state.copy(
                 postState = UiState.Success(
                     post.copy(
-                        comments = post.comments + newComment,
-                        commentsCount = post.commentsCount + 1
+                        comments = updatedComments,
+                        commentsCount = updatedComments.size
                     )
                 )
             )
