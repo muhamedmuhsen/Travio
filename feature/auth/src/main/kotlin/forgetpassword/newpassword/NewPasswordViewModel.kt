@@ -69,12 +69,21 @@ class NewPasswordViewModel @Inject constructor(
     }
 
     fun onPasswordChange(password: String) {
+        val isMinLengthMet = password.length >= 6
+        val isLetterAndNumberMet = password.any { it.isLetter() } && password.any { it.isDigit() }
+        val isUpperCaseMet = password.any { it.isUpperCase() }
+        val isSpecialCharMet = password.any { !it.isLetterOrDigit() && !it.isWhitespace() }
+
         _state.update { currentState ->
             currentState.copy(
                 newPassword = password,
                 newPasswordState = UiState.Idle,
                 isPasswordsDoesnotMatch = false,
-                isNewPasswordValid = true
+                isNewPasswordValid = true,
+                isMinLengthMet = isMinLengthMet,
+                isLetterAndNumberMet = isLetterAndNumberMet,
+                isUpperCaseMet = isUpperCaseMet,
+                isSpecialCharMet = isSpecialCharMet
             )
         }
     }

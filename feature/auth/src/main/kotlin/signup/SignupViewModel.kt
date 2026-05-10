@@ -129,7 +129,20 @@ class SignupViewModel @Inject constructor(
     }
 
     fun onPasswordChange(password: String) {
-        _state.update { it.copy(password = password) }
+        val isMinLengthMet = password.length >= 6
+        val isLetterAndNumberMet = password.any { it.isLetter() } && password.any { it.isDigit() }
+        val isUpperCaseMet = password.any { it.isUpperCase() }
+        val isSpecialCharMet = password.any { !it.isLetterOrDigit() && !it.isWhitespace() }
+
+        _state.update {
+            it.copy(
+                password = password,
+                isMinLengthMet = isMinLengthMet,
+                isLetterAndNumberMet = isLetterAndNumberMet,
+                isUpperCaseMet = isUpperCaseMet,
+                isSpecialCharMet = isSpecialCharMet
+            )
+        }
     }
 
     fun onPasswordVisibilityCheck() {

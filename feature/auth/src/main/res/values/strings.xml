@@ -23,7 +23,8 @@
     <string name="last_name">Last Name</string>
     <string name="username">Username</string>
     <string name="your_password_must">Your password must:</string>
-    <string name="at_least_9_characters">• Be at least 6 characters</string>
+    <string name="at_least_6_characters">• Be at least 6 characters</string>
+    <string name="include_uppercase_letter">• Include at least one uppercase letter</string>
     <string name="include_letters_and_numbers">• Include letters and numbers</string>
     <string name="include_special_character">• Include at least one special character (!@#\$%^&amp;*_)</string>
     <string name="reset_your_password_using">Reset your password using:</string>
@@ -49,7 +50,7 @@
     <string name="error_sign_in_failed">Sign in failed. Please try again.</string>
     <string name="error_registration_failed">Registration failed. Please try again.</string>
     <string name="error_invalid_email">Please enter a valid email address.</string>
-    <string name="error_weak_password">Password must be at least 8 characters.</string>
+    <string name="error_weak_password">Password must be at least 6 characters and include uppercase letters, numbers, and special characters.</string>
     <string name="error_missing_fields">Please fill in all required fields.</string>
     <string name="error_password_mismatch">Passwords do not match.</string>
     <string name="error_invalid_inputs">Please check your input.</string>
