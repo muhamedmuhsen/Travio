@@ -41,6 +41,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -243,7 +244,11 @@ fun SignupScreenContent(
 
             PasswordRulesText(
                 textColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                textStyle = MaterialTheme.typography.bodySmall
+                textStyle = MaterialTheme.typography.bodySmall,
+                isMinLengthMet = state.isMinLengthMet,
+                isLetterAndNumberMet = state.isLetterAndNumberMet,
+                isUpperCaseMet = state.isUpperCaseMet,
+                isSpecialCharMet = state.isSpecialCharMet
             )
             Spacer(modifier = Modifier.height(MaterialTheme.spacing.md))
 
@@ -343,7 +348,11 @@ fun ByCreatingAccountSection(modifier: Modifier = Modifier) {
 fun PasswordRulesText(
     modifier: Modifier = Modifier,
     textColor: Color,
-    textStyle: TextStyle
+    textStyle: TextStyle,
+    isMinLengthMet: Boolean,
+    isLetterAndNumberMet: Boolean,
+    isUpperCaseMet: Boolean,
+    isSpecialCharMet: Boolean
 ) {
     Column(
         modifier = modifier
@@ -357,21 +366,35 @@ fun PasswordRulesText(
             color = textColor
         )
         Text(
-            text = stringResource(id = R.string.at_least_9_characters),
-            style = textStyle,
-            color = textColor
+            text = stringResource(id = R.string.at_least_6_characters),
+            style = textStyle.copy(
+                textDecoration = if (isMinLengthMet) TextDecoration.LineThrough else TextDecoration.None
+            ),
+            color = if (isMinLengthMet) MaterialTheme.colorScheme.primary else textColor
 
         )
         Text(
             text = stringResource(id = R.string.include_letters_and_numbers),
-            style = textStyle,
-            color = textColor
+            style = textStyle.copy(
+                textDecoration = if (isLetterAndNumberMet) TextDecoration.LineThrough else TextDecoration.None
+            ),
+            color = if (isLetterAndNumberMet) MaterialTheme.colorScheme.primary else textColor
+
+        )
+        Text(
+            text = stringResource(id = R.string.include_uppercase_letter),
+            style = textStyle.copy(
+                textDecoration = if (isUpperCaseMet) TextDecoration.LineThrough else TextDecoration.None
+            ),
+            color = if (isUpperCaseMet) MaterialTheme.colorScheme.primary else textColor
 
         )
         Text(
             text = stringResource(id = R.string.include_special_character),
-            style = textStyle,
-            color = textColor
+            style = textStyle.copy(
+                textDecoration = if (isSpecialCharMet) TextDecoration.LineThrough else TextDecoration.None
+            ),
+            color = if (isSpecialCharMet) MaterialTheme.colorScheme.primary else textColor
 
         )
     }
@@ -382,7 +405,13 @@ fun PasswordRulesText(
 private fun SignupScreenPreview() {
     TravioTheme {
         SignupScreenContent(
-            state = SignupUiState(),
+            state = SignupUiState(
+                password = "Password123!",
+                isMinLengthMet = true,
+                isLetterAndNumberMet = true,
+                isUpperCaseMet = true,
+                isSpecialCharMet = true
+            ),
             errorMessage = null,
             onCloseClicked = {},
             onFirstNameChange = {},

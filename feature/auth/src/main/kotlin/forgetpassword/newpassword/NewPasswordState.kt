@@ -9,5 +9,9 @@ data class NewPasswordState(
     val isConfirmPasswordVisible: Boolean = false,
     val confirmNewPassword: String = "",
     val isNewPasswordValid: Boolean = false,
+    val isMinLengthMet: Boolean = false,
+    val isLetterAndNumberMet: Boolean = false,
+    val isUpperCaseMet: Boolean = false,
+    val isSpecialCharMet: Boolean = false,
     val newPasswordState: UiState<Unit> = UiState.Idle
 )

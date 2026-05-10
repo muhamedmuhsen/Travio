@@ -16,5 +16,9 @@ data class SignupUiState(
     val isLastNameError: Boolean = false,
     val isUsernameError: Boolean = false,
     val isPasswordMismatch: Boolean = false,
+    val isMinLengthMet: Boolean = false,
+    val isLetterAndNumberMet: Boolean = false,
+    val isUpperCaseMet: Boolean = false,
+    val isSpecialCharMet: Boolean = false,
     val signupState: UiState<User> = UiState.Idle
 )

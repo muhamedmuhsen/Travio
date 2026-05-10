@@ -22,7 +22,8 @@
     <string name="last_name">الاسم الاخير</string>
     <string name="username">اسم المتسخدم</string>
     <string name="your_password_must">يجب ان تكون كلمه المرور:</string>
-    <string name="at_least_9_characters">• 9 أحرف على الأقل</string>
+    <string name="at_least_6_characters">• 6 أحرف على الأقل</string>
+    <string name="include_uppercase_letter">• تضمين حرف كبير واحد على الأقل</string>
     <string name="include_letters_and_numbers">• تتضمن أحرفًا وأرقامًا</string>
     <string name="include_special_character">• تتضمن حرفًا خاصًا واحدًا على الأقل (!@#\$%^&amp;*_)</string>
     <string name="reset_your_password_using">إعادة تعيين كلمة المرور باستخدام:</string>
@@ -47,7 +48,7 @@
     <string name="error_sign_in_failed">فشل تسجيل الدخول. حاول مرة أخرى.</string>
     <string name="error_registration_failed">فشل التسجيل. حاول مرة أخرى.</string>
     <string name="error_invalid_email">يرجى إدخال عنوان بريد إلكتروني صالح.</string>
-    <string name="error_weak_password">يجب أن تكون كلمة المرور 8 أحرف على الأقل.</string>
+    <string name="error_weak_password">يجب أن تتكون كلمة المرور من 6 أحرف على الأقل وتتضمن حروفًا كبيرة وأرقامًا ورموزًا.</string>
     <string name="error_missing_fields">يرجى ملء جميع الحقول المطلوبة.</string>
     <string name="error_password_mismatch">كلمات المرور غير متطابقة.</string>
     <string name="error_invalid_inputs">يرجى التحقق من المدخلات.</string>

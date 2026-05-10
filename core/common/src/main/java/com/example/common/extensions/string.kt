@@ -14,9 +14,11 @@ fun String.isValidEmail(): Boolean {
 }
 
 fun String.isValidPassword(): Boolean {
-    val passwordRegex =
-        "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{6,}$".toRegex()
-    return this.matches(passwordRegex)
+    val hasLetter = any { it.isLetter() }
+    val hasUpperCase = any { it.isUpperCase() }
+    val hasDigit = any { it.isDigit() }
+    val hasSpecialChar = any { !it.isLetterOrDigit() && !it.isWhitespace() }
+    return this.length >= 6 && hasLetter && hasUpperCase && hasDigit && hasSpecialChar
 }
 
 fun String.isValidName(): Boolean {
@@ -128,7 +130,7 @@ fun String.toFullDate(): String {
         } else {
             this
         }
-    } catch (e: Exception) {
+    } catch (_: Exception) {
         this
     }
 }

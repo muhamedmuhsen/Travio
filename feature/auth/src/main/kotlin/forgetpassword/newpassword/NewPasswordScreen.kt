@@ -167,7 +167,11 @@ fun NewPasswordScreenContent(
             Spacer(modifier = Modifier.height(MaterialTheme.spacing.lg))
             PasswordRulesText(
                 textColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                textStyle = MaterialTheme.typography.bodySmall
+                textStyle = MaterialTheme.typography.bodySmall,
+                isMinLengthMet = state.isMinLengthMet,
+                isLetterAndNumberMet = state.isLetterAndNumberMet,
+                isUpperCaseMet = state.isUpperCaseMet,
+                isSpecialCharMet = state.isSpecialCharMet
             )
             Spacer(modifier = Modifier.height(MaterialTheme.spacing.lg))
 
