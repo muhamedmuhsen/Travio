@@ -11,4 +11,5 @@ sealed interface SearchAction {
     data object OnBackClicked : SearchAction
     data object OnClearQuery : SearchAction
     data object OnRetrySearch : SearchAction
+    data class OnInterestToggled(val interestId: Int) : SearchAction
 }

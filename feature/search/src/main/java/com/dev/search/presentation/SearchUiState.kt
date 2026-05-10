@@ -7,5 +7,6 @@ import com.example.domain.model.search.RecentSearch
 data class SearchUiState(
     val query: String = "",
     val recentSearches: List<RecentSearch> = emptyList(),
-    val searchResultsState: UiState<List<Destination>> = UiState.Idle
+    val searchResultsState: UiState<List<Destination>> = UiState.Idle,
+    val selectedInterestIds: Set<Int> = emptySet()
 )

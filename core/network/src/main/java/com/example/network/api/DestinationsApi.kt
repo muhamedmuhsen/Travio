@@ -35,7 +35,8 @@ interface DestinationsApi {
     suspend fun searchForDestinations(
         @Query("keyword") keyword: String,
         @Query("pageIndex") pageIndex: Int = 1,
-        @Query("pageSize") pageSize: Int = 10
+        @Query("pageSize") pageSize: Int = 10,
+        @Query("interestIds") interestIds: List<Int>? = null
     ): GetAllDestinationsResponse
 
     @GET("Destinations/famous-countries")

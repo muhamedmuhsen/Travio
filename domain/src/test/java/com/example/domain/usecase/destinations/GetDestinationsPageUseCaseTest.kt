@@ -114,7 +114,8 @@ class GetDestinationsPageUseCaseTest {
         override suspend fun searchForDestinations(
             keyword: String,
             pageIndex: Int,
-            pageSize: Int
+            pageSize: Int,
+            interestIds: List<Int>?
         ): Result<List<Destination>, DataError> {
             return Result.Success(emptyList())
         }

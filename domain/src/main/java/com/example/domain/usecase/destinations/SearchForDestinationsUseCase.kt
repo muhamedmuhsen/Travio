@@ -10,11 +10,12 @@ class SearchForDestinationsUseCase @Inject constructor(private val repository: D
     suspend operator fun invoke(
         keyword: String,
         pageIndex: Int,
-        pageSize: Int
+        pageSize: Int,
+        interestIds: List<Int>? = null
     ): Result<List<Destination>, DataError> {
-        if (keyword.isEmpty()) {
+        if (keyword.isEmpty() && interestIds.isNullOrEmpty()) {
             return Result.Error(DataError.Validation.MissingFields)
         }
-        return repository.searchForDestinations(keyword, pageIndex, pageSize)
+        return repository.searchForDestinations(keyword, pageIndex, pageSize, interestIds)
     }
 }
