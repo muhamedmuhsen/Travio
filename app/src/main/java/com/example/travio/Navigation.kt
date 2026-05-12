@@ -320,6 +320,11 @@ fun TravioNavHost(
                     navController.navigate(Screen.AiChatScreen.route) {
                         launchSingleTop = true
                     }
+                },
+                navigateToDestinationDetails = { id ->
+                    id.toIntOrNull()?.let { destinationId ->
+                        navController.navigate(DestinationDetailRoute(destinationId))
+                    }
                 }
             )
         }
