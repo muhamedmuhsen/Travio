@@ -133,9 +133,7 @@ class BookingViewModel @Inject constructor(
     ) {
         if (success) {
             _uiState.update { it.copy(paymentStatus = PaymentStatus.Success) }
-            viewModelScope.launch {
-                _effect.send(BookingEffect.NavigateToConfirmation(""))
-            }
+            confirmBooking()
         } else if (canceled) {
             _uiState.update { it.copy(isProcessing = false, paymentStatus = PaymentStatus.Canceled) }
         } else {

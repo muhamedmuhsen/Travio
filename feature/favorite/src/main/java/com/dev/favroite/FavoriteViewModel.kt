@@ -8,14 +8,12 @@ import com.dev.favroite.FavoritesTabUiState.Loading
 import com.dev.favroite.FavoritesTabUiState.Success
 import com.dev.favroite.components.SectionTab
 import com.dev.utils.uitext.UiText
-import com.example.domain.model.favorite.FavoriteDestination
 import com.example.domain.model.favorite.FavoritesPage
 import com.example.domain.usecase.favorite.destination.AddDestinationFavoriteUseCase
 import com.example.domain.usecase.favorite.destination.GetFavoriteDestinationsPageUseCase
 import com.example.domain.usecase.favorite.destination.ObserveFavoriteDestinationIdsUseCase
 import com.example.domain.usecase.favorite.destination.RemoveDestinationFavoriteUseCase
 import com.example.domain.usecase.favorite.place.DeletePlaceUseCase
-import com.example.domain.usecase.favorite.place.GetAllPlacesUseCase
 import com.example.domain.usecase.favorite.preference.GetFavoriteSelectedTabUseCase
 import com.example.domain.usecase.favorite.preference.SaveFavoriteSelectedTabUseCase
 import com.example.domain.usecase.favorite.trip.DeleteTripUseCase
@@ -36,16 +34,15 @@ import javax.inject.Inject
 
 @HiltViewModel
 class FavoriteViewModel @Inject constructor(
-    private val getAllPlacesUseCase: GetAllPlacesUseCase,
     private val getAllTripsUseCase: GetAllTripsUseCase,
     private val deletePlaceUseCase: DeletePlaceUseCase,
     private val deleteTripUseCase: DeleteTripUseCase,
-    private val addDestinationFavoriteUseCase: AddDestinationFavoriteUseCase? = null,
-    private val removeDestinationFavoriteUseCase: RemoveDestinationFavoriteUseCase? = null,
-    private val observeFavoriteDestinationIdsUseCase: ObserveFavoriteDestinationIdsUseCase? = null,
+    private val addDestinationFavoriteUseCase: AddDestinationFavoriteUseCase,
+    private val removeDestinationFavoriteUseCase: RemoveDestinationFavoriteUseCase,
+    private val observeFavoriteDestinationIdsUseCase: ObserveFavoriteDestinationIdsUseCase,
     private val getFavoriteSelectedTabUseCase: GetFavoriteSelectedTabUseCase,
     private val saveFavoriteSelectedTabUseCase: SaveFavoriteSelectedTabUseCase,
-    private val getFavoriteDestinationsPageUseCase: GetFavoriteDestinationsPageUseCase? = null
+    private val getFavoriteDestinationsPageUseCase: GetFavoriteDestinationsPageUseCase
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(FavoriteState())
@@ -72,9 +69,8 @@ class FavoriteViewModel @Inject constructor(
     }
 
     private fun observeSharedFavoriteIds() {
-        val sharedObserver = observeFavoriteDestinationIdsUseCase ?: return
         viewModelScope.launch {
-            sharedObserver()
+            observeFavoriteDestinationIdsUseCase()
                 .catch { throwable ->
                     System.err.println("FavoriteViewModel observer failed: ${throwable.message}")
                     _effect.trySend(FavoriteEffect.ShowMessage(UiText.StringResource(R.string.favorite_sync_unavailable)))
@@ -86,9 +82,8 @@ class FavoriteViewModel @Inject constructor(
     }
 
     private fun warmSharedFavoriteSync() {
-        val pageUseCase = getFavoriteDestinationsPageUseCase ?: return
         viewModelScope.launch {
-            pageUseCase(pageIndex = FIRST_PAGE, pageSize = PAGE_SIZE)
+            getFavoriteDestinationsPageUseCase(pageIndex = FIRST_PAGE, pageSize = PAGE_SIZE)
         }
     }
 
@@ -175,46 +170,7 @@ class FavoriteViewModel @Inject constructor(
         pageIndex: Int,
         pageSize: Int
     ): Result<FavoritesPage, DataError> {
-        val modernUseCase = getFavoriteDestinationsPageUseCase
-        if (modernUseCase != null) {
-            return modernUseCase(pageIndex = pageIndex, pageSize = pageSize)
-        }
-
-        if (pageIndex > FIRST_PAGE) {
-            val currentItems = _state.value.loadedDestinations
-            return Result.Success(
-                FavoritesPage(
-                    pageIndex = pageIndex,
-                    pageSize = pageSize,
-                    count = currentItems.size,
-                    items = emptyList()
-                )
-            )
-        }
-
-        return try {
-            val places = getAllPlacesUseCase().first()
-            val mappedItems = places.map {
-                FavoriteDestination(
-                    destinationId = it.id,
-                    name = it.name,
-                    description = it.description,
-                    rating = 0.0,
-                    cityName = it.description,
-                    imageUrls = it.imageUrls
-                )
-            }
-            Result.Success(
-                FavoritesPage(
-                    pageIndex = FIRST_PAGE,
-                    pageSize = pageSize,
-                    count = mappedItems.size,
-                    items = mappedItems
-                )
-            )
-        } catch (_: Exception) {
-            Result.Error(DataError.Network.UnexpectedResponse)
-        }
+        return getFavoriteDestinationsPageUseCase(pageIndex = pageIndex, pageSize = pageSize)
     }
 
     private fun applyDestinationPage(
@@ -379,35 +335,8 @@ class FavoriteViewModel @Inject constructor(
 
         viewModelScope.launch {
             val result = when (intent) {
-                MutationIntent.Add -> {
-                    val addUseCase = addDestinationFavoriteUseCase
-                    if (addUseCase != null) {
-                        addUseCase(destinationId)
-                    } else {
-                        Result.Success(
-                            com.example.domain.model.favorite.FavoriteMutationResult(
-                                isSuccess = true,
-                                message = null,
-                                errors = emptyList()
-                            )
-                        )
-                    }
-                }
-
-                MutationIntent.Remove -> {
-                    val removeUseCase = removeDestinationFavoriteUseCase
-                    if (removeUseCase != null) {
-                        removeUseCase(destinationId)
-                    } else {
-                        Result.Success(
-                            com.example.domain.model.favorite.FavoriteMutationResult(
-                                isSuccess = true,
-                                message = null,
-                                errors = emptyList()
-                            )
-                        )
-                    }
-                }
+                MutationIntent.Add -> addDestinationFavoriteUseCase(destinationId)
+                MutationIntent.Remove -> removeDestinationFavoriteUseCase(destinationId)
             }
 
             if (result is Result.Error) {

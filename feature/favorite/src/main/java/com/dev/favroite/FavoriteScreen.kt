@@ -50,6 +50,7 @@ fun FavoriteScreen(
     viewModel: FavoriteViewModel = hiltViewModel(),
     navigateToProfile: () -> Unit,
     navigateToHome: () -> Unit,
+    navigateToDestinationDetails: (String) -> Unit,
     navigateToCommunity: () -> Unit = {},
     navigateToAi: () -> Unit = {}
 ) {
@@ -68,6 +69,7 @@ fun FavoriteScreen(
         onLoadMoreCurrentTab = viewModel::onLoadMoreCurrentTab,
         onRetryLoadMoreCurrentTab = viewModel::onRetryLoadMoreCurrentTab,
         onDestinationItemVisible = viewModel::onDestinationItemVisible,
+        onDestinationClick = navigateToDestinationDetails,
         onBottomBarItemSelected = { index ->
             when (index) {
                 0 -> navigateToHome()
@@ -90,6 +92,7 @@ fun FavoriteContent(
     onLoadMoreCurrentTab: () -> Unit,
     onRetryLoadMoreCurrentTab: () -> Unit,
     onDestinationItemVisible: (Int) -> Unit,
+    onDestinationClick: (String) -> Unit,
     onBottomBarItemSelected: (Int) -> Unit
 ) {
     Scaffold(
@@ -146,6 +149,7 @@ fun FavoriteContent(
                         onLoadMore = onLoadMoreCurrentTab,
                         onRetryLoadMore = onRetryLoadMoreCurrentTab,
                         onDestinationItemVisible = onDestinationItemVisible,
+                        onDestinationClick = onDestinationClick,
                         inFlightMutationIds = state.inFlightMutationIds
                     )
                 }
@@ -209,6 +213,7 @@ private fun FavoriteList(
     onLoadMore: () -> Unit,
     onRetryLoadMore: () -> Unit,
     onDestinationItemVisible: (Int) -> Unit,
+    onDestinationClick: (String) -> Unit,
     inFlightMutationIds: Set<Int>
 ) {
     LazyColumn(
@@ -236,7 +241,7 @@ private fun FavoriteList(
                 isFavorite = true,
                 isFavoriteActionEnabled = place.id !in inFlightMutationIds,
                 onFavoriteClick = { onDeletePlace(place.id.toString()) },
-                onClick = {}
+                onClick = { onDestinationClick(place.id.toString()) }
             )
         }
 
@@ -419,6 +424,7 @@ private fun FavoriteScreenEmptyPreview() {
             onLoadMoreCurrentTab = {},
             onRetryLoadMoreCurrentTab = {},
             onDestinationItemVisible = {},
+            onDestinationClick = {},
             onBottomBarItemSelected = {}
         )
     }
@@ -481,6 +487,7 @@ private fun FavoriteScreenWithDataPreview() {
             onLoadMoreCurrentTab = {},
             onRetryLoadMoreCurrentTab = {},
             onDestinationItemVisible = {},
+            onDestinationClick = {},
             onBottomBarItemSelected = {}
         )
     }

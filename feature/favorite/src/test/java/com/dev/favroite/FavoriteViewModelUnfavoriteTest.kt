@@ -36,13 +36,22 @@ class FavoriteViewModelUnfavoriteTest {
         val tripRepo = FakeFavoriteTripRepository(shouldDeleteFail = true)
         val prefRepo = InMemoryFavoriteTabPreferenceRepository()
 
+        val favRepo = object : com.example.domain.repository.favorite.FavoriteDestinationRepository {
+            override suspend fun getFavoriteDestinationsPage(pageIndex: Int, pageSize: Int): Result<com.example.domain.model.favorite.FavoritesPage, DataError> = Result.Success(com.example.domain.model.favorite.FavoritesPage(1, 10, 0, emptyList()))
+            override suspend fun addDestinationToFavorites(destinationId: Int): Result<com.example.domain.model.favorite.FavoriteMutationResult, DataError> = Result.Success(com.example.domain.model.favorite.FavoriteMutationResult(true, null, emptyList()))
+            override suspend fun removeDestinationFromFavorites(destinationId: Int): Result<com.example.domain.model.favorite.FavoriteMutationResult, DataError> = Result.Success(com.example.domain.model.favorite.FavoriteMutationResult(true, null, emptyList()))
+            override fun observeFavoriteDestinationIds(): Flow<Set<Int>> = kotlinx.coroutines.flow.flowOf(emptySet())
+        }
         val viewModel = FavoriteViewModel(
-            getAllPlacesUseCase = GetAllPlacesUseCase(placeRepo),
             getAllTripsUseCase = GetAllTripsUseCase(tripRepo),
             deletePlaceUseCase = DeletePlaceUseCase(placeRepo),
             deleteTripUseCase = DeleteTripUseCase(tripRepo),
+            addDestinationFavoriteUseCase = com.example.domain.usecase.favorite.destination.AddDestinationFavoriteUseCase(favRepo),
+            removeDestinationFavoriteUseCase = com.example.domain.usecase.favorite.destination.RemoveDestinationFavoriteUseCase(favRepo),
+            observeFavoriteDestinationIdsUseCase = com.example.domain.usecase.favorite.destination.ObserveFavoriteDestinationIdsUseCase(favRepo),
             getFavoriteSelectedTabUseCase = GetFavoriteSelectedTabUseCase(prefRepo),
-            saveFavoriteSelectedTabUseCase = SaveFavoriteSelectedTabUseCase(prefRepo)
+            saveFavoriteSelectedTabUseCase = SaveFavoriteSelectedTabUseCase(prefRepo),
+            getFavoriteDestinationsPageUseCase = com.example.domain.usecase.favorite.destination.GetFavoriteDestinationsPageUseCase(favRepo)
         )
 
         advanceUntilIdle()

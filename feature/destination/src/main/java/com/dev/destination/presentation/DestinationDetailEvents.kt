@@ -1,5 +1,7 @@
 package com.dev.destination.presentation
 
+import com.dev.utils.uitext.UiText
+
 sealed interface DestinationDetailAction {
     data object OnBackClicked : DestinationDetailAction
     data object OnShareClicked : DestinationDetailAction
@@ -21,6 +23,6 @@ sealed interface DestinationDetailEvent {
     data class NavigateToDestination(val destinationId: Int) : DestinationDetailEvent
     data class OpenMap(val lat: Double, val lng: Double) : DestinationDetailEvent
     data class ShareDestination(val text: String) : DestinationDetailEvent
-    data class ShowSuccessSnackbar(val msg: String) : DestinationDetailEvent
-    data class ShowErrorSnackbar(val msg: String) : DestinationDetailEvent
+    data class ShowSuccessSnackbar(val msg: UiText) : DestinationDetailEvent
+    data class ShowErrorSnackbar(val msg: UiText) : DestinationDetailEvent
 }

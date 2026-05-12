@@ -63,11 +63,9 @@ class HomeFavoriteSyncTest {
             getDestinationsPageUseCase = GetDestinationsPageUseCase(destinationsRepository),
             getNearbyDestinationsUseCase = GetNearbyDestinationsUseCase(locationRepository, destinationsRepository),
             getFamousCountriesUseCase = GetFamousCountriesUseCase(destinationsRepository),
-            favoritePlaceUseCase = FavoritePlaceUseCase(favoritePlaceRepository),
             addDestinationFavoriteUseCase = AddDestinationFavoriteUseCase(favoriteDestinationRepository),
             removeDestinationFavoriteUseCase = RemoveDestinationFavoriteUseCase(favoriteDestinationRepository),
             observeFavoriteDestinationIdsUseCase = ObserveFavoriteDestinationIdsUseCase(favoriteDestinationRepository),
-            getAllPlacesUseCase = GetAllPlacesUseCase(favoritePlaceRepository),
             getRecentlyViewedUseCase = GetRecentlyViewedUseCase(recentlyViewedRepository),
             addToRecentlyViewedUseCase = AddToRecentlyViewedUseCase(recentlyViewedRepository),
             getTopFlightOffersUseCase = FakeGetTopOffersUseCase()
@@ -155,7 +153,8 @@ class HomeFavoriteSyncTest {
         override suspend fun searchForDestinations(
             keyword: String,
             pageIndex: Int,
-            pageSize: Int
+            pageSize: Int,
+            interestIds: List<Int>?
         ): Result<List<Destination>, DataError> = Result.Success(emptyList())
 
         override suspend fun getFamousCountries(): Result<List<Country>, DataError> = Result.Success(emptyList())

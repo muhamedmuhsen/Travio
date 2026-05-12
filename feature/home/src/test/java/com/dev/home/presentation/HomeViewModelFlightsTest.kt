@@ -63,7 +63,7 @@ class HomeViewModelFlightsTest {
 
             override suspend fun getNearbyDestinations(latitude: Double, longitude: Double, radiusKm: Double, count: Int): Result<List<com.example.domain.model.destination.Destination>, DataError> = Result.Success(emptyList())
 
-            override suspend fun searchForDestinations(keyword: String, pageIndex: Int, pageSize: Int): Result<List<com.example.domain.model.destination.Destination>, DataError> = Result.Success(emptyList())
+            override suspend fun searchForDestinations(keyword: String, pageIndex: Int, pageSize: Int, interestIds: List<Int>?): Result<List<com.example.domain.model.destination.Destination>, DataError> = Result.Success(emptyList())
 
             override suspend fun getFamousCountries(): Result<List<com.example.domain.model.destination.Country>, DataError> = Result.Success(emptyList())
         }
@@ -87,12 +87,19 @@ class HomeViewModelFlightsTest {
             override suspend fun deletePlaceFromFavorite(placeId: String): Result<Unit, DataError.Local> = Result.Success(Unit)
         }
 
+        val favRepo = object : com.example.domain.repository.favorite.FavoriteDestinationRepository {
+            override suspend fun getFavoriteDestinationsPage(pageIndex: Int, pageSize: Int): Result<com.example.domain.model.favorite.FavoritesPage, DataError> = Result.Success(com.example.domain.model.favorite.FavoritesPage(1, 10, 0, emptyList()))
+            override suspend fun addDestinationToFavorites(destinationId: Int): Result<com.example.domain.model.favorite.FavoriteMutationResult, DataError> = Result.Success(com.example.domain.model.favorite.FavoriteMutationResult(true, null, emptyList()))
+            override suspend fun removeDestinationFromFavorites(destinationId: Int): Result<com.example.domain.model.favorite.FavoriteMutationResult, DataError> = Result.Success(com.example.domain.model.favorite.FavoriteMutationResult(true, null, emptyList()))
+            override fun observeFavoriteDestinationIds(): kotlinx.coroutines.flow.Flow<Set<Int>> = kotlinx.coroutines.flow.flowOf(emptySet())
+        }
         return HomeViewModel(
             getDestinationsPageUseCase = com.example.domain.usecase.destinations.GetDestinationsPageUseCase(destinationsRepository),
             getNearbyDestinationsUseCase = com.example.domain.usecase.destinations.GetNearbyDestinationsUseCase(locationRepository, destinationsRepository),
             getFamousCountriesUseCase = com.example.domain.usecase.destinations.GetFamousCountriesUseCase(destinationsRepository),
-            favoritePlaceUseCase = com.example.domain.usecase.favorite.place.FavoritePlaceUseCase(favoritePlaceRepository),
-            getAllPlacesUseCase = com.example.domain.usecase.favorite.place.GetAllPlacesUseCase(favoritePlaceRepository),
+            addDestinationFavoriteUseCase = com.example.domain.usecase.favorite.destination.AddDestinationFavoriteUseCase(favRepo),
+            removeDestinationFavoriteUseCase = com.example.domain.usecase.favorite.destination.RemoveDestinationFavoriteUseCase(favRepo),
+            observeFavoriteDestinationIdsUseCase = com.example.domain.usecase.favorite.destination.ObserveFavoriteDestinationIdsUseCase(favRepo),
             getRecentlyViewedUseCase = com.example.domain.usecase.destinations.GetRecentlyViewedUseCase(recentlyViewedRepository),
             addToRecentlyViewedUseCase = com.example.domain.usecase.destinations.AddToRecentlyViewedUseCase(recentlyViewedRepository),
             getTopFlightOffersUseCase = getTopOffersUseCase

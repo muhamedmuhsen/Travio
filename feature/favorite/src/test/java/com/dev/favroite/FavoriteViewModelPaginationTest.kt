@@ -113,10 +113,12 @@ class FavoriteViewModelPaginationTest {
         val tripRepo = FakeFavoriteTripRepository()
         val prefRepo = InMemoryFavoriteTabPreferenceRepository()
         return FavoriteViewModel(
-            getAllPlacesUseCase = GetAllPlacesUseCase(placeRepo),
             getAllTripsUseCase = GetAllTripsUseCase(tripRepo),
             deletePlaceUseCase = DeletePlaceUseCase(placeRepo),
             deleteTripUseCase = DeleteTripUseCase(tripRepo),
+            addDestinationFavoriteUseCase = com.example.domain.usecase.favorite.destination.AddDestinationFavoriteUseCase(destinationRepo),
+            removeDestinationFavoriteUseCase = com.example.domain.usecase.favorite.destination.RemoveDestinationFavoriteUseCase(destinationRepo),
+            observeFavoriteDestinationIdsUseCase = com.example.domain.usecase.favorite.destination.ObserveFavoriteDestinationIdsUseCase(destinationRepo),
             getFavoriteSelectedTabUseCase = GetFavoriteSelectedTabUseCase(prefRepo),
             saveFavoriteSelectedTabUseCase = SaveFavoriteSelectedTabUseCase(prefRepo),
             getFavoriteDestinationsPageUseCase = GetFavoriteDestinationsPageUseCase(destinationRepo)

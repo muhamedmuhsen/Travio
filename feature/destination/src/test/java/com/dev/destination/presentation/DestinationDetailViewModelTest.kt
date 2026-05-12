@@ -50,6 +50,7 @@ class DestinationDetailViewModelTest {
     private lateinit var getAllPlacesUseCase: GetAllPlacesUseCase
     private lateinit var fakeDestinationsRepository: FakeDestinationsRepository
     private lateinit var fakeFavoritePlaceRepository: FakeFavoritePlaceRepository
+    private lateinit var fakeFavoriteDestinationRepository: FakeFavoriteDestinationRepository
     private lateinit var fakeReviewRepository: FakeReviewRepository
     private lateinit var fakeUserManagementRepository: FakeUserManagementRepository
 
@@ -71,11 +72,9 @@ class DestinationDetailViewModelTest {
         return DestinationDetailViewModel(
             getDestinationByIdUseCase = getDestinationByIdUseCase,
             getAllDestinationsUseCase = getAllDestinationsUseCase,
-            favoritePlaceUseCase = favoritePlaceUseCase,
-            addDestinationFavoriteUseCase = null,
-            removeDestinationFavoriteUseCase = null,
-            observeFavoriteDestinationIdsUseCase = null,
-            getAllPlacesUseCase = getAllPlacesUseCase,
+            addDestinationFavoriteUseCase = com.example.domain.usecase.favorite.destination.AddDestinationFavoriteUseCase(fakeFavoriteDestinationRepository),
+            removeDestinationFavoriteUseCase = com.example.domain.usecase.favorite.destination.RemoveDestinationFavoriteUseCase(fakeFavoriteDestinationRepository),
+            observeFavoriteDestinationIdsUseCase = com.example.domain.usecase.favorite.destination.ObserveFavoriteDestinationIdsUseCase(fakeFavoriteDestinationRepository),
             reviewRepository = fakeReviewRepository,
             userManagementRepository = fakeUserManagementRepository,
             savedStateHandle = savedStateHandle
@@ -87,6 +86,7 @@ class DestinationDetailViewModelTest {
         Dispatchers.setMain(testDispatcher)
         fakeDestinationsRepository = FakeDestinationsRepository()
         fakeFavoritePlaceRepository = FakeFavoritePlaceRepository()
+        fakeFavoriteDestinationRepository = FakeFavoriteDestinationRepository()
         fakeReviewRepository = FakeReviewRepository()
         fakeUserManagementRepository = FakeUserManagementRepository()
         getDestinationByIdUseCase = GetDestinationByIdUseCase(fakeDestinationsRepository)
@@ -152,7 +152,7 @@ class DestinationDetailViewModelTest {
 
     @Test
     fun should_setFavoriteTrue_when_destinationAlreadyFavorite_onViewModelInit() = runTest {
-        fakeFavoritePlaceRepository.seedFavorite(sampleDestination.destinationID)
+        fakeFavoriteDestinationRepository.favoriteIds.value = setOf(sampleDestination.destinationID)
         fakeDestinationsRepository.destinationByIdResult = Result.Success(sampleDestination)
         fakeDestinationsRepository.allDestinationsResult = Result.Success(emptyList())
 
@@ -410,7 +410,8 @@ class DestinationDetailViewModelTest {
         override suspend fun searchForDestinations(
             keyword: String,
             pageIndex: Int,
-            pageSize: Int
+            pageSize: Int,
+            interestIds: List<Int>?
         ): Result<List<Destination>, DataError> = Result.Success(emptyList())
 
         override suspend fun getFamousCountries(): Result<List<Country>, DataError> = Result.Success(emptyList())
@@ -454,5 +455,30 @@ class DestinationDetailViewModelTest {
                 )
             )
         }
+    }
+
+    private class FakeFavoriteDestinationRepository : com.example.domain.repository.favorite.FavoriteDestinationRepository {
+        var addResult: kotlinx.coroutines.CompletableDeferred<Result<com.example.domain.model.favorite.FavoriteMutationResult, DataError>> =
+            kotlinx.coroutines.CompletableDeferred(Result.Success(com.example.domain.model.favorite.FavoriteMutationResult(isSuccess = true, message = null, errors = emptyList())))
+        val favoriteIds = MutableStateFlow<Set<Int>>(emptySet())
+
+        override suspend fun getFavoriteDestinationsPage(pageIndex: Int, pageSize: Int): Result<com.example.domain.model.favorite.FavoritesPage, DataError> {
+            return Result.Success(com.example.domain.model.favorite.FavoritesPage(pageIndex, pageSize, 0, emptyList()))
+        }
+
+        override suspend fun addDestinationToFavorites(destinationId: Int): Result<com.example.domain.model.favorite.FavoriteMutationResult, DataError> {
+            val result = addResult.await()
+            if (result is Result.Success) {
+                favoriteIds.value = favoriteIds.value + destinationId
+            }
+            return result
+        }
+
+        override suspend fun removeDestinationFromFavorites(destinationId: Int): Result<com.example.domain.model.favorite.FavoriteMutationResult, DataError> {
+            favoriteIds.value = favoriteIds.value - destinationId
+            return Result.Success(com.example.domain.model.favorite.FavoriteMutationResult(isSuccess = true, message = null, errors = emptyList()))
+        }
+
+        override fun observeFavoriteDestinationIds(): Flow<Set<Int>> = favoriteIds
     }
 }

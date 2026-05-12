@@ -41,12 +41,16 @@ class SearchViewModelTest {
     private val saveRecentSearchUseCase = mock<SaveRecentSearchUseCase>()
     private val deleteRecentSearchUseCase = mock<DeleteRecentSearchUseCase>()
     private val clearRecentSearchesUseCase = mock<ClearRecentSearchesUseCase>()
+    private val observeFavoriteDestinationIdsUseCase = mock<com.example.domain.usecase.favorite.destination.ObserveFavoriteDestinationIdsUseCase>()
+    private val addDestinationFavoriteUseCase = mock<com.example.domain.usecase.favorite.destination.AddDestinationFavoriteUseCase>()
+    private val removeDestinationFavoriteUseCase = mock<com.example.domain.usecase.favorite.destination.RemoveDestinationFavoriteUseCase>()
     private val testDispatcher = UnconfinedTestDispatcher()
 
     @Before
     fun setup() {
         Dispatchers.setMain(testDispatcher)
         whenever(getRecentSearchesUseCase()).thenReturn(flowOf(emptyList()))
+        whenever(observeFavoriteDestinationIdsUseCase()).thenReturn(flowOf(emptySet()))
         viewModel = SearchViewModel(
             SavedStateHandle(),
             searchForDestinationsUseCase,
@@ -54,7 +58,10 @@ class SearchViewModelTest {
             getRecentSearchesUseCase,
             saveRecentSearchUseCase,
             deleteRecentSearchUseCase,
-            clearRecentSearchesUseCase
+            clearRecentSearchesUseCase,
+            observeFavoriteDestinationIdsUseCase,
+            addDestinationFavoriteUseCase,
+            removeDestinationFavoriteUseCase
         )
     }
 

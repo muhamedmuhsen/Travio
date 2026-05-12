@@ -4,9 +4,9 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
+import com.dev.destination.R
+import com.dev.utils.uitext.UiText
 import com.example.common.navigation.DestinationDetailRoute
-import com.example.domain.model.favorite.FavoriteMutationResult
-import com.example.domain.model.favorite.toPlace
 import com.example.domain.model.review.ReviewSummary
 import com.example.domain.repository.review.ReviewRepository
 import com.example.domain.repository.usermanagement.UserManagementRepository
@@ -15,8 +15,6 @@ import com.example.domain.usecase.destinations.GetDestinationByIdUseCase
 import com.example.domain.usecase.favorite.destination.AddDestinationFavoriteUseCase
 import com.example.domain.usecase.favorite.destination.ObserveFavoriteDestinationIdsUseCase
 import com.example.domain.usecase.favorite.destination.RemoveDestinationFavoriteUseCase
-import com.example.domain.usecase.favorite.place.FavoritePlaceUseCase
-import com.example.domain.usecase.favorite.place.GetAllPlacesUseCase
 import com.example.domain.utils.DataError
 import com.example.domain.utils.Result
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -36,11 +34,9 @@ import kotlin.math.roundToInt
 class DestinationDetailViewModel @Inject constructor(
     private val getDestinationByIdUseCase: GetDestinationByIdUseCase,
     private val getAllDestinationsUseCase: GetAllDestinationsUseCase,
-    private val favoritePlaceUseCase: FavoritePlaceUseCase,
-    private val addDestinationFavoriteUseCase: AddDestinationFavoriteUseCase? = null,
-    private val removeDestinationFavoriteUseCase: RemoveDestinationFavoriteUseCase? = null,
-    private val observeFavoriteDestinationIdsUseCase: ObserveFavoriteDestinationIdsUseCase? = null,
-    private val getAllPlacesUseCase: GetAllPlacesUseCase,
+    private val addDestinationFavoriteUseCase: AddDestinationFavoriteUseCase,
+    private val removeDestinationFavoriteUseCase: RemoveDestinationFavoriteUseCase,
+    private val observeFavoriteDestinationIdsUseCase: ObserveFavoriteDestinationIdsUseCase,
     private val reviewRepository: ReviewRepository,
     private val userManagementRepository: UserManagementRepository,
     savedStateHandle: SavedStateHandle
@@ -172,12 +168,12 @@ class DestinationDetailViewModel @Inject constructor(
                             reviewsState = UiState.Success(mergedReviews)
                         )
                     }
-                    _events.send(DestinationDetailEvent.ShowSuccessSnackbar("Review submitted successfully"))
+                    _events.send(DestinationDetailEvent.ShowSuccessSnackbar(UiText.DynamicString("Review submitted successfully")))
                 }
 
                 is Result.Error -> {
                     _uiState.update { it.copy(isSubmittingReview = false) }
-                    _events.send(DestinationDetailEvent.ShowErrorSnackbar("Failed to submit review"))
+                    _events.send(DestinationDetailEvent.ShowErrorSnackbar(UiText.DynamicString("Failed to submit review")))
                 }
             }
         }
@@ -211,12 +207,12 @@ class DestinationDetailViewModel @Inject constructor(
                             )
                         )
                     }
-                    _events.send(DestinationDetailEvent.ShowSuccessSnackbar("Review deleted"))
+                    _events.send(DestinationDetailEvent.ShowSuccessSnackbar(UiText.DynamicString("Review deleted")))
                 }
 
                 is Result.Error -> {
                     _uiState.update { it.copy(isSubmittingReview = false) }
-                    _events.send(DestinationDetailEvent.ShowErrorSnackbar("Failed to delete review"))
+                    _events.send(DestinationDetailEvent.ShowErrorSnackbar(UiText.DynamicString("Failed to delete review")))
                 }
             }
         }
@@ -229,22 +225,9 @@ class DestinationDetailViewModel @Inject constructor(
     private fun observeFavoriteState() {
         val currentDestinationId = destinationId ?: return
 
-        val sharedObserver = observeFavoriteDestinationIdsUseCase
-        if (sharedObserver != null) {
-            viewModelScope.launch {
-                sharedObserver()
-                    .map { ids -> currentDestinationId in ids }
-                    .distinctUntilChanged()
-                    .collect { isFavorite ->
-                        _uiState.update { it.copy(isFavorite = isFavorite) }
-                    }
-            }
-            return
-        }
-
         viewModelScope.launch {
-            getAllPlacesUseCase()
-                .map { places -> places.any { it.id == currentDestinationId } }
+            observeFavoriteDestinationIdsUseCase()
+                .map { ids -> currentDestinationId in ids }
                 .distinctUntilChanged()
                 .collect { isFavorite ->
                     _uiState.update { it.copy(isFavorite = isFavorite) }
@@ -428,47 +411,20 @@ class DestinationDetailViewModel @Inject constructor(
                 )
 
                 val result = if (newState) {
-                    if (addDestinationFavoriteUseCase != null) {
-                        addDestinationFavoriteUseCase(destination.destinationID)
-                    } else {
-                        when (favoritePlaceUseCase(destination.toPlace())) {
-                            is Result.Success -> Result.Success(
-                                FavoriteMutationResult(
-                                    isSuccess = true,
-                                    message = null,
-                                    errors = emptyList()
-                                )
-                            )
-
-                            is Result.Error -> Result.Error(DataError.Local.DatabaseError)
-                        }
-                    }
+                    addDestinationFavoriteUseCase(destination.destinationID)
                 } else {
-                    if (removeDestinationFavoriteUseCase != null) {
-                        removeDestinationFavoriteUseCase(destination.destinationID)
-                    } else {
-                        when (favoritePlaceUseCase(destination.toPlace())) {
-                            is Result.Success -> Result.Success(
-                                FavoriteMutationResult(
-                                    isSuccess = true,
-                                    message = null,
-                                    errors = emptyList()
-                                )
-                            )
-
-                            is Result.Error -> Result.Error(DataError.Local.DatabaseError)
-                        }
-                    }
+                    removeDestinationFavoriteUseCase(destination.destinationID)
                 }
 
                 when (result) {
                     is Result.Success -> {
                         val message = result.data.message
                             ?.takeIf { it.isNotBlank() }
+                            ?.let { UiText.DynamicString(it) }
                             ?: if (newState) {
-                                "Saved to favourites"
+                                UiText.StringResource(R.string.saved_to_favourites)
                             } else {
-                                "Removed from favourites"
+                                UiText.StringResource(R.string.removed_from_favourites)
                             }
                         _events.send(DestinationDetailEvent.ShowSuccessSnackbar(message))
                     }
@@ -484,17 +440,17 @@ class DestinationDetailViewModel @Inject constructor(
         }
     }
 
-    private fun mapFavoriteMutationError(error: DataError): String {
+    private fun mapFavoriteMutationError(error: DataError): UiText {
         return when (error) {
-            DataError.Network.NoInternetConnection -> "No internet connection. Check your network and try again."
-            DataError.Network.Timeout -> "Request timed out. Please try again."
+            DataError.Network.NoInternetConnection -> UiText.StringResource(R.string.error_no_internet)
+            DataError.Network.Timeout -> UiText.StringResource(R.string.error_timeout)
             DataError.Network.BadRequest,
             DataError.Network.ServerError,
             DataError.Network.UnexpectedResponse,
-            DataError.Network.TooManyRequests -> "Server error while updating favorites. Please try again."
+            DataError.Network.TooManyRequests -> UiText.StringResource(R.string.error_server)
             DataError.Validation.InvalidInputs,
-            DataError.Data.NotFound -> "This destination is no longer available for favorites."
-            else -> "Could not update favorites. Please try again."
+            DataError.Data.NotFound -> UiText.StringResource(R.string.error_destination_not_available)
+            else -> UiText.StringResource(R.string.error_unknown)
         }
     }
 

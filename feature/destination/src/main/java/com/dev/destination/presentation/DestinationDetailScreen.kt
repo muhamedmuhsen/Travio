@@ -25,6 +25,8 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
@@ -53,6 +55,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
@@ -84,6 +87,7 @@ import com.example.designsystem.theme.TravioTheme
 import com.example.domain.model.destination.Destination
 import com.example.domain.model.destination.Interest
 import com.example.domain.model.review.Review
+import kotlinx.coroutines.launch
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
@@ -108,8 +112,8 @@ fun DestinationDetailScreen(
                 is DestinationDetailEvent.NavigateBack -> onNavigateBack()
                 is DestinationDetailEvent.NavigateToDestination -> onNavigateToDestination(event.destinationId)
                 is DestinationDetailEvent.OpenMap -> onOpenMap(event.lat, event.lng)
-                is DestinationDetailEvent.ShowSuccessSnackbar -> snackbarHostState.showSnackbar(event.msg)
-                is DestinationDetailEvent.ShowErrorSnackbar -> snackbarHostState.showSnackbar(event.msg)
+                is DestinationDetailEvent.ShowSuccessSnackbar -> snackbarHostState.showSnackbar(event.msg.asString(context))
+                is DestinationDetailEvent.ShowErrorSnackbar -> snackbarHostState.showSnackbar(event.msg.asString(context))
                 is DestinationDetailEvent.ShareDestination -> {
                     val shareIntent = Intent(Intent.ACTION_SEND).apply {
                         type = "text/plain"
@@ -170,19 +174,36 @@ private fun DestinationDetailContent(
                             .fillMaxWidth()
                             .height(300.dp)
                     ) {
-                        // Background Image
-                        if (heroImage != null) {
-                            AsyncImage(
-                                model = ImageRequest.Builder(LocalContext.current)
-                                    .data(heroImage)
-                                    .crossfade(true)
-                                    .placeholder(com.example.designsystem.R.drawable.image_placeholder)
-                                    .error(com.example.designsystem.R.drawable.image_placeholder)
-                                    .build(),
-                                contentDescription = stringResource(id = R.string.destination_hero_image_cd),
-                                contentScale = ContentScale.Crop,
-                                modifier = Modifier.fillMaxSize()
+                        // Background Image Pager
+                        if (destination.imageUrls.isNotEmpty()) {
+                            val pagerState = androidx.compose.foundation.pager.rememberPagerState(
+                                pageCount = { destination.imageUrls.size }
                             )
+                            val scope = androidx.compose.runtime.rememberCoroutineScope()
+
+                            androidx.compose.foundation.pager.HorizontalPager(
+                                state = pagerState,
+                                modifier = Modifier.fillMaxSize()
+                            ) { page ->
+                                val imageUrl = destination.imageUrls[page]
+                                AsyncImage(
+                                    model = ImageRequest.Builder(LocalContext.current)
+                                        .data(imageUrl)
+                                        .crossfade(true)
+                                        .placeholder(com.example.designsystem.R.drawable.image_placeholder)
+                                        .error(com.example.designsystem.R.drawable.image_placeholder)
+                                        .build(),
+                                    contentDescription = stringResource(id = R.string.destination_hero_image_cd),
+                                    contentScale = ContentScale.Crop,
+                                    modifier = Modifier.fillMaxSize()
+                                )
+                            }
+
+                            if (destination.imageUrls.size > 1) {
+                                PagerPillIndicator(imageUrls = destination.imageUrls, pagerState = pagerState)
+                                PagerLeftArrow(pagerState = pagerState, scope = scope)
+                                PagerRightArrow(pagerState = pagerState, imageUrls = destination.imageUrls, scope = scope)
+                            }
                         } else {
                             Box(
                                 modifier = Modifier
@@ -866,6 +887,102 @@ fun DestinationDetailScreenPreview() {
                 modifier = Modifier.padding(padding),
                 snackbarHostState = remember { SnackbarHostState() },
                 initialTabIndex = 1
+            )
+        }
+    }
+}
+
+@Composable
+private fun androidx.compose.foundation.layout.BoxScope.PagerLeftArrow(
+    pagerState: androidx.compose.foundation.pager.PagerState,
+    scope: kotlinx.coroutines.CoroutineScope
+) {
+    val showLeft by remember { derivedStateOf { pagerState.currentPage > 0 } }
+    if (showLeft) {
+        IconButton(
+            onClick = {
+                scope.launch {
+                    pagerState.animateScrollToPage(pagerState.currentPage - 1)
+                }
+            },
+            modifier = Modifier
+                .align(Alignment.CenterStart)
+                .padding(start = 8.dp)
+                .clip(CircleShape)
+                .background(Color.Black.copy(alpha = 0.35f))
+                .size(36.dp)
+        ) {
+            Icon(
+                imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
+                contentDescription = stringResource(R.string.pager_previous_cd),
+                tint = Color.White,
+                modifier = Modifier.size(22.dp)
+            )
+        }
+    }
+}
+
+@Composable
+private fun androidx.compose.foundation.layout.BoxScope.PagerRightArrow(
+    pagerState: androidx.compose.foundation.pager.PagerState,
+    imageUrls: List<String>,
+    scope: kotlinx.coroutines.CoroutineScope
+) {
+    val showRight by remember { derivedStateOf { pagerState.currentPage < imageUrls.size - 1 } }
+    if (showRight) {
+        IconButton(
+            onClick = {
+                scope.launch {
+                    pagerState.animateScrollToPage(pagerState.currentPage + 1)
+                }
+            },
+            modifier = Modifier
+                .align(Alignment.CenterEnd)
+                .padding(end = 8.dp)
+                .clip(CircleShape)
+                .background(Color.Black.copy(alpha = 0.35f))
+                .size(36.dp)
+
+        ) {
+            Icon(
+                imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                contentDescription = stringResource(R.string.pager_next_cd),
+                tint = Color.White,
+                modifier = Modifier.size(22.dp)
+            )
+        }
+    }
+}
+
+@Composable
+private fun androidx.compose.foundation.layout.BoxScope.PagerPillIndicator(
+    imageUrls: List<String>,
+    pagerState: androidx.compose.foundation.pager.PagerState
+) {
+    Row(
+        modifier = Modifier
+            .height(24.dp)
+            .fillMaxWidth()
+            .align(Alignment.BottomCenter)
+            .padding(bottom = 12.dp),
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        repeat(imageUrls.size) { iteration ->
+            val isSelected = pagerState.currentPage == iteration
+            val width by androidx.compose.animation.core.animateDpAsState(
+                targetValue = if (isSelected) 24.dp else 8.dp,
+                label = "indicator_width"
+            )
+            Box(
+                modifier = Modifier
+                    .padding(horizontal = 4.dp)
+                    .clip(CircleShape)
+                    .background(
+                        if (isSelected) Color.White else Color.White.copy(alpha = 0.5f)
+                    )
+                    .width(width)
+                    .height(8.dp)
             )
         }
     }

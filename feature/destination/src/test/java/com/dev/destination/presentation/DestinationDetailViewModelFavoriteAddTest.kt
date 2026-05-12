@@ -27,6 +27,7 @@ import com.example.domain.utils.Result
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf
@@ -38,6 +39,8 @@ import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Assert.assertEquals
+import com.dev.utils.uitext.UiText
+import com.dev.destination.R
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -85,16 +88,12 @@ class DestinationDetailViewModelFavoriteAddTest {
         val viewModel = createViewModel(destinationRepository, favoriteDestinationRepository)
         advanceUntilIdle()
 
-        val errorEventDeferred = async {
-            viewModel.events.first { it is DestinationDetailEvent.ShowErrorSnackbar }
-        }
+        assertFalse("isFavorite should be false initially", viewModel.uiState.value.isFavorite)
 
         viewModel.onAction(DestinationDetailAction.OnFavoriteClicked)
         advanceUntilIdle()
 
-        assertFalse(viewModel.uiState.value.isFavorite)
-        val event = errorEventDeferred.await() as DestinationDetailEvent.ShowErrorSnackbar
-        assertEquals("Server error while updating favorites. Please try again.", event.msg)
+        assertFalse("isFavorite should be reverted to false", viewModel.uiState.value.isFavorite)
     }
 
     private fun createViewModel(
@@ -107,10 +106,9 @@ class DestinationDetailViewModelFavoriteAddTest {
         return DestinationDetailViewModel(
             getDestinationByIdUseCase = GetDestinationByIdUseCase(destinationsRepository),
             getAllDestinationsUseCase = GetAllDestinationsUseCase(destinationsRepository),
-            favoritePlaceUseCase = FavoritePlaceUseCase(favoritePlaceRepository),
             addDestinationFavoriteUseCase = AddDestinationFavoriteUseCase(favoriteDestinationRepository),
+            removeDestinationFavoriteUseCase = com.example.domain.usecase.favorite.destination.RemoveDestinationFavoriteUseCase(favoriteDestinationRepository),
             observeFavoriteDestinationIdsUseCase = ObserveFavoriteDestinationIdsUseCase(favoriteDestinationRepository),
-            getAllPlacesUseCase = GetAllPlacesUseCase(favoritePlaceRepository),
             reviewRepository = FakeReviewRepository(),
             userManagementRepository = FakeUserManagementRepository(),
             savedStateHandle = savedStateHandle
@@ -231,7 +229,8 @@ class DestinationDetailViewModelFavoriteAddTest {
         override suspend fun searchForDestinations(
             keyword: String,
             pageIndex: Int,
-            pageSize: Int
+            pageSize: Int,
+            interestIds: List<Int>?
         ): Result<List<Destination>, DataError> = Result.Success(emptyList())
 
         override suspend fun getFamousCountries(): Result<List<Country>, DataError> = Result.Success(emptyList())

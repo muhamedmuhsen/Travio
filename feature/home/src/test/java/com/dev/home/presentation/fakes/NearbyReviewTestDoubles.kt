@@ -76,7 +76,8 @@ class FakeNearbyDestinationsRepository : DestinationsRepository {
     override suspend fun searchForDestinations(
         keyword: String,
         pageIndex: Int,
-        pageSize: Int
+        pageSize: Int,
+        interestIds: List<Int>?
     ): Result<List<Destination>, DataError> {
         return Result.Success(emptyList())
     }
@@ -116,20 +117,28 @@ class FakeNearbyRecentlyViewedRepository : RecentlyViewedRepository {
     override suspend fun clearAll() = Unit
 }
 
+class FakeFavoriteDestinationRepository : com.example.domain.repository.favorite.FavoriteDestinationRepository {
+    override suspend fun getFavoriteDestinationsPage(pageIndex: Int, pageSize: Int): Result<com.example.domain.model.favorite.FavoritesPage, DataError> = Result.Success(com.example.domain.model.favorite.FavoritesPage(1, 10, 0, emptyList()))
+    override suspend fun addDestinationToFavorites(destinationId: Int): Result<com.example.domain.model.favorite.FavoriteMutationResult, DataError> = Result.Success(com.example.domain.model.favorite.FavoriteMutationResult(true, null, emptyList()))
+    override suspend fun removeDestinationFromFavorites(destinationId: Int): Result<com.example.domain.model.favorite.FavoriteMutationResult, DataError> = Result.Success(com.example.domain.model.favorite.FavoriteMutationResult(true, null, emptyList()))
+    override fun observeFavoriteDestinationIds(): Flow<Set<Int>> = flowOf(emptySet())
+}
+
 fun createNearbyReviewHomeViewModel(
     destinationsRepository: FakeNearbyDestinationsRepository = FakeNearbyDestinationsRepository(),
     locationRepository: FakeNearbyLocationRepository = FakeNearbyLocationRepository(),
     favoritePlaceRepository: FakeNearbyFavoritePlaceRepository = FakeNearbyFavoritePlaceRepository(),
-    recentlyViewedRepository: FakeNearbyRecentlyViewedRepository = FakeNearbyRecentlyViewedRepository()
-,
+    recentlyViewedRepository: FakeNearbyRecentlyViewedRepository = FakeNearbyRecentlyViewedRepository(),
     getTopFlightOffersUseCase: GetTopFlightOffersUseCase = FakeGetTopOffersUseCase()
 ): HomeViewModel {
+    val favRepo = FakeFavoriteDestinationRepository()
     return HomeViewModel(
         getDestinationsPageUseCase = GetDestinationsPageUseCase(destinationsRepository),
         getNearbyDestinationsUseCase = GetNearbyDestinationsUseCase(locationRepository, destinationsRepository),
         getFamousCountriesUseCase = GetFamousCountriesUseCase(destinationsRepository),
-        favoritePlaceUseCase = FavoritePlaceUseCase(favoritePlaceRepository),
-        getAllPlacesUseCase = GetAllPlacesUseCase(favoritePlaceRepository),
+        addDestinationFavoriteUseCase = com.example.domain.usecase.favorite.destination.AddDestinationFavoriteUseCase(favRepo),
+        removeDestinationFavoriteUseCase = com.example.domain.usecase.favorite.destination.RemoveDestinationFavoriteUseCase(favRepo),
+        observeFavoriteDestinationIdsUseCase = com.example.domain.usecase.favorite.destination.ObserveFavoriteDestinationIdsUseCase(favRepo),
         getRecentlyViewedUseCase = GetRecentlyViewedUseCase(recentlyViewedRepository),
         addToRecentlyViewedUseCase = AddToRecentlyViewedUseCase(recentlyViewedRepository),
         getTopFlightOffersUseCase = getTopFlightOffersUseCase
