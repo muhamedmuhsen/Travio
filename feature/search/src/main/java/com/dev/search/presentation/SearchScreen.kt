@@ -127,7 +127,12 @@ internal fun SearchContent(
             if (isQueryActive) {
                 SearchResultsSection(
                     state = state.searchResultsState,
+                    favoriteIds = state.favoriteIds,
+                    favoriteMutationInFlightIds = state.favoriteMutationInFlightIds,
                     onDestinationClicked = { dest -> onAction(SearchAction.OnDestinationClicked(dest)) },
+                    onFavoriteClicked = { id, shouldFavorite ->
+                        onAction(SearchAction.OnFavoriteToggled(id, shouldFavorite))
+                    },
                     onRetry = { onAction(SearchAction.OnRetrySearch) }
                 )
             } else {
@@ -215,7 +220,10 @@ private fun RecentSearchesSection(
 @Composable
 private fun SearchResultsSection(
     state: UiState<List<Destination>>,
+    favoriteIds: Set<Int>,
+    favoriteMutationInFlightIds: Set<Int>,
     onDestinationClicked: (Destination) -> Unit,
+    onFavoriteClicked: (Int, Boolean) -> Unit,
     onRetry: () -> Unit
 ) {
     when (state) {
@@ -253,7 +261,12 @@ private fun SearchResultsSection(
                     items(results, key = { it.destinationID }) { destination ->
                         SearchResultItem(
                             destination = destination,
-                            onClick = { onDestinationClicked(destination) }
+                            isFavorite = destination.destinationID in favoriteIds,
+                            isFavoriteInFlight = destination.destinationID in favoriteMutationInFlightIds,
+                            onClick = { onDestinationClicked(destination) },
+                            onFavoriteClick = { shouldFavorite ->
+                                onFavoriteClicked(destination.destinationID, shouldFavorite)
+                            }
                         )
                     }
                 }

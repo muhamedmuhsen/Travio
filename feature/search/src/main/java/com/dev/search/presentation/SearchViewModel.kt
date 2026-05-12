@@ -8,6 +8,9 @@ import com.dev.utils.uitext.asUiText
 import com.example.domain.model.destination.Destination
 import com.example.domain.usecase.destinations.AddToRecentlyViewedUseCase
 import com.example.domain.usecase.destinations.SearchForDestinationsUseCase
+import com.example.domain.usecase.favorite.destination.AddDestinationFavoriteUseCase
+import com.example.domain.usecase.favorite.destination.ObserveFavoriteDestinationIdsUseCase
+import com.example.domain.usecase.favorite.destination.RemoveDestinationFavoriteUseCase
 import com.example.domain.usecase.search.ClearRecentSearchesUseCase
 import com.example.domain.usecase.search.DeleteRecentSearchUseCase
 import com.example.domain.usecase.search.GetRecentSearchesUseCase
@@ -38,7 +41,10 @@ class SearchViewModel @Inject constructor(
     private val getRecentSearchesUseCase: GetRecentSearchesUseCase,
     private val saveRecentSearchUseCase: SaveRecentSearchUseCase,
     private val deleteRecentSearchUseCase: DeleteRecentSearchUseCase,
-    private val clearRecentSearchesUseCase: ClearRecentSearchesUseCase
+    private val clearRecentSearchesUseCase: ClearRecentSearchesUseCase,
+    private val observeFavoriteDestinationIdsUseCase: ObserveFavoriteDestinationIdsUseCase,
+    private val addDestinationFavoriteUseCase: AddDestinationFavoriteUseCase,
+    private val removeDestinationFavoriteUseCase: RemoveDestinationFavoriteUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(
@@ -57,6 +63,7 @@ class SearchViewModel @Inject constructor(
     init {
         observeRecentSearches()
         observeSearchTrigger()
+        observeFavoriteIds()
     }
 
     fun onAction(action: SearchAction) {
@@ -144,6 +151,10 @@ class SearchViewModel @Inject constructor(
                     )
                 )
             }
+
+            is SearchAction.OnFavoriteToggled -> {
+                toggleFavorite(action.destinationId, action.shouldFavorite)
+            }
         }
     }
 
@@ -204,6 +215,59 @@ class SearchViewModel @Inject constructor(
         viewModelScope.launch {
             addToRecentlyViewedUseCase(destination)
             _event.send(SearchEvent.NavigateToDestination(destination.destinationID.toString()))
+        }
+    }
+
+    private fun observeFavoriteIds() {
+        viewModelScope.launch {
+            observeFavoriteDestinationIdsUseCase()
+                .catch { e -> Timber.e(e, "observeFavoriteIds failed") }
+                .collect { ids ->
+                    _uiState.update { it.copy(favoriteIds = ids) }
+                }
+        }
+    }
+
+    private fun toggleFavorite(
+        destinationId: Int,
+        shouldFavorite: Boolean
+    ) {
+        val isCurrentlyFavorite = destinationId in _uiState.value.favoriteIds
+        if (shouldFavorite == isCurrentlyFavorite) return
+
+        _uiState.update { state ->
+            val newFavorites = if (shouldFavorite) {
+                state.favoriteIds + destinationId
+            } else {
+                state.favoriteIds - destinationId
+            }
+            state.copy(
+                favoriteIds = newFavorites,
+                favoriteMutationInFlightIds = state.favoriteMutationInFlightIds + destinationId
+            )
+        }
+
+        viewModelScope.launch {
+            val result = if (shouldFavorite) {
+                addDestinationFavoriteUseCase(destinationId)
+            } else {
+                removeDestinationFavoriteUseCase(destinationId)
+            }
+
+            _uiState.update { it.copy(favoriteMutationInFlightIds = it.favoriteMutationInFlightIds - destinationId) }
+
+            if (result is Result.Error) {
+                // Rollback
+                _uiState.update { state ->
+                    val rollbackFavorites = if (shouldFavorite) {
+                        state.favoriteIds - destinationId
+                    } else {
+                        state.favoriteIds + destinationId
+                    }
+                    state.copy(favoriteIds = rollbackFavorites)
+                }
+                _event.send(SearchEvent.ShowErrorSnackbar(result.error.asUiText()))
+            }
         }
     }
 }

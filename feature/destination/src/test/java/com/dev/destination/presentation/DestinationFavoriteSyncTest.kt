@@ -64,11 +64,9 @@ class DestinationFavoriteSyncTest {
         val viewModel = DestinationDetailViewModel(
             getDestinationByIdUseCase = GetDestinationByIdUseCase(destinationRepo),
             getAllDestinationsUseCase = GetAllDestinationsUseCase(destinationRepo),
-            favoritePlaceUseCase = FavoritePlaceUseCase(FakeFavoritePlaceRepository()),
             addDestinationFavoriteUseCase = AddDestinationFavoriteUseCase(favoriteRepo),
             removeDestinationFavoriteUseCase = RemoveDestinationFavoriteUseCase(favoriteRepo),
             observeFavoriteDestinationIdsUseCase = ObserveFavoriteDestinationIdsUseCase(favoriteRepo),
-            getAllPlacesUseCase = GetAllPlacesUseCase(FakeFavoritePlaceRepository()),
             reviewRepository = FakeReviewRepository(),
             userManagementRepository = FakeUserManagementRepository(),
             savedStateHandle = SavedStateHandle(mapOf("id" to 1))
@@ -192,7 +190,8 @@ class DestinationFavoriteSyncTest {
         override suspend fun searchForDestinations(
             keyword: String,
             pageIndex: Int,
-            pageSize: Int
+            pageSize: Int,
+            interestIds: List<Int>?
         ): Result<List<Destination>, DataError> = Result.Success(emptyList())
 
         override suspend fun getFamousCountries(): Result<List<Country>, DataError> = Result.Success(emptyList())

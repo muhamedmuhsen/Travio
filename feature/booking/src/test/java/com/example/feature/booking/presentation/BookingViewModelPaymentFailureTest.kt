@@ -38,11 +38,30 @@ class BookingViewModelPaymentFailureTest {
         val validatePassengersUseCase = ValidatePassengersUseCase()
         val createPaymentIntentUseCase = CreatePaymentIntentUseCase(fakeRepo)
         val confirmFlightOrderUseCase = ConfirmFlightOrderUseCase(fakeRepo)
+        
+        val dummyPayload = com.example.domain.model.flights.details.FlightDetailsPayload(
+            offerId = "off_123",
+            totalPrice = 100.0,
+            taxAmount = 10.0,
+            currency = "USD",
+            totalDuration = "2h",
+            checkedBags = 1,
+            isRefundable = true,
+            refundPenaltyAmount = 0.0,
+            pricePerPerson = 100.0,
+            segments = emptyList()
+        )
+        
+        val fakeFlightDetailsRepo = object : com.example.domain.repository.flights.FlightDetailsRepository {
+            override suspend fun getFlightDetails(offerId: String, forceRefresh: Boolean): com.example.domain.utils.Result<com.example.domain.model.flights.details.FlightDetailsPayload, com.example.domain.utils.DataError> = com.example.domain.utils.Result.Success(dummyPayload)
+        }
+        val getFlightDetailsUseCase = com.example.domain.usecase.flights.GetFlightDetailsUseCase(fakeFlightDetailsRepo)
 
         viewModel = BookingViewModel(
             validatePassengersUseCase,
             createPaymentIntentUseCase,
             confirmFlightOrderUseCase,
+            getFlightDetailsUseCase,
             SavedStateHandle(mapOf("offerId" to "off_123"))
         )
     }

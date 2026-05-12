@@ -120,4 +120,5 @@
     <string name="interest_nightlife">Nightlife</string>
     <string name="interest_photography">Photography</string>
     <string name="search_interest_chip_cd">Filter by %s</string>
+    <string name="search_favorite_cd">Toggle favorite</string>
 </resources>

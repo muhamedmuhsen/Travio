@@ -108,8 +108,8 @@ fun DestinationDetailScreen(
                 is DestinationDetailEvent.NavigateBack -> onNavigateBack()
                 is DestinationDetailEvent.NavigateToDestination -> onNavigateToDestination(event.destinationId)
                 is DestinationDetailEvent.OpenMap -> onOpenMap(event.lat, event.lng)
-                is DestinationDetailEvent.ShowSuccessSnackbar -> snackbarHostState.showSnackbar(event.msg)
-                is DestinationDetailEvent.ShowErrorSnackbar -> snackbarHostState.showSnackbar(event.msg)
+                is DestinationDetailEvent.ShowSuccessSnackbar -> snackbarHostState.showSnackbar(event.msg.asString(context))
+                is DestinationDetailEvent.ShowErrorSnackbar -> snackbarHostState.showSnackbar(event.msg.asString(context))
                 is DestinationDetailEvent.ShareDestination -> {
                     val shareIntent = Intent(Intent.ACTION_SEND).apply {
                         type = "text/plain"

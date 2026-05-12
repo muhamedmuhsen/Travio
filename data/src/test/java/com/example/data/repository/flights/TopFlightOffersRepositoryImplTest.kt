@@ -9,6 +9,7 @@ import com.example.domain.utils.DataError
 import com.example.domain.utils.Result
 import com.example.network.api.FlightBookingApi
 import com.example.network.dto.flights.details.FlightDetailsResponseDto
+import com.example.network.dto.flights.search.FlightSearchResponseDto
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals

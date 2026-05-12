@@ -72,7 +72,6 @@ class FavoriteSyncReconciliationTest {
         val prefRepo = InMemoryFavoriteTabPreferenceRepository()
 
         return FavoriteViewModel(
-            getAllPlacesUseCase = GetAllPlacesUseCase(placeRepo),
             getAllTripsUseCase = GetAllTripsUseCase(tripRepo),
             deletePlaceUseCase = DeletePlaceUseCase(placeRepo),
             deleteTripUseCase = DeleteTripUseCase(tripRepo),

@@ -131,13 +131,12 @@ class FavoriteViewModelRemoveTest {
         val prefRepo = InMemoryFavoriteTabPreferenceRepository()
 
         return FavoriteViewModel(
-            getAllPlacesUseCase = GetAllPlacesUseCase(placeRepo),
             getAllTripsUseCase = GetAllTripsUseCase(tripRepo),
             deletePlaceUseCase = DeletePlaceUseCase(placeRepo),
             deleteTripUseCase = DeleteTripUseCase(tripRepo),
             addDestinationFavoriteUseCase = AddDestinationFavoriteUseCase(destinationRepo),
             removeDestinationFavoriteUseCase = RemoveDestinationFavoriteUseCase(destinationRepo),
-            observeFavoriteDestinationIdsUseCase = observeUseCase,
+            observeFavoriteDestinationIdsUseCase = observeUseCase ?: ObserveFavoriteDestinationIdsUseCase(destinationRepo),
             getFavoriteSelectedTabUseCase = GetFavoriteSelectedTabUseCase(prefRepo),
             saveFavoriteSelectedTabUseCase = SaveFavoriteSelectedTabUseCase(prefRepo),
             getFavoriteDestinationsPageUseCase = GetFavoriteDestinationsPageUseCase(destinationRepo)

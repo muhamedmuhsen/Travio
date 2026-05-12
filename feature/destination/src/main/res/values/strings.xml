@@ -23,5 +23,12 @@
 
     <string name="destination_error_icon_cd">Error</string>
     <string name="delete_review">Delete review</string>
+    <string name="saved_to_favourites">Saved to favourites</string>
+    <string name="removed_from_favourites">Removed from favourites</string>
+    <string name="error_no_internet">No internet connection. Check your network and try again.</string>
+    <string name="error_timeout">Request timed out. Please try again.</string>
+    <string name="error_server">Server error while updating favorites. Please try again.</string>
+    <string name="error_destination_not_available">This destination is no longer available for favorites.</string>
+    <string name="error_unknown">Could not update favorites. Please try again.</string>
 </resources>
 

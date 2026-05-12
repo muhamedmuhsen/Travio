@@ -8,5 +8,7 @@ data class SearchUiState(
     val query: String = "",
     val recentSearches: List<RecentSearch> = emptyList(),
     val searchResultsState: UiState<List<Destination>> = UiState.Idle,
-    val selectedInterestIds: Set<Int> = emptySet()
+    val selectedInterestIds: Set<Int> = emptySet(),
+    val favoriteIds: Set<Int> = emptySet(),
+    val favoriteMutationInFlightIds: Set<Int> = emptySet()
 )

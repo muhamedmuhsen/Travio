@@ -22,7 +22,7 @@ import com.example.domain.usecase.destinations.GetNearbyDestinationsUseCase
 import com.example.domain.usecase.destinations.GetRecentlyViewedUseCase
 import com.example.domain.usecase.favorite.destination.AddDestinationFavoriteUseCase
 import com.example.domain.usecase.favorite.destination.ObserveFavoriteDestinationIdsUseCase
-import com.example.domain.usecase.favorite.place.FavoritePlaceUseCase
+import com.example.domain.usecase.favorite.destination.RemoveDestinationFavoriteUseCase
 import com.example.domain.usecase.favorite.place.GetAllPlacesUseCase
 import com.example.domain.utils.DataError
 import com.example.domain.utils.Result
@@ -86,10 +86,9 @@ class HomeViewModelFavoriteAddTest {
             getDestinationsPageUseCase = GetDestinationsPageUseCase(destinationsRepository),
             getNearbyDestinationsUseCase = GetNearbyDestinationsUseCase(locationRepository, destinationsRepository),
             getFamousCountriesUseCase = GetFamousCountriesUseCase(destinationsRepository),
-            favoritePlaceUseCase = FavoritePlaceUseCase(favoritePlaceRepository),
             addDestinationFavoriteUseCase = AddDestinationFavoriteUseCase(favoriteDestinationRepository),
+            removeDestinationFavoriteUseCase = RemoveDestinationFavoriteUseCase(favoriteDestinationRepository),
             observeFavoriteDestinationIdsUseCase = ObserveFavoriteDestinationIdsUseCase(favoriteDestinationRepository),
-            getAllPlacesUseCase = GetAllPlacesUseCase(favoritePlaceRepository),
             getRecentlyViewedUseCase = GetRecentlyViewedUseCase(recentlyViewedRepository),
             addToRecentlyViewedUseCase = AddToRecentlyViewedUseCase(recentlyViewedRepository),
             getTopFlightOffersUseCase = FakeGetTopOffersUseCase()
@@ -217,7 +216,8 @@ class HomeViewModelFavoriteAddTest {
         override suspend fun searchForDestinations(
             keyword: String,
             pageIndex: Int,
-            pageSize: Int
+            pageSize: Int,
+            interestIds: List<Int>?
         ): Result<List<Destination>, DataError> = Result.Success(emptyList())
 
         override suspend fun getFamousCountries(): Result<List<Country>, DataError> = Result.Success(emptyList())

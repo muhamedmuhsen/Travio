@@ -9,7 +9,6 @@ import com.dev.utils.uitext.UiText
 import com.dev.utils.uitext.asUiText
 import com.example.domain.model.destination.Destination
 import com.example.domain.model.destination.DestinationsPage
-import com.example.domain.model.favorite.toPlace
 import com.example.domain.model.flights.TopFlightOffer
 import com.example.domain.usecase.destinations.AddToRecentlyViewedUseCase
 import com.example.domain.usecase.destinations.GetDestinationsPageUseCase
@@ -19,8 +18,6 @@ import com.example.domain.usecase.destinations.GetRecentlyViewedUseCase
 import com.example.domain.usecase.favorite.destination.AddDestinationFavoriteUseCase
 import com.example.domain.usecase.favorite.destination.ObserveFavoriteDestinationIdsUseCase
 import com.example.domain.usecase.favorite.destination.RemoveDestinationFavoriteUseCase
-import com.example.domain.usecase.favorite.place.FavoritePlaceUseCase
-import com.example.domain.usecase.favorite.place.GetAllPlacesUseCase
 import com.example.domain.usecase.flights.GetTopFlightOffersUseCase
 import com.example.domain.utils.DataError
 import com.example.domain.utils.Result
@@ -43,11 +40,9 @@ class HomeViewModel @Inject constructor(
     private val getDestinationsPageUseCase: GetDestinationsPageUseCase,
     private val getNearbyDestinationsUseCase: GetNearbyDestinationsUseCase,
     private val getFamousCountriesUseCase: GetFamousCountriesUseCase,
-    private val favoritePlaceUseCase: FavoritePlaceUseCase,
-    private val addDestinationFavoriteUseCase: AddDestinationFavoriteUseCase? = null,
-    private val removeDestinationFavoriteUseCase: RemoveDestinationFavoriteUseCase? = null,
-    private val observeFavoriteDestinationIdsUseCase: ObserveFavoriteDestinationIdsUseCase? = null,
-    private val getAllPlacesUseCase: GetAllPlacesUseCase,
+    private val addDestinationFavoriteUseCase: AddDestinationFavoriteUseCase,
+    private val removeDestinationFavoriteUseCase: RemoveDestinationFavoriteUseCase,
+    private val observeFavoriteDestinationIdsUseCase: ObserveFavoriteDestinationIdsUseCase,
     private val getRecentlyViewedUseCase: GetRecentlyViewedUseCase,
     private val addToRecentlyViewedUseCase: AddToRecentlyViewedUseCase,
     private val getTopFlightOffersUseCase: GetTopFlightOffersUseCase
@@ -121,14 +116,8 @@ class HomeViewModel @Inject constructor(
     }
 
     private fun observeFavoriteIds() {
-        val sharedObserver = observeFavoriteDestinationIdsUseCase
-        if (sharedObserver == null) {
-            Timber.e("observeFavoriteIds: shared observer is not available")
-            return
-        }
-
         viewModelScope.launch {
-            sharedObserver()
+            observeFavoriteDestinationIdsUseCase()
                 .catch { e -> Timber.e(e, "observeFavoriteIds(shared): failed") }
                 .collect { favoriteIds ->
                     _uiState.update { it.copy(favoriteIds = favoriteIds) }
@@ -138,7 +127,6 @@ class HomeViewModel @Inject constructor(
 
     private fun toggleFavorite(destination: Destination) {
         viewModelScope.launch {
-            val place = destination.toPlace()
             val destinationId = destination.destinationID
             if (destinationId in _uiState.value.favoriteMutationInFlightIds) return@launch
 
@@ -150,25 +138,7 @@ class HomeViewModel @Inject constructor(
                         favoriteMutationInFlightIds = it.favoriteMutationInFlightIds + destinationId
                     )
                 }
-                val addResult = if (addDestinationFavoriteUseCase != null) {
-                    addDestinationFavoriteUseCase(destinationId)
-                } else {
-                    when (favoritePlaceUseCase(place)) {
-                        is Result.Success -> {
-                            Result.Success(
-                                com.example.domain.model.favorite.FavoriteMutationResult(
-                                    isSuccess = true,
-                                    message = null,
-                                    errors = emptyList()
-                                )
-                            )
-                        }
-
-                        is Result.Error -> {
-                            Result.Error(DataError.Local.DatabaseError)
-                        }
-                    }
-                }
+                val addResult = addDestinationFavoriteUseCase(destinationId)
 
                 when (addResult) {
                     is Result.Success -> {
@@ -203,25 +173,7 @@ class HomeViewModel @Inject constructor(
                 )
             }
 
-            val removeResult = if (removeDestinationFavoriteUseCase != null) {
-                removeDestinationFavoriteUseCase(destinationId)
-            } else {
-                when (favoritePlaceUseCase(place)) {
-                    is Result.Success -> {
-                        Result.Success(
-                            com.example.domain.model.favorite.FavoriteMutationResult(
-                                isSuccess = true,
-                                message = null,
-                                errors = emptyList()
-                            )
-                        )
-                    }
-
-                    is Result.Error -> {
-                        Result.Error(DataError.Local.DatabaseError)
-                    }
-                }
-            }
+            val removeResult = removeDestinationFavoriteUseCase(destinationId)
 
             when (removeResult) {
                 is Result.Success -> {

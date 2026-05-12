@@ -108,7 +108,8 @@ class DestinationsRepositoryNearbyRequestReviewTest {
         override suspend fun searchForDestinations(
             keyword: String,
             pageIndex: Int,
-            pageSize: Int
+            pageSize: Int,
+            interestIds: List<Int>?
         ): GetAllDestinationsResponse {
             return GetAllDestinationsResponse(count = 0, data = emptyList(), pageIndex = pageIndex, pageSize = pageSize)
         }

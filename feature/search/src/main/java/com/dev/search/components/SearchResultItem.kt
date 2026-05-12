@@ -11,6 +11,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -40,7 +45,10 @@ private val ThumbnailSize @Composable get() = MaterialTheme.spacing.xxxl * 2
 fun SearchResultItem(
     modifier: Modifier = Modifier,
     destination: Destination,
-    onClick: () -> Unit
+    isFavorite: Boolean = false,
+    isFavoriteInFlight: Boolean = false,
+    onClick: () -> Unit,
+    onFavoriteClick: (Boolean) -> Unit = {}
 ) {
     Row(
         modifier = modifier
@@ -94,6 +102,17 @@ fun SearchResultItem(
                     InterestChip(label = firstInterest.interestName)
                 }
             }
+        }
+
+        IconButton(
+            onClick = { onFavoriteClick(!isFavorite) },
+            enabled = !isFavoriteInFlight
+        ) {
+            Icon(
+                imageVector = if (isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                contentDescription = stringResource(id = R.string.search_favorite_cd),
+                tint = if (isFavorite) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurfaceVariant
+            )
         }
     }
 }
