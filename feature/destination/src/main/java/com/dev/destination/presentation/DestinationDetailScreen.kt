@@ -170,19 +170,28 @@ private fun DestinationDetailContent(
                             .fillMaxWidth()
                             .height(300.dp)
                     ) {
-                        // Background Image
-                        if (heroImage != null) {
-                            AsyncImage(
-                                model = ImageRequest.Builder(LocalContext.current)
-                                    .data(heroImage)
-                                    .crossfade(true)
-                                    .placeholder(com.example.designsystem.R.drawable.image_placeholder)
-                                    .error(com.example.designsystem.R.drawable.image_placeholder)
-                                    .build(),
-                                contentDescription = stringResource(id = R.string.destination_hero_image_cd),
-                                contentScale = ContentScale.Crop,
-                                modifier = Modifier.fillMaxSize()
+                        // Background Image Pager
+                        if (destination.imageUrls.isNotEmpty()) {
+                            val pagerState = androidx.compose.foundation.pager.rememberPagerState(
+                                pageCount = { destination.imageUrls.size }
                             )
+                            androidx.compose.foundation.pager.HorizontalPager(
+                                state = pagerState,
+                                modifier = Modifier.fillMaxSize()
+                            ) { page ->
+                                val imageUrl = destination.imageUrls[page]
+                                AsyncImage(
+                                    model = ImageRequest.Builder(LocalContext.current)
+                                        .data(imageUrl)
+                                        .crossfade(true)
+                                        .placeholder(com.example.designsystem.R.drawable.image_placeholder)
+                                        .error(com.example.designsystem.R.drawable.image_placeholder)
+                                        .build(),
+                                    contentDescription = stringResource(id = R.string.destination_hero_image_cd),
+                                    contentScale = ContentScale.Crop,
+                                    modifier = Modifier.fillMaxSize()
+                                )
+                            }
                         } else {
                             Box(
                                 modifier = Modifier
