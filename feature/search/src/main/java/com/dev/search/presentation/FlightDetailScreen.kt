@@ -531,12 +531,7 @@ private fun FeatureIcon(
 @Composable
 private fun PriceBreakdownCard(price: PriceSectionUi) {
     var expanded by remember { mutableStateOf(false) }
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        elevation = CardDefaults.cardElevation(defaultElevation = MaterialTheme.elevation.xs),
-        shape = MaterialTheme.shapes.large
-    ) {
+    LayeredCard(modifier = Modifier.fillMaxWidth()) {
         Column(modifier = Modifier.padding(MaterialTheme.spacing.md)) {
             Row(
                 modifier = Modifier
@@ -646,12 +641,7 @@ private fun FlightInformationCard(
     info: FlightInfoUi,
     duration: String
 ) {
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        elevation = CardDefaults.cardElevation(defaultElevation = MaterialTheme.elevation.xs),
-        shape = MaterialTheme.shapes.large
-    ) {
+    LayeredCard(modifier = Modifier.fillMaxWidth()) {
         Column(modifier = Modifier.padding(MaterialTheme.spacing.md)) {
             Text(
                 text = stringResource(R.string.flight_details_flight_info),
@@ -1132,6 +1122,32 @@ private fun BaggageItem(
                 style = MaterialTheme.typography.labelSmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
+        }
+    }
+}
+
+@Composable
+private fun LayeredCard(
+    modifier: Modifier = Modifier,
+    content: @Composable () -> Unit
+) {
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .background(
+                color = MaterialTheme.colorScheme.primary,
+                shape = MaterialTheme.shapes.large
+            )
+    ) {
+        Surface(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 4.dp),
+            color = MaterialTheme.colorScheme.surface,
+            shape = MaterialTheme.shapes.large,
+            shadowElevation = MaterialTheme.elevation.xs
+        ) {
+            content()
         }
     }
 }
