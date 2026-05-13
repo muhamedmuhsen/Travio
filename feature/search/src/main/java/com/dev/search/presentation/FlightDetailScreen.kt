@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -55,6 +56,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.dev.search.presentation.flightdetails.ExtrasUi
 import com.dev.search.presentation.flightdetails.FlightDetailsEvent
@@ -70,7 +72,11 @@ import com.example.common.extensions.toCurrencySymbol
 import com.example.common.extensions.toFormattedPrice
 import com.example.designsystem.theme.TravioTheme
 import com.example.designsystem.theme.elevation
+import com.example.designsystem.theme.onWarningContainer
 import com.example.designsystem.theme.spacing
+import com.example.designsystem.theme.success
+import com.example.designsystem.theme.warning
+import com.example.designsystem.theme.warningContainer
 import com.example.feature.search.R
 
 @Composable
@@ -768,6 +774,8 @@ private fun LargeFlightInfoItem(
             text = value,
             style = MaterialTheme.typography.titleLarge,
             fontWeight = FontWeight.Bold,
+            fontSize = 18.sp,
+            maxLines = 1,
             color = valueColor
         )
     }
@@ -854,26 +862,27 @@ private fun TimelineItem(
     item: TimelineItemUi,
     isLast: Boolean
 ) {
-    Row(modifier = Modifier.fillMaxWidth()) {
+    Row(modifier = Modifier.fillMaxWidth().height(androidx.compose.foundation.layout.IntrinsicSize.Min)) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             val color = when (item) {
-                is TimelineItemUi.Departure -> MaterialTheme.colorScheme.secondaryContainer
+                is TimelineItemUi.Departure -> MaterialTheme.colorScheme.success
                 is TimelineItemUi.Arrival -> MaterialTheme.colorScheme.error
-                is TimelineItemUi.Layover -> MaterialTheme.colorScheme.errorContainer
+                is TimelineItemUi.Layover -> MaterialTheme.colorScheme.warning
                 else -> MaterialTheme.colorScheme.primary
             }
             Box(
                 modifier = Modifier
-                    .size(MaterialTheme.spacing.sm)
-                    .background(color, CircleShape)
-                    .border(MaterialTheme.spacing.xxs, color.copy(alpha = 0.3f), CircleShape)
+                    .size(16.dp)
+                    .border(width = 1.5.dp, color = color, shape = CircleShape)
+                    .padding(3.dp)
+                    .background(color = color, shape = CircleShape)
             )
             if (!isLast) {
                 Box(
                     modifier = Modifier
-                        .width(MaterialTheme.spacing.xxs)
-                        .height(MaterialTheme.spacing.xxxl + MaterialTheme.spacing.md)
-                        .background(color.copy(alpha = 0.3f))
+                        .width(2.dp)
+                        .fillMaxHeight()
+                        .background(color.copy(alpha = 0.4f))
                 )
             }
         }
@@ -941,7 +950,7 @@ private fun TimelineItem(
                         text = stringResource(R.string.flight_details_layover_label),
                         style = MaterialTheme.typography.labelSmall,
                         fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.errorContainer
+                        color = MaterialTheme.colorScheme.warning
                     )
                     Text(
                         text = item.location,
@@ -951,13 +960,14 @@ private fun TimelineItem(
                     Spacer(modifier = Modifier.height(MaterialTheme.spacing.xs))
                     Box(
                         modifier = Modifier
-                            .background(MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.1f), MaterialTheme.shapes.small)
-                            .padding(horizontal = MaterialTheme.spacing.xs, vertical = MaterialTheme.spacing.xxs)
+                            .background(MaterialTheme.colorScheme.warningContainer, CircleShape)
+                            .border(1.dp, MaterialTheme.colorScheme.warning, CircleShape)
+                            .padding(horizontal = MaterialTheme.spacing.md, vertical = 6.dp)
                     ) {
                         Text(
                             text = stringResource(R.string.flight_details_wait, item.duration),
-                            style = MaterialTheme.typography.labelSmall,
-                            color = MaterialTheme.colorScheme.errorContainer,
+                            style = MaterialTheme.typography.labelLarge,
+                            color = MaterialTheme.colorScheme.onWarningContainer,
                             fontWeight = FontWeight.Bold
                         )
                     }
@@ -1220,8 +1230,11 @@ private fun FlightDetailPreviewContent() {
         ),
         timeline = listOf(
             TimelineItemUi.Departure("Cairo International Airport (CAI)", "10:27 PM", "May 30, 2026"),
-            TimelineItemUi.Flight("British Airways BA 0189", "2 hours 30 minutes"),
+            TimelineItemUi.Flight("British Airways BA 0189", "2h 30m"),
+            TimelineItemUi.Arrival("Istanbul Airport (IST)", "12:57 AM", "May 31, 2026"),
             TimelineItemUi.Layover("2h 00m", "Istanbul Airport (IST)"),
+            TimelineItemUi.Departure("Istanbul Airport (IST)", "02:57 AM", "May 31, 2026"),
+            TimelineItemUi.Flight("British Airways BA 0190", "3h 45m"),
             TimelineItemUi.Arrival("Paris Charles de Gaulle (CDG)", "06:42 AM", "May 31, 2026")
         ),
         extras = ExtrasUi(

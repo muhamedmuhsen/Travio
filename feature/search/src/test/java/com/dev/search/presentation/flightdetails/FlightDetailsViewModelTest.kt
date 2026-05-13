@@ -67,12 +67,16 @@ class FlightDetailsViewModelTest {
                     departureTime = "2026-05-03T10:00:00Z",
                     destinationAirport = "LAX",
                     arrivalTime = "2026-05-03T12:00:00Z",
+                    originCityName = "New York",
+                    destinationCityName = "Los Angeles",
                     segmentDuration = "PT2H"
                 )
             ),
             stops = 0,
             originAirport = "JFK",
+            originCity = "New York",
             destinationAirport = "LAX",
+            destinationCity = "Los Angeles",
             departureTime = "2026-05-03T10:00:00Z",
             arrivalTime = "2026-05-03T12:00:00Z",
             layovers = emptyList(),
@@ -112,12 +116,16 @@ class FlightDetailsViewModelTest {
                     departureTime = "INVALID",
                     destinationAirport = "LAX",
                     arrivalTime = "INVALID",
+                    originCityName = "New York",
+                    destinationCityName = "Los Angeles",
                     segmentDuration = "PT2H"
                 )
             ),
             stops = 0,
             originAirport = "JFK",
+            originCity = "New York",
             destinationAirport = "LAX",
+            destinationCity = "Los Angeles",
             departureTime = "INVALID",
             arrivalTime = "INVALID",
             layovers = emptyList(),
@@ -177,11 +185,13 @@ class FlightDetailsViewModelTest {
             refundPenaltyAmount = null,
             pricePerPerson = null,
             segments = listOf(
-                FlightDetailsSegment("Air", null, "123", "A320", "JFK", "2026-05-03T10:00:00Z", "LAX", "2026-05-03T12:00:00Z", "PT2H")
+                FlightDetailsSegment("Air", null, "123", "A320", "JFK", "2026-05-03T10:00:00Z", "LAX", "2026-05-03T12:00:00Z", "New York", "Los Angeles", "PT2H")
             ),
             stops = 0,
             originAirport = "JFK",
+            originCity = "New York",
             destinationAirport = "LAX",
+            destinationCity = "Los Angeles",
             departureTime = "2026-05-03T10:00:00Z",
             arrivalTime = "2026-05-03T12:00:00Z",
             layovers = emptyList(),

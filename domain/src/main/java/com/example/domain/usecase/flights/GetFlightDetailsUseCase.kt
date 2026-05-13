@@ -43,8 +43,8 @@ class GetFlightDetailsUseCase @Inject constructor(
         }
 
         val timeValuesValid = sortedSegments.all { segment ->
-            FlightDetailsTimeUtils.parseOffsetDateTime(segment.departureTime) != null &&
-                FlightDetailsTimeUtils.parseOffsetDateTime(segment.arrivalTime) != null
+            FlightDetailsTimeUtils.parseDateTime(segment.departureTime) != null &&
+                FlightDetailsTimeUtils.parseDateTime(segment.arrivalTime) != null
         }
 
         val layoverDurations = sortedSegments.windowed(2, 1, false).map { (current, next) ->

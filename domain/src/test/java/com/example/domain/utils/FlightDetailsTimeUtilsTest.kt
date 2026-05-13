@@ -3,20 +3,21 @@ package com.example.domain.utils
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class FlightDetailsTimeUtilsTest {
 
     @Test
-    fun should_parse_offset_date_time() {
-        val parsed = FlightDetailsTimeUtils.parseOffsetDateTime("2026-05-03T08:00:00+03:00")
-        assertNotNull(parsed)
+    fun `parseDateTime valid string returns date`() {
+        val result = FlightDetailsTimeUtils.parseDateTime("2026-05-03T10:00:00Z")
+        assertTrue(result != null)
     }
 
     @Test
-    fun should_return_null_for_invalid_offset_date_time() {
-        val parsed = FlightDetailsTimeUtils.parseOffsetDateTime("invalid")
-        assertNull(parsed)
+    fun `parseDateTime invalid string returns null`() {
+        val result = FlightDetailsTimeUtils.parseDateTime("INVALID")
+        assertTrue(result == null)
     }
 
     @Test

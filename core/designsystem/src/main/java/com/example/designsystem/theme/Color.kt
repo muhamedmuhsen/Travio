@@ -264,3 +264,30 @@ val androidx.compose.material3.ColorScheme.success: Color
 val androidx.compose.material3.ColorScheme.onSuccess: Color
     @androidx.compose.runtime.Composable
     get() = if (androidx.compose.foundation.isSystemInDarkTheme()) onSuccessDark else onSuccessLight
+
+// Warning Colors
+val warningLight = Color(0xFFF2994A)
+val onWarningLight = Color(0xFFFFFFFF)
+val warningContainerLight = Color(0xFFFFF4E5)
+val onWarningContainerLight = Color(0xFFF2994A)
+
+val warningDark = Color(0xFFF2994A)
+val onWarningDark = Color(0xFF452B00)
+val warningContainerDark = Color(0xFF663D00)
+val onWarningContainerDark = Color(0xFFFFF4E5)
+
+val androidx.compose.material3.ColorScheme.warning: Color
+    @androidx.compose.runtime.Composable
+    get() = if (androidx.compose.foundation.isSystemInDarkTheme()) warningDark else warningLight
+
+val androidx.compose.material3.ColorScheme.onWarning: Color
+    @androidx.compose.runtime.Composable
+    get() = if (androidx.compose.foundation.isSystemInDarkTheme()) onWarningDark else onWarningLight
+
+val androidx.compose.material3.ColorScheme.warningContainer: Color
+    @androidx.compose.runtime.Composable
+    get() = if (androidx.compose.foundation.isSystemInDarkTheme()) warningContainerDark else warningContainerLight
+
+val androidx.compose.material3.ColorScheme.onWarningContainer: Color
+    @androidx.compose.runtime.Composable
+    get() = if (androidx.compose.foundation.isSystemInDarkTheme()) onWarningContainerDark else onWarningContainerLight
