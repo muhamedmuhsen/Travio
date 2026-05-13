@@ -333,6 +333,14 @@ private fun FlightSummaryCard(data: FlightDetailsUiModel) {
                         color = MaterialTheme.colorScheme.primary,
                         textAlign = TextAlign.Center
                     )
+                    data.summary.originCity?.let { city ->
+                        Text(
+                            text = city,
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            textAlign = TextAlign.Center
+                        )
+                    }
                     Text(
                         text = data.summary.departureDate,
                         style = MaterialTheme.typography.bodySmall,
@@ -416,6 +424,14 @@ private fun FlightSummaryCard(data: FlightDetailsUiModel) {
                         color = MaterialTheme.colorScheme.primary,
                         textAlign = TextAlign.Center
                     )
+                    data.summary.destinationCity?.let { city ->
+                        Text(
+                            text = city,
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            textAlign = TextAlign.Center
+                        )
+                    }
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text(
                             text = data.summary.arrivalDate,
@@ -1104,7 +1120,7 @@ private fun BaggageItem(
 ) {
     Row(verticalAlignment = Alignment.Top, modifier = Modifier.padding(vertical = MaterialTheme.spacing.xxs)) {
         Icon(
-            painter = painterResource(R.drawable.bag_icon),
+            painter = painterResource(R.drawable.refund_icon),
             contentDescription = null,
             tint = MaterialTheme.colorScheme.secondaryContainer,
             modifier = Modifier.size(14.dp)
@@ -1182,7 +1198,9 @@ private fun FlightDetailPreviewContent() {
             arrivalDate = "May 31",
             arrivalDateFull = "Sunday, May 31, 2026",
             origin = "CAI",
+            originCity = "Cairo",
             destination = "CDG",
+            destinationCity = "Paris",
             stopsLabel = UiText.DynamicString("1 Stop"),
             totalDuration = "8h 15m"
         ),

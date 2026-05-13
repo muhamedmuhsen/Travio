@@ -36,6 +36,8 @@ class GetFlightDetailsUseCase @Inject constructor(
                 departureTime = it.departureTime,
                 destinationAirport = it.destinationAirport,
                 arrivalTime = it.arrivalTime,
+                originCityName = it.originCityName,
+                destinationCityName = it.destinationCityName,
                 segmentDuration = it.segmentDuration
             )
         }
@@ -112,7 +114,9 @@ class GetFlightDetailsUseCase @Inject constructor(
             segments = domainSegments,
             stops = (domainSegments.size - 1).coerceAtLeast(0),
             originAirport = domainSegments.first().originAirport,
+            originCity = domainSegments.first().originCityName,
             destinationAirport = domainSegments.last().destinationAirport,
+            destinationCity = domainSegments.last().destinationCityName,
             departureTime = domainSegments.first().departureTime,
             arrivalTime = domainSegments.last().arrivalTime,
             layovers = layovers,

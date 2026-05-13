@@ -21,7 +21,9 @@ data class FlightDetailsSummaryUi(
     val arrivalDate: String,
     val arrivalDateFull: String,
     val origin: String,
+    val originCity: String?,
     val destination: String,
+    val destinationCity: String?,
     val stopsLabel: UiText,
     val totalDuration: String
 )

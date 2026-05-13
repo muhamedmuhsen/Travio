@@ -111,7 +111,9 @@ class FlightDetailsViewModel @Inject constructor(
             arrivalDate = arrivalTime.toFormattedDate(),
             arrivalDateFull = arrivalTime.toFullDate(),
             origin = originAirport,
+            originCity = originCity,
             destination = destinationAirport,
+            destinationCity = destinationCity,
             stopsLabel = stopsLabel,
             totalDuration = totalDuration.toFlightDuration()
         )
