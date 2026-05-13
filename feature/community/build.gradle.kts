@@ -72,4 +72,10 @@ dependencies {
 
     // Timber logging library
     implementation(libs.timber)
+
+    // Testing
+    testImplementation(libs.junit)
+    testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.mockito.core)
+    testImplementation(libs.mockito.kotlin)
 }

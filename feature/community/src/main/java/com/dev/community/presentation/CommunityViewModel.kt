@@ -30,16 +30,24 @@ class CommunityViewModel @Inject constructor(
     val event = _event.receiveAsFlow()
 
     init {
+        // loadPosts() is called only once on creation. Navigation back to this screen
+        // reuses the retained ViewModel, preventing redundant API calls.
         loadPosts()
     }
 
     private fun loadPosts() {
         viewModelScope.launch {
             getCommunityPosts().collect { result ->
-                _uiState.update {
+                _uiState.update { state ->
                     when (result) {
-                        is Result.Success -> it.copy(postsState = UiState.Success(result.data))
-                        is Result.Error -> it.copy(postsState = UiState.Error(result.error.asUiText()))
+                        is Result.Success -> state.copy(postsState = UiState.Success(result.data))
+                        is Result.Error -> {
+                            if (state.postsState is UiState.Success) {
+                                state // Keep existing posts on refresh error
+                            } else {
+                                state.copy(postsState = UiState.Error(result.error.asUiText()))
+                            }
+                        }
                     }
                 }
             }
