@@ -13,8 +13,12 @@ import com.example.network.api.CommunityApi
 import com.example.network.dto.community.CommentContentRequest
 import com.example.network.dto.community.PostContentRequest
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.update
 import timber.log.Timber
@@ -31,13 +35,21 @@ class CommunityRepositoryImpl @Inject constructor(
     // TODO: persist bookmarks via Room once the community DB table is added.
     private val bookmarkedIds = MutableStateFlow<Set<Int>>(emptySet())
 
+    private val refreshTrigger = MutableSharedFlow<Unit>(
+        replay = 1,
+        onBufferOverflow = BufferOverflow.DROP_OLDEST
+    ).apply { tryEmit(Unit) }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
     override fun getAllPost(): Flow<Result<List<CommunityPost>, DataError>> =
-        flow {
-            emit(
-                safeApiCall {
-                    api.getAllPosts().data.map { it.toCommunityPost() }
-                }
-            )
+        refreshTrigger.flatMapLatest {
+            flow {
+                emit(
+                    safeApiCall {
+                        api.getAllPosts().data.map { it.toCommunityPost() }
+                    }
+                )
+            }
         }
 
     override suspend fun getPostById(postId: Int): Result<CommunityPost, DataError> =
@@ -48,8 +60,8 @@ class CommunityRepositoryImpl @Inject constructor(
     override suspend fun addPost(
         location: String,
         description: String
-    ): Result<Int, DataError> =
-        safeApiCall {
+    ): Result<Int, DataError> {
+        val result = safeApiCall {
             api.createPost(
                 PostContentRequest(
                     content = description,
@@ -57,6 +69,15 @@ class CommunityRepositoryImpl @Inject constructor(
                 )
             ).data.postId
         }
+        if (result is Result.Success) {
+            notifyPostCreated()
+        }
+        return result
+    }
+
+    override fun notifyPostCreated() {
+        refreshTrigger.tryEmit(Unit)
+    }
 
     override suspend fun uploadPostImages(
         postId: Int,

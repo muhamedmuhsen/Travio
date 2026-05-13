@@ -48,6 +48,7 @@ class ShareMomentViewModel @Inject constructor(
 
     fun onPostClicked() {
         val state = _uiState.value
+        if (state.submitState is UiState.Loading) return
         if (state.location.isBlank()) {
             viewModelScope.launch { _event.send(ShareMomentEvent.ShowLocationRequired) }
             return

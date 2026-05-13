@@ -28,4 +28,6 @@ interface CommunityRepository {
     suspend fun toggleLike(postId: Int): Result<Unit, DataError>
 
     suspend fun toggleBookmark(postId: Int): Result<Unit, DataError>
+
+    fun notifyPostCreated()
 }
