@@ -9,5 +9,7 @@ data class FlightDetailsSegmentPayload(
     val departureTime: String,
     val destinationAirport: String,
     val arrivalTime: String,
+    val originCityName: String?,
+    val destinationCityName: String?,
     val segmentDuration: String
 )

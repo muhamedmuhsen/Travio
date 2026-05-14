@@ -51,6 +51,8 @@ private fun FlightDetailsSegmentDto.toPayload(): FlightDetailsSegmentPayload? {
         departureTime = resolvedDeparture,
         destinationAirport = resolvedDestination,
         arrivalTime = resolvedArrival,
+        originCityName = originCityName,
+        destinationCityName = destinationCityName,
         segmentDuration = resolvedDuration
     )
 }

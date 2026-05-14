@@ -111,7 +111,9 @@ class FlightDetailsViewModel @Inject constructor(
             arrivalDate = arrivalTime.toFormattedDate(),
             arrivalDateFull = arrivalTime.toFullDate(),
             origin = originAirport,
+            originCity = originCity,
             destination = destinationAirport,
+            destinationCity = destinationCity,
             stopsLabel = stopsLabel,
             totalDuration = totalDuration.toFlightDuration()
         )
@@ -142,18 +144,16 @@ class FlightDetailsViewModel @Inject constructor(
                     )
                 )
                 add(TimelineItemUi.Flight("${segment.airlineName} ${segment.flightNumber}", segment.segmentDuration.toFlightDuration()))
+                add(
+                    TimelineItemUi.Arrival(
+                        segment.destinationAirport,
+                        segment.arrivalTime.toFormattedTime(),
+                        segment.arrivalTime.toFullDate()
+                    )
+                )
                 if (index < layovers.size) {
                     val layover = layovers[index]
                     add(TimelineItemUi.Layover(layover.duration.toFlightDuration(), layover.location))
-                }
-                if (index == segments.lastIndex) {
-                    add(
-                        TimelineItemUi.Arrival(
-                            segment.destinationAirport,
-                            segment.arrivalTime.toFormattedTime(),
-                            segment.arrivalTime.toFullDate()
-                        )
-                    )
                 }
             }
         }

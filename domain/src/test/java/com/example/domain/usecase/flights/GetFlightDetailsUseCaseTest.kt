@@ -53,6 +53,8 @@ class GetFlightDetailsUseCaseTest {
                             departureTime = "2026-05-03T08:00:00+03:00",
                             destinationAirport = "AMS",
                             arrivalTime = "2026-05-03T10:30:00+03:00",
+                            originCityName = "New York",
+                            destinationCityName = "Amsterdam",
                             segmentDuration = "PT2H30M"
                         )
                     )
@@ -97,6 +99,8 @@ class GetFlightDetailsUseCaseTest {
                             departureTime = "2026-05-03T08:00:00+03:00",
                             destinationAirport = "AMS",
                             arrivalTime = "2026-05-03T10:00:00+03:00",
+                            originCityName = "New York",
+                            destinationCityName = "Amsterdam",
                             segmentDuration = "PT2H0M"
                         ),
                         FlightDetailsSegmentPayload(
@@ -108,6 +112,8 @@ class GetFlightDetailsUseCaseTest {
                             departureTime = "2026-05-03T12:30:00+03:00",
                             destinationAirport = "BCN",
                             arrivalTime = "2026-05-03T15:30:00+03:00",
+                            originCityName = "Amsterdam",
+                            destinationCityName = "Barcelona",
                             segmentDuration = "PT3H0M"
                         )
                     )
@@ -151,6 +157,8 @@ class GetFlightDetailsUseCaseTest {
                             departureTime = "INVALID_TIME",
                             destinationAirport = "AMS",
                             arrivalTime = "2026-05-03T10:30:00+03:00",
+                            originCityName = "New York",
+                            destinationCityName = "Amsterdam",
                             segmentDuration = "PT2H30M"
                         )
                     )

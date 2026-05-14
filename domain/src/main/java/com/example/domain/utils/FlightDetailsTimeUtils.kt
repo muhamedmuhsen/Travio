@@ -5,10 +5,14 @@ import java.time.OffsetDateTime
 import java.time.format.DateTimeParseException
 
 object FlightDetailsTimeUtils {
-    fun parseOffsetDateTime(value: String): OffsetDateTime? {
+    fun parseDateTime(value: String): java.time.LocalDateTime? {
         return try {
-            OffsetDateTime.parse(value)
-        } catch (ex: DateTimeParseException) {
+            try {
+                OffsetDateTime.parse(value).toLocalDateTime()
+            } catch (e: Exception) {
+                java.time.LocalDateTime.parse(value)
+            }
+        } catch (ex: Exception) {
             null
         }
     }
@@ -17,8 +21,8 @@ object FlightDetailsTimeUtils {
         start: String,
         end: String
     ): Duration? {
-        val startTime = parseOffsetDateTime(start) ?: return null
-        val endTime = parseOffsetDateTime(end) ?: return null
+        val startTime = parseDateTime(start) ?: return null
+        val endTime = parseDateTime(end) ?: return null
         return Duration.between(startTime, endTime)
     }
 
