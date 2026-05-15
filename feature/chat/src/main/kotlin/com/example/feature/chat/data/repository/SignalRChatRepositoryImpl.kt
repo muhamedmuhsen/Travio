@@ -44,19 +44,7 @@ class SignalRChatRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getThreadHistory(threadId: String): Result<List<ChatMessage>, DataError> {
-        val history = listOf(
-            ChatMessage(
-                threadId = threadId,
-                sender = com.example.feature.chat.domain.model.Sender.USER,
-                content = "Hi, I need a trip plan."
-            ),
-            ChatMessage(
-                threadId = threadId,
-                sender = com.example.feature.chat.domain.model.Sender.AI,
-                content = "Sure! Where do you want to go?"
-            )
-        )
-        return Result.Success(history)
+        return Result.Success(emptyList())
     }
 
     override suspend fun connect() {
