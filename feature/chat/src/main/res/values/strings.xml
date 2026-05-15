@@ -1,0 +1,12 @@
+<resources>
+    <string name="travel_assistant">Travel Assistant</string>
+    <string name="travel_ai_assistant">Travel AI Assistant</string>
+    <string name="travel_ai_assistant_subtitle">Your intelligent companion for discovering amazing destinations and planning perfect trips</string>
+    <string name="ask_chatgpt">Ask ChatGPT</string>
+    <string name="send_message">Send Message</string>
+    <string name="ask_anything">Ask anything...</string>
+    <string name="creating_your_plan">Creating your plan...</string>
+    <string name="dismiss">Dismiss</string>
+    <string name="plan_created_successfully">Plan Created Successfully!</string>
+    <string name="waiting_to_start">Waiting to start...</string>
+</resources>

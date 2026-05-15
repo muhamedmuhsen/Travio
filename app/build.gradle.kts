@@ -202,6 +202,7 @@ dependencies {
     implementation(project(":feature:search"))
     implementation(project(":feature:destination"))
     implementation(project(":feature:booking"))
+    implementation(project(":feature:chat"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
