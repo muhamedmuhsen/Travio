@@ -16,6 +16,7 @@ sealed class Screen(val route: String) {
     data object FavoriteScreen : Screen(Screens.FAVORITE.name)
     data object CommunityScreen : Screen(Screens.COMMUNITY.name)
     data object AiChatScreen : Screen(Screens.AI_CHAT.name)
+    data object TripsScreen : Screen(Screens.TRIPS.name)
     data object DestinationDetailScreen : Screen(Screens.DESTINATION_DETAIL.name) {
         const val ARG_DESTINATION_ID = "id"
         val routePattern = "$route/{$ARG_DESTINATION_ID}"
@@ -53,6 +54,7 @@ enum class Screens {
     FAVORITE,
     COMMUNITY,
     AI_CHAT,
+    TRIPS,
     DESTINATION_DETAIL,
     SEARCH,
     SURVEY,

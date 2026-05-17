@@ -170,8 +170,8 @@ fun TravioNavHost(
                         launchSingleTop = true
                     }
                 },
-                navigateToAi = {
-                    navController.navigate(Screen.AiChatScreen.route) {
+                navigateToTrips = {
+                    navController.navigate(Screen.TripsScreen.route) {
                         launchSingleTop = true
                     }
                 },
@@ -215,8 +215,8 @@ fun TravioNavHost(
                         launchSingleTop = true
                     }
                 },
-                navigateToAi = {
-                    navController.navigate(Screen.AiChatScreen.route) {
+                navigateToTrips = {
+                    navController.navigate(Screen.TripsScreen.route) {
                         launchSingleTop = true
                     }
                 },
@@ -260,8 +260,8 @@ fun TravioNavHost(
                         launchSingleTop = true
                     }
                 },
-                navigateToAi = {
-                    navController.navigate(Screen.AiChatScreen.route) {
+                navigateToTrips = {
+                    navController.navigate(Screen.TripsScreen.route) {
                         launchSingleTop = true
                     }
                 },
@@ -315,8 +315,8 @@ fun TravioNavHost(
                         launchSingleTop = true
                     }
                 },
-                navigateToAi = {
-                    navController.navigate(Screen.AiChatScreen.route) {
+                navigateToTrips = {
+                    navController.navigate(Screen.TripsScreen.route) {
                         launchSingleTop = true
                     }
                 },
@@ -364,8 +364,8 @@ fun TravioNavHost(
                         launchSingleTop = true
                     }
                 },
-                navigateToAi = {
-                    navController.navigate(Screen.AiChatScreen.route) {
+                navigateToTrips = {
+                    navController.navigate(Screen.TripsScreen.route) {
                         launchSingleTop = true
                     }
                 },
@@ -423,6 +423,37 @@ fun TravioNavHost(
             ChatScreen(
                 onNavigateToPlanGeneration = { threadId ->
                     navController.navigate(PlanGenerationRoute(threadId))
+                },
+                navigateToHome = {
+                    navController.navigate(Screen.HomeScreen.route) {
+                        popUpTo(Screen.HomeScreen.route) { inclusive = false }
+                        launchSingleTop = true
+                    }
+                },
+                navigateToFavorite = {
+                    navController.navigate(Screen.FavoriteScreen.route) {
+                        launchSingleTop = true
+                    }
+                },
+                navigateToCommunity = {
+                    navController.navigate(Screen.CommunityScreen.route) {
+                        launchSingleTop = true
+                    }
+                },
+                navigateToProfile = {
+                    navController.navigate(Screen.ProfileScreen.route) {
+                        launchSingleTop = true
+                    }
+                }
+            )
+        }
+
+        composable(Screen.TripsScreen.route) {
+            com.example.feature.chat.presentation.ui.TripsScreen(
+                onNavigateToAiChat = {
+                    navController.navigate(Screen.AiChatScreen.route) {
+                        launchSingleTop = true
+                    }
                 },
                 navigateToHome = {
                     navController.navigate(Screen.HomeScreen.route) {

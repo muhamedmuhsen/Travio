@@ -43,7 +43,7 @@ fun CommunityScreen(
     viewModel: CommunityViewModel = hiltViewModel(),
     navigateToHome: () -> Unit = {},
     navigateToFavorite: () -> Unit = {},
-    navigateToAi: () -> Unit = {},
+    navigateToTrips: () -> Unit = {},
     navigateToProfile: () -> Unit = {},
     navigateToPostDetail: (Int) -> Unit = {},
     navigateToShareMoment: () -> Unit = {}
@@ -77,7 +77,7 @@ fun CommunityScreen(
         onLikeClicked = viewModel::onLikeClicked,
         navigateToHome = navigateToHome,
         navigateToFavorite = navigateToFavorite,
-        navigateToAi = navigateToAi,
+        navigateToTrips = navigateToTrips,
         navigateToProfile = navigateToProfile,
         navigateToPostDetail = navigateToPostDetail,
         navigateToShareMoment = navigateToShareMoment,
@@ -92,7 +92,7 @@ fun CommunityScreenContent(
     onLikeClicked: (Int) -> Unit,
     navigateToHome: () -> Unit,
     navigateToFavorite: () -> Unit,
-    navigateToAi: () -> Unit,
+    navigateToTrips: () -> Unit,
     navigateToProfile: () -> Unit,
     navigateToPostDetail: (Int) -> Unit,
     modifier: Modifier = Modifier,
@@ -113,7 +113,7 @@ fun CommunityScreenContent(
                         2 -> {
                             /* already on Community */
                         }
-                        3 -> navigateToAi()
+                        3 -> navigateToTrips()
                         4 -> navigateToProfile()
                     }
                 }
@@ -236,7 +236,7 @@ private fun CommunityScreenPreview() {
             onLikeClicked = {},
             navigateToHome = {},
             navigateToFavorite = {},
-            navigateToAi = {},
+            navigateToTrips = {},
             navigateToProfile = {},
             navigateToPostDetail = {}
         )
@@ -253,7 +253,7 @@ private fun CommunityScreenLoadingPreview() {
             onLikeClicked = {},
             navigateToHome = {},
             navigateToFavorite = {},
-            navigateToAi = {},
+            navigateToTrips = {},
             navigateToProfile = {},
             navigateToPostDetail = {}
         )
@@ -270,7 +270,7 @@ private fun CommunityScreenEmptyPreview() {
             onLikeClicked = {},
             navigateToHome = {},
             navigateToFavorite = {},
-            navigateToAi = {},
+            navigateToTrips = {},
             navigateToProfile = {},
             navigateToPostDetail = {}
         )

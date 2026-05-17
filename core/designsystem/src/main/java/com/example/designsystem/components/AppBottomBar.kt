@@ -47,7 +47,7 @@ val items = listOf(
         unselectedIcon = R.drawable.comunity_icon
     ),
     BottomNavigationItem(
-        title = R.string.bottom_nav_ai_chat,
+        title = R.string.bottom_nav_trips,
         selectedIcon = R.drawable.ai_chat_fill,
         unselectedIcon = R.drawable.ai_chat_icon
     ),

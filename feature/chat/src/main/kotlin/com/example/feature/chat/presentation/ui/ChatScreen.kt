@@ -461,6 +461,6 @@ private object Dimensions {
     val EmptyStateImageSize = 120.dp
     val BubbleCornerLarge = 20.dp
     val BubbleCornerSmall = 4.dp
-    val InputHeight = 50.dp
+    val InputHeight = 54.dp
     val ProgressIndicatorSize = 24.dp
 }

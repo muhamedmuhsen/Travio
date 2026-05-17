@@ -128,7 +128,7 @@ fun AllFlightsScreenRoute(
     navigateToHome: () -> Unit = {},
     navigateToFavorite: () -> Unit = {},
     navigateToCommunity: () -> Unit = {},
-    navigateToAi: () -> Unit = {},
+    navigateToTrips: () -> Unit = {},
     navigateToProfile: () -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -158,7 +158,7 @@ fun AllFlightsScreenRoute(
             navigateToHome = navigateToHome,
             navigateToFavorite = navigateToFavorite,
             navigateToCommunity = navigateToCommunity,
-            navigateToAi = navigateToAi,
+            navigateToTrips = navigateToTrips,
             navigateToProfile = navigateToProfile
         )
 
@@ -179,7 +179,7 @@ fun AllFlightsScreen(
     navigateToHome: () -> Unit = {},
     navigateToFavorite: () -> Unit = {},
     navigateToCommunity: () -> Unit = {},
-    navigateToAi: () -> Unit = {},
+    navigateToTrips: () -> Unit = {},
     navigateToProfile: () -> Unit = {}
 ) {
     Scaffold(
@@ -194,7 +194,7 @@ fun AllFlightsScreen(
                         0 -> navigateToHome()
                         1 -> navigateToFavorite()
                         2 -> navigateToCommunity()
-                        3 -> navigateToAi()
+                        3 -> navigateToTrips()
                         4 -> navigateToProfile()
                     }
                 }
