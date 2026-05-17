@@ -475,6 +475,40 @@ fun TravioNavHost(
                     navController.navigate(Screen.ProfileScreen.route) {
                         launchSingleTop = true
                     }
+                },
+                onNavigateToTripDetail = { tripId ->
+                    navController.navigate(Screen.TripDetailScreen.createRoute(tripId))
+                }
+            )
+        }
+
+        composable(
+            route = Screen.TripDetailScreen.routePattern,
+            arguments = listOf(navArgument(Screen.TripDetailScreen.ARG_TRIP_ID) { type = NavType.StringType })
+        ) { backStackEntry ->
+            val tripId = backStackEntry.arguments?.getString(Screen.TripDetailScreen.ARG_TRIP_ID) ?: ""
+            com.example.feature.chat.presentation.ui.TripDetailScreen(
+                tripId = tripId,
+                navigateToHome = {
+                    navController.navigate(Screen.HomeScreen.route) {
+                        popUpTo(Screen.HomeScreen.route) { inclusive = false }
+                        launchSingleTop = true
+                    }
+                },
+                navigateToFavorite = {
+                    navController.navigate(Screen.FavoriteScreen.route) {
+                        launchSingleTop = true
+                    }
+                },
+                navigateToCommunity = {
+                    navController.navigate(Screen.CommunityScreen.route) {
+                        launchSingleTop = true
+                    }
+                },
+                navigateToProfile = {
+                    navController.navigate(Screen.ProfileScreen.route) {
+                        launchSingleTop = true
+                    }
                 }
             )
         }

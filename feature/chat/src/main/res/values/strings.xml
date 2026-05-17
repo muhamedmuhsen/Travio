@@ -13,4 +13,5 @@
     <string name="ai_powered_planning">AI-Powered Travel Planning</string>
     <string name="ai_planning_subtitle">Get personalized recommendations and curated itineraries designed just for you.</string>
     <string name="plan_with_ai">Plan with AI</string>
+    <string name="recommended_hotels">Recommended Hotels</string>
 </resources>

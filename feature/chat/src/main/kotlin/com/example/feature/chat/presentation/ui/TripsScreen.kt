@@ -65,6 +65,7 @@ data class TripUiModel(
 @Composable
 fun TripsScreen(
     onNavigateToAiChat: () -> Unit,
+    onNavigateToTripDetail: (String) -> Unit,
     navigateToHome: () -> Unit,
     navigateToFavorite: () -> Unit,
     navigateToCommunity: () -> Unit,
@@ -137,6 +138,7 @@ fun TripsScreen(
             items(trips, key = { it.id }) { trip ->
                 TripCard(
                     trip = trip,
+                    onClick = { onNavigateToTripDetail(trip.id) },
                     onRemove = { trips.remove(trip) }
                 )
             }
@@ -260,6 +262,7 @@ fun AiPlanningCard(
 @Composable
 fun TripCard(
     trip: TripUiModel,
+    onClick: () -> Unit,
     onRemove: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -269,7 +272,8 @@ fun TripCard(
             .height(110.dp),
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+        onClick = onClick
     ) {
         Row(modifier = Modifier.fillMaxSize()) {
             Image(
@@ -348,6 +352,7 @@ fun TripsScreenPreview() {
     TravioTheme {
         TripsScreen(
             onNavigateToAiChat = {},
+            onNavigateToTripDetail = {},
             navigateToHome = {},
             navigateToFavorite = {},
             navigateToCommunity = {},
