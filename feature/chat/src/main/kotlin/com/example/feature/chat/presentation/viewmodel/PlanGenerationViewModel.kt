@@ -23,16 +23,26 @@ class PlanGenerationViewModel @Inject constructor(
     fun startObserving(threadId: String) {
         _state.value = PlanGenerationUiState.Loading()
         viewModelScope.launch {
-            observePlanStatusUseCase(threadId).collect { planState ->
-                _state.update {
-                    when (planState.status) {
-                        PlanStatus.COMPLETED -> PlanGenerationUiState.Success(planState.tripId ?: "")
-                        PlanStatus.FAILED -> PlanGenerationUiState.Error(planState.error ?: "Unknown error")
-                        PlanStatus.IN_PROGRESS -> PlanGenerationUiState.Loading(PlanStatus.IN_PROGRESS)
+            try {
+                kotlinx.coroutines.withTimeout(5 * 60 * 1000L) {
+                    observePlanStatusUseCase(threadId).collect { planState ->
+                        _state.update {
+                            when (planState.status) {
+                                PlanStatus.COMPLETED -> PlanGenerationUiState.Success(planState.tripId ?: "")
+                                PlanStatus.FAILED -> PlanGenerationUiState.Error(planState.error ?: "Unknown error")
+                                PlanStatus.IN_PROGRESS -> PlanGenerationUiState.Loading(PlanStatus.IN_PROGRESS)
+                            }
+                        }
                     }
                 }
+            } catch (e: kotlinx.coroutines.TimeoutCancellationException) {
+                _state.value = PlanGenerationUiState.Error("Plan generation timed out")
             }
         }
+    }
+
+    fun retry(threadId: String) {
+        startObserving(threadId)
     }
 
     fun dismiss() {

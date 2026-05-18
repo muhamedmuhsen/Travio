@@ -43,7 +43,7 @@ class ChatViewModel @Inject constructor(
     private val _toastEvent = Channel<String>()
     val toastEvent = _toastEvent.receiveAsFlow()
 
-    private var currentThreadId: String = "default_thread"
+    private val currentThreadId: String = java.util.UUID.randomUUID().toString()
 
     init {
         loadMessages()
@@ -67,9 +67,13 @@ class ChatViewModel @Inject constructor(
             _state.value = ChatUiState.Success(messages = history)
 
             observeMessagesUseCase(currentThreadId).collect { message ->
+                if (message.threadId != currentThreadId) return@collect
                 _state.update { currentState ->
                     if (currentState is ChatUiState.Success) {
                         val messages = currentState.messages
+                        if (messages.any { it.id == message.id }) {
+                            return@update currentState
+                        }
                         val updatedMessages = if (messages.isNotEmpty() && messages.last().sender == Sender.AI) {
                             // Append chunk to last message
                             val last = messages.last()

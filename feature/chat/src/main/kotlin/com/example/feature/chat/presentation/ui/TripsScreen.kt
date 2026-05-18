@@ -140,7 +140,7 @@ fun TripsScreen(
                             trip = trip,
                             onClick = { onNavigateToTripDetail(trip.id) },
                             onRemove = {
-                                // TODO implement remove if needed
+                                viewModel.deleteTrip(trip.id)
                             }
                         )
                     }
@@ -327,7 +327,7 @@ fun TripCard(
 
                     val tripDays = trip.dailyPlans.size
                     Text(
-                        text = "$tripDays Days Trip",
+                        text = stringResource(R.string.days_trip_count, tripDays),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         maxLines = 2,
@@ -344,7 +344,7 @@ fun TripCard(
                 ) {
                     Icon(
                         imageVector = Icons.Default.Close,
-                        contentDescription = "Remove",
+                        contentDescription = stringResource(R.string.remove),
                         tint = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.size(16.dp)
                     )

@@ -8,8 +8,8 @@ import com.example.feature.chat.presentation.state.PlanGenerationUiState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
-import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.After
@@ -41,25 +41,37 @@ class PlanGenerationViewModelTest {
     }
 
     @Test
-    fun `should start with Idle state`() {
-        kotlinx.coroutines.test.runTest {
-            val state = viewModel.state.value
-            org.junit.Assert.assertTrue(state is PlanGenerationUiState.Idle)
-        }
+    fun `should start with Idle state`() = runTest(testDispatcher) {
+        val state = viewModel.state.value
+        assertTrue(state is PlanGenerationUiState.Idle)
     }
 
     @Test
-    fun `should update state to Success when plan completes`() {
-        kotlinx.coroutines.test.runTest {
-            val threadId = "thread_123"
-            viewModel.startObserving(threadId)
-            advanceUntilIdle()
-            
-            fakeRepository.emitPlanStatus(PlanGenerationState(threadId, PlanStatus.COMPLETED))
-            advanceUntilIdle()
+    fun `should update state to Success when plan completes`() = runTest(testDispatcher) {
+        val threadId = "thread_123"
+        viewModel.startObserving(threadId)
+        runCurrent()
+        
+        fakeRepository.emitPlanStatus(PlanGenerationState(threadId, PlanStatus.COMPLETED))
+        runCurrent()
 
-            val state = viewModel.state.value
-            org.junit.Assert.assertTrue(state is PlanGenerationUiState.Success)
-        }
+        val state = viewModel.state.value
+        assertTrue(state is PlanGenerationUiState.Success)
+    }
+
+    @Test
+    fun `should emit Error state on timeout`() = runTest(testDispatcher) {
+        val threadId = "thread_123"
+        viewModel.startObserving(threadId)
+        runCurrent()
+
+        assertTrue(viewModel.state.value is PlanGenerationUiState.Loading)
+
+        testScheduler.advanceTimeBy(5 * 60 * 1000L)
+        runCurrent()
+
+        val state = viewModel.state.value
+        assertTrue(state is PlanGenerationUiState.Error)
+        assertEquals("Plan generation timed out", (state as PlanGenerationUiState.Error).message)
     }
 }

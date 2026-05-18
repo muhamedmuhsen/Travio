@@ -30,6 +30,7 @@ data class TripDayDto(
 
 @Serializable
 data class TripActivityDto(
+    @SerialName("activity_type")
     val type: String? = null,
     @SerialName("place_name")
     val placeName: String? = null,
@@ -37,6 +38,6 @@ data class TripActivityDto(
     val suggestedTime: String? = null,
     val description: String? = null,
     val address: String? = null,
-    @SerialName("image_url")
+    @SerialName("featured_image")
     val imageUrl: String? = null
 )

@@ -1,5 +1,6 @@
 package com.example.feature.chat.presentation.viewmodel
 
+import androidx.compose.runtime.Immutable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.feature.chat.domain.repository.TripRepository
@@ -11,6 +12,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+@Immutable
 data class TripDetailUiState(
     val days: List<DayItinerary> = emptyList(),
     val selectedDayId: String = "",
@@ -18,6 +20,7 @@ data class TripDetailUiState(
     val error: String? = null
 )
 
+@Immutable
 data class DayItinerary(
     val id: String,
     val title: String,
@@ -26,6 +29,7 @@ data class DayItinerary(
     val activities: List<ActivityItem>
 )
 
+@Immutable
 data class RecommendedHotel(
     val id: String,
     val name: String,
@@ -35,6 +39,7 @@ data class RecommendedHotel(
     val imageUrl: String?
 )
 
+@Immutable
 data class ActivityItem(
     val id: String,
     val time: String,

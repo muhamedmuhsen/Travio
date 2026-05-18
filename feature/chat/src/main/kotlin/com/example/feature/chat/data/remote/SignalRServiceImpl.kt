@@ -6,6 +6,7 @@ import com.example.feature.chat.domain.model.ConnectionState
 import com.example.network.di.BaseUrl
 import com.microsoft.signalr.HubConnection
 import com.microsoft.signalr.HubConnectionBuilder
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -14,6 +15,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 import timber.log.Timber
@@ -24,9 +26,11 @@ import javax.inject.Singleton
 import javax.net.ssl.SSLContext
 import javax.net.ssl.TrustManager
 import javax.net.ssl.X509TrustManager
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
 
 @Singleton
-class SignalRServiceImpl @Inject constructor(
+open class SignalRServiceImpl @Inject constructor(
     @BaseUrl private val baseUrl: String,
     private val environmentConfig: com.example.network.config.EnvironmentConfig,
     private val notificationManager: com.example.feature.chat.data.notification.PlanNotificationManager
@@ -38,26 +42,22 @@ class SignalRServiceImpl @Inject constructor(
     private val connectionState = MutableStateFlow(ConnectionState.DISCONNECTED)
     override fun observeConnectionState(): Flow<ConnectionState> = connectionState.asStateFlow()
 
-    private val messageFlow = MutableSharedFlow<AiResponseDto>()
-    private val planStatusFlow = MutableSharedFlow<PlanStatusDto>()
-    private val statusFlow = MutableSharedFlow<String>()
+    private val messageFlow = MutableSharedFlow<AiResponseDto>(extraBufferCapacity = 64)
+    private val planStatusFlow = MutableSharedFlow<PlanStatusDto>(replay = 1)
+    private val statusFlow = MutableSharedFlow<String>(replay = 1)
 
     override fun observeStatus(): Flow<String> = statusFlow
 
-    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
+    protected open val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
+    protected open val initialRetryDelayMs: Long = 1000L
+    protected open val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
 
     init {
         // Use injected baseUrl, removing /api/ suffix if present to get the root URL for SignalR hub
         val rootUrl = baseUrl.removeSuffix("api/")
         val hubUrl = "${rootUrl}hubs/trip-planer"
 
-        hubConnection = HubConnectionBuilder.create(hubUrl)
-            .setHttpClientBuilderCallback { builder ->
-                if (environmentConfig.enableDebugDiagnostics) {
-                    addUnsafeTrustManager(builder)
-                }
-            }
-            .build()
+        hubConnection = createHubConnection(hubUrl)
 
         // 1. ReceiveStatus
         hubConnection?.on("ReceiveStatus", { status: String ->
@@ -155,7 +155,13 @@ class SignalRServiceImpl @Inject constructor(
 
         hubConnection?.onClosed {
             Timber.d("SignalR connection closed")
-            connectionState.value = ConnectionState.DISCONNECTED
+            if (connectionState.value == ConnectionState.CONNECTED) {
+                scope.launch {
+                    attemptReconnection()
+                }
+            } else {
+                connectionState.value = ConnectionState.DISCONNECTED
+            }
         }
     }
 
@@ -163,36 +169,109 @@ class SignalRServiceImpl @Inject constructor(
 
     override fun observePlanStatus(): Flow<PlanStatusDto> = planStatusFlow
 
+    internal suspend fun emitPlanStatusForTest(dto: PlanStatusDto) {
+        planStatusFlow.emit(dto)
+    }
+
     override suspend fun sendMessage(
         threadId: String,
         content: String
     ) {
         currentThreadId = threadId
-        withContext(Dispatchers.IO) {
+        withContext(ioDispatcher) {
             hubConnection?.send("SendMessage", threadId, content)
         }
     }
 
+    private suspend fun startHubConnection() =
+        withContext(ioDispatcher) {
+            System.err.println("DEBUG: startHubConnection starting")
+            suspendCancellableCoroutine<Unit> { continuation ->
+                System.err.println("DEBUG: startHubConnection inside suspendCancellableCoroutine")
+                val disposable = hubConnection?.start()?.subscribe(
+                    {
+                        System.err.println("DEBUG: startHubConnection succeeded")
+                        continuation.resume(Unit)
+                    },
+                    { error ->
+                        System.err.println("DEBUG: startHubConnection failed with $error")
+                        continuation.resumeWithException(error)
+                    }
+                )
+                continuation.invokeOnCancellation {
+                    System.err.println("DEBUG: startHubConnection cancelled")
+                    disposable?.dispose()
+                }
+            }
+        }
+
+    private suspend fun stopHubConnection() =
+        withContext(ioDispatcher) {
+            suspendCancellableCoroutine<Unit> { continuation ->
+                val disposable = hubConnection?.stop()?.subscribe(
+                    {
+                        continuation.resume(Unit)
+                    },
+                    { error ->
+                        continuation.resumeWithException(error)
+                    }
+                )
+                continuation.invokeOnCancellation {
+                    disposable?.dispose()
+                }
+            }
+        }
+
+    private suspend fun attemptReconnection() {
+        System.err.println("DEBUG: attemptReconnection starting")
+        connectionState.value = ConnectionState.RECONNECTING
+        var retryDelay = initialRetryDelayMs
+        for (attempt in 1..5) {
+            System.err.println("DEBUG: attemptReconnection attempt $attempt with delay $retryDelay")
+            kotlinx.coroutines.delay(retryDelay)
+            try {
+                System.err.println("DEBUG: attemptReconnection calling startHubConnection")
+                startHubConnection()
+                System.err.println("DEBUG: attemptReconnection successfully reconnected")
+                connectionState.value = ConnectionState.CONNECTED
+
+                // Re-register active thread subscription if present
+                currentThreadId?.let { threadId ->
+                    Timber.d("Restoring active thread subscription: $threadId")
+                    hubConnection?.send("SendMessage", threadId, "")
+                }
+                return
+            } catch (e: Exception) {
+                System.err.println("DEBUG: attemptReconnection catch $e")
+                retryDelay *= 2
+            }
+        }
+        Timber.e("SignalR reconnection failed after 5 attempts")
+        connectionState.value = ConnectionState.DISCONNECTED
+        statusFlow.emit("connection_failed")
+    }
+
     override suspend fun connect() {
         Timber.d("Connecting to SignalR...")
-        withContext(Dispatchers.IO) {
-            try {
-                hubConnection?.start()?.blockingAwait()
-                Timber.d("Connected to SignalR")
-                connectionState.value = ConnectionState.CONNECTED
-            } catch (e: Exception) {
-                Timber.e(e, "Failed to connect to SignalR")
-                connectionState.value = ConnectionState.DISCONNECTED
-            }
+        try {
+            startHubConnection()
+            Timber.d("Connected to SignalR")
+            connectionState.value = ConnectionState.CONNECTED
+        } catch (e: Exception) {
+            Timber.e(e, "Failed to connect to SignalR")
+            connectionState.value = ConnectionState.DISCONNECTED
+            statusFlow.emit("connection_failed")
         }
     }
 
     override suspend fun disconnect() {
         Timber.d("Disconnecting from SignalR...")
-        withContext(Dispatchers.IO) {
-            hubConnection?.stop()?.blockingAwait()
+        connectionState.value = ConnectionState.DISCONNECTED
+        try {
+            stopHubConnection()
             Timber.d("Disconnected from SignalR")
-            connectionState.value = ConnectionState.DISCONNECTED
+        } catch (e: Exception) {
+            Timber.e(e, "Failed to disconnect from SignalR cleanly")
         }
     }
 
@@ -225,6 +304,16 @@ class SignalRServiceImpl @Inject constructor(
         } catch (e: Exception) {
             throw RuntimeException(e)
         }
+    }
+
+    internal open fun createHubConnection(url: String): HubConnection {
+        return HubConnectionBuilder.create(url)
+            .setHttpClientBuilderCallback { builder ->
+                if (environmentConfig.enableDebugDiagnostics) {
+                    addUnsafeTrustManager(builder)
+                }
+            }
+            .build()
     }
 }
 

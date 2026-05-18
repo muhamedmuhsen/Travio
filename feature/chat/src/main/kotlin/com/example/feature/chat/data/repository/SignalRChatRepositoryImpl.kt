@@ -2,6 +2,7 @@ package com.example.feature.chat.data.repository
 
 import com.example.domain.utils.DataError
 import com.example.domain.utils.Result
+import com.example.feature.chat.data.di.ChatRepositoryScope
 import com.example.feature.chat.data.mapper.toChatMessage
 import com.example.feature.chat.data.mapper.toFeatureDto
 import com.example.feature.chat.data.mapper.toPlanGenerationState
@@ -18,6 +19,7 @@ import com.example.feature.chat.domain.repository.ChatRepository
 import com.example.feature.chat.domain.repository.TripRepository
 import com.example.network.api.AiApi
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -26,58 +28,16 @@ import javax.inject.Inject
 class SignalRChatRepositoryImpl @Inject constructor(
     private val signalRService: SignalRService,
     private val tripRepository: TripRepository,
-    private val aiApi: AiApi
+    private val aiApi: AiApi,
+    @ChatRepositoryScope private val repositoryScope: kotlinx.coroutines.CoroutineScope
 ) : ChatRepository {
-
-    private val repositoryScope = kotlinx.coroutines.CoroutineScope(
-        kotlinx.coroutines.SupervisorJob() + kotlinx.coroutines.Dispatchers.IO
-    )
 
     init {
         repositoryScope.launch {
             signalRService.observePlanStatus().collect { status ->
                 Timber.d("SignalR plan status event collected in Repository: $status")
                 if (status.isCompleted && status.data != null && status.tripId != null) {
-                    Timber.d("SignalR plan completed, saving tripPlan to database: $status")
-                    val firstHotelImage = status.data.recommendedHotels?.firstOrNull()?.imageUrl
-                    val firstActivityImage = status.data.itinerary?.firstOrNull()?.activities?.firstOrNull()?.imageUrl
-                    val coverImage = firstActivityImage ?: firstHotelImage
-
-                    val tripPlan = TripPlan(
-                        id = status.tripId,
-                        threadId = status.threadId,
-                        title = status.data.itinerary?.firstOrNull()?.theme ?: "Generated Trip",
-                        createdAt = System.currentTimeMillis(),
-                        coverImage = coverImage,
-                        status = TripPlanStatus.COMPLETED,
-                        recommendedHotels = status.data.recommendedHotels?.map { h ->
-                            Hotel(
-                                name = h.name ?: "",
-                                description = h.description,
-                                rating = h.rating,
-                                address = h.address,
-                                link = h.link,
-                                imageUrl = h.imageUrl
-                            )
-                        } ?: emptyList(),
-                        dailyPlans = status.data.itinerary?.map { d ->
-                            TripDay(
-                                day = d.day ?: 1,
-                                theme = d.theme ?: "",
-                                activities = d.activities?.map { a ->
-                                    TripActivity(
-                                        type = a.type ?: "",
-                                        placeName = a.placeName ?: "",
-                                        suggestedTime = a.suggestedTime,
-                                        description = a.description,
-                                        address = a.address,
-                                        imageUrl = a.imageUrl
-                                    )
-                                } ?: emptyList()
-                            )
-                        } ?: emptyList()
-                    )
-                    tripRepository.saveTripPlan(tripPlan)
+                    saveTripIfNew(status.threadId, status.tripId, status.data)
                 }
             }
         }
@@ -107,6 +67,7 @@ class SignalRChatRepositoryImpl @Inject constructor(
     override fun observePlanStatus(threadId: String): Flow<PlanGenerationState> {
         val signalRFlow = signalRService.observePlanStatus()
             .map { it.toPlanGenerationState() }
+            .filter { it.threadId == threadId }
 
         return kotlinx.coroutines.flow.flow {
             try {
@@ -120,57 +81,25 @@ class SignalRChatRepositoryImpl @Inject constructor(
                     val tripId = java.util.UUID.randomUUID().toString()
                     val featureDto = apiResponse.toFeatureDto()
 
-                    val firstHotelImage = featureDto.recommendedHotels?.firstOrNull()?.imageUrl
-                    val firstActivityImage = featureDto.itinerary?.firstOrNull()?.activities?.firstOrNull()?.imageUrl
-                    val coverImage = firstActivityImage ?: firstHotelImage
-
-                    val tripPlan = TripPlan(
-                        id = tripId,
-                        threadId = threadId,
-                        title = featureDto.itinerary?.firstOrNull()?.theme ?: "Generated Trip",
-                        createdAt = System.currentTimeMillis(),
-                        coverImage = coverImage,
-                        status = TripPlanStatus.COMPLETED,
-                        recommendedHotels = featureDto.recommendedHotels?.map { h ->
-                            Hotel(
-                                name = h.name ?: "",
-                                description = h.description,
-                                rating = h.rating,
-                                address = h.address,
-                                link = h.link,
-                                imageUrl = h.imageUrl
-                            )
-                        } ?: emptyList(),
-                        dailyPlans = featureDto.itinerary?.map { d ->
-                            TripDay(
-                                day = d.day ?: 1,
-                                theme = d.theme ?: "",
-                                activities = d.activities?.map { a ->
-                                    TripActivity(
-                                        type = a.type ?: "",
-                                        placeName = a.placeName ?: "",
-                                        suggestedTime = a.suggestedTime,
-                                        description = a.description,
-                                        address = a.address,
-                                        imageUrl = a.imageUrl
-                                    )
-                                } ?: emptyList()
-                            )
-                        } ?: emptyList()
-                    )
-                    tripRepository.saveTripPlan(tripPlan)
+                    saveTripIfNew(threadId, tripId, featureDto)
 
                     emit(
                         PlanGenerationState(
                             threadId = threadId,
                             status = com.example.feature.chat.domain.model.PlanStatus.COMPLETED,
-                            tripId = tripId,
-                            data = featureDto
+                            tripId = tripId
                         )
                     )
                 }
             } catch (e: Exception) {
-                // Ignore API errors and fallback to SignalR Flow
+                Timber.e(e, "REST API fallback failed")
+                emit(
+                    PlanGenerationState(
+                        threadId = threadId,
+                        status = com.example.feature.chat.domain.model.PlanStatus.FAILED,
+                        error = e.message ?: "REST API fallback failed"
+                    )
+                )
             }
 
             signalRFlow.collect { emit(it) }
@@ -187,5 +116,64 @@ class SignalRChatRepositoryImpl @Inject constructor(
 
     override fun observeStatus(): Flow<String> {
         return signalRService.observeStatus()
+    }
+
+    private suspend fun saveTripIfNew(
+        threadId: String,
+        tripId: String,
+        data: com.example.feature.chat.data.remote.dto.AiStatusResponseDto
+    ) {
+        val existingTrips = tripRepository.getTripsForThread(threadId)
+        val completedTrip = existingTrips.find { it.status == TripPlanStatus.COMPLETED }
+        val hasIncomplete = completedTrip != null && completedTrip.dailyPlans.any { day ->
+            day.activities.any { act -> act.type.isBlank() || act.placeName.isBlank() || act.imageUrl == null }
+        }
+
+        if (completedTrip != null && !hasIncomplete) {
+            Timber.d("Trip for thread $threadId already completed and has full details, skipping save.")
+            return
+        }
+
+        val targetTripId = completedTrip?.id ?: tripId
+        Timber.d("Saving completed trip for thread $threadId, tripId: $targetTripId")
+        val firstHotelImage = data.recommendedHotels?.firstOrNull()?.imageUrl
+        val firstActivityImage = data.itinerary?.firstOrNull()?.activities?.firstOrNull()?.imageUrl
+        val coverImage = firstActivityImage ?: firstHotelImage
+
+        val tripPlan = TripPlan(
+            id = targetTripId,
+            threadId = threadId,
+            title = data.itinerary?.firstOrNull()?.theme ?: "Generated Trip",
+            createdAt = System.currentTimeMillis(),
+            coverImage = coverImage,
+            status = TripPlanStatus.COMPLETED,
+            recommendedHotels = data.recommendedHotels?.map { h ->
+                Hotel(
+                    name = h.name ?: "",
+                    description = h.description,
+                    rating = h.rating,
+                    address = h.address,
+                    link = h.link,
+                    imageUrl = h.imageUrl
+                )
+            } ?: emptyList(),
+            dailyPlans = data.itinerary?.map { d ->
+                TripDay(
+                    day = d.day ?: 1,
+                    theme = d.theme ?: "",
+                    activities = d.activities?.map { a ->
+                        TripActivity(
+                            type = a.type ?: "",
+                            placeName = a.placeName ?: "",
+                            suggestedTime = a.suggestedTime,
+                            description = a.description,
+                            address = a.address,
+                            imageUrl = a.imageUrl
+                        )
+                    } ?: emptyList()
+                )
+            } ?: emptyList()
+        )
+        tripRepository.saveTripPlan(tripPlan)
     }
 }

@@ -17,4 +17,10 @@ interface TripPlanDao {
 
     @Query("SELECT * FROM trip_plans WHERE id = :id")
     suspend fun getTripPlanById(id: String): TripPlanEntity?
+
+    @Query("SELECT * FROM trip_plans WHERE threadId = :threadId")
+    suspend fun getTripsForThread(threadId: String): List<TripPlanEntity>
+
+    @Query("DELETE FROM trip_plans WHERE id = :id")
+    suspend fun deleteTripPlanById(id: String)
 }

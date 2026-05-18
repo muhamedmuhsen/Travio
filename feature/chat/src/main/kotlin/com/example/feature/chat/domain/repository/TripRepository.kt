@@ -7,4 +7,6 @@ interface TripRepository {
     suspend fun saveTripPlan(tripPlan: TripPlan)
     fun observeTrips(): Flow<List<TripPlan>>
     suspend fun getTripById(tripId: String): TripPlan?
+    suspend fun getTripsForThread(threadId: String): List<TripPlan>
+    suspend fun deleteTripPlan(tripId: String)
 }

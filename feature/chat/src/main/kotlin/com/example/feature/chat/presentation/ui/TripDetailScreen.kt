@@ -20,7 +20,16 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Attractions
+import androidx.compose.material.icons.filled.BreakfastDining
+import androidx.compose.material.icons.filled.DinnerDining
+import androidx.compose.material.icons.filled.DirectionsWalk
+import androidx.compose.material.icons.filled.Explore
+import androidx.compose.material.icons.filled.LocalCafe
 import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.LunchDining
+import androidx.compose.material.icons.filled.Museum
+import androidx.compose.material.icons.filled.Restaurant
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -95,7 +104,7 @@ fun TripDetailScreen(
             }
         } else if (uiState.error != null) {
             Box(modifier = Modifier.fillMaxSize().padding(paddingValues), contentAlignment = Alignment.Center) {
-                Text(uiState.error ?: "Unknown error")
+                Text(uiState.error ?: stringResource(R.string.unknown_error))
             }
         } else {
             val selectedDay = uiState.days.find { it.id == uiState.selectedDayId }
@@ -136,8 +145,11 @@ fun TripDetailScreen(
                     }
 
                     // Timeline
-                    items(day.activities.size) { index ->
-                        val activity = day.activities[index]
+                    items(
+                        items = day.activities,
+                        key = { it.id }
+                    ) { activity ->
+                        val index = day.activities.indexOf(activity)
                         val isLast = index == day.activities.size - 1
                         TimelineActivityNode(
                             activity = activity,
@@ -302,6 +314,22 @@ fun TimelineActivityNode(
     modifier: Modifier = Modifier
 ) {
     val lineColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
+    val activityIcon = when {
+        activity.tag.contains("breakfast", ignoreCase = true) -> Icons.Filled.BreakfastDining
+        activity.tag.contains("lunch", ignoreCase = true) -> Icons.Filled.LunchDining
+        activity.tag.contains("dinner", ignoreCase = true) -> Icons.Filled.DinnerDining
+        activity.tag.contains("attraction", ignoreCase = true) -> Icons.Filled.Attractions
+        activity.tag.contains("activity", ignoreCase = true) -> Icons.Filled.DirectionsWalk
+        activity.tag.contains("explore", ignoreCase = true) -> Icons.Filled.Explore
+        activity.tag.contains("museum", ignoreCase = true) -> Icons.Filled.Museum
+        activity.tag.contains(
+            "restaurant",
+            ignoreCase = true
+        ) || activity.tag.contains("food", ignoreCase = true) -> Icons.Filled.Restaurant
+        activity.tag.contains("cafe", ignoreCase = true) || activity.tag.contains("coffee", ignoreCase = true) -> Icons.Filled.LocalCafe
+        else -> Icons.Default.LocationOn
+    }
+
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -333,8 +361,8 @@ fun TimelineActivityNode(
             // Small inner dot or icon
             // Or any custom path icon
             Icon(
-                imageVector = Icons.Default.LocationOn,
-                contentDescription = null,
+                imageVector = activityIcon,
+                contentDescription = activity.tag,
                 tint = MaterialTheme.colorScheme.onPrimary,
                 modifier = Modifier.size(14.dp)
             )

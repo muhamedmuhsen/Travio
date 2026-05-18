@@ -4,8 +4,7 @@ data class PlanGenerationState(
     val threadId: String,
     val status: PlanStatus,
     val error: String? = null,
-    val tripId: String? = null,
-    val data: com.example.feature.chat.data.remote.dto.AiStatusResponseDto? = null
+    val tripId: String? = null
 )
 
 enum class PlanStatus {

@@ -75,6 +75,7 @@ fun PlanGenerationScreen(
     PlanGenerationScreenContent(
         state = state,
         onDismiss = onDismiss,
+        onRetry = { viewModel.retry(threadId) },
         modifier = modifier
     )
 }
@@ -83,6 +84,7 @@ fun PlanGenerationScreen(
 fun PlanGenerationScreenContent(
     state: PlanGenerationUiState,
     onDismiss: () -> Unit,
+    onRetry: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val isDark = isSystemInDarkTheme()
@@ -162,7 +164,7 @@ fun PlanGenerationScreenContent(
                 }
                 is PlanGenerationUiState.Error -> {
                     Text(
-                        text = "Plan creation failed",
+                        text = stringResource(R.string.plan_creation_failed),
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.error,
@@ -178,6 +180,24 @@ fun PlanGenerationScreenContent(
                         textAlign = TextAlign.Center,
                         modifier = Modifier.padding(horizontal = 24.dp)
                     )
+
+                    Spacer(modifier = Modifier.height(24.dp))
+
+                    Button(
+                        onClick = onRetry,
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = buttonColor,
+                            contentColor = buttonTextColor
+                        ),
+                        shape = RoundedCornerShape(28.dp),
+                        modifier = Modifier.height(50.dp)
+                    ) {
+                        Text(
+                            text = stringResource(R.string.retry),
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    }
                 }
             }
         }
@@ -387,7 +407,8 @@ fun PulsingDots(
 fun PlanGenerationScreenLoadingPreview() {
     PlanGenerationScreenContent(
         state = PlanGenerationUiState.Loading(),
-        onDismiss = {}
+        onDismiss = {},
+        onRetry = {}
     )
 }
 
@@ -396,6 +417,7 @@ fun PlanGenerationScreenLoadingPreview() {
 fun PlanGenerationScreenErrorPreview() {
     PlanGenerationScreenContent(
         state = PlanGenerationUiState.Error("Failed to fetch server response"),
-        onDismiss = {}
+        onDismiss = {},
+        onRetry = {}
     )
 }

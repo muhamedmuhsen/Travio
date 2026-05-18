@@ -11,12 +11,15 @@ import com.example.feature.chat.domain.model.TripDay
 import com.example.feature.chat.domain.model.TripPlan
 import com.example.feature.chat.domain.model.TripPlanStatus
 import com.example.feature.chat.domain.repository.TripRepository
+import com.example.network.api.AiApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import timber.log.Timber
 import javax.inject.Inject
 
 class TripRepositoryImpl @Inject constructor(
-    private val tripPlanDao: TripPlanDao
+    private val tripPlanDao: TripPlanDao,
+    private val aiApi: AiApi
 ) : TripRepository {
 
     override suspend fun saveTripPlan(tripPlan: TripPlan) {
@@ -64,7 +67,82 @@ class TripRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getTripById(tripId: String): TripPlan? {
-        return tripPlanDao.getTripPlanById(tripId)?.toDomain()
+        val cached = tripPlanDao.getTripPlanById(tripId)?.toDomain()
+        if (cached != null) {
+            val isIncomplete = cached.dailyPlans.any { day ->
+                day.activities.any { act -> act.type.isBlank() || act.imageUrl == null }
+            }
+            if (isIncomplete) {
+                Timber.d(
+                    "Trip %s in local DB has empty/null activities. " +
+                        "Refreshing from network thread %s...",
+                    tripId,
+                    cached.threadId
+                )
+                try {
+                    val apiResponse = aiApi.getAiStatus(cached.threadId)
+                    val apiData = apiResponse.data
+                    if (apiData != null) {
+                        val itinerary = apiData.itinerary
+                        if (!itinerary.isNullOrEmpty()) {
+                            val firstHotelImage = apiData.recommendedHotels
+                                ?.firstOrNull()?.imageUrl
+                            val firstActivityImage = itinerary.firstOrNull()
+                                ?.activities?.firstOrNull()?.imageUrl
+                            val coverImage = firstActivityImage ?: firstHotelImage
+
+                            val updatedTrip = TripPlan(
+                                id = cached.id,
+                                threadId = cached.threadId,
+                                title = itinerary.firstOrNull()?.theme ?: cached.title,
+                                createdAt = cached.createdAt,
+                                coverImage = coverImage,
+                                status = TripPlanStatus.COMPLETED,
+                                recommendedHotels = apiData.recommendedHotels?.map { h ->
+                                    Hotel(
+                                        name = h.name ?: "",
+                                        description = h.description,
+                                        rating = h.rating,
+                                        address = h.address,
+                                        link = h.link,
+                                        imageUrl = h.imageUrl
+                                    )
+                                } ?: emptyList(),
+                                dailyPlans = itinerary.map { d ->
+                                    TripDay(
+                                        day = d.day ?: 1,
+                                        theme = d.theme ?: "",
+                                        activities = d.activities?.map { a ->
+                                            TripActivity(
+                                                type = a.type ?: "",
+                                                placeName = a.placeName ?: "",
+                                                suggestedTime = a.suggestedTime,
+                                                description = a.description,
+                                                address = a.address,
+                                                imageUrl = a.imageUrl
+                                            )
+                                        } ?: emptyList()
+                                    )
+                                }
+                            )
+                            saveTripPlan(updatedTrip)
+                            return updatedTrip
+                        }
+                    }
+                } catch (e: Exception) {
+                    Timber.e(e, "Failed to refresh incomplete trip from REST API fallback")
+                }
+            }
+        }
+        return cached
+    }
+
+    override suspend fun getTripsForThread(threadId: String): List<TripPlan> {
+        return tripPlanDao.getTripsForThread(threadId).map { it.toDomain() }
+    }
+
+    override suspend fun deleteTripPlan(tripId: String) {
+        tripPlanDao.deleteTripPlanById(tripId)
     }
 
     private fun TripPlanEntity.toDomain(): TripPlan {

@@ -17,4 +17,13 @@
     <string name="building_trip_title">Building a trip just for you</string>
     <string name="building_trip_subtitle">We\'re whipping up all your recommendations in one place.</string>
     <string name="keep_explore">Keep Explore</string>
+    <string name="plan_creation_failed">Plan creation failed</string>
+    <string name="unknown_error">Unknown error</string>
+    <string name="remove">Remove</string>
+    <string name="days_trip_count">%1$d Days Trip</string>
+    <string name="notification_title_completed">Your AI trip plan is ready 🎉</string>
+    <string name="notification_body_completed">Click to open and explore your itinerary</string>
+    <string name="notification_title_failed">Plan Generation Failed</string>
+    <string name="notification_body_failed">Failed to generate plan for thread %1$s.</string>
+    <string name="retry">Retry</string>
 </resources>

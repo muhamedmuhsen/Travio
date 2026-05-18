@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 sealed interface TripsUiState {
@@ -19,7 +20,7 @@ sealed interface TripsUiState {
 
 @HiltViewModel
 class TripsViewModel @Inject constructor(
-    tripRepository: TripRepository
+    private val tripRepository: TripRepository
 ) : ViewModel() {
 
     val uiState: StateFlow<TripsUiState> = tripRepository.observeTrips()
@@ -31,4 +32,10 @@ class TripsViewModel @Inject constructor(
             started = SharingStarted.WhileSubscribed(5000),
             initialValue = TripsUiState.Loading
         )
+
+    fun deleteTrip(tripId: String) {
+        viewModelScope.launch {
+            tripRepository.deleteTripPlan(tripId)
+        }
+    }
 }

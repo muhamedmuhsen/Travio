@@ -36,8 +36,7 @@ fun PlanStatusDto.toPlanGenerationState(): PlanGenerationState {
         threadId = threadId,
         status = status,
         error = errorMessage,
-        tripId = tripId,
-        data = data
+        tripId = tripId
     )
 }
 
