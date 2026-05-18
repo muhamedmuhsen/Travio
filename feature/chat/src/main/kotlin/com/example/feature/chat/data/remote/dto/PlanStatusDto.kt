@@ -7,5 +7,7 @@ data class PlanStatusDto(
     val threadId: String,
     val isCompleted: Boolean,
     val isFailed: Boolean,
-    val errorMessage: String? = null
+    val errorMessage: String? = null,
+    val data: AiStatusResponseDto? = null,
+    val tripId: String? = null
 )

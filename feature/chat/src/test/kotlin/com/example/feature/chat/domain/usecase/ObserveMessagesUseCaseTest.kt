@@ -6,10 +6,12 @@ import com.example.feature.chat.domain.repository.FakeChatRepository
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.test.runCurrent
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 
+@kotlinx.coroutines.ExperimentalCoroutinesApi
 class ObserveMessagesUseCaseTest {
 
     private lateinit var fakeRepository: FakeChatRepository
@@ -34,6 +36,7 @@ class ObserveMessagesUseCaseTest {
         val job = launch {
             receivedMessage = flow.first()
         }
+        runCurrent()
         
         fakeRepository.emitMessage(message)
         

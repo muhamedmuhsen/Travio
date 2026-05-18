@@ -15,14 +15,22 @@ import com.example.database.recentsearch.RecentSearch
 import com.example.database.recentsearch.RecentSearchDao
 
 @Database(
-    entities = [Place::class, Post::class, Comment::class, RecentlyViewedDestination::class, RecentSearch::class],
-    version = 3,
+    entities = [
+        Place::class,
+        Post::class,
+        Comment::class,
+        RecentlyViewedDestination::class,
+        RecentSearch::class,
+        com.example.database.trips.TripPlanEntity::class
+    ],
+    version = 4,
     exportSchema = false
 )
-@TypeConverters(StringListConverter::class)
+@TypeConverters(StringListConverter::class, com.example.database.trips.TripPlanTypeConverters::class)
 abstract class TravioDatabase : RoomDatabase() {
     abstract fun postDao(): FavoritePostDao
     abstract fun placeDao(): FavoritePlaceDao
     abstract fun recentlyViewedDao(): RecentlyViewedDao
     abstract fun recentSearchDao(): RecentSearchDao
+    abstract fun tripPlanDao(): com.example.database.trips.TripPlanDao
 }

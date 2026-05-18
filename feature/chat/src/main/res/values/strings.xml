@@ -14,4 +14,7 @@
     <string name="ai_planning_subtitle">Get personalized recommendations and curated itineraries designed just for you.</string>
     <string name="plan_with_ai">Plan with AI</string>
     <string name="recommended_hotels">Recommended Hotels</string>
+    <string name="building_trip_title">Building a trip just for you</string>
+    <string name="building_trip_subtitle">We\'re whipping up all your recommendations in one place.</string>
+    <string name="keep_explore">Keep Explore</string>
 </resources>

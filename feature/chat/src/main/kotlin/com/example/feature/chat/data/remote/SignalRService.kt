@@ -9,6 +9,7 @@ interface SignalRService {
     fun observeMessages(): Flow<AiResponseDto>
     fun observeConnectionState(): Flow<ConnectionState>
     fun observePlanStatus(): Flow<PlanStatusDto>
+    fun observeStatus(): Flow<String>
     suspend fun sendMessage(
         threadId: String,
         content: String

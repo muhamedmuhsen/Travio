@@ -27,8 +27,7 @@ class SendMessageUseCaseTest {
         // When
         val result = sendMessageUseCase(threadId, content)
 
-        // Then
-        assertEquals(Result.Success(Unit), result)
+        org.junit.Assert.assertTrue(result is Result.Success)
         assertEquals(1, fakeRepository.sentMessages.size)
         assertEquals("Hello", fakeRepository.sentMessages.first())
     }

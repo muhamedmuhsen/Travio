@@ -1,17 +1,21 @@
 package com.example.feature.chat.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.feature.chat.domain.repository.TripRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 data class TripDetailUiState(
     val days: List<DayItinerary> = emptyList(),
     val selectedDayId: String = "",
-    val isLoading: Boolean = true
+    val isLoading: Boolean = true,
+    val error: String? = null
 )
 
 data class DayItinerary(
@@ -28,7 +32,7 @@ data class RecommendedHotel(
     val location: String,
     val price: String,
     val rating: Float,
-    val imageRes: Int
+    val imageUrl: String?
 )
 
 data class ActivityItem(
@@ -38,116 +42,65 @@ data class ActivityItem(
     val description: String,
     val price: String,
     val tag: String,
-    val imageRes: Int
+    val imageUrl: String?
 )
 
 @HiltViewModel
-class TripDetailViewModel @Inject constructor() : ViewModel() {
+class TripDetailViewModel @Inject constructor(
+    private val tripRepository: TripRepository
+) : ViewModel() {
 
     private val _uiState = MutableStateFlow(TripDetailUiState())
     val uiState: StateFlow<TripDetailUiState> = _uiState.asStateFlow()
 
-    init {
-        loadMockData()
-    }
+    fun loadTrip(tripId: String) {
+        _uiState.update { it.copy(isLoading = true, error = null) }
+        viewModelScope.launch {
+            try {
+                val trip = tripRepository.getTripById(tripId)
+                if (trip != null) {
+                    val days = trip.dailyPlans.map { day ->
+                        DayItinerary(
+                            id = day.day.toString(),
+                            title = "Day ${day.day}",
+                            subtitle = day.theme,
+                            recommendedHotels = trip.recommendedHotels.mapIndexed { index, hotel ->
+                                RecommendedHotel(
+                                    id = index.toString(),
+                                    name = hotel.name,
+                                    location = hotel.address ?: "Unknown",
+                                    price = "",
+                                    rating = hotel.rating?.toFloat() ?: 0f,
+                                    imageUrl = hotel.imageUrl
+                                )
+                            },
+                            activities = day.activities.mapIndexed { index, act ->
+                                ActivityItem(
+                                    id = "${day.day}_$index",
+                                    time = act.suggestedTime ?: "",
+                                    title = act.placeName,
+                                    description = act.description ?: "",
+                                    price = "",
+                                    tag = act.type,
+                                    imageUrl = act.imageUrl
+                                )
+                            }
+                        )
+                    }
 
-    private fun loadMockData() {
-        val mockDays = listOf(
-            DayItinerary(
-                id = "day_1",
-                title = "Day 1",
-                subtitle = "Imperial Icons",
-                recommendedHotels = listOf(
-                    RecommendedHotel(
-                        id = "h1",
-                        name = "Hapi V",
-                        location = "Downtown",
-                        price = "$120 / night",
-                        rating = 4.5f,
-                        imageRes = com.example.designsystem.R.drawable.ishan_seefromthesky
-                    ),
-                    RecommendedHotel(
-                        id = "h2",
-                        name = "Retreats",
-                        location = "Historic District",
-                        price = "$150 / night",
-                        rating = 4.8f,
-                        imageRes = com.example.designsystem.R.drawable.ishan_seefromthesky
-                    )
-                ),
-                activities = listOf(
-                    ActivityItem(
-                        id = "a1",
-                        time = "08:30 AM",
-                        title = "Breakfast at Anna Cafe",
-                        description = "Fuel up with artisan coffee and a flaky croissant on a rustic table.",
-                        price = "$25.00",
-                        tag = "Breakfast",
-                        imageRes = com.example.designsystem.R.drawable.ishan_seefromthesky
-                    ),
-                    ActivityItem(
-                        id = "a2",
-                        time = "10:30 AM",
-                        title = "Brandenburg Gate",
-                        description = "Iconic neoclassical monument standing tall against the morning sky.",
-                        price = "Free",
-                        tag = "Attraction",
-                        imageRes = com.example.designsystem.R.drawable.ishan_seefromthesky
-                    ),
-                    ActivityItem(
-                        id = "a3",
-                        time = "01:00 PM",
-                        title = "Bazaar Visit",
-                        description = "Explore the vibrant local markets and shop for souvenirs.",
-                        price = "$40.00",
-                        tag = "Shopping",
-                        imageRes = com.example.designsystem.R.drawable.ishan_seefromthesky
-                    )
-                )
-            ),
-            DayItinerary(
-                id = "day_2",
-                title = "Day 2",
-                subtitle = "Urban Zenith",
-                recommendedHotels = listOf(
-                    RecommendedHotel(
-                        id = "h3",
-                        name = "City Lights Inn",
-                        location = "Central Park",
-                        price = "$100 / night",
-                        rating = 4.2f,
-                        imageRes = com.example.designsystem.R.drawable.ishan_seefromthesky
-                    )
-                ),
-                activities = listOf(
-                    ActivityItem(
-                        id = "a4",
-                        time = "09:00 AM",
-                        title = "Modern Art Museum",
-                        description = "Discover the latest contemporary masterpieces.",
-                        price = "$30.00",
-                        tag = "Museum",
-                        imageRes = com.example.designsystem.R.drawable.ishan_seefromthesky
-                    ),
-                    ActivityItem(
-                        id = "a5",
-                        time = "12:30 PM",
-                        title = "Lunch at Zenith Sky Deck",
-                        description = "Enjoy a panoramic view while having a luxurious lunch.",
-                        price = "$55.00",
-                        tag = "Lunch",
-                        imageRes = com.example.designsystem.R.drawable.ishan_seefromthesky
-                    )
-                )
-            )
-        )
-
-        _uiState.update {
-            it.copy(
-                days = mockDays,
-                selectedDayId = mockDays.firstOrNull()?.id.orEmpty(),
-                isLoading = false
-            )
+                    _uiState.update {
+                        it.copy(
+                            days = days,
+                            selectedDayId = days.firstOrNull()?.id.orEmpty(),
+                            isLoading = false
+                        )
+                    }
+                } else {
+                    _uiState.update { it.copy(isLoading = false, error = "Trip not found") }
+                }
+            } catch (e: Exception) {
+                _uiState.update { it.copy(isLoading = false, error = e.message ?: "Unknown error") }
+            }
         }
     }
 

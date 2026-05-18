@@ -4,6 +4,12 @@ import android.Manifest
 import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -41,6 +47,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -160,7 +167,7 @@ fun ChatScreenContent(
                     Column(modifier = Modifier.fillMaxSize()) {
                         ConnectionIndicator(state = state.connectionState)
 
-                        if (state.messages.isEmpty()) {
+                        if (state.messages.isEmpty() && !state.isAiThinking) {
                             EmptyStateContent(modifier = Modifier.weight(1f))
                         } else {
                             LazyColumn(
@@ -171,6 +178,11 @@ fun ChatScreenContent(
                                     .padding(horizontal = MaterialTheme.spacing.md),
                                 reverseLayout = true
                             ) {
+                                if (state.isAiThinking) {
+                                    item {
+                                        ThinkingIndicatorItem()
+                                    }
+                                }
                                 items(state.messages.reversed(), key = { it.id }) { message ->
                                     MessageItem(message = message)
                                 }
@@ -451,6 +463,58 @@ fun ChatScreenErrorPreview() {
             onSendMessage = {},
             onBottomBarItemSelected = {}
         )
+    }
+}
+
+@Composable
+fun ThinkingIndicatorItem() {
+    val infiniteTransition = rememberInfiniteTransition(label = "thinking")
+    val alpha by infiniteTransition.animateFloat(
+        initialValue = 0.4f,
+        targetValue = 1f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(1000, easing = LinearEasing),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "alpha"
+    )
+
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp),
+        horizontalArrangement = Arrangement.Start,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Surface(
+            color = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.6f),
+            shape = RoundedCornerShape(
+                topStart = Dimensions.BubbleCornerLarge,
+                topEnd = Dimensions.BubbleCornerLarge,
+                bottomStart = Dimensions.BubbleCornerSmall,
+                bottomEnd = Dimensions.BubbleCornerLarge
+            ),
+            modifier = Modifier.alpha(alpha)
+        ) {
+            Row(
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(10.dp)
+                        .background(MaterialTheme.colorScheme.primary, CircleShape)
+                )
+                Text(
+                    text = "AI is thinking...",
+                    color = MaterialTheme.colorScheme.onSecondaryContainer,
+                    style = MaterialTheme.typography.bodyMedium.copy(
+                        fontWeight = FontWeight.Medium
+                    )
+                )
+            }
+        }
     }
 }
 

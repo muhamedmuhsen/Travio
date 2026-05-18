@@ -3,6 +3,13 @@ package com.example.feature.chat.presentation.state
 import com.example.feature.chat.domain.model.ChatMessage
 import com.example.feature.chat.domain.model.ConnectionState
 
+enum class GenerationStatus {
+    IDLE,
+    PROCESSING,
+    COMPLETED,
+    FAILED
+}
+
 sealed interface ChatUiState {
     data object Loading : ChatUiState
 
@@ -10,7 +17,11 @@ sealed interface ChatUiState {
         val messages: List<ChatMessage> = emptyList(),
         val inputText: String = "",
         val connectionState: ConnectionState = ConnectionState.CONNECTED,
-        val isSending: Boolean = false
+        val isSending: Boolean = false,
+        val isAiThinking: Boolean = false,
+        val isGeneratingPlan: Boolean = false,
+        val generatedTripId: String? = null,
+        val generationStatus: GenerationStatus = GenerationStatus.IDLE
     ) : ChatUiState
 
     data class Error(val message: String) : ChatUiState

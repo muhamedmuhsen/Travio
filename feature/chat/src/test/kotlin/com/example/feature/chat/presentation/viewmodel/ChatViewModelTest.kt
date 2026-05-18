@@ -7,6 +7,9 @@ import com.example.feature.chat.domain.usecase.ObserveMessagesUseCase
 import com.example.feature.chat.domain.usecase.SendMessageUseCase
 import com.example.feature.chat.domain.usecase.GetThreadHistoryUseCase
 import com.example.feature.chat.domain.usecase.ObserveConnectionStateUseCase
+import com.example.feature.chat.domain.usecase.ObservePlanStatusUseCase
+import com.example.feature.chat.domain.usecase.ConnectUseCase
+import com.example.feature.chat.domain.usecase.ObserveAiStatusUseCase
 import com.example.feature.chat.presentation.state.ChatUiState
 import com.example.feature.chat.domain.model.ConnectionState
 import kotlinx.coroutines.Dispatchers
@@ -40,7 +43,18 @@ class ChatViewModelTest {
         sendMessageUseCase = SendMessageUseCase(fakeRepository)
         val getThreadHistoryUseCase = GetThreadHistoryUseCase(fakeRepository)
         val observeConnectionStateUseCase = ObserveConnectionStateUseCase(fakeRepository)
-        viewModel = ChatViewModel(observeMessagesUseCase, sendMessageUseCase, getThreadHistoryUseCase, observeConnectionStateUseCase)
+        val observePlanStatusUseCase = ObservePlanStatusUseCase(fakeRepository)
+        val connectUseCase = ConnectUseCase(fakeRepository)
+        val observeAiStatusUseCase = ObserveAiStatusUseCase(fakeRepository)
+        viewModel = ChatViewModel(
+            observeMessagesUseCase,
+            sendMessageUseCase,
+            getThreadHistoryUseCase,
+            observeConnectionStateUseCase,
+            observePlanStatusUseCase,
+            connectUseCase,
+            observeAiStatusUseCase
+        )
     }
     
     @After
@@ -94,5 +108,28 @@ class ChatViewModelTest {
         advanceUntilIdle()
 
         assertEquals(0, fakeRepository.sentMessages.size)
+    }
+
+    @Test
+    fun `should update isAiThinking when AI status changes`() = runTest {
+        advanceUntilIdle()
+
+        // 1. Initial status is false
+        val initialState = viewModel.state.value as ChatUiState.Success
+        assertEquals(false, initialState.isAiThinking)
+
+        // 2. Status thinking -> isAiThinking becomes true
+        fakeRepository.emitStatus("thinking")
+        advanceUntilIdle()
+
+        val thinkingState = viewModel.state.value as ChatUiState.Success
+        assertEquals(true, thinkingState.isAiThinking)
+
+        // 3. Status streaming -> isAiThinking becomes false
+        fakeRepository.emitStatus("streaming")
+        advanceUntilIdle()
+
+        val streamingState = viewModel.state.value as ChatUiState.Success
+        assertEquals(false, streamingState.isAiThinking)
     }
 }

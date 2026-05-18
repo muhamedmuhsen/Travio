@@ -41,21 +41,25 @@ class PlanGenerationViewModelTest {
     }
 
     @Test
-    fun `should start with Idle state`() = runTest {
-        val state = viewModel.state.value
-        assertTrue(state is PlanGenerationUiState.Idle)
+    fun `should start with Idle state`() {
+        kotlinx.coroutines.test.runTest {
+            val state = viewModel.state.value
+            org.junit.Assert.assertTrue(state is PlanGenerationUiState.Idle)
+        }
     }
 
     @Test
-    fun `should update state to Success when plan completes`() = runTest {
-        val threadId = "thread_123"
-        viewModel.startObserving(threadId)
-        advanceUntilIdle()
-        
-        fakeRepository.emitPlanStatus(PlanGenerationState(threadId, PlanStatus.COMPLETED))
-        advanceUntilIdle()
+    fun `should update state to Success when plan completes`() {
+        kotlinx.coroutines.test.runTest {
+            val threadId = "thread_123"
+            viewModel.startObserving(threadId)
+            advanceUntilIdle()
+            
+            fakeRepository.emitPlanStatus(PlanGenerationState(threadId, PlanStatus.COMPLETED))
+            advanceUntilIdle()
 
-        val state = viewModel.state.value
-        assertTrue(state is PlanGenerationUiState.Success)
+            val state = viewModel.state.value
+            org.junit.Assert.assertTrue(state is PlanGenerationUiState.Success)
+        }
     }
 }

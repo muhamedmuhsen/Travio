@@ -8,6 +8,7 @@ import com.example.feature.chat.domain.model.PlanStatus
 import com.example.feature.chat.domain.model.Sender
 import com.example.feature.chat.domain.usecase.ConnectUseCase
 import com.example.feature.chat.domain.usecase.GetThreadHistoryUseCase
+import com.example.feature.chat.domain.usecase.ObserveAiStatusUseCase
 import com.example.feature.chat.domain.usecase.ObserveConnectionStateUseCase
 import com.example.feature.chat.domain.usecase.ObserveMessagesUseCase
 import com.example.feature.chat.domain.usecase.ObservePlanStatusUseCase
@@ -29,7 +30,8 @@ class ChatViewModel @Inject constructor(
     private val getThreadHistoryUseCase: GetThreadHistoryUseCase,
     private val observeConnectionStateUseCase: ObserveConnectionStateUseCase,
     private val observePlanStatusUseCase: ObservePlanStatusUseCase,
-    private val connectUseCase: ConnectUseCase
+    private val connectUseCase: ConnectUseCase,
+    private val observeAiStatusUseCase: ObserveAiStatusUseCase
 ) : ViewModel() {
 
     private val _state = MutableStateFlow<ChatUiState>(ChatUiState.Loading)
@@ -47,6 +49,7 @@ class ChatViewModel @Inject constructor(
         loadMessages()
         observeConnection()
         observePlanStatus()
+        observeAiStatus()
         connect()
     }
 
@@ -101,8 +104,38 @@ class ChatViewModel @Inject constructor(
     private fun observePlanStatus() {
         viewModelScope.launch {
             observePlanStatusUseCase(currentThreadId).collect { planState ->
-                if (planState.status == PlanStatus.COMPLETED) {
+                _state.update { currentState ->
+                    if (currentState is ChatUiState.Success) {
+                        val genStatus = when (planState.status) {
+                            PlanStatus.IN_PROGRESS -> com.example.feature.chat.presentation.state.GenerationStatus.PROCESSING
+                            PlanStatus.COMPLETED -> com.example.feature.chat.presentation.state.GenerationStatus.COMPLETED
+                            PlanStatus.FAILED -> com.example.feature.chat.presentation.state.GenerationStatus.FAILED
+                        }
+                        currentState.copy(
+                            isGeneratingPlan = planState.status == PlanStatus.IN_PROGRESS,
+                            generatedTripId = planState.tripId,
+                            generationStatus = genStatus
+                        )
+                    } else {
+                        currentState
+                    }
+                }
+                if (planState.status == PlanStatus.IN_PROGRESS) {
                     _navigationEvent.send(ChatNavigationEvent.NavigateToPlanGeneration(currentThreadId))
+                }
+            }
+        }
+    }
+
+    private fun observeAiStatus() {
+        viewModelScope.launch {
+            observeAiStatusUseCase().collect { status ->
+                _state.update { currentState ->
+                    if (currentState is ChatUiState.Success) {
+                        currentState.copy(isAiThinking = status == "thinking")
+                    } else {
+                        currentState
+                    }
                 }
             }
         }

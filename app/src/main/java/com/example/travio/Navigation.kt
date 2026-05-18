@@ -517,7 +517,11 @@ fun TravioNavHost(
             val route: PlanGenerationRoute = backStackEntry.toRoute()
             PlanGenerationScreen(
                 threadId = route.threadId,
-                onDismiss = { navController.popBackStack() }
+                onDismiss = { navController.popBackStack() },
+                onNavigateToTripDetail = { tripId ->
+                    navController.popBackStack() // Pop PlanGenerationScreen
+                    navController.navigate(Screen.TripDetailScreen.createRoute(tripId))
+                }
             )
         }
 

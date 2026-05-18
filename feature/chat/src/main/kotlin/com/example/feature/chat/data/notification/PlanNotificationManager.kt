@@ -35,12 +35,27 @@ class PlanNotificationManager @Inject constructor(
         }
     }
 
-    fun showPlanCompletedNotification(threadId: String) {
+    fun showPlanCompletedNotification(
+        threadId: String,
+        tripId: String
+    ) {
+        val intent = context.packageManager.getLaunchIntentForPackage(context.packageName)?.apply {
+            putExtra("tripId", tripId)
+            flags = android.content.Intent.FLAG_ACTIVITY_SINGLE_TOP or android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP
+        }
+        val pendingIntent = android.app.PendingIntent.getActivity(
+            context,
+            tripId.hashCode(),
+            intent,
+            android.app.PendingIntent.FLAG_UPDATE_CURRENT or android.app.PendingIntent.FLAG_IMMUTABLE
+        )
+
         val builder = NotificationCompat.Builder(context, channelId)
             .setSmallIcon(android.R.drawable.ic_dialog_info)
-            .setContentTitle("Plan Ready!")
-            .setContentText("Your travel plan for thread $threadId is ready.")
+            .setContentTitle("Your AI trip plan is ready 🎉")
+            .setContentText("Click to open and explore your itinerary")
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setContentIntent(pendingIntent)
             .setAutoCancel(true)
 
         try {

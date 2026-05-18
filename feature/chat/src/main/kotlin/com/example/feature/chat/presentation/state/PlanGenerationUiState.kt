@@ -9,7 +9,7 @@ sealed interface PlanGenerationUiState {
         val status: PlanStatus = PlanStatus.IN_PROGRESS
     ) : PlanGenerationUiState
 
-    data object Success : PlanGenerationUiState
+    data class Success(val tripId: String) : PlanGenerationUiState
 
     data class Error(val message: String) : PlanGenerationUiState
 }

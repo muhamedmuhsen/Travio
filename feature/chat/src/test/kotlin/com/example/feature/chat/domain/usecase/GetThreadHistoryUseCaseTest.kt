@@ -31,6 +31,7 @@ class GetThreadHistoryUseCaseTest {
 
         val result = getThreadHistoryUseCase(threadId)
 
-        assertEquals(Result.Success(history), result)
+        org.junit.Assert.assertTrue(result is Result.Success)
+        assertEquals(history, (result as Result.Success).data)
     }
 }

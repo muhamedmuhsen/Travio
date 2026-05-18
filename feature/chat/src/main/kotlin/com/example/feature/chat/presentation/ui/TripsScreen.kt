@@ -1,6 +1,5 @@
 package com.example.feature.chat.presentation.ui
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -34,7 +33,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -48,10 +48,18 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import coil.compose.AsyncImage
 import com.example.designsystem.components.AppBottomBar
 import com.example.designsystem.theme.TravioTheme
 import com.example.designsystem.theme.spacing
 import com.example.feature.chat.R
+import com.example.feature.chat.domain.model.TripPlan
+import com.example.feature.chat.presentation.viewmodel.TripsUiState
+import com.example.feature.chat.presentation.viewmodel.TripsViewModel
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 data class TripUiModel(
     val id: String,
@@ -70,33 +78,10 @@ fun TripsScreen(
     navigateToFavorite: () -> Unit,
     navigateToCommunity: () -> Unit,
     navigateToProfile: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    viewModel: TripsViewModel = hiltViewModel()
 ) {
-    val trips = remember {
-        mutableStateListOf(
-            TripUiModel(
-                id = "1",
-                title = "Paris, France",
-                date = "15 - 22 June 2023",
-                description = "An exploratory trip in the City of Lights.",
-                imageRes = com.example.designsystem.R.drawable.ishan_seefromthesky
-            ),
-            TripUiModel(
-                id = "2",
-                title = "Paris, France",
-                date = "15 - 22 June 2023",
-                description = "An exploratory trip in the City of Lights.",
-                imageRes = com.example.designsystem.R.drawable.ishan_seefromthesky
-            ),
-            TripUiModel(
-                id = "3",
-                title = "Paris, France",
-                date = "15 - 22 June 2023",
-                description = "An exploratory trip in the City of Lights.",
-                imageRes = com.example.designsystem.R.drawable.ishan_seefromthesky
-            )
-        )
-    }
+    val uiState by viewModel.uiState.collectAsState()
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
@@ -135,12 +120,31 @@ fun TripsScreen(
                 AiPlanningCard(onPlanClick = onNavigateToAiChat)
             }
 
-            items(trips, key = { it.id }) { trip ->
-                TripCard(
-                    trip = trip,
-                    onClick = { onNavigateToTripDetail(trip.id) },
-                    onRemove = { trips.remove(trip) }
-                )
+            when (uiState) {
+                is TripsUiState.Loading -> {
+                    item {
+                        androidx.compose.material3.CircularProgressIndicator(
+                            modifier = Modifier.padding(16.dp).fillMaxWidth()
+                        )
+                    }
+                }
+                is TripsUiState.Error -> {
+                    item {
+                        Text(text = (uiState as TripsUiState.Error).message)
+                    }
+                }
+                is TripsUiState.Success -> {
+                    val trips = (uiState as TripsUiState.Success).trips
+                    items(trips, key = { it.id }) { trip ->
+                        TripCard(
+                            trip = trip,
+                            onClick = { onNavigateToTripDetail(trip.id) },
+                            onRemove = {
+                                // TODO implement remove if needed
+                            }
+                        )
+                    }
+                }
             }
         }
     }
@@ -261,7 +265,7 @@ fun AiPlanningCard(
 
 @Composable
 fun TripCard(
-    trip: TripUiModel,
+    trip: TripPlan,
     onClick: () -> Unit,
     onRemove: () -> Unit,
     modifier: Modifier = Modifier
@@ -276,8 +280,8 @@ fun TripCard(
         onClick = onClick
     ) {
         Row(modifier = Modifier.fillMaxSize()) {
-            Image(
-                painter = painterResource(id = trip.imageRes),
+            AsyncImage(
+                model = trip.coverImage ?: com.example.designsystem.R.drawable.ishan_seefromthesky,
                 contentDescription = trip.title,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
@@ -311,15 +315,19 @@ fun TripCard(
                             modifier = Modifier.size(16.dp),
                             tint = MaterialTheme.colorScheme.onSurfaceVariant
                         )
+                        val formattedDate = remember(trip.createdAt) {
+                            SimpleDateFormat("dd MMM yyyy", Locale.getDefault()).format(Date(trip.createdAt))
+                        }
                         Text(
-                            text = trip.date,
+                            text = formattedDate,
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
 
+                    val tripDays = trip.dailyPlans.size
                     Text(
-                        text = trip.description,
+                        text = "$tripDays Days Trip",
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         maxLines = 2,

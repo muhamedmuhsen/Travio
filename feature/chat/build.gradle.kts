@@ -58,6 +58,7 @@ dependencies {
     implementation(project(":core:common"))
     implementation(project(":core:designsystem"))
     implementation(project(":core:network"))
+    implementation(project(":core:database"))
     implementation(project(":feature:utils"))
     implementation(libs.okhttp)
 
@@ -86,4 +87,13 @@ dependencies {
 
     // Logging
     implementation(libs.timber)
+
+    // Image Loading
+    implementation(libs.coil.compose)
+
+    // Testing
+    testImplementation(libs.junit)
+    testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.mockito.core)
+    testImplementation(libs.mockito.kotlin)
 }

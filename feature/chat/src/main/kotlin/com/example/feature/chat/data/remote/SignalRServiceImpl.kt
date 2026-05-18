@@ -40,6 +40,9 @@ class SignalRServiceImpl @Inject constructor(
 
     private val messageFlow = MutableSharedFlow<AiResponseDto>()
     private val planStatusFlow = MutableSharedFlow<PlanStatusDto>()
+    private val statusFlow = MutableSharedFlow<String>()
+
+    override fun observeStatus(): Flow<String> = statusFlow
 
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
 
@@ -59,12 +62,16 @@ class SignalRServiceImpl @Inject constructor(
         // 1. ReceiveStatus
         hubConnection?.on("ReceiveStatus", { status: String ->
             Timber.d("SignalR Status: $status")
+            scope.launch {
+                statusFlow.emit(status)
+            }
         }, String::class.java)
 
         // 2. ReceiveMessageChunk
         hubConnection?.on("ReceiveMessageChunk", { chunk: String ->
             Timber.d("Received chunk: $chunk")
             scope.launch {
+                statusFlow.emit("streaming")
                 messageFlow.emit(
                     AiResponseDto(
                         threadId = currentThreadId ?: "unknown",
@@ -79,6 +86,7 @@ class SignalRServiceImpl @Inject constructor(
         hubConnection?.on("MessageComplete", { response: BackendResponseDto ->
             Timber.d("Message complete. Status: ${response.status}")
             scope.launch {
+                statusFlow.emit("idle")
                 messageFlow.emit(
                     AiResponseDto(
                         threadId = currentThreadId ?: "unknown",
@@ -86,6 +94,16 @@ class SignalRServiceImpl @Inject constructor(
                         status = response.status ?: "COMPLETED"
                     )
                 )
+                if (response.status?.lowercase() == "processing") {
+                    planStatusFlow.emit(
+                        PlanStatusDto(
+                            threadId = currentThreadId ?: "unknown",
+                            isCompleted = false,
+                            isFailed = false,
+                            errorMessage = null
+                        )
+                    )
+                }
             }
         }, BackendResponseDto::class.java)
 
@@ -100,18 +118,21 @@ class SignalRServiceImpl @Inject constructor(
             scope.launch {
                 val isCompleted = statusResponse.status?.lowercase() in listOf("completed", "success") || statusResponse.data != null
                 val isFailed = statusResponse.status?.lowercase() in listOf("failed", "error")
+                val tripId = java.util.UUID.randomUUID().toString()
 
                 planStatusFlow.emit(
                     PlanStatusDto(
                         threadId = currentThreadId ?: "unknown",
                         isCompleted = isCompleted,
                         isFailed = isFailed,
-                        errorMessage = if (isFailed) statusResponse.message else null
+                        errorMessage = if (isFailed) statusResponse.message else null,
+                        data = statusResponse.data,
+                        tripId = tripId
                     )
                 )
 
                 if (isCompleted) {
-                    notificationManager.showPlanCompletedNotification(currentThreadId ?: "unknown")
+                    notificationManager.showPlanCompletedNotification(currentThreadId ?: "unknown", tripId)
                 }
             }
         }, BackendItineraryStatusDto::class.java)
@@ -120,6 +141,7 @@ class SignalRServiceImpl @Inject constructor(
         hubConnection?.on("ReceiveError", { errorMessage: String ->
             Timber.e("Received error: $errorMessage")
             scope.launch {
+                statusFlow.emit("idle")
                 planStatusFlow.emit(
                     PlanStatusDto(
                         threadId = currentThreadId ?: "unknown",
@@ -215,5 +237,5 @@ private data class BackendResponseDto(
 private data class BackendItineraryStatusDto(
     val status: String? = null,
     val message: String? = null,
-    val data: String? = null
+    val data: com.example.feature.chat.data.remote.dto.AiStatusResponseDto? = null
 )

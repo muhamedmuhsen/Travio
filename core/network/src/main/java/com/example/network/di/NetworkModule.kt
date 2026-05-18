@@ -2,6 +2,7 @@ package com.example.network.di
 
 import com.example.domain.repository.auth.TokenProvider
 import com.example.domain.session.SessionEventBus
+import com.example.network.api.AiApi
 import com.example.network.api.AuthApi
 import com.example.network.api.CommunityApi
 import com.example.network.api.DestinationsApi
@@ -167,6 +168,12 @@ object NetworkModule {
     @Singleton
     fun provideFlightBookingApi(retrofit: Retrofit): com.example.network.api.FlightBookingApi {
         return retrofit.create(com.example.network.api.FlightBookingApi::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideAiApi(retrofit: Retrofit): AiApi {
+        return retrofit.create(AiApi::class.java)
     }
 
     @Provides

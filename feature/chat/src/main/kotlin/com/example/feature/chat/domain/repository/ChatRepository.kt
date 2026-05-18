@@ -15,6 +15,7 @@ interface ChatRepository {
     ): Result<Unit, DataError>
     fun observeConnectionState(): Flow<ConnectionState>
     fun observePlanStatus(threadId: String): Flow<PlanGenerationState>
+    fun observeStatus(): Flow<String>
     suspend fun getThreadHistory(threadId: String): Result<List<ChatMessage>, DataError>
     suspend fun connect()
 }

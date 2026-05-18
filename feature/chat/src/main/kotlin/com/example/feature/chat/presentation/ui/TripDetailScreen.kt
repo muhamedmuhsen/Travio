@@ -1,6 +1,5 @@
 package com.example.feature.chat.presentation.ui
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -32,6 +31,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -41,15 +41,13 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import coil.compose.AsyncImage
 import com.example.designsystem.components.AppBottomBar
-import com.example.designsystem.theme.TravioTheme
 import com.example.designsystem.theme.spacing
 import com.example.feature.chat.R
 import com.example.feature.chat.presentation.viewmodel.ActivityItem
@@ -70,6 +68,10 @@ fun TripDetailScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
+    LaunchedEffect(tripId) {
+        viewModel.loadTrip(tripId)
+    }
+
     Scaffold(
         modifier = modifier.fillMaxSize(),
         bottomBar = {
@@ -88,9 +90,12 @@ fun TripDetailScreen(
         containerColor = MaterialTheme.colorScheme.background
     ) { paddingValues ->
         if (uiState.isLoading) {
-            // Can show a loading state here
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                Text("Loading...")
+            Box(modifier = Modifier.fillMaxSize().padding(paddingValues), contentAlignment = Alignment.Center) {
+                androidx.compose.material3.CircularProgressIndicator()
+            }
+        } else if (uiState.error != null) {
+            Box(modifier = Modifier.fillMaxSize().padding(paddingValues), contentAlignment = Alignment.Center) {
+                Text(uiState.error ?: "Unknown error")
             }
         } else {
             val selectedDay = uiState.days.find { it.id == uiState.selectedDayId }
@@ -115,14 +120,16 @@ fun TripDetailScreen(
 
                 selectedDay?.let { day ->
                     // Hotels
-                    item {
-                        RecommendedHotelsSection(hotels = day.recommendedHotels)
+                    if (day.recommendedHotels.isNotEmpty()) {
+                        item {
+                            RecommendedHotelsSection(hotels = day.recommendedHotels)
+                        }
                     }
 
                     // Timeline Title
                     item {
                         Text(
-                            text = "${day.subtitle} & Historic Echoes",
+                            text = day.subtitle,
                             style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
                             modifier = Modifier.padding(horizontal = MaterialTheme.spacing.md, vertical = MaterialTheme.spacing.sm)
                         )
@@ -220,8 +227,8 @@ fun HotelRecommendationCard(
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
-            Image(
-                painter = painterResource(id = hotel.imageRes),
+            AsyncImage(
+                model = hotel.imageUrl ?: com.example.designsystem.R.drawable.ishan_seefromthesky,
                 contentDescription = hotel.name,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
@@ -277,13 +284,10 @@ fun HotelRecommendationCard(
                     Text(
                         text = hotel.location,
                         style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                    Spacer(modifier = Modifier.weight(1f))
-                    Text(
-                        text = hotel.price,
-                        style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
-                        color = MaterialTheme.colorScheme.primary
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.weight(1f)
                     )
                 }
             }
@@ -346,8 +350,8 @@ fun TimelineActivityNode(
             elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
         ) {
             Column {
-                Image(
-                    painter = painterResource(id = activity.imageRes),
+                AsyncImage(
+                    model = activity.imageUrl ?: com.example.designsystem.R.drawable.ishan_seefromthesky,
                     contentDescription = activity.title,
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
@@ -397,19 +401,5 @@ fun TimelineActivityNode(
                 }
             }
         }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun TripDetailScreenPreview() {
-    TravioTheme {
-        TripDetailScreen(
-            tripId = "1",
-            navigateToHome = {},
-            navigateToFavorite = {},
-            navigateToCommunity = {},
-            navigateToProfile = {}
-        )
     }
 }

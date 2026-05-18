@@ -26,7 +26,7 @@ class PlanGenerationViewModel @Inject constructor(
             observePlanStatusUseCase(threadId).collect { planState ->
                 _state.update {
                     when (planState.status) {
-                        PlanStatus.COMPLETED -> PlanGenerationUiState.Success
+                        PlanStatus.COMPLETED -> PlanGenerationUiState.Success(planState.tripId ?: "")
                         PlanStatus.FAILED -> PlanGenerationUiState.Error(planState.error ?: "Unknown error")
                         PlanStatus.IN_PROGRESS -> PlanGenerationUiState.Loading(PlanStatus.IN_PROGRESS)
                     }

@@ -16,6 +16,7 @@ class FakeChatRepository : ChatRepository {
     private val _messages = MutableSharedFlow<ChatMessage>()
     private val _connectionState = MutableStateFlow(ConnectionState.CONNECTED)
     private val _planStatus = MutableSharedFlow<PlanGenerationState>()
+    private val _status = MutableSharedFlow<String>()
 
     var sendMessageResult: Result<Unit, DataError> = Result.Success(Unit)
     var getThreadHistoryResult: Result<List<ChatMessage>, DataError> = Result.Success(emptyList())
@@ -39,6 +40,10 @@ class FakeChatRepository : ChatRepository {
         return _planStatus.asSharedFlow()
     }
 
+    override fun observeStatus(): Flow<String> {
+        return _status.asSharedFlow()
+    }
+
     override suspend fun getThreadHistory(threadId: String): Result<List<ChatMessage>, DataError> {
         return getThreadHistoryResult
     }
@@ -58,5 +63,9 @@ class FakeChatRepository : ChatRepository {
 
     suspend fun emitPlanStatus(state: PlanGenerationState) {
         _planStatus.emit(state)
+    }
+
+    suspend fun emitStatus(status: String) {
+        _status.emit(status)
     }
 }
