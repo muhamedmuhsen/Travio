@@ -88,7 +88,7 @@ fun HomeScreen(
     navigateToProfile: () -> Unit = {},
     navigateToFavorite: () -> Unit = {},
     navigateToCommunity: () -> Unit = {},
-    navigateToAi: () -> Unit = {},
+    navigateToTrips: () -> Unit = {},
     navigateToSeeAllFlights: () -> Unit = {},
     viewModel: HomeViewModel = hiltViewModel()
 ) {
@@ -151,7 +151,7 @@ fun HomeScreen(
         navigateToProfile = navigateToProfile,
         navigateToFavorite = navigateToFavorite,
         navigateToCommunity = navigateToCommunity,
-        navigateToAi = navigateToAi
+        navigateToTrips = navigateToTrips
     )
 }
 
@@ -166,7 +166,7 @@ private fun HomeContent(
     navigateToProfile: () -> Unit,
     navigateToFavorite: () -> Unit,
     navigateToCommunity: () -> Unit,
-    navigateToAi: () -> Unit
+    navigateToTrips: () -> Unit
 ) {
     Scaffold(
         modifier = modifier,
@@ -180,7 +180,7 @@ private fun HomeContent(
                         0 -> {}
                         1 -> navigateToFavorite()
                         2 -> navigateToCommunity()
-                        3 -> navigateToAi()
+                        3 -> navigateToTrips()
                         4 -> navigateToProfile()
                     }
                 }
@@ -650,7 +650,7 @@ private fun HomeScreenLoadedPreview() {
             navigateToProfile = {},
             navigateToFavorite = {},
             navigateToCommunity = {},
-            navigateToAi = {}
+            navigateToTrips = {}
         )
     }
 }
@@ -671,7 +671,7 @@ private fun HomeScreenErrorPreview() {
             navigateToProfile = {},
             navigateToFavorite = {},
             navigateToCommunity = {},
-            navigateToAi = {}
+            navigateToTrips = {}
         )
     }
 }
@@ -700,7 +700,7 @@ private fun HomeScreenAppendLoadingPreview() {
             navigateToProfile = {},
             navigateToFavorite = {},
             navigateToCommunity = {},
-            navigateToAi = {}
+            navigateToTrips = {}
         )
     }
 }
@@ -729,7 +729,7 @@ private fun HomeScreenAppendErrorPreview() {
             navigateToProfile = {},
             navigateToFavorite = {},
             navigateToCommunity = {},
-            navigateToAi = {}
+            navigateToTrips = {}
         )
     }
 }

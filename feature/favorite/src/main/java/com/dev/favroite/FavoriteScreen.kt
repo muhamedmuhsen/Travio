@@ -52,7 +52,7 @@ fun FavoriteScreen(
     navigateToHome: () -> Unit,
     navigateToDestinationDetails: (String) -> Unit,
     navigateToCommunity: () -> Unit = {},
-    navigateToAi: () -> Unit = {}
+    navigateToTrips: () -> Unit = {}
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
@@ -74,7 +74,7 @@ fun FavoriteScreen(
             when (index) {
                 0 -> navigateToHome()
                 2 -> navigateToCommunity()
-                3 -> navigateToAi()
+                3 -> navigateToTrips()
                 4 -> navigateToProfile()
             }
         }

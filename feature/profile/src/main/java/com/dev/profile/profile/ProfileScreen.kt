@@ -61,7 +61,7 @@ fun ProfileScreen(
     navigateToHome: () -> Unit = {},
     navigateToFavorite: () -> Unit = {},
     navigateToCommunity: () -> Unit = {},
-    navigateToAi: () -> Unit = {},
+    navigateToTrips: () -> Unit = {},
     viewModel: ProfileViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -136,7 +136,7 @@ fun ProfileScreen(
                         0 -> navigateToHome()
                         1 -> navigateToFavorite()
                         2 -> navigateToCommunity()
-                        3 -> navigateToAi()
+                        3 -> navigateToTrips()
                         4 -> {
                             /* already on Profile */
                         }

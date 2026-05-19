@@ -1,10 +1,6 @@
 package com.example.travio
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -29,8 +25,11 @@ import com.dev.search.presentation.SearchScreen
 import com.dev.survey.presentation.SurveyScreen
 import com.example.common.navigation.BookingRoute
 import com.example.common.navigation.DestinationDetailRoute
+import com.example.common.navigation.PlanGenerationRoute
 import com.example.common.navigation.Screen
 import com.example.feature.booking.presentation.BookingScreen
+import com.example.feature.chat.presentation.ui.ChatScreen
+import com.example.feature.chat.presentation.ui.PlanGenerationScreen
 import com.example.feature.forgetpassword.ForgetPasswordScreen
 import com.example.feature.forgetpassword.code.CodeScreen
 import com.example.feature.forgetpassword.newpassword.NewPasswordScreen
@@ -171,8 +170,8 @@ fun TravioNavHost(
                         launchSingleTop = true
                     }
                 },
-                navigateToAi = {
-                    navController.navigate(Screen.AiChatScreen.route) {
+                navigateToTrips = {
+                    navController.navigate(Screen.TripsScreen.route) {
                         launchSingleTop = true
                     }
                 },
@@ -216,8 +215,8 @@ fun TravioNavHost(
                         launchSingleTop = true
                     }
                 },
-                navigateToAi = {
-                    navController.navigate(Screen.AiChatScreen.route) {
+                navigateToTrips = {
+                    navController.navigate(Screen.TripsScreen.route) {
                         launchSingleTop = true
                     }
                 },
@@ -261,8 +260,8 @@ fun TravioNavHost(
                         launchSingleTop = true
                     }
                 },
-                navigateToAi = {
-                    navController.navigate(Screen.AiChatScreen.route) {
+                navigateToTrips = {
+                    navController.navigate(Screen.TripsScreen.route) {
                         launchSingleTop = true
                     }
                 },
@@ -316,8 +315,8 @@ fun TravioNavHost(
                         launchSingleTop = true
                     }
                 },
-                navigateToAi = {
-                    navController.navigate(Screen.AiChatScreen.route) {
+                navigateToTrips = {
+                    navController.navigate(Screen.TripsScreen.route) {
                         launchSingleTop = true
                     }
                 },
@@ -365,8 +364,8 @@ fun TravioNavHost(
                         launchSingleTop = true
                     }
                 },
-                navigateToAi = {
-                    navController.navigate(Screen.AiChatScreen.route) {
+                navigateToTrips = {
+                    navController.navigate(Screen.TripsScreen.route) {
                         launchSingleTop = true
                     }
                 },
@@ -421,10 +420,109 @@ fun TravioNavHost(
         }
 
         composable(Screen.AiChatScreen.route) {
-            // TODO: replace with real AiChatScreen composable once feature is built
-            Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                Text("AI Chat – coming soon")
-            }
+            ChatScreen(
+                onNavigateToPlanGeneration = { threadId ->
+                    navController.navigate(PlanGenerationRoute(threadId))
+                },
+                navigateToHome = {
+                    navController.navigate(Screen.HomeScreen.route) {
+                        popUpTo(Screen.HomeScreen.route) { inclusive = false }
+                        launchSingleTop = true
+                    }
+                },
+                navigateToFavorite = {
+                    navController.navigate(Screen.FavoriteScreen.route) {
+                        launchSingleTop = true
+                    }
+                },
+                navigateToCommunity = {
+                    navController.navigate(Screen.CommunityScreen.route) {
+                        launchSingleTop = true
+                    }
+                },
+                navigateToProfile = {
+                    navController.navigate(Screen.ProfileScreen.route) {
+                        launchSingleTop = true
+                    }
+                }
+            )
+        }
+
+        composable(Screen.TripsScreen.route) {
+            com.example.feature.chat.presentation.ui.TripsScreen(
+                onNavigateToAiChat = {
+                    navController.navigate(Screen.AiChatScreen.route) {
+                        launchSingleTop = true
+                    }
+                },
+                navigateToHome = {
+                    navController.navigate(Screen.HomeScreen.route) {
+                        popUpTo(Screen.HomeScreen.route) { inclusive = false }
+                        launchSingleTop = true
+                    }
+                },
+                navigateToFavorite = {
+                    navController.navigate(Screen.FavoriteScreen.route) {
+                        launchSingleTop = true
+                    }
+                },
+                navigateToCommunity = {
+                    navController.navigate(Screen.CommunityScreen.route) {
+                        launchSingleTop = true
+                    }
+                },
+                navigateToProfile = {
+                    navController.navigate(Screen.ProfileScreen.route) {
+                        launchSingleTop = true
+                    }
+                },
+                onNavigateToTripDetail = { tripId ->
+                    navController.navigate(Screen.TripDetailScreen.createRoute(tripId))
+                }
+            )
+        }
+
+        composable(
+            route = Screen.TripDetailScreen.routePattern,
+            arguments = listOf(navArgument(Screen.TripDetailScreen.ARG_TRIP_ID) { type = NavType.StringType })
+        ) { backStackEntry ->
+            val tripId = backStackEntry.arguments?.getString(Screen.TripDetailScreen.ARG_TRIP_ID) ?: ""
+            com.example.feature.chat.presentation.ui.TripDetailScreen(
+                tripId = tripId,
+                navigateToHome = {
+                    navController.navigate(Screen.HomeScreen.route) {
+                        popUpTo(Screen.HomeScreen.route) { inclusive = false }
+                        launchSingleTop = true
+                    }
+                },
+                navigateToFavorite = {
+                    navController.navigate(Screen.FavoriteScreen.route) {
+                        launchSingleTop = true
+                    }
+                },
+                navigateToCommunity = {
+                    navController.navigate(Screen.CommunityScreen.route) {
+                        launchSingleTop = true
+                    }
+                },
+                navigateToProfile = {
+                    navController.navigate(Screen.ProfileScreen.route) {
+                        launchSingleTop = true
+                    }
+                }
+            )
+        }
+
+        composable<PlanGenerationRoute> { backStackEntry ->
+            val route: PlanGenerationRoute = backStackEntry.toRoute()
+            PlanGenerationScreen(
+                threadId = route.threadId,
+                onDismiss = { navController.popBackStack() },
+                onNavigateToTripDetail = { tripId ->
+                    navController.popBackStack() // Pop PlanGenerationScreen
+                    navController.navigate(Screen.TripDetailScreen.createRoute(tripId))
+                }
+            )
         }
 
         composable(Screen.SurveyScreen.route) {

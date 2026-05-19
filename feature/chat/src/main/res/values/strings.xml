@@ -1,0 +1,29 @@
+<resources>
+    <string name="travel_assistant">Travel Assistant</string>
+    <string name="travel_ai_assistant">Travel AI Assistant</string>
+    <string name="travel_ai_assistant_subtitle">Your intelligent companion for discovering amazing destinations and planning perfect trips</string>
+    <string name="ask_chatgpt">Ask ChatGPT</string>
+    <string name="send_message">Send Message</string>
+    <string name="ask_anything">Ask anything...</string>
+    <string name="creating_your_plan">Creating your plan...</string>
+    <string name="dismiss">Dismiss</string>
+    <string name="plan_created_successfully">Plan Created Successfully!</string>
+    <string name="waiting_to_start">Waiting to start...</string>
+    <string name="my_previous_trips">My Previous Trips</string>
+    <string name="ai_powered_planning">AI-Powered Travel Planning</string>
+    <string name="ai_planning_subtitle">Get personalized recommendations and curated itineraries designed just for you.</string>
+    <string name="plan_with_ai">Plan with AI</string>
+    <string name="recommended_hotels">Recommended Hotels</string>
+    <string name="building_trip_title">Building a trip just for you</string>
+    <string name="building_trip_subtitle">We\'re whipping up all your recommendations in one place.</string>
+    <string name="keep_explore">Keep Explore</string>
+    <string name="plan_creation_failed">Plan creation failed</string>
+    <string name="unknown_error">Unknown error</string>
+    <string name="remove">Remove</string>
+    <string name="days_trip_count">%1$d Days Trip</string>
+    <string name="notification_title_completed">Your AI trip plan is ready 🎉</string>
+    <string name="notification_body_completed">Click to open and explore your itinerary</string>
+    <string name="notification_title_failed">Plan Generation Failed</string>
+    <string name="notification_body_failed">Failed to generate plan for thread %1$s.</string>
+    <string name="retry">Retry</string>
+</resources>

@@ -19,6 +19,7 @@
     <string name="bottom_nav_favorite">Favorite</string>
     <string name="bottom_nav_community">Community</string>
     <string name="bottom_nav_ai_chat">AI Chat</string>
+    <string name="bottom_nav_trips">Trips</string>
     <string name="bottom_nav_profile">Profile</string>
 
     <!-- Content Descriptions -->

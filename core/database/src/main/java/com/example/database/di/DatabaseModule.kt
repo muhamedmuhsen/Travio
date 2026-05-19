@@ -44,4 +44,8 @@ object DatabaseModule {
     @Provides
     @Singleton
     fun provideRecentSearchDao(database: TravioDatabase): RecentSearchDao = database.recentSearchDao()
+
+    @Provides
+    @Singleton
+    fun provideTripPlanDao(database: TravioDatabase): com.example.database.trips.TripPlanDao = database.tripPlanDao()
 }

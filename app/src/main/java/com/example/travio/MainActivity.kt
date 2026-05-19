@@ -19,10 +19,12 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     private val viewModel: MainViewModel by viewModels()
+    private val notificationTripId = kotlinx.coroutines.flow.MutableStateFlow<String?>(null)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
+        handleIntent(intent)
         splashScreen.setKeepOnScreenCondition { viewModel.startDestination.value == null }
         enableEdgeToEdge()
         setContent {
@@ -30,6 +32,16 @@ class MainActivity : ComponentActivity() {
             val isDarkModePreference by viewModel.isDarkMode.collectAsStateWithLifecycle()
             val isDarkMode = isDarkModePreference ?: isSystemInDarkTheme()
             val diagnosticsState = EnvironmentDiagnosticsState.fromBuildConfig()
+
+            val notificationTripIdState by notificationTripId.collectAsStateWithLifecycle()
+            val navController = rememberNavController()
+
+            androidx.compose.runtime.LaunchedEffect(notificationTripIdState) {
+                notificationTripIdState?.let { tripId ->
+                    navController.navigate(Screen.TripDetailScreen.createRoute(tripId))
+                    notificationTripId.value = null
+                }
+            }
 
             TravioTheme(darkTheme = isDarkMode) {
                 Box {
@@ -44,7 +56,7 @@ class MainActivity : ComponentActivity() {
                         }
 
                         TravioNavHost(
-                            navController = rememberNavController(),
+                            navController = navController,
                             startDestination = destination
                         )
                     }
@@ -55,6 +67,20 @@ class MainActivity : ComponentActivity() {
 //                    )
                 }
             }
+        }
+    }
+
+    override fun onNewIntent(intent: android.content.Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        handleIntent(intent)
+    }
+
+    private fun handleIntent(intent: android.content.Intent?) {
+        val tripId = intent?.getStringExtra("tripId")
+        if (tripId != null) {
+            notificationTripId.value = tripId
+            intent.removeExtra("tripId")
         }
     }
 }
