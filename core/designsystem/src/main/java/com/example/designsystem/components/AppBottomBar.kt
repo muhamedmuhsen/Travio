@@ -100,11 +100,7 @@ fun AppBottomBar(
                     val iconTint = if (selectedItem == index) {
                         MaterialTheme.colorScheme.primary
                     } else {
-                        if (selectedItem == 1) {
-                            Color.Unspecified
-                        } else {
-                            MaterialTheme.colorScheme.onBackground
-                        }
+                        MaterialTheme.colorScheme.onBackground
                     }
                     Icon(
                         painterResource(iconR),
