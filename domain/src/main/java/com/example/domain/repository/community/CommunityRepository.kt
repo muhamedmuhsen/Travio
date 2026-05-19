@@ -29,5 +29,5 @@ interface CommunityRepository {
 
     suspend fun toggleBookmark(postId: Int): Result<Unit, DataError>
 
-    fun notifyPostCreated()
+    fun refreshPosts()
 }

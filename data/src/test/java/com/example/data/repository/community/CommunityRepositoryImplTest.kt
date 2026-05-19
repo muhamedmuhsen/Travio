@@ -46,12 +46,12 @@ class CommunityRepositoryImplTest {
         override suspend fun getPostById(postId: Int): BaseResponse<PostWithCommentsDto> = throw NotImplementedError()
         override suspend fun addComment(postId: Int, request: CommentContentRequest): BaseResponse<Unit> = throw NotImplementedError()
         override suspend fun likePost(postId: Int): LikePostResponse = throw NotImplementedError()
-        override suspend fun deletePost(postId: Int) = throw NotImplementedError()
-        override suspend fun uploadPostImages(postId: Int, Images: List<MultipartBody.Part>) = throw NotImplementedError()
+        override suspend fun deletePost(postId: Int) {}
+        override suspend fun uploadPostImages(postId: Int, Images: List<MultipartBody.Part>) {}
     }
 
     @Test
-    fun should_reEmitPosts_when_notifyPostCreatedCalled() = runTest {
+    fun should_reEmitPosts_when_refreshPostsCalled() = runTest {
         var apiCallCount = 0
         val api = object : FakeCommunityApi() {
             override suspend fun getAllPosts(): BaseResponse<List<PostDto>> {
@@ -73,7 +73,7 @@ class CommunityRepositoryImplTest {
         // Wait for initial emission
         assertEquals(1, emissions.size)
         
-        repo.notifyPostCreated()
+        repo.refreshPosts()
         advanceUntilIdle()
         
         // Wait for second emission
@@ -146,6 +146,40 @@ class CommunityRepositoryImplTest {
         
         assertTrue(result is Result.Error)
         assertEquals(1, emissions.size)
+        
+        job.cancel()
+    }
+
+    @Test
+    fun should_triggerRefresh_when_deletePostSucceeds() = runTest {
+        var apiCallCount = 0
+        val api = object : FakeCommunityApi() {
+            override suspend fun deletePost(postId: Int) {
+                // Success
+            }
+            override suspend fun getAllPosts(): BaseResponse<List<PostDto>> {
+                apiCallCount++
+                return BaseResponse(listOf(samplePostDto(apiCallCount)), true, "OK", emptyList())
+            }
+        }
+        val mockContext = mock<Context>()
+        val repo = CommunityRepositoryImpl(api, mockContext)
+
+        val emissions = mutableListOf<Result<List<CommunityPost>, DataError>>()
+        val job = launch {
+            repo.getAllPost().collect {
+                emissions.add(it)
+            }
+        }
+
+        advanceUntilIdle()
+        assertEquals(1, emissions.size)
+        
+        val result = repo.deletePost(1)
+        advanceUntilIdle()
+        
+        assertTrue(result is Result.Success)
+        assertEquals(2, emissions.size)
         
         job.cancel()
     }
