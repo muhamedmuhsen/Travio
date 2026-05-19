@@ -31,6 +31,8 @@ class FlightDetailsMapperTest {
                     departureTime = "2026-05-03T08:00:00+03:00",
                     destinationAirport = "AMS",
                     arrivalTime = "2026-05-03T10:30:00+03:00",
+                    originCityName = "New York",
+                    destinationCityName = "Amsterdam",
                     segmentDuration = "PT2H30M"
                 )
             )
@@ -84,6 +86,8 @@ class FlightDetailsMapperTest {
                     departureTime = "2026-05-03T08:00:00+03:00",
                     destinationAirport = "AMS",
                     arrivalTime = "2026-05-03T10:30:00+03:00",
+                    originCityName = "New York",
+                    destinationCityName = "Amsterdam",
                     segmentDuration = "PT2H30M"
                 )
             )

@@ -70,12 +70,12 @@ class CommunityRepositoryImpl @Inject constructor(
             ).data.postId
         }
         if (result is Result.Success) {
-            notifyPostCreated()
+            refreshPosts()
         }
         return result
     }
 
-    override fun notifyPostCreated() {
+    override fun refreshPosts() {
         refreshTrigger.tryEmit(Unit)
     }
 
@@ -98,7 +98,13 @@ class CommunityRepositoryImpl @Inject constructor(
         return safeApiCall { api.uploadPostImages(postId, parts.filterNotNull()) }
     }
 
-    override suspend fun deletePost(postId: Int): Result<Unit, DataError> = safeApiCall { api.deletePost(postId) }
+    override suspend fun deletePost(postId: Int): Result<Unit, DataError> {
+        val result = safeApiCall { api.deletePost(postId) }
+        if (result is Result.Success) {
+            refreshPosts()
+        }
+        return result
+    }
 
     override suspend fun addComment(
         postId: Int,
