@@ -2,6 +2,7 @@ package com.dev.home.components
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -39,6 +40,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
 import com.dev.home.presentation.flights.FlightCardContent
 import com.dev.home.presentation.flights.FlightStatusTone
 import com.example.designsystem.components.shimmerEffect
@@ -143,26 +145,37 @@ fun LoadingFlightCard(modifier: Modifier = Modifier) {
 
 @Composable
 private fun FlightCardHeader(content: FlightCardContent) {
-    val context = LocalContext.current
     val logoContentDescription = content.airlineLogoContentDescription
         ?: stringResource(R.string.flight_airline_logo_cd, content.airlineName)
 
     Row(
         modifier = Modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.Top,
+        verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.sm)
     ) {
-        Surface(
-            shape = CircleShape,
-            color = MaterialTheme.colorScheme.primary,
-            modifier = Modifier.size(MaterialTheme.spacing.xl)
+        Box(
+            modifier = Modifier
+                .size(40.dp)
+                .clip(CircleShape)
+                .background(Color(0xFFE8EAF6)),
+            contentAlignment = Alignment.Center
         ) {
-            Image(
-                painter = painterResource(R.drawable.plane_icon2),
-                contentDescription = logoContentDescription,
-                modifier = Modifier.fillMaxSize().padding(8.dp),
-                colorFilter = ColorFilter.tint(Color.White)
-            )
+            if (content.airlineLogoUrl != null) {
+                AsyncImage(
+                    model = content.airlineLogoUrl,
+                    contentDescription = logoContentDescription,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(MaterialTheme.spacing.xs)
+                )
+            } else {
+                Text(
+                    text = content.airlineName.take(2).uppercase(),
+                    style = MaterialTheme.typography.labelMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
         }
 
         Column(
@@ -191,6 +204,9 @@ private fun FlightCardHeader(content: FlightCardContent) {
 
 @Composable
 private fun FlightStatusBadge(content: FlightCardContent) {
+    // DESIGN: Remove the "Unknown" box if no status is provided
+    if (content.status.label.asString().equals("Unknown", ignoreCase = true)) return
+
     val context = LocalContext.current
     val statusContentDescription = stringResource(
         R.string.flight_status_badge_cd,

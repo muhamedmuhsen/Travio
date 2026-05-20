@@ -186,7 +186,8 @@ private fun HomeContent(
                 }
             )
         }
-    ) { paddingValues ->
+    ) {
+            paddingValues ->
         PullToRefreshBox(
             isRefreshing = state.isRefreshing,
             onRefresh = { onAction(HomeAction.OnRefresh) },
