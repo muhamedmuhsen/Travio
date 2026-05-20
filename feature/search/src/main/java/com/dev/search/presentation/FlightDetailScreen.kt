@@ -46,7 +46,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathEffect
@@ -361,52 +363,68 @@ private fun FlightSummaryCard(data: FlightDetailsUiModel) {
                 ) {
                     Text(
                         text = data.summary.totalDuration,
-                        style = MaterialTheme.typography.labelSmall,
+                        style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
-                    Spacer(modifier = Modifier.height(MaterialTheme.spacing.xxs))
+                    Spacer(modifier = Modifier.height(MaterialTheme.spacing.xs))
                     Box(contentAlignment = Alignment.Center) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.drawBehind {
+                                val dashLength = 4.dp.toPx()
+                                val gapLength = 4.dp.toPx()
+                                drawLine(
+                                    color = Color.Gray.copy(alpha = 0.5f),
+                                    start = Offset(0f, size.height / 2),
+                                    end = Offset(size.width, size.height / 2),
+                                    strokeWidth = 1.dp.toPx(),
+                                    pathEffect = PathEffect.dashPathEffect(
+                                        floatArrayOf(dashLength, gapLength),
+                                        0f
+                                    )
+                                )
+                            }
+                        ) {
                             Box(
-                                modifier = Modifier.size(
-                                    MaterialTheme.spacing.xxs
-                                ).background(MaterialTheme.colorScheme.secondaryContainer, CircleShape)
+                                modifier = Modifier
+                                    .size(6.dp)
+                                    .background(Color(0xFF2E7D32), CircleShape)
                             )
+                            Spacer(modifier = Modifier.width(MaterialTheme.spacing.xxxl + MaterialTheme.spacing.md))
                             Box(
-                                modifier = Modifier.width(
-                                    MaterialTheme.spacing.xxxl + MaterialTheme.spacing.md
-                                ).height(MaterialTheme.spacing.xxs).background(MaterialTheme.colorScheme.secondaryContainer)
-                            )
-                            Box(
-                                modifier = Modifier.size(
-                                    MaterialTheme.spacing.xxs
-                                ).background(MaterialTheme.colorScheme.errorContainer, CircleShape)
+                                modifier = Modifier
+                                    .size(6.dp)
+                                    .background(Color(0xFFD32F2F), CircleShape)
                             )
                         }
                         Box(
                             modifier = Modifier
-                                .size(MaterialTheme.spacing.lg)
-                                .background(MaterialTheme.colorScheme.primary, CircleShape),
+                                .size(28.dp)
+                                .background(Color(0xFF006064), CircleShape)
+                                .border(2.dp, Color.White, CircleShape),
                             contentAlignment = Alignment.Center
                         ) {
                             Icon(
                                 painter = painterResource(R.drawable.plane_icon),
                                 contentDescription = null,
-                                tint = MaterialTheme.colorScheme.onPrimary,
-                                modifier = Modifier.size(MaterialTheme.spacing.sm + MaterialTheme.spacing.xxs)
+                                tint = Color.White,
+                                modifier = Modifier.size(16.dp)
                             )
                         }
                     }
-                    Spacer(modifier = Modifier.height(MaterialTheme.spacing.xxs))
+                    Spacer(modifier = Modifier.height(MaterialTheme.spacing.xs))
                     Box(
                         modifier = Modifier
-                            .background(MaterialTheme.colorScheme.errorContainer, MaterialTheme.shapes.small)
-                            .padding(horizontal = MaterialTheme.spacing.xs, vertical = 2.dp)
+                            .background(
+                                color = MaterialTheme.colorScheme.error.copy(alpha = 0.12f),
+                                shape = CircleShape
+                            )
+                            .padding(horizontal = 12.dp, vertical = 4.dp)
                     ) {
                         Text(
                             text = data.summary.stopsLabel.asString(),
                             style = MaterialTheme.typography.labelSmall,
-                            color = MaterialTheme.colorScheme.onErrorContainer,
+                            color = MaterialTheme.colorScheme.error,
                             fontWeight = FontWeight.Bold
                         )
                     }
