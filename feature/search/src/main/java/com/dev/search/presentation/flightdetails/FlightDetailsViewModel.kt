@@ -103,6 +103,7 @@ class FlightDetailsViewModel @Inject constructor(
         val summary = FlightDetailsSummaryUi(
             offerId = offerId,
             airlineName = segments.first().airlineName,
+            airlineLogoUrl = segments.first().airlineLogoUrl,
             flightNumber = segments.first().flightNumber,
             departureTime = departureTime.toFormattedTime(),
             departureDate = departureTime.toFormattedDate(),
@@ -131,7 +132,8 @@ class FlightDetailsViewModel @Inject constructor(
             aircraftName = segments.first().aircraftName,
             cabinClass = null,
             stopsLabel = stopsLabel,
-            airlineName = segments.first().airlineName
+            airlineName = segments.first().airlineName,
+            airlineLogoUrl = segments.first().airlineLogoUrl
         )
 
         val timeline = buildList {
@@ -143,7 +145,13 @@ class FlightDetailsViewModel @Inject constructor(
                         segment.departureTime.toFullDate()
                     )
                 )
-                add(TimelineItemUi.Flight("${segment.airlineName} ${segment.flightNumber}", segment.segmentDuration.toFlightDuration()))
+                add(
+                    TimelineItemUi.Flight(
+                        airlineAndFlightNumber = "${segment.airlineName} ${segment.flightNumber}",
+                        duration = segment.segmentDuration.toFlightDuration(),
+                        airlineLogoUrl = segment.airlineLogoUrl
+                    )
+                )
                 add(
                     TimelineItemUi.Arrival(
                         segment.destinationAirport,

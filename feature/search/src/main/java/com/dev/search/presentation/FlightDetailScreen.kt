@@ -60,6 +60,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import coil.compose.AsyncImage
 import com.dev.search.presentation.flightdetails.ExtrasUi
 import com.dev.search.presentation.flightdetails.FlightDetailsEvent
 import com.dev.search.presentation.flightdetails.FlightDetailsSummaryUi
@@ -280,29 +281,42 @@ private fun AirlineHeaderCard(summary: FlightDetailsSummaryUi) {
         ) {
             Box(
                 modifier = Modifier
-                    .size(MaterialTheme.spacing.xxxl)
+                    .size(56.dp)
                     .clip(CircleShape)
-                    .background(MaterialTheme.colorScheme.surfaceVariant),
+                    // Light lavender/grey
+                    .background(Color(0xFFE8EAF6)),
                 contentAlignment = Alignment.Center
             ) {
-                Text(
-                    text = summary.airlineName.take(2).uppercase(),
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
+                if (summary.airlineLogoUrl != null) {
+                    AsyncImage(
+                        model = summary.airlineLogoUrl,
+                        contentDescription = summary.airlineName,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(MaterialTheme.spacing.sm)
+                    )
+                } else {
+                    Text(
+                        text = summary.airlineName.take(2).uppercase(),
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
             }
-            Spacer(modifier = Modifier.width(MaterialTheme.spacing.sm))
+            Spacer(modifier = Modifier.width(MaterialTheme.spacing.md))
             Column {
                 Text(
                     text = summary.airlineName,
                     style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold,
+                    fontWeight = FontWeight.ExtraBold,
                     color = MaterialTheme.colorScheme.onSurface
                 )
                 Text(
                     text = "${summary.flightNumber} · Economy",
                     style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    fontWeight = FontWeight.Medium
                 )
             }
         }
@@ -758,6 +772,14 @@ private fun FlightInformationCard(
                         modifier = Modifier.size(MaterialTheme.spacing.md)
                     )
                     Spacer(modifier = Modifier.width(MaterialTheme.spacing.xs))
+                    if (info.airlineLogoUrl != null) {
+                        AsyncImage(
+                            model = info.airlineLogoUrl,
+                            contentDescription = null,
+                            modifier = Modifier.size(MaterialTheme.spacing.md).clip(CircleShape)
+                        )
+                        Spacer(modifier = Modifier.width(MaterialTheme.spacing.xs))
+                    }
                     Text(
                         text = stringResource(R.string.flight_details_operated_by, info.airlineName),
                         style = MaterialTheme.typography.labelSmall,
@@ -943,12 +965,20 @@ private fun TimelineItem(
 
                 is TimelineItemUi.Flight -> {
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        Icon(
-                            imageVector = Icons.Outlined.ConfirmationNumber,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier.size(16.dp)
-                        )
+                        if (item.airlineLogoUrl != null) {
+                            AsyncImage(
+                                model = item.airlineLogoUrl,
+                                contentDescription = null,
+                                modifier = Modifier.size(16.dp).clip(CircleShape)
+                            )
+                        } else {
+                            Icon(
+                                imageVector = Icons.Outlined.ConfirmationNumber,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier.size(16.dp)
+                            )
+                        }
                         Spacer(modifier = Modifier.width(MaterialTheme.spacing.xs))
                         Column {
                             Text(
@@ -1219,8 +1249,9 @@ private fun FlightDetailPreviewContent() {
     val mockData = FlightDetailsUiModel(
         summary = FlightDetailsSummaryUi(
             offerId = "mock_offer_id",
-            airlineName = "British Airways",
-            flightNumber = "BA 0189",
+            airlineName = "Aegean Airlines",
+            airlineLogoUrl = "https://assets.duffel.com/img/airlines/for-light-background/full-color-logo/A3.svg",
+            flightNumber = "A3 0931",
             departureTime = "22:27",
             departureDate = "May 30",
             departureDateFull = "Saturday, May 30, 2026",
@@ -1242,19 +1273,28 @@ private fun FlightDetailPreviewContent() {
             pricePerPerson = 176.76
         ),
         flightInfo = FlightInfoUi(
-            flightNumber = "BA 0189",
-            aircraftName = "Boeing 787",
+            flightNumber = "A3 0931",
+            aircraftName = "Airbus A320neo",
             cabinClass = "Economy",
             stopsLabel = UiText.DynamicString("1 Stop"),
-            airlineName = "British Airways"
+            airlineName = "Aegean Airlines",
+            airlineLogoUrl = "https://assets.duffel.com/img/airlines/for-light-background/full-color-logo/A3.svg"
         ),
         timeline = listOf(
             TimelineItemUi.Departure("Cairo International Airport (CAI)", "10:27 PM", "May 30, 2026"),
-            TimelineItemUi.Flight("British Airways BA 0189", "2h 30m"),
-            TimelineItemUi.Arrival("Istanbul Airport (IST)", "12:57 AM", "May 31, 2026"),
-            TimelineItemUi.Layover("2h 00m", "Istanbul Airport (IST)"),
-            TimelineItemUi.Departure("Istanbul Airport (IST)", "02:57 AM", "May 31, 2026"),
-            TimelineItemUi.Flight("British Airways BA 0190", "3h 45m"),
+            TimelineItemUi.Flight(
+                airlineAndFlightNumber = "Aegean Airlines A3 0931",
+                duration = "2h 30m",
+                airlineLogoUrl = "https://assets.duffel.com/img/airlines/for-light-background/full-color-logo/A3.svg"
+            ),
+            TimelineItemUi.Arrival("Athens (ATH)", "12:57 AM", "May 31, 2026"),
+            TimelineItemUi.Layover("2h 00m", "Athens (ATH)"),
+            TimelineItemUi.Departure("Athens (ATH)", "02:57 AM", "May 31, 2026"),
+            TimelineItemUi.Flight(
+                airlineAndFlightNumber = "Aegean Airlines A3 0932",
+                duration = "3h 45m",
+                airlineLogoUrl = "https://assets.duffel.com/img/airlines/for-light-background/full-color-logo/A3.svg"
+            ),
             TimelineItemUi.Arrival("Paris Charles de Gaulle (CDG)", "06:42 AM", "May 31, 2026")
         ),
         extras = ExtrasUi(

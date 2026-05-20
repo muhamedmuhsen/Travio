@@ -135,6 +135,7 @@ maps-compose = { group = "com.google.maps.android", name = "maps-compose", versi
 # Image Loading
 coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil" }
 coil-network-okhttp = { group = "io.coil-kt", name = "coil-network-okhttp", version.ref = "coil" }
+coil-svg = { group = "io.coil-kt", name = "coil-svg", version.ref = "coil" }
 
 # UI & Material
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }

@@ -227,6 +227,7 @@ dependencies {
     ksp(libs.hilt.compiler)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.coil.compose)
+    implementation(libs.coil.svg)
     implementation(libs.okhttp)
     implementation(libs.timber)
     implementation(libs.stripe.android)

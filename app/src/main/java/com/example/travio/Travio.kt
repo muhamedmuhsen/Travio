@@ -3,6 +3,7 @@ package com.example.travio
 import android.app.Application
 import coil.Coil
 import coil.ImageLoader
+import coil.decode.SvgDecoder
 import com.example.travio.config.AppEnvironmentConfig
 import com.stripe.android.PaymentConfiguration
 import dagger.hilt.android.HiltAndroidApp
@@ -23,13 +24,21 @@ class Travio : Application() {
         // Fails fast when tester/production variants are built with placeholder endpoint values.
         val environmentConfig = AppEnvironmentConfig.fromBuildConfig()
 
+        Coil.setImageLoader(
+            ImageLoader.Builder(this)
+                .components {
+                    add(SvgDecoder.Factory())
+                }
+                .apply {
+                    if (environmentConfig.enableDebugDiagnostics) {
+                        okHttpClient(buildUnsafeOkHttpClient())
+                    }
+                }
+                .build()
+        )
+
         if (environmentConfig.enableDebugDiagnostics) {
             Timber.plant(Timber.DebugTree())
-            Coil.setImageLoader(
-                ImageLoader.Builder(this)
-                    .okHttpClient(buildUnsafeOkHttpClient())
-                    .build()
-            )
         }
 
         val stripePublishableKey = getString(R.string.stripe_publishable_key).trim()

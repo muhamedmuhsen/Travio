@@ -13,6 +13,7 @@ data class FlightDetailsUiModel(
 data class FlightDetailsSummaryUi(
     val offerId: String,
     val airlineName: String,
+    val airlineLogoUrl: String?,
     val flightNumber: String,
     val departureTime: String,
     val departureDate: String,
@@ -41,7 +42,8 @@ data class FlightInfoUi(
     val aircraftName: String,
     val cabinClass: String?,
     val stopsLabel: UiText,
-    val airlineName: String
+    val airlineName: String,
+    val airlineLogoUrl: String?
 )
 
 sealed interface TimelineItemUi {
@@ -53,7 +55,8 @@ sealed interface TimelineItemUi {
 
     data class Flight(
         val airlineAndFlightNumber: String,
-        val duration: String
+        val duration: String,
+        val airlineLogoUrl: String? = null
     ) : TimelineItemUi
 
     data class Layover(
