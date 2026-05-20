@@ -430,6 +430,8 @@ private fun FlightSummaryCard(data: FlightDetailsUiModel) {
                         color = MaterialTheme.colorScheme.primary,
                         textAlign = TextAlign.Center
                     )
+                    Spacer(modifier = Modifier.height(MaterialTheme.spacing.xs))
+
                     data.summary.destinationCity?.let { city ->
                         Text(
                             text = city,
@@ -455,7 +457,7 @@ private fun FlightSummaryCard(data: FlightDetailsUiModel) {
                 }
             }
 
-            Spacer(modifier = Modifier.height(MaterialTheme.spacing.md))
+            Spacer(modifier = Modifier.height(MaterialTheme.spacing.xl))
 
             Box(
                 modifier = Modifier
@@ -472,7 +474,7 @@ private fun FlightSummaryCard(data: FlightDetailsUiModel) {
                 )
             }
 
-            Spacer(modifier = Modifier.height(MaterialTheme.spacing.md))
+            Spacer(modifier = Modifier.height(MaterialTheme.spacing.xl))
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -529,7 +531,7 @@ private fun FeatureIcon(
     title: String,
     subtitle: String
 ) {
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(4.dp)) {
         Icon(
             painter = icon,
             contentDescription = null,
