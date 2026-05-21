@@ -1,0 +1,29 @@
+<resources>
+    <string name="hotel_details_no_images">No images available</string>
+    <string name="hotel_details_gallery_image_desc">Hotel image %1$d</string>
+    <string name="hotel_details_error_loading">Could not load hotel details. Please check your connection and try again.</string>
+    <string name="hotel_details_retry">Retry</string>
+    <string name="hotel_details_no_rooms">No rooms available</string>
+    
+    <string name="hotel_details_room_only">Room Only</string>
+    <string name="hotel_details_free_cancellation">Free Cancellation</string>
+    <string name="hotel_details_non_refundable">Non-Refundable</string>
+    <string name="hotel_details_rooms_left">Only %1$d rooms left</string>
+    <string name="hotel_details_price_on_request">Price on request</string>
+    <string name="hotel_details_book_now">Book Now</string>
+    <string name="hotel_details_starting_from_price">Starting from $%1$.2f</string>
+    <string name="hotel_details_pricing_unavailable">Pricing unavailable</string>
+    <string name="hotel_details_available_rates">Available Rates</string>
+    <string name="hotel_details_rooms">Select a room</string>
+    
+    <string name="hotel_details_facilities">Amenities</string>
+    <string name="hotel_details_about">About this hotel</string>
+    <string name="hotel_details_read_more">Read more</string>
+    <string name="hotel_details_read_less">Read less</string>
+    
+    <string name="hotel_details_location">Location</string>
+    <string name="hotel_details_contact">Contact Information</string>
+    <string name="hotel_details_call">Call</string>
+    <string name="hotel_details_email">Email</string>
+    <string name="hotel_details_website">Website</string>
+</resources>

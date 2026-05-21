@@ -85,6 +85,7 @@ import com.google.accompanist.permissions.rememberMultiplePermissionsState
 fun HomeScreen(
     modifier: Modifier = Modifier,
     navigateToDestination: (String) -> Unit = {},
+    navigateToHotelDetails: (Int) -> Unit = {},
     navigateToFlightDetails: (String) -> Unit = {},
     startFlightBooking: (String) -> Unit = {},
     navigateToSearch: () -> Unit = {},
@@ -115,6 +116,7 @@ fun HomeScreen(
         viewModel.event.collect { event ->
             when (event) {
                 is HomeEvent.NavigateToDestination -> navigateToDestination(event.id)
+                is HomeEvent.NavigateToHotelDetails -> navigateToHotelDetails(event.code)
                 is HomeEvent.NavigateToFlightDetails -> navigateToFlightDetails(event.id)
                 is HomeEvent.StartFlightBooking -> startFlightBooking(event.id)
                 HomeEvent.NavigateToSearch -> navigateToSearch()

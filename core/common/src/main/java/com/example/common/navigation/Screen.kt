@@ -30,6 +30,13 @@ sealed class Screen(val route: String) {
         fun createRoute(destinationId: Int): String = "$route/$destinationId"
     }
 
+    data object HotelDetailScreen : Screen(Screens.HOTEL_DETAIL.name) {
+        const val ARG_HOTEL_CODE = "hotelCode"
+        val routePattern = "$route/{$ARG_HOTEL_CODE}"
+
+        fun createRoute(hotelCode: Int): String = "$route/$hotelCode"
+    }
+
     data object SearchScreen : Screen(Screens.SEARCH.name)
     data object SurveyScreen : Screen(Screens.SURVEY.name)
     data object PostDetailScreen : Screen(Screens.POST_DETAIL.name)
@@ -69,5 +76,6 @@ enum class Screens {
     SHARE_MOMENT,
     LOCATION_PICKER,
     SEE_ALL_FLIGHTS,
-    FLIGHT_DETAIL
+    FLIGHT_DETAIL,
+    HOTEL_DETAIL
 }

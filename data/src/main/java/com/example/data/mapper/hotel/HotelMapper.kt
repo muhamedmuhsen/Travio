@@ -6,7 +6,7 @@ import com.example.domain.model.hotel.NearbyHotel
 import com.example.network.dto.hotel.HotelDto
 import com.example.network.dto.hotel.HotelImageDto
 
-private fun resolveImageUrl(path: String?): String? {
+internal fun resolveImageUrl(path: String?): String? {
     if (path.isNullOrBlank()) return null
     if (path.startsWith("http", ignoreCase = true)) return path
     val base = BuildConfig.IMAGE_BASE_URL.trimEnd('/')

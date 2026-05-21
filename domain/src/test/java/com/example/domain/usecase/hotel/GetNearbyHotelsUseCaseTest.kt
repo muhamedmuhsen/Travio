@@ -88,6 +88,17 @@ class GetNearbyHotelsUseCaseTest {
             lastCheckOut = checkOut
             return nearbyResult
         }
+
+        override suspend fun getHotelDetails(
+            hotelCode: Int,
+            checkIn: String,
+            checkOut: String,
+            adults: Int,
+            children: Int?,
+            childrenAges: String?
+        ): Result<com.example.domain.model.hotel.HotelDetails, DataError> {
+            return Result.Error(DataError.UnknownError)
+        }
     }
 
     private companion object {

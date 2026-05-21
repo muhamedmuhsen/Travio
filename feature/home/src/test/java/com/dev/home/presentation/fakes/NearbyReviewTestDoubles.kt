@@ -141,6 +141,17 @@ class FakeHotelRepository : HotelRepository {
         )
         return searchResult
     }
+
+    override suspend fun getHotelDetails(
+        hotelCode: Int,
+        checkIn: String,
+        checkOut: String,
+        adults: Int,
+        children: Int?,
+        childrenAges: String?
+    ): Result<com.example.domain.model.hotel.HotelDetails, DataError> {
+        return Result.Error(DataError.UnknownError)
+    }
 }
 
 data class HotelSearchRequest(

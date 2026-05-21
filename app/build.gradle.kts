@@ -201,6 +201,7 @@ dependencies {
     implementation(project(":feature:survey"))
     implementation(project(":feature:search"))
     implementation(project(":feature:destination"))
+    implementation(project(":feature:hotel"))
     implementation(project(":feature:booking"))
     implementation(project(":feature:chat"))
 

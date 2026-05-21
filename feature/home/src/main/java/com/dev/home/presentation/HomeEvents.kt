@@ -12,6 +12,7 @@ sealed interface HomeEvent {
     data class StartFlightBooking(val id: String) : HomeEvent
     data object NavigateToSearch : HomeEvent
     data object RequestLocationPermission : HomeEvent
+    data class NavigateToHotelDetails(val code: Int) : HomeEvent
 }
 
 sealed interface HomeSection {
