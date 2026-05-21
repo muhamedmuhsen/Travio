@@ -80,7 +80,7 @@ fun BookingCard(
                     text = "$$price",
                     style = MaterialTheme.typography.headlineMedium,
                     fontWeight = FontWeight.Bold,
-                    color = Color(0xFF008080)
+                    color = MaterialTheme.colorScheme.primary
                 )
                 Spacer(modifier = Modifier.width(4.dp))
                 Text(
@@ -154,7 +154,7 @@ fun BookingCard(
                     .fillMaxWidth()
                     .height(48.dp),
                 shape = RoundedCornerShape(8.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF008080)),
+                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
                 enabled = !uiState.isSearchingRooms
             ) {
                 if (uiState.isSearchingRooms) {
@@ -260,12 +260,6 @@ private fun GuestSelectionDialog(
                     label = "Children",
                     count = uiState.children,
                     onCountChanged = { onAction(HotelDetailAction.OnChildrenCountChanged(it)) }
-                )
-                CounterRow(
-                    label = "Rooms",
-                    count = uiState.rooms,
-                    onCountChanged = { onAction(HotelDetailAction.OnRoomsCountChanged(it)) },
-                    minCount = 1
                 )
 
                 if (uiState.children > 0) {

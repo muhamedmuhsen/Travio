@@ -137,7 +137,8 @@ class HotelDetailViewModel @Inject constructor(
 
             when (val result = getNearbyHotelsUseCase(latitude = latitude, longitude = longitude, radiusInKm = 10)) {
                 is Result.Success -> {
-                    _uiState.update { it.copy(nearbyHotelsState = UiState.Success(result.data)) }
+                    val filteredHotels = result.data.filter { it.code != hotelCode }
+                    _uiState.update { it.copy(nearbyHotelsState = UiState.Success(filteredHotels)) }
                 }
                 is Result.Error -> {
                     _uiState.update { it.copy(nearbyHotelsState = UiState.Error(result.error.asUiText())) }

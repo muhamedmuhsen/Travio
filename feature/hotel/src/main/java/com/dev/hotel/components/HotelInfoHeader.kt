@@ -131,8 +131,6 @@ fun HotelInfoHeader(
             if (!hotelDetails.accommodationType.isNullOrBlank()) {
                 TagChip(text = hotelDetails.accommodationType!!)
             }
-            TagChip(text = "Luxury")
-            TagChip(text = "Top Rated")
         }
 
         Spacer(modifier = Modifier.height(16.dp))

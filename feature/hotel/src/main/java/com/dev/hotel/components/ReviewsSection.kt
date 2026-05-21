@@ -64,6 +64,7 @@ fun ReviewsSection(
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -88,15 +89,6 @@ fun ReviewsSection(
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
-                }
-
-                Spacer(modifier = Modifier.width(32.dp))
-
-                Column(modifier = Modifier.weight(1f)) {
-                    RatingBreakdownItem(label = stringResource(R.string.hotel_details_cleanliness), rating = 4.8f)
-                    RatingBreakdownItem(label = stringResource(R.string.hotel_details_service), rating = 4.9f)
-                    RatingBreakdownItem(label = stringResource(R.string.hotel_details_amenities), rating = 5.0f)
-                    RatingBreakdownItem(label = stringResource(R.string.hotel_details_value), rating = 4.7f)
                 }
             }
 
@@ -132,45 +124,6 @@ fun ReviewsSection(
                 Text(text = stringResource(R.string.hotel_details_show_all_reviews))
             }
         }
-    }
-}
-
-@Composable
-private fun RatingBreakdownItem(
-    label: String,
-    rating: Float
-) {
-    Row(
-        modifier = Modifier.fillMaxWidth().padding(vertical = 2.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Text(
-            text = label,
-            style = MaterialTheme.typography.labelSmall,
-            modifier = Modifier.width(80.dp),
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
-        Box(
-            modifier = Modifier
-                .height(6.dp)
-                .weight(1f)
-                .clip(CircleShape)
-                .background(Color.LightGray.copy(alpha = 0.3f))
-        ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth(rating / 5f)
-                    .height(6.dp)
-                    .clip(CircleShape)
-                    .background(Color(0xFF008080))
-            )
-        }
-        Spacer(modifier = Modifier.width(8.dp))
-        Text(
-            text = rating.toString(),
-            style = MaterialTheme.typography.labelSmall,
-            fontWeight = FontWeight.Bold
-        )
     }
 }
 
