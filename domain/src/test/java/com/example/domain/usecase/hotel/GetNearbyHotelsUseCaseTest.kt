@@ -78,7 +78,8 @@ class GetNearbyHotelsUseCaseTest {
             checkIn: String,
             checkOut: String,
             radiusInKm: Int,
-            maxHotels: Int
+            maxHotels: Int,
+            hotelCodes: List<Int>
         ): Result<List<NearbyHotel>, DataError> {
             searchCalls += 1
             lastLatitude = latitude

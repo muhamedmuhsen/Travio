@@ -21,26 +21,40 @@ class HotelRepositoryImpl @Inject constructor(
         checkIn: String,
         checkOut: String,
         radiusInKm: Int,
-        maxHotels: Int
+        maxHotels: Int,
+        hotelCodes: List<Int>
     ): Result<List<NearbyHotel>, DataError> {
         val request = HotelSearchRequestDto(
             checkIn = checkIn,
             checkOut = checkOut,
             occupancies = listOf(
                 OccupancyDto(
-                    rooms = 1,
                     adults = 2,
-                    children = 0
+                    children = 0,
+                    childrenAges = emptyList()
                 )
             ),
             latitude = latitude,
             longitude = longitude,
             radiusInKm = radiusInKm,
+            hotelCodes = hotelCodes,
             maxHotels = maxHotels
         )
-        return safeApiCall {
-            val response = api.searchHotels(request)
-            response.map { it.toDomain() }
+        val result = safeApiCall {
+            api.searchHotels(request)
+        }
+
+        return when (result) {
+            is Result.Success -> {
+                val response = result.data
+                if (!response.success) {
+                    Result.Error(DataError.Logical(response.message))
+                } else {
+                    val hotels = response.data?.hotels?.map { it.toDomain() } ?: emptyList()
+                    Result.Success(hotels)
+                }
+            }
+            is Result.Error -> Result.Error(result.error)
         }
     }
 }

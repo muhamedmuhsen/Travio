@@ -9,5 +9,6 @@ data class HotelSearchRequestDto(
     @SerializedName("latitude") val latitude: Double,
     @SerializedName("longitude") val longitude: Double,
     @SerializedName("radiusInKm") val radiusInKm: Int,
-    @SerializedName("maxHotels") val maxHotels: Int
+    @SerializedName("maxHotels") val maxHotels: Int,
+    @SerializedName("hotelCodes") val hotelCodes: List<Int> = listOf(1)
 )

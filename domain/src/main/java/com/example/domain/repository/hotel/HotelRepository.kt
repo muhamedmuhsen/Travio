@@ -11,6 +11,7 @@ interface HotelRepository {
         checkIn: String,
         checkOut: String,
         radiusInKm: Int = 50,
-        maxHotels: Int = 10
+        maxHotels: Int = 10,
+        hotelCodes: List<Int> = listOf(1)
     ): Result<List<NearbyHotel>, DataError>
 }

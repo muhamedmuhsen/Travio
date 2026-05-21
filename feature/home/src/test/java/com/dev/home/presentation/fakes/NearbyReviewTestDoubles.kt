@@ -130,7 +130,8 @@ class FakeHotelRepository : HotelRepository {
         checkIn: String,
         checkOut: String,
         radiusInKm: Int,
-        maxHotels: Int
+        maxHotels: Int,
+        hotelCodes: List<Int>
     ): Result<List<NearbyHotel>, DataError> {
         searchRequests += HotelSearchRequest(
             latitude = latitude,
