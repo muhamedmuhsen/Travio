@@ -3,7 +3,10 @@ package com.example.database
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import com.example.database.hotel.CachedHotelDetails
 import com.example.database.hotel.CachedNearbyHotel
+import com.example.database.hotel.HotelDetailsDao
+import com.example.database.hotel.HotelDetailsTypeConverters
 import com.example.database.hotel.NearbyHotelDao
 import com.example.database.hotel.NearbyHotelTypeConverters
 import com.example.database.place.FavoritePlaceDao
@@ -25,12 +28,18 @@ import com.example.database.recentsearch.RecentSearchDao
         RecentlyViewedDestination::class,
         RecentSearch::class,
         com.example.database.trips.TripPlanEntity::class,
-        CachedNearbyHotel::class
+        CachedNearbyHotel::class,
+        CachedHotelDetails::class
     ],
-    version = 5,
+    version = 6,
     exportSchema = false
 )
-@TypeConverters(StringListConverter::class, com.example.database.trips.TripPlanTypeConverters::class, NearbyHotelTypeConverters::class)
+@TypeConverters(
+    StringListConverter::class,
+    com.example.database.trips.TripPlanTypeConverters::class,
+    NearbyHotelTypeConverters::class,
+    HotelDetailsTypeConverters::class
+)
 abstract class TravioDatabase : RoomDatabase() {
     abstract fun postDao(): FavoritePostDao
     abstract fun placeDao(): FavoritePlaceDao
@@ -38,4 +47,5 @@ abstract class TravioDatabase : RoomDatabase() {
     abstract fun recentSearchDao(): RecentSearchDao
     abstract fun tripPlanDao(): com.example.database.trips.TripPlanDao
     abstract fun nearbyHotelDao(): NearbyHotelDao
+    abstract fun hotelDetailsDao(): HotelDetailsDao
 }

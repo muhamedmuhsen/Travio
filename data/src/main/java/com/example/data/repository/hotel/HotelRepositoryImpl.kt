@@ -3,6 +3,7 @@ package com.example.data.repository.hotel
 import com.example.data.mapper.hotel.toCached
 import com.example.data.mapper.hotel.toDomain
 import com.example.data.utils.safeApiCall
+import com.example.database.hotel.HotelDetailsDao
 import com.example.database.hotel.NearbyHotelDao
 import com.example.domain.model.hotel.HotelDetails
 import com.example.domain.model.hotel.NearbyHotel
@@ -16,7 +17,8 @@ import javax.inject.Inject
 
 class HotelRepositoryImpl @Inject constructor(
     private val api: HotelApi,
-    private val nearbyHotelDao: NearbyHotelDao
+    private val nearbyHotelDao: NearbyHotelDao,
+    private val hotelDetailsDao: HotelDetailsDao
 ) : HotelRepository {
 
     override suspend fun searchNearbyHotels(
@@ -95,6 +97,25 @@ class HotelRepositoryImpl @Inject constructor(
         children: Int?,
         childrenAges: String?
     ): Result<HotelDetails, DataError> {
+        // 1. Check Cache First
+        val childrenAgesStr = childrenAges ?: ""
+        val childrenCount = children ?: 0
+        val expirationTime = System.currentTimeMillis() - (24 * 60 * 60 * 1000) // 24 hours ago
+
+        val cached = hotelDetailsDao.getHotelDetails(
+            code = hotelCode,
+            checkIn = checkIn,
+            checkOut = checkOut,
+            adults = adults,
+            children = childrenCount,
+            childrenAges = childrenAgesStr,
+            expirationTime = expirationTime
+        )
+
+        if (cached != null) {
+            return Result.Success(cached.toDomain())
+        }
+
         val result = safeApiCall {
             api.getHotelDetails(
                 hotelCode = hotelCode,
@@ -115,7 +136,30 @@ class HotelRepositoryImpl @Inject constructor(
                 } else if (data == null) {
                     Result.Error(DataError.Data.NotFound)
                 } else {
-                    Result.Success(data.toDomain())
+                    val domainHotel = data.toDomain()
+
+                    // Save to Cache
+                    hotelDetailsDao.deleteOldCache(
+                        code = hotelCode,
+                        checkIn = checkIn,
+                        checkOut = checkOut,
+                        adults = adults,
+                        children = childrenCount,
+                        childrenAges = childrenAgesStr
+                    )
+
+                    val timestamp = System.currentTimeMillis()
+                    val cacheEntity = domainHotel.toCached(
+                        checkIn = checkIn,
+                        checkOut = checkOut,
+                        adults = adults,
+                        children = childrenCount,
+                        childrenAges = childrenAgesStr,
+                        timestamp = timestamp
+                    )
+                    hotelDetailsDao.insertHotelDetails(cacheEntity)
+
+                    Result.Success(domainHotel)
                 }
             }
             is Result.Error -> Result.Error(result.error)
