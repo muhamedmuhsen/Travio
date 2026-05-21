@@ -1,17 +1,21 @@
 package com.dev.hotel.components
 
 import androidx.compose.animation.animateContentSize
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -27,12 +31,17 @@ fun HotelDescriptionSection(
 ) {
     if (description.isNullOrBlank()) return
 
-    Surface(
-        modifier = modifier.fillMaxWidth(),
-        color = MaterialTheme.colorScheme.surface
+    Card(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp),
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
+        border = BorderStroke(1.dp, Color.LightGray.copy(alpha = 0.5f))
     ) {
         Column(
-            modifier = Modifier.padding(horizontal = 16.dp, vertical = 16.dp)
+            modifier = Modifier.padding(16.dp)
         ) {
             Text(
                 text = stringResource(R.string.hotel_details_about),
@@ -58,8 +67,6 @@ fun HotelDescriptionSection(
 
                 Spacer(modifier = Modifier.height(4.dp))
 
-                // Truncation toggle (mock logic: if it's long enough, show toggle)
-                // In a real app we'd measure text lines, but for simplicity here we just use length
                 if (description.length > 150) {
                     Text(
                         text = if (isExpanded) {
@@ -68,7 +75,7 @@ fun HotelDescriptionSection(
                             stringResource(R.string.hotel_details_read_more)
                         },
                         style = MaterialTheme.typography.labelLarge,
-                        color = MaterialTheme.colorScheme.primary,
+                        color = Color(0xFF008080),
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.clickable { onToggleExpand() }
                     )

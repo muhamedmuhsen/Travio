@@ -1,4 +1,4 @@
-package com.dev.home.components
+package com.example.designsystem.components
 
 import android.content.res.Configuration
 import androidx.compose.foundation.BorderStroke
@@ -45,11 +45,10 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.example.designsystem.components.shimmerEffect
+import com.example.designsystem.R
 import com.example.designsystem.theme.TravioTheme
 import com.example.designsystem.theme.elevation
 import com.example.designsystem.theme.spacing
-import com.example.feature.home.R
 
 // Single source of truth for the card dimensions
 private val DESTINATION_CARD_WIDTH: Dp = 240.dp
@@ -87,8 +86,8 @@ fun DestinationCard(
                 model = ImageRequest.Builder(LocalContext.current)
                     .data(imageUrl)
                     .crossfade(true)
-                    .placeholder(R.drawable.error_place_icon)
-                    .error(R.drawable.error_place_icon)
+                    .placeholder(R.drawable.image_placeholder)
+                    .error(R.drawable.image_placeholder)
                     .build(),
                 contentDescription = title,
                 contentScale = ContentScale.Crop,

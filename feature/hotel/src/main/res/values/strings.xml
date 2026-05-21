@@ -26,4 +26,20 @@
     <string name="hotel_details_call">Call</string>
     <string name="hotel_details_email">Email</string>
     <string name="hotel_details_website">Website</string>
+    <string name="hotel_details_reviews_and_ratings">Reviews &amp; Ratings</string>
+    <string name="hotel_details_show_all_reviews">Show all reviews</string>
+    <string name="hotel_details_popular_nearby">Popular nearby</string>
+    <string name="hotel_details_per_night">/ night</string>
+    <string name="hotel_details_check_availability">Check Availability</string>
+    <string name="hotel_details_check_in">Check in</string>
+    <string name="hotel_details_check_out">Check out</string>
+    <string name="hotel_details_guests">Guests</string>
+    <string name="hotel_details_cleanliness">Cleanliness</string>
+    <string name="hotel_details_service">Service</string>
+    <string name="hotel_details_amenities">Amenities</string>
+    <string name="hotel_details_value">Value</string>
+    <string name="hotel_details_check_availability_coming_soon">Checking availability is not available in this demo.</string>
+    <string name="hotel_details_added_to_favorites">Added to favorites</string>
+    <string name="hotel_details_removed_from_favorites">Removed from favorites</string>
+    <string name="hotel_details_rooms_updated">Room availability updated</string>
 </resources>

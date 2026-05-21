@@ -100,4 +100,9 @@
     <string name="error_location_permission_denied">Location permission denied.</string>
     <string name="error_location_disabled">Location services are disabled.</string>
     <string name="error_location_timeout">Location request timed out.</string>
+
+    <!-- Destination Card -->
+    <string name="add_to_favorites">Add to favorites</string>
+    <string name="remove_from_favorites">Remove from favorites</string>
+    <string name="home_explore">Explore</string>
 </resources>

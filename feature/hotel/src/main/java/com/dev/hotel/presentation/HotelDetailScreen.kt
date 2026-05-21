@@ -10,11 +10,16 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -22,6 +27,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.dev.hotel.components.BookingCard
+import com.dev.hotel.components.BottomBookingBar
 import com.dev.hotel.components.ContactSection
 import com.dev.hotel.components.FacilitiesSection
 import com.dev.hotel.components.HotelDescriptionSection
@@ -29,16 +36,45 @@ import com.dev.hotel.components.HotelDetailShimmer
 import com.dev.hotel.components.HotelGallery
 import com.dev.hotel.components.HotelInfoHeader
 import com.dev.hotel.components.LocationSection
+import com.dev.hotel.components.PopularNearbySection
+import com.dev.hotel.components.ReviewsSection
 import com.dev.hotel.components.RoomCard
 import com.dev.utils.uistate.UiState
 import com.example.domain.model.hotel.HotelDetails
 import com.example.feature.hotel.R
 
 @Composable
-fun HotelDetailScreen(viewModel: HotelDetailViewModel = hiltViewModel()) {
+fun HotelDetailScreen(
+    viewModel: HotelDetailViewModel = hiltViewModel(),
+    onBackClick: () -> Unit = {}
+) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val snackbarHostState = remember { SnackbarHostState() }
+    val context = LocalContext.current
+
+    LaunchedEffect(Unit) {
+        viewModel.event.collect { event ->
+            when (event) {
+                HotelDetailEvent.NavigateBack -> onBackClick()
+                HotelDetailEvent.NavigateToReviews -> {
+                    snackbarHostState.showSnackbar("Reviews screen coming soon")
+                }
+                is HotelDetailEvent.NavigateToNearbyDetails -> {
+                    snackbarHostState.showSnackbar("Exploring ${event.name} coming soon")
+                }
+                is HotelDetailEvent.NavigateToBooking -> {
+                    snackbarHostState.showSnackbar("Booking process coming soon")
+                }
+                is HotelDetailEvent.ShowMessage -> {
+                    snackbarHostState.showSnackbar(event.message.asString(context))
+                }
+            }
+        }
+    }
+
     HotelDetailScreen(
         uiState = uiState,
+        snackbarHostState = snackbarHostState,
         onAction = viewModel::onAction
     )
 }
@@ -46,11 +82,26 @@ fun HotelDetailScreen(viewModel: HotelDetailViewModel = hiltViewModel()) {
 @Composable
 fun HotelDetailScreen(
     uiState: HotelDetailUiState,
+    snackbarHostState: SnackbarHostState,
     onAction: (HotelDetailAction) -> Unit
 ) {
-    Scaffold { paddingValues ->
+    val hotelData = (uiState.hotelState as? UiState.Success)?.data
+
+    Scaffold(
+        snackbarHost = { SnackbarHost(snackbarHostState) },
+        bottomBar = {
+            if (hotelData != null && hotelData.minRate != null) {
+                BottomBookingBar(
+                    price = hotelData.minRate!!,
+                    onBookNowClick = { onAction(HotelDetailAction.BookNowClicked) }
+                )
+            }
+        }
+    ) { paddingValues ->
         Box(
-            modifier = Modifier.fillMaxSize().padding(paddingValues),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues),
             contentAlignment = Alignment.Center
         ) {
             when (val state = uiState.hotelState) {
@@ -99,10 +150,23 @@ private fun HotelDetailContent(
         modifier = Modifier.fillMaxSize()
     ) {
         item {
-            HotelGallery(images = hotelDetails.images)
+            HotelGallery(
+                images = hotelDetails.images,
+                isFavorite = uiState.isFavorite,
+                onBackClick = { onAction(HotelDetailAction.BackClicked) },
+                onFavoriteClick = { onAction(HotelDetailAction.FavoriteClicked) }
+            )
         }
         item {
             HotelInfoHeader(hotelDetails = hotelDetails)
+        }
+
+        item {
+            BookingCard(
+                uiState = uiState,
+                onAction = onAction
+            )
+            Spacer(modifier = Modifier.height(24.dp))
         }
 
         item {
@@ -124,6 +188,19 @@ private fun HotelDetailContent(
             FacilitiesSection(facilities = hotelDetails.facilities)
         }
 
+        item {
+            ReviewsSection(onShowAllReviews = { onAction(HotelDetailAction.LoadReviews) })
+            Spacer(modifier = Modifier.height(24.dp))
+        }
+
+        item {
+            PopularNearbySection(
+                nearbyHotelsState = uiState.nearbyHotelsState,
+                onExploreClick = { onAction(HotelDetailAction.NearbyExploreClicked(it)) }
+            )
+            Spacer(modifier = Modifier.height(24.dp))
+        }
+
         if (hotelDetails.rooms.isNotEmpty()) {
             item {
                 Text(
@@ -143,7 +220,7 @@ private fun HotelDetailContent(
                     room = room,
                     isExpanded = uiState.expandedRoomCodes.contains(room.code),
                     onToggleExpand = { onAction(HotelDetailAction.ToggleRoomExpansion(room.code)) },
-                    onBookRate = { onAction(HotelDetailAction.BookRoom(it)) }
+                    onBookRate = { rateKey -> onAction(HotelDetailAction.BookRoom(rateKey)) }
                 )
             }
         }
@@ -154,9 +231,8 @@ private fun HotelDetailContent(
 
         item {
             ContactSection(hotelDetails = hotelDetails)
+            Spacer(modifier = Modifier.height(32.dp))
         }
-
-        // Future sections will be added here
     }
 }
 
@@ -166,6 +242,7 @@ private fun HotelDetailScreenLoadingPreview() {
     MaterialTheme {
         HotelDetailScreen(
             uiState = HotelDetailUiState(hotelState = UiState.Loading),
+            snackbarHostState = SnackbarHostState(),
             onAction = {}
         )
     }
@@ -177,6 +254,7 @@ private fun HotelDetailScreenErrorPreview() {
     MaterialTheme {
         HotelDetailScreen(
             uiState = HotelDetailUiState(hotelState = UiState.Error(com.dev.utils.uitext.UiText.DynamicString("Error"))),
+            snackbarHostState = SnackbarHostState(),
             onAction = {}
         )
     }
@@ -212,6 +290,7 @@ private fun HotelDetailScreenSuccessPreview() {
                     )
                 )
             ),
+            snackbarHostState = SnackbarHostState(),
             onAction = {}
         )
     }

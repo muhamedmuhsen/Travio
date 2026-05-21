@@ -359,7 +359,9 @@ fun TravioNavHost(
             route = Screen.HotelDetailScreen.routePattern,
             arguments = listOf(navArgument(Screen.HotelDetailScreen.ARG_HOTEL_CODE) { type = NavType.IntType })
         ) {
-            HotelDetailScreen()
+            HotelDetailScreen(
+                onBackClick = { navController.popBackStack() }
+            )
         }
 
         composable(Screen.CommunityScreen.route) {
