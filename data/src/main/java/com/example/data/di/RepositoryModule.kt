@@ -18,6 +18,7 @@ import com.example.data.repository.favorite.FavoriteTripRepositoryImpl
 import com.example.data.repository.flights.FlightDetailsRepositoryImpl
 import com.example.data.repository.flights.FlightSearchRepositoryImpl
 import com.example.data.repository.flights.TopFlightOffersRepositoryImpl
+import com.example.data.repository.hotel.HotelRepositoryImpl
 import com.example.data.repository.review.ReviewRepositoryImpl
 import com.example.data.repository.search.RecentSearchRepositoryImpl
 import com.example.data.repository.survey.SurveyPreferencesRepositoryImpl
@@ -39,6 +40,7 @@ import com.example.domain.repository.favorite.FavoriteTripRepository
 import com.example.domain.repository.flights.FlightDetailsRepository
 import com.example.domain.repository.flights.FlightSearchRepository
 import com.example.domain.repository.flights.TopFlightOffersRepository
+import com.example.domain.repository.hotel.HotelRepository
 import com.example.domain.repository.review.ReviewRepository
 import com.example.domain.repository.search.RecentSearchRepository
 import com.example.domain.repository.survey.SurveyPreferencesRepository
@@ -51,6 +53,10 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 abstract class RepositoryModule {
+
+    @Binds
+    @Singleton
+    abstract fun bindHotelRepository(hotelRepositoryImpl: HotelRepositoryImpl): HotelRepository
 
     @Binds
     @Singleton

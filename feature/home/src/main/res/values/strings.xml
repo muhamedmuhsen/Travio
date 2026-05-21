@@ -53,4 +53,12 @@
     <string name="home_on_time">On Time</string>
     <string name="error_failed_load_destinations">Failed to load destinations</string>
     <string name="error_load_more_failed">Load more failed</string>
+
+    <!-- Nearby Hotels -->
+    <string name="section_nearby_hotels">Nearby Hotels</string>
+    <string name="nearby_hotels_no_results">No hotels found near your location.</string>
+    <string name="nearby_hotels_error">Failed to load nearby hotels.</string>
+    <string name="nearby_hotels_location_rationale">Allow location access so we can show hotels near you.</string>
+    <string name="nearby_hotel_card_cd">Nearby Hotel %1$s in %2$s</string>
+    <string name="nearby_hotel_price_from">From %1$s</string>
 </resources>

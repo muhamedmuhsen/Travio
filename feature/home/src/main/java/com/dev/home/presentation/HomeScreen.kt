@@ -60,7 +60,9 @@ import com.dev.home.components.HomeSearchBar
 import com.dev.home.components.LoadingCountryCard
 import com.dev.home.components.LoadingDestinationCard
 import com.dev.home.components.LoadingFlightCard
+import com.dev.home.components.LoadingNearbyHotelCard
 import com.dev.home.components.LoadingRecentViewedCard
+import com.dev.home.components.NearbyHotelCard
 import com.dev.home.components.RecentViewedCard
 import com.dev.home.presentation.HomeAction.OnLocationPermissionResult
 import com.dev.home.presentation.flights.FlightsSectionUiState
@@ -73,6 +75,7 @@ import com.example.designsystem.theme.TravioTheme
 import com.example.designsystem.theme.spacing
 import com.example.domain.model.destination.Country
 import com.example.domain.model.destination.Destination
+import com.example.domain.model.hotel.NearbyHotel
 import com.example.feature.home.R
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
@@ -251,6 +254,11 @@ private fun HomeContent(
                         onAction = onAction,
                         onRetry = { onAction(HomeAction.OnRetrySection(HomeSection.Nearby)) },
                         isNearby = true
+                    )
+                    NearbyHotelsStateHandling(
+                        state = state.nearbyHotelsState,
+                        onAction = onAction,
+                        onRetry = { onAction(HomeAction.OnRetrySection(HomeSection.NearbyHotels)) }
                     )
                     FlightsStateHandling(
                         state = state.flightsState,
@@ -580,6 +588,63 @@ private fun DestinationStateHandling(
                         item(key = "destinations_append_loading") {
                             AppendLoadingIndicator()
                         }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun NearbyHotelsStateHandling(
+    state: UiState<List<NearbyHotel>>,
+    onAction: (HomeAction) -> Unit,
+    onRetry: () -> Unit
+) {
+    val context = LocalContext.current
+    when (state) {
+        is UiState.Error -> {
+            val errorMsg = state.message.asString(context)
+            val permissionDeniedMsg = stringResource(
+                com.example.designsystem.R.string.error_location_permission_denied
+            )
+            if (errorMsg == permissionDeniedMsg) {
+                EmptySection(
+                    title = stringResource(R.string.section_nearby_hotels),
+                    message = stringResource(R.string.nearby_hotels_location_rationale),
+                    icon = Icons.Outlined.LocationOff
+                )
+            } else {
+                ErrorSection(
+                    title = stringResource(R.string.section_nearby_hotels),
+                    onRetry = onRetry
+                )
+            }
+        }
+
+        UiState.Idle -> Unit
+        UiState.Loading -> {
+            HorizontalSection(title = stringResource(R.string.section_nearby_hotels)) {
+                items(3) { LoadingNearbyHotelCard() }
+            }
+        }
+
+        is UiState.Success -> {
+            val hotels = state.data ?: emptyList()
+            if (hotels.isEmpty()) {
+                EmptySection(
+                    title = stringResource(R.string.section_nearby_hotels),
+                    message = stringResource(R.string.nearby_hotels_no_results)
+                )
+            } else {
+                HorizontalSection(title = stringResource(R.string.section_nearby_hotels)) {
+                    items(hotels, key = { it.code }) { hotel ->
+                        NearbyHotelCard(
+                            hotel = hotel,
+                            onClick = {
+                                onAction(HomeAction.OnHotelClicked(hotel.code))
+                            }
+                        )
                     }
                 }
             }

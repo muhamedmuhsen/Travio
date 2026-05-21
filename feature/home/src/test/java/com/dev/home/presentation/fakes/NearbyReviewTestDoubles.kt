@@ -17,6 +17,9 @@ import com.example.domain.usecase.destinations.GetNearbyDestinationsUseCase
 import com.example.domain.usecase.destinations.GetRecentlyViewedUseCase
 import com.example.domain.usecase.favorite.place.FavoritePlaceUseCase
 import com.example.domain.usecase.favorite.place.GetAllPlacesUseCase
+import com.example.domain.usecase.hotel.GetNearbyHotelsUseCase
+import com.example.domain.repository.hotel.HotelRepository
+import com.example.domain.model.hotel.NearbyHotel
 import com.example.domain.utils.DataError
 import com.example.domain.utils.Result
 import com.dev.home.presentation.HomeViewModel
@@ -117,6 +120,36 @@ class FakeNearbyRecentlyViewedRepository : RecentlyViewedRepository {
     override suspend fun clearAll() = Unit
 }
 
+class FakeHotelRepository : HotelRepository {
+    var searchResult: Result<List<NearbyHotel>, DataError> = Result.Success(emptyList())
+    val searchRequests = mutableListOf<HotelSearchRequest>()
+
+    override suspend fun searchNearbyHotels(
+        latitude: Double,
+        longitude: Double,
+        checkIn: String,
+        checkOut: String,
+        radiusInKm: Int,
+        maxHotels: Int,
+        hotelCodes: List<Int>
+    ): Result<List<NearbyHotel>, DataError> {
+        searchRequests += HotelSearchRequest(
+            latitude = latitude,
+            longitude = longitude,
+            checkIn = checkIn,
+            checkOut = checkOut
+        )
+        return searchResult
+    }
+}
+
+data class HotelSearchRequest(
+    val latitude: Double,
+    val longitude: Double,
+    val checkIn: String,
+    val checkOut: String
+)
+
 class FakeFavoriteDestinationRepository : com.example.domain.repository.favorite.FavoriteDestinationRepository {
     override suspend fun getFavoriteDestinationsPage(pageIndex: Int, pageSize: Int): Result<com.example.domain.model.favorite.FavoritesPage, DataError> = Result.Success(com.example.domain.model.favorite.FavoritesPage(1, 10, 0, emptyList()))
     override suspend fun addDestinationToFavorites(destinationId: Int): Result<com.example.domain.model.favorite.FavoriteMutationResult, DataError> = Result.Success(com.example.domain.model.favorite.FavoriteMutationResult(true, null, emptyList()))
@@ -129,7 +162,8 @@ fun createNearbyReviewHomeViewModel(
     locationRepository: FakeNearbyLocationRepository = FakeNearbyLocationRepository(),
     favoritePlaceRepository: FakeNearbyFavoritePlaceRepository = FakeNearbyFavoritePlaceRepository(),
     recentlyViewedRepository: FakeNearbyRecentlyViewedRepository = FakeNearbyRecentlyViewedRepository(),
-    getTopFlightOffersUseCase: GetTopFlightOffersUseCase = FakeGetTopOffersUseCase()
+    getTopFlightOffersUseCase: GetTopFlightOffersUseCase = FakeGetTopOffersUseCase(),
+    hotelRepository: FakeHotelRepository = FakeHotelRepository()
 ): HomeViewModel {
     val favRepo = FakeFavoriteDestinationRepository()
     return HomeViewModel(
@@ -141,7 +175,8 @@ fun createNearbyReviewHomeViewModel(
         observeFavoriteDestinationIdsUseCase = com.example.domain.usecase.favorite.destination.ObserveFavoriteDestinationIdsUseCase(favRepo),
         getRecentlyViewedUseCase = GetRecentlyViewedUseCase(recentlyViewedRepository),
         addToRecentlyViewedUseCase = AddToRecentlyViewedUseCase(recentlyViewedRepository),
-        getTopFlightOffersUseCase = getTopFlightOffersUseCase
+        getTopFlightOffersUseCase = getTopFlightOffersUseCase,
+        getNearbyHotelsUseCase = GetNearbyHotelsUseCase(locationRepository, hotelRepository)
     )
 }
 

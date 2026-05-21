@@ -19,6 +19,7 @@ import com.example.domain.usecase.favorite.destination.AddDestinationFavoriteUse
 import com.example.domain.usecase.favorite.destination.ObserveFavoriteDestinationIdsUseCase
 import com.example.domain.usecase.favorite.destination.RemoveDestinationFavoriteUseCase
 import com.example.domain.usecase.flights.GetTopFlightOffersUseCase
+import com.example.domain.usecase.hotel.GetNearbyHotelsUseCase
 import com.example.domain.utils.DataError
 import com.example.domain.utils.Result
 import com.example.feature.home.R
@@ -45,7 +46,8 @@ class HomeViewModel @Inject constructor(
     private val observeFavoriteDestinationIdsUseCase: ObserveFavoriteDestinationIdsUseCase,
     private val getRecentlyViewedUseCase: GetRecentlyViewedUseCase,
     private val addToRecentlyViewedUseCase: AddToRecentlyViewedUseCase,
-    private val getTopFlightOffersUseCase: GetTopFlightOffersUseCase
+    private val getTopFlightOffersUseCase: GetTopFlightOffersUseCase,
+    private val getNearbyHotelsUseCase: GetNearbyHotelsUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(HomeUiState())
@@ -65,6 +67,11 @@ class HomeViewModel @Inject constructor(
     fun onAction(action: HomeAction) {
         when (action) {
             is HomeAction.OnDestinationClicked -> navigateToDestination(action.id)
+            is HomeAction.OnHotelClicked -> {
+                viewModelScope.launch {
+                    _event.send(HomeEvent.ShowSuccessSnackbar(UiText.DynamicString("Hotel Details: ${action.code}")))
+                }
+            }
             is HomeAction.OnFlightCardClicked -> navigateToFlightDetails(action.id)
             is HomeAction.OnFlightCtaClicked -> startFlightBooking(action.id)
             HomeAction.OnSearchClicked -> navigateToSearch()
@@ -89,10 +96,14 @@ class HomeViewModel @Inject constructor(
     private fun onLocationPermissionResult(granted: Boolean) {
         if (granted) {
             loadNearbyDestinations()
+            loadNearbyHotels()
         } else {
             _uiState.update {
                 it.copy(
                     nearbyDestinationsState = UiState.Error(
+                        UiText.StringResource(DesignSystemR.string.error_location_permission_denied)
+                    ),
+                    nearbyHotelsState = UiState.Error(
                         UiText.StringResource(DesignSystemR.string.error_location_permission_denied)
                     )
                 )
@@ -109,7 +120,8 @@ class HomeViewModel @Inject constructor(
                 isInitialLoad = true
             )
 
-            HomeSection.Nearby -> requestLocationPermission()
+            HomeSection.Nearby,
+            HomeSection.NearbyHotels -> requestLocationPermission()
             HomeSection.RecentlyViewed -> observeRecentlyViewed()
             HomeSection.Flights -> loadFlightsSectionData(forceRefresh = false)
         }
@@ -512,6 +524,15 @@ class HomeViewModel @Inject constructor(
             setError = { state, msg -> state.copy(nearbyDestinationsState = UiState.Error(msg)) },
             setSuccess = { state, data -> state.copy(nearbyDestinationsState = UiState.Success(data)) },
             load = { getNearbyDestinationsUseCase() }
+        )
+    }
+
+    private fun loadNearbyHotels() {
+        launchLoad(
+            setLoading = { it.copy(nearbyHotelsState = UiState.Loading) },
+            setError = { state, msg -> state.copy(nearbyHotelsState = UiState.Error(msg)) },
+            setSuccess = { state, data -> state.copy(nearbyHotelsState = UiState.Success(data)) },
+            load = { getNearbyHotelsUseCase() }
         )
     }
 
