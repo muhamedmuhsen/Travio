@@ -20,6 +20,7 @@ sealed interface HomeSection {
     data object Recommended : HomeSection
     data object Destinations : HomeSection
     data object Nearby : HomeSection
+    data object NearbyHotels : HomeSection
     data object Flights : HomeSection
 }
 
@@ -27,6 +28,7 @@ sealed interface HomeAction {
     data object OnSearchClicked : HomeAction
     data class OnSearchQueryChanged(val query: String) : HomeAction
     data class OnDestinationClicked(val id: String) : HomeAction
+    data class OnHotelClicked(val code: Int) : HomeAction
     data class OnFavoriteClicked(val destination: Destination) : HomeAction
     data object OnLoadMoreDestinations : HomeAction
     data object OnRetryLoadMoreDestinations : HomeAction

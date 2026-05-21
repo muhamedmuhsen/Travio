@@ -7,6 +7,7 @@ import com.example.network.api.AuthApi
 import com.example.network.api.CommunityApi
 import com.example.network.api.DestinationsApi
 import com.example.network.api.FavoritesApi
+import com.example.network.api.HotelApi
 import com.example.network.api.ReviewsApi
 import com.example.network.api.SurveyApi
 import com.example.network.api.UserManagementApi
@@ -174,6 +175,12 @@ object NetworkModule {
     @Singleton
     fun provideAiApi(retrofit: Retrofit): AiApi {
         return retrofit.create(AiApi::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideHotelApi(retrofit: Retrofit): HotelApi {
+        return retrofit.create(HotelApi::class.java)
     }
 
     @Provides

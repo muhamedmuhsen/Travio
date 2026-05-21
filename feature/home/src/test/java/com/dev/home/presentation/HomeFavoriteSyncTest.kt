@@ -21,6 +21,8 @@ import com.example.domain.usecase.destinations.GetRecentlyViewedUseCase
 import com.example.domain.usecase.favorite.destination.AddDestinationFavoriteUseCase
 import com.example.domain.usecase.favorite.destination.ObserveFavoriteDestinationIdsUseCase
 import com.example.domain.usecase.favorite.destination.RemoveDestinationFavoriteUseCase
+import com.example.domain.usecase.hotel.GetNearbyHotelsUseCase
+import com.dev.home.presentation.fakes.FakeHotelRepository
 import com.example.domain.usecase.favorite.place.FavoritePlaceUseCase
 import com.example.domain.usecase.favorite.place.GetAllPlacesUseCase
 import com.example.domain.utils.DataError
@@ -68,7 +70,8 @@ class HomeFavoriteSyncTest {
             observeFavoriteDestinationIdsUseCase = ObserveFavoriteDestinationIdsUseCase(favoriteDestinationRepository),
             getRecentlyViewedUseCase = GetRecentlyViewedUseCase(recentlyViewedRepository),
             addToRecentlyViewedUseCase = AddToRecentlyViewedUseCase(recentlyViewedRepository),
-            getTopFlightOffersUseCase = FakeGetTopOffersUseCase()
+            getTopFlightOffersUseCase = FakeGetTopOffersUseCase(),
+            getNearbyHotelsUseCase = GetNearbyHotelsUseCase(locationRepository, FakeHotelRepository())
         )
     }
 

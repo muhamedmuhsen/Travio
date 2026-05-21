@@ -12,6 +12,8 @@ import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
+import com.example.domain.usecase.hotel.GetNearbyHotelsUseCase
+import com.dev.home.presentation.fakes.FakeHotelRepository
 import org.junit.Rule
 import org.junit.Test
 
@@ -102,7 +104,8 @@ class HomeViewModelFlightsTest {
             observeFavoriteDestinationIdsUseCase = com.example.domain.usecase.favorite.destination.ObserveFavoriteDestinationIdsUseCase(favRepo),
             getRecentlyViewedUseCase = com.example.domain.usecase.destinations.GetRecentlyViewedUseCase(recentlyViewedRepository),
             addToRecentlyViewedUseCase = com.example.domain.usecase.destinations.AddToRecentlyViewedUseCase(recentlyViewedRepository),
-            getTopFlightOffersUseCase = getTopOffersUseCase
+            getTopFlightOffersUseCase = getTopOffersUseCase,
+            getNearbyHotelsUseCase = GetNearbyHotelsUseCase(locationRepository, FakeHotelRepository())
         )
     }
 
