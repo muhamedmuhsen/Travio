@@ -43,4 +43,4 @@ include(":feature")
 include(":feature:booking")
 include(":feature:chat")
 include(":core:database")
-
+include(":feature:hotel")

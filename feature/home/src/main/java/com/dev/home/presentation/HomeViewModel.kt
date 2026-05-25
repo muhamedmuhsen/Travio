@@ -69,7 +69,7 @@ class HomeViewModel @Inject constructor(
             is HomeAction.OnDestinationClicked -> navigateToDestination(action.id)
             is HomeAction.OnHotelClicked -> {
                 viewModelScope.launch {
-                    _event.send(HomeEvent.ShowSuccessSnackbar(UiText.DynamicString("Hotel Details: ${action.code}")))
+                    _event.send(HomeEvent.NavigateToHotelDetails(action.code))
                 }
             }
             is HomeAction.OnFlightCardClicked -> navigateToFlightDetails(action.id)

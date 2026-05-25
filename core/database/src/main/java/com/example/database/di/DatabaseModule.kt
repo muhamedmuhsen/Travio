@@ -3,6 +3,8 @@ package com.example.database.di
 import android.content.Context
 import androidx.room.Room
 import com.example.database.TravioDatabase
+import com.example.database.hotel.HotelDetailsDao
+import com.example.database.hotel.NearbyHotelDao
 import com.example.database.place.FavoritePlaceDao
 import com.example.database.post.FavoritePostDao
 import com.example.database.recentlyviewed.RecentlyViewedDao
@@ -48,4 +50,12 @@ object DatabaseModule {
     @Provides
     @Singleton
     fun provideTripPlanDao(database: TravioDatabase): com.example.database.trips.TripPlanDao = database.tripPlanDao()
+
+    @Provides
+    @Singleton
+    fun provideNearbyHotelDao(database: TravioDatabase): NearbyHotelDao = database.nearbyHotelDao()
+
+    @Provides
+    @Singleton
+    fun provideHotelDetailsDao(database: TravioDatabase): HotelDetailsDao = database.hotelDetailsDao()
 }

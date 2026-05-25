@@ -48,7 +48,7 @@ class FakeCommunityRepository : CommunityRepository {
     override suspend fun addComment(postId: Int, text: String, authorName: String): Result<Unit, DataError> = TODO()
     override suspend fun toggleLike(postId: Int): Result<Unit, DataError> = TODO()
     override suspend fun toggleBookmark(postId: Int): Result<Unit, DataError> = TODO()
-    override fun notifyPostCreated() = TODO()
+    override fun refreshPosts() = TODO()
 }
 
 @OptIn(ExperimentalCoroutinesApi::class)

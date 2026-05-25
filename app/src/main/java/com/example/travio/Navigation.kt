@@ -14,6 +14,7 @@ import com.dev.community.presentation.PostDetailScreen
 import com.dev.community.presentation.ShareMomentScreen
 import com.dev.favroite.FavoriteScreen
 import com.dev.home.presentation.HomeScreen
+import com.dev.hotel.presentation.HotelDetailScreen
 import com.dev.onboarding.language.LanguageScreen
 import com.dev.onboarding.onboarding.OnboardingScreen
 import com.dev.onboarding.starterlogin.StarterLogin
@@ -180,6 +181,9 @@ fun TravioNavHost(
                     id.toIntOrNull()?.let { destinationId ->
                         navController.navigate(DestinationDetailRoute(destinationId))
                     }
+                },
+                navigateToHotelDetails = { hotelCode ->
+                    navController.navigate(Screen.HotelDetailScreen.createRoute(hotelCode))
                 },
                 navigateToFlightDetails = { offerId ->
                     // Navigate to flight detail screen using a typed route
@@ -348,6 +352,15 @@ fun TravioNavHost(
                 onOpenMap = { lat, lng ->
                     // Actually handle map intent if desired, for now no-op or intent
                 }
+            )
+        }
+
+        composable(
+            route = Screen.HotelDetailScreen.routePattern,
+            arguments = listOf(navArgument(Screen.HotelDetailScreen.ARG_HOTEL_CODE) { type = NavType.IntType })
+        ) {
+            HotelDetailScreen(
+                onBackClick = { navController.popBackStack() }
             )
         }
 

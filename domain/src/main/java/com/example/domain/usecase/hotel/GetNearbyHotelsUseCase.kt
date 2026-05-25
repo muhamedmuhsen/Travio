@@ -14,28 +14,38 @@ class GetNearbyHotelsUseCase @Inject constructor(
     private val hotelRepository: HotelRepository
 ) {
     suspend operator fun invoke(
+        latitude: Double? = null,
+        longitude: Double? = null,
         radiusInKm: Int = 50,
         maxHotels: Int = 10
     ): Result<List<NearbyHotel>, DataError> {
-        return when (val locationResult = locationRepository.getLastKnownLocation()) {
-            is Result.Error -> {
-                Result.Error(locationResult.error)
-            }
-            is Result.Success -> {
-                val location = locationResult.data
-                val today = LocalDate.now()
-                val tomorrow = today.plusDays(1)
-                val formatter = DateTimeFormatter.ISO_LOCAL_DATE
+        val lat: Double
+        val lng: Double
 
-                hotelRepository.searchNearbyHotels(
-                    latitude = location.latitude,
-                    longitude = location.longitude,
-                    checkIn = today.format(formatter),
-                    checkOut = tomorrow.format(formatter),
-                    radiusInKm = radiusInKm,
-                    maxHotels = maxHotels
-                )
+        if (latitude != null && longitude != null) {
+            lat = latitude
+            lng = longitude
+        } else {
+            when (val locationResult = locationRepository.getLastKnownLocation()) {
+                is Result.Error -> return Result.Error(locationResult.error)
+                is Result.Success -> {
+                    lat = locationResult.data.latitude
+                    lng = locationResult.data.longitude
+                }
             }
         }
+
+        val today = LocalDate.now()
+        val tomorrow = today.plusDays(1)
+        val formatter = DateTimeFormatter.ISO_LOCAL_DATE
+
+        return hotelRepository.searchNearbyHotels(
+            latitude = lat,
+            longitude = lng,
+            checkIn = today.format(formatter),
+            checkOut = tomorrow.format(formatter),
+            radiusInKm = radiusInKm,
+            maxHotels = maxHotels
+        )
     }
 }

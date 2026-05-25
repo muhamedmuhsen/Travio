@@ -14,4 +14,13 @@ interface HotelRepository {
         maxHotels: Int = 10,
         hotelCodes: List<Int> = listOf(1)
     ): Result<List<NearbyHotel>, DataError>
+
+    suspend fun getHotelDetails(
+        hotelCode: Int,
+        checkIn: String,
+        checkOut: String,
+        adults: Int,
+        children: Int? = null,
+        childrenAges: String? = null
+    ): Result<com.example.domain.model.hotel.HotelDetails, DataError>
 }

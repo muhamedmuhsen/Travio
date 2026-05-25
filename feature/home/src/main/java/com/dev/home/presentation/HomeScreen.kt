@@ -53,12 +53,10 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.dev.home.components.AppendErrorRetry
 import com.dev.home.components.AppendLoadingIndicator
 import com.dev.home.components.CountryCard
-import com.dev.home.components.DestinationCard
 import com.dev.home.components.ErrorView
 import com.dev.home.components.FlightsSection
 import com.dev.home.components.HomeSearchBar
 import com.dev.home.components.LoadingCountryCard
-import com.dev.home.components.LoadingDestinationCard
 import com.dev.home.components.LoadingFlightCard
 import com.dev.home.components.LoadingNearbyHotelCard
 import com.dev.home.components.LoadingRecentViewedCard
@@ -69,6 +67,8 @@ import com.dev.home.presentation.flights.FlightsSectionUiState
 import com.dev.utils.uistate.UiState
 import com.example.designsystem.components.AppBottomBar
 import com.example.designsystem.components.AppSnackBar
+import com.example.designsystem.components.DestinationCard
+import com.example.designsystem.components.LoadingDestinationCard
 import com.example.designsystem.components.SnackBarType
 import com.example.designsystem.components.showAppSnackbar
 import com.example.designsystem.theme.TravioTheme
@@ -85,6 +85,7 @@ import com.google.accompanist.permissions.rememberMultiplePermissionsState
 fun HomeScreen(
     modifier: Modifier = Modifier,
     navigateToDestination: (String) -> Unit = {},
+    navigateToHotelDetails: (Int) -> Unit = {},
     navigateToFlightDetails: (String) -> Unit = {},
     startFlightBooking: (String) -> Unit = {},
     navigateToSearch: () -> Unit = {},
@@ -115,6 +116,7 @@ fun HomeScreen(
         viewModel.event.collect { event ->
             when (event) {
                 is HomeEvent.NavigateToDestination -> navigateToDestination(event.id)
+                is HomeEvent.NavigateToHotelDetails -> navigateToHotelDetails(event.code)
                 is HomeEvent.NavigateToFlightDetails -> navigateToFlightDetails(event.id)
                 is HomeEvent.StartFlightBooking -> startFlightBooking(event.id)
                 HomeEvent.NavigateToSearch -> navigateToSearch()
