@@ -32,10 +32,38 @@ sealed class Screen(val route: String) {
 
     data object HotelDetailScreen : Screen(Screens.HOTEL_DETAIL.name) {
         const val ARG_HOTEL_CODE = "hotelCode"
-        val routePattern = "$route/{$ARG_HOTEL_CODE}"
+        val routePattern = "$route/{$ARG_HOTEL_CODE}" +
+            "?checkIn={checkIn}&checkOut={checkOut}&adults={adults}&children={children}&childrenAges={childrenAges}"
 
-        fun createRoute(hotelCode: Int): String = "$route/$hotelCode"
+        fun createRoute(
+            hotelCode: Int,
+            checkIn: String? = null,
+            checkOut: String? = null,
+            adults: Int? = null,
+            children: Int? = null,
+            childrenAges: String? = null
+        ): String {
+            val builder = StringBuilder("$route/$hotelCode")
+            var hasQuery = false
+            fun appendQuery(
+                name: String,
+                value: Any?
+            ) {
+                if (value != null) {
+                    builder.append(if (hasQuery) "&" else "?").append(name).append("=").append(value)
+                    hasQuery = true
+                }
+            }
+            appendQuery("checkIn", checkIn)
+            appendQuery("checkOut", checkOut)
+            appendQuery("adults", adults)
+            appendQuery("children", children)
+            appendQuery("childrenAges", childrenAges)
+            return builder.toString()
+        }
     }
+
+    data object HotelSearchScreen : Screen(Screens.HOTEL_SEARCH.name)
 
     data object SearchScreen : Screen(Screens.SEARCH.name)
     data object SurveyScreen : Screen(Screens.SURVEY.name)
@@ -77,5 +105,6 @@ enum class Screens {
     LOCATION_PICKER,
     SEE_ALL_FLIGHTS,
     FLIGHT_DETAIL,
-    HOTEL_DETAIL
+    HOTEL_DETAIL,
+    HOTEL_SEARCH
 }

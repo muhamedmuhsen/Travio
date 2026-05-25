@@ -19,6 +19,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
@@ -38,6 +39,34 @@ class HotelDetailViewModel @Inject constructor(
     val event = _event.receiveAsFlow()
 
     init {
+        val checkInStr: String? = savedStateHandle["checkIn"]
+        val checkOutStr: String? = savedStateHandle["checkOut"]
+        val adultsVal: Int? = savedStateHandle["adults"]
+        val childrenVal: Int? = savedStateHandle["children"]
+        val childrenAgesStr: String? = savedStateHandle["childrenAges"]
+
+        _uiState.update { state ->
+            val parsedCheckIn = checkInStr?.let {
+                runCatching { LocalDate.parse(it) }.getOrNull()
+            } ?: state.checkInDate
+
+            val parsedCheckOut = checkOutStr?.let {
+                runCatching { LocalDate.parse(it) }.getOrNull()
+            } ?: state.checkOutDate
+
+            val parsedAdults = if (adultsVal != null && adultsVal > 0) adultsVal else state.adults
+            val parsedChildren = if (childrenVal != null && childrenVal >= 0) childrenVal else state.children
+            val parsedChildrenAges = childrenAgesStr?.split(",")?.mapNotNull { it.toIntOrNull() } ?: state.childrenAges
+
+            state.copy(
+                checkInDate = parsedCheckIn,
+                checkOutDate = parsedCheckOut,
+                adults = parsedAdults,
+                children = parsedChildren,
+                childrenAges = parsedChildrenAges
+            )
+        }
+
         loadHotelDetails()
     }
 

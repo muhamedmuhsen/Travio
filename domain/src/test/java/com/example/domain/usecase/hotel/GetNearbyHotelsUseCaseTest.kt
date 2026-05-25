@@ -89,6 +89,15 @@ class GetNearbyHotelsUseCaseTest {
             return nearbyResult
         }
 
+        override suspend fun searchHotels(
+            destination: String,
+            checkIn: String,
+            checkOut: String,
+            occupancies: List<com.example.domain.model.hotel.Occupancy>
+        ): Result<List<NearbyHotel>, DataError> {
+            return Result.Error(DataError.UnknownError)
+        }
+
         override suspend fun getHotelDetails(
             hotelCode: Int,
             checkIn: String,

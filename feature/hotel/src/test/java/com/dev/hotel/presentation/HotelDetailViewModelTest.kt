@@ -13,11 +13,16 @@ import kotlinx.coroutines.test.setMain
 import androidx.lifecycle.SavedStateHandle
 import com.example.common.navigation.Screen
 import com.example.domain.usecase.hotel.GetHotelDetailsUseCase
+import com.example.domain.usecase.hotel.GetNearbyHotelsUseCase
 import com.example.domain.utils.DataError
 import com.example.domain.utils.Result
 import com.dev.utils.uistate.UiState
 import com.example.domain.model.hotel.HotelDetails
 import com.example.domain.repository.hotel.HotelRepository
+import com.example.domain.repository.destinations.LocationRepository
+import com.example.domain.model.destination.UserLocation
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOf
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class HotelDetailViewModelTest {
@@ -27,12 +32,14 @@ class HotelDetailViewModelTest {
     private lateinit var viewModel: HotelDetailViewModel
     private lateinit var fakeRepository: FakeHotelRepository
     private lateinit var useCase: GetHotelDetailsUseCase
+    private lateinit var getNearbyHotelsUseCase: GetNearbyHotelsUseCase
 
     @Before
     fun setup() {
         Dispatchers.setMain(testDispatcher)
         fakeRepository = FakeHotelRepository()
         useCase = GetHotelDetailsUseCase(fakeRepository)
+        getNearbyHotelsUseCase = GetNearbyHotelsUseCase(FakeLocationRepository(), fakeRepository)
     }
 
     @org.junit.After
@@ -52,7 +59,7 @@ class HotelDetailViewModelTest {
         fakeRepository.detailsResult = Result.Success(hotelDetails)
 
         val savedStateHandle = SavedStateHandle(mapOf(Screen.HotelDetailScreen.ARG_HOTEL_CODE to 1))
-        viewModel = HotelDetailViewModel(useCase, savedStateHandle)
+        viewModel = HotelDetailViewModel(useCase, getNearbyHotelsUseCase, savedStateHandle)
         
         // Starts with Loading
         assertTrue(viewModel.uiState.value.hotelState is UiState.Loading)
@@ -70,7 +77,7 @@ class HotelDetailViewModelTest {
         fakeRepository.detailsResult = Result.Error(DataError.Network.NoInternetConnection)
 
         val savedStateHandle = SavedStateHandle(mapOf(Screen.HotelDetailScreen.ARG_HOTEL_CODE to 1))
-        viewModel = HotelDetailViewModel(useCase, savedStateHandle)
+        viewModel = HotelDetailViewModel(useCase, getNearbyHotelsUseCase, savedStateHandle)
         
         testDispatcher.scheduler.advanceUntilIdle()
         
@@ -83,7 +90,7 @@ class HotelDetailViewModelTest {
         fakeRepository.detailsResult = Result.Error(DataError.Network.NoInternetConnection)
 
         val savedStateHandle = SavedStateHandle(mapOf(Screen.HotelDetailScreen.ARG_HOTEL_CODE to 1))
-        viewModel = HotelDetailViewModel(useCase, savedStateHandle)
+        viewModel = HotelDetailViewModel(useCase, getNearbyHotelsUseCase, savedStateHandle)
         
         testDispatcher.scheduler.advanceUntilIdle()
         assertTrue(viewModel.uiState.value.hotelState is UiState.Error)
@@ -107,7 +114,7 @@ class HotelDetailViewModelTest {
     @Test
     fun `toggle room expansion toggles code in set`() = runTest {
         val savedStateHandle = SavedStateHandle(mapOf(Screen.HotelDetailScreen.ARG_HOTEL_CODE to 1))
-        viewModel = HotelDetailViewModel(useCase, savedStateHandle)
+        viewModel = HotelDetailViewModel(useCase, getNearbyHotelsUseCase, savedStateHandle)
         
         val roomCode = "ROOM_123"
         
@@ -126,7 +133,7 @@ class HotelDetailViewModelTest {
     @Test
     fun `toggle room expansion handles multiple rooms independently`() = runTest {
         val savedStateHandle = SavedStateHandle(mapOf(Screen.HotelDetailScreen.ARG_HOTEL_CODE to 1))
-        viewModel = HotelDetailViewModel(useCase, savedStateHandle)
+        viewModel = HotelDetailViewModel(useCase, getNearbyHotelsUseCase, savedStateHandle)
         
         val room1 = "ROOM_1"
         val room2 = "ROOM_2"
@@ -157,8 +164,20 @@ class FakeHotelRepository : HotelRepository {
         hotelCodes: List<Int>
     ): Result<List<com.example.domain.model.hotel.NearbyHotel>, DataError> = Result.Success(emptyList())
 
+    override suspend fun searchHotels(
+        destination: String,
+        checkIn: String,
+        checkOut: String,
+        occupancies: List<com.example.domain.model.hotel.Occupancy>
+    ): Result<List<com.example.domain.model.hotel.NearbyHotel>, DataError> = Result.Success(emptyList())
+
     override suspend fun getHotelDetails(
         hotelCode: Int, checkIn: String, checkOut: String, adults: Int,
         children: Int?, childrenAges: String?
     ): Result<HotelDetails, DataError> = detailsResult
+}
+
+private class FakeLocationRepository : LocationRepository {
+    override fun observeLocation(): Flow<Result<UserLocation, DataError>> = flowOf(Result.Error(DataError.Location.Timeout))
+    override suspend fun getLastKnownLocation(): Result<UserLocation, DataError> = Result.Error(DataError.Location.Timeout)
 }

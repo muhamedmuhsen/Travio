@@ -9,6 +9,7 @@ import com.example.domain.model.hotel.NearbyHotel
 import com.example.domain.utils.DataError
 import com.example.domain.utils.Result
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
@@ -95,5 +96,20 @@ class HomeViewModelNearbyHotelsTest {
         advanceUntilIdle()
 
         assertTrue(viewModel.uiState.value.nearbyHotelsState is UiState.Error)
+    }
+
+    @Test
+    fun should_emitNavigateToHotelSearch_when_onSeeAllNearbyHotelsClicked() = runTest {
+        val viewModel = createNearbyReviewHomeViewModel()
+        val events = mutableListOf<HomeEvent>()
+        val job = launch {
+            viewModel.event.collect { events.add(it) }
+        }
+
+        viewModel.onAction(HomeAction.OnSeeAllNearbyHotelsClicked)
+        advanceUntilIdle()
+
+        assertTrue(events.contains(HomeEvent.NavigateToHotelSearch))
+        job.cancel()
     }
 }

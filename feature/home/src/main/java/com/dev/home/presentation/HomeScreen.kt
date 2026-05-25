@@ -5,9 +5,11 @@ import android.annotation.SuppressLint
 import android.content.res.Configuration
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -94,6 +96,7 @@ fun HomeScreen(
     navigateToCommunity: () -> Unit = {},
     navigateToTrips: () -> Unit = {},
     navigateToSeeAllFlights: () -> Unit = {},
+    navigateToHotelSearch: () -> Unit = {},
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
@@ -145,6 +148,7 @@ fun HomeScreen(
                 }
 
                 HomeEvent.NavigateToSeeAllFlights -> navigateToSeeAllFlights()
+                HomeEvent.NavigateToHotelSearch -> navigateToHotelSearch()
             }
         }
     }
@@ -639,7 +643,10 @@ private fun NearbyHotelsStateHandling(
                     message = stringResource(R.string.nearby_hotels_no_results)
                 )
             } else {
-                HorizontalSection(title = stringResource(R.string.section_nearby_hotels)) {
+                HorizontalSection(
+                    title = stringResource(R.string.section_nearby_hotels),
+                    onSeeAllClick = { onAction(HomeAction.OnSeeAllNearbyHotelsClicked) }
+                ) {
                     items(hotels, key = { it.code }) { hotel ->
                         NearbyHotelCard(
                             hotel = hotel,
@@ -657,20 +664,41 @@ private fun NearbyHotelsStateHandling(
 @Composable
 private fun HorizontalSection(
     title: String,
+    onSeeAllClick: (() -> Unit)? = null,
     content: LazyListScope.() -> Unit
 ) {
     Column {
-        Text(
-            text = title,
-            style = MaterialTheme.typography.titleLarge.copy(
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onSurface
-            ),
-            modifier = Modifier.padding(
-                horizontal = MaterialTheme.spacing.lg,
-                vertical = MaterialTheme.spacing.sm
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(
+                    horizontal = MaterialTheme.spacing.lg,
+                    vertical = MaterialTheme.spacing.sm
+                ),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.titleLarge.copy(
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onSurface
+                ),
+                modifier = Modifier.weight(1f)
             )
-        )
+            if (onSeeAllClick != null) {
+                Text(
+                    text = stringResource(R.string.section_see_all),
+                    style = MaterialTheme.typography.labelLarge.copy(
+                        fontWeight = FontWeight.SemiBold,
+                        color = MaterialTheme.colorScheme.primary
+                    ),
+                    modifier = Modifier
+                        .clickable { onSeeAllClick() }
+                        .padding(MaterialTheme.spacing.xs)
+                )
+            }
+        }
         LazyRow(
             horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.sm),
             content = content,

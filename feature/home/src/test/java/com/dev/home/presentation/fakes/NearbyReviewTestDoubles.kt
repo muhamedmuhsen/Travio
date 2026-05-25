@@ -142,6 +142,15 @@ class FakeHotelRepository : HotelRepository {
         return searchResult
     }
 
+    override suspend fun searchHotels(
+        destination: String,
+        checkIn: String,
+        checkOut: String,
+        occupancies: List<com.example.domain.model.hotel.Occupancy>
+    ): Result<List<NearbyHotel>, DataError> {
+        return Result.Success(emptyList())
+    }
+
     override suspend fun getHotelDetails(
         hotelCode: Int,
         checkIn: String,
