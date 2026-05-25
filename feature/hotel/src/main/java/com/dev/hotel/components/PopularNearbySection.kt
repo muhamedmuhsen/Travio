@@ -17,6 +17,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.dev.utils.uistate.UiState
+import com.example.common.extensions.toCurrencySymbol
 import com.example.designsystem.components.DestinationCard
 import com.example.designsystem.components.LoadingDestinationCard
 import com.example.domain.model.hotel.NearbyHotel
@@ -63,7 +64,7 @@ fun PopularNearbySection(
                             rating = 0.0,
                             reviewCount = 0,
                             description = hotel.categoryName ?: hotel.destinationName ?: "",
-                            price = "${hotel.currency ?: "$"} ${hotel.minRate ?: 0.0}",
+                            price = "${hotel.currency?.toCurrencySymbol() ?: "$"} ${hotel.minRate ?: 0.0}",
                             imageUrl = hotel.thumbnailImage ?: "",
                             isFavorite = false,
                             onFavoriteClicked = { },

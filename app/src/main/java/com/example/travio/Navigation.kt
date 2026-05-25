@@ -15,6 +15,7 @@ import com.dev.community.presentation.ShareMomentScreen
 import com.dev.favroite.FavoriteScreen
 import com.dev.home.presentation.HomeScreen
 import com.dev.hotel.presentation.HotelDetailScreen
+import com.dev.hotel.search.HotelSearchScreen
 import com.dev.onboarding.language.LanguageScreen
 import com.dev.onboarding.onboarding.OnboardingScreen
 import com.dev.onboarding.starterlogin.StarterLogin
@@ -194,6 +195,9 @@ fun TravioNavHost(
                 },
                 navigateToSeeAllFlights = {
                     navController.navigate(Screen.SeeAllFlightsScreen.route)
+                },
+                navigateToHotelSearch = {
+                    navController.navigate(Screen.HotelSearchScreen.route)
                 }
             )
         }
@@ -357,10 +361,53 @@ fun TravioNavHost(
 
         composable(
             route = Screen.HotelDetailScreen.routePattern,
-            arguments = listOf(navArgument(Screen.HotelDetailScreen.ARG_HOTEL_CODE) { type = NavType.IntType })
+            arguments = listOf(
+                navArgument(Screen.HotelDetailScreen.ARG_HOTEL_CODE) { type = NavType.IntType },
+                navArgument("checkIn") {
+                    type = NavType.StringType
+                    nullable = true
+                    defaultValue = null
+                },
+                navArgument("checkOut") {
+                    type = NavType.StringType
+                    nullable = true
+                    defaultValue = null
+                },
+                navArgument("adults") {
+                    type = NavType.IntType
+                    defaultValue = -1
+                },
+                navArgument("children") {
+                    type = NavType.IntType
+                    defaultValue = -1
+                },
+                navArgument("childrenAges") {
+                    type = NavType.StringType
+                    nullable = true
+                    defaultValue = null
+                }
+            )
         ) {
             HotelDetailScreen(
                 onBackClick = { navController.popBackStack() }
+            )
+        }
+
+        composable(Screen.HotelSearchScreen.route) {
+            HotelSearchScreen(
+                onNavigateToDetails = { hotelCode, checkIn, checkOut, adults, children, childrenAges ->
+                    navController.navigate(
+                        Screen.HotelDetailScreen.createRoute(
+                            hotelCode = hotelCode,
+                            checkIn = checkIn.toString(),
+                            checkOut = checkOut.toString(),
+                            adults = adults,
+                            children = children,
+                            childrenAges = childrenAges
+                        )
+                    )
+                },
+                onBack = { navController.popBackStack() }
             )
         }
 

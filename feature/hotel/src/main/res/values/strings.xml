@@ -42,4 +42,36 @@
     <string name="hotel_details_added_to_favorites">Added to favorites</string>
     <string name="hotel_details_removed_from_favorites">Removed from favorites</string>
     <string name="hotel_details_rooms_updated">Room availability updated</string>
+
+    <!-- Hotel Search Strings -->
+    <string name="hotel_search_title">Find Hotels</string>
+    <string name="hotel_search_destination_label">Destination</string>
+    <string name="hotel_search_destination_placeholder">Where are you going?</string>
+    <string name="hotel_search_destination_required">Destination is required</string>
+    <string name="hotel_search_check_in_label">Check-in</string>
+    <string name="hotel_search_check_out_label">Check-out</string>
+    <string name="hotel_search_guests_label">Guests &amp; Rooms</string>
+    <string name="hotel_search_guests_summary">%1$d Adults, %2$d Children</string>
+    <string name="hotel_search_button">Search Hotels</string>
+    <string name="hotel_search_no_results">No hotels found</string>
+    <string name="hotel_search_no_results_desc">Try searching for a different destination or date range.</string>
+    <string name="hotel_search_error_title">Search Failed</string>
+    <string name="hotel_search_error_desc">An error occurred while searching for hotels. Please try again.</string>
+    
+    <!-- Guest Selector Bottom Sheet -->
+    <string name="hotel_search_select_guests">Select Guests</string>
+    <string name="hotel_search_adults">Adults</string>
+    <string name="hotel_search_adults_desc">Age 18 or above</string>
+    <string name="hotel_search_children">Children</string>
+    <string name="hotel_search_children_desc">Ages 0 to 17</string>
+    <string name="hotel_search_child_age_label">Child %1$d Age</string>
+    <string name="hotel_search_child_years">%1$d years old</string>
+    <string name="hotel_search_child_under_one">Under 1 year old</string>
+    <string name="hotel_search_apply">Apply</string>
+    
+    <!-- Validation Errors -->
+    <string name="hotel_search_validation_checkout_after_checkin">Check-out date must be after check-in date</string>
+    <string name="hotel_search_validation_invalid_occupancy">Please enter valid guests (1-6 adults, 0-4 children)</string>
+    <string name="hotel_search_validation_child_ages_missing">Please select ages for all children</string>
 </resources>
+

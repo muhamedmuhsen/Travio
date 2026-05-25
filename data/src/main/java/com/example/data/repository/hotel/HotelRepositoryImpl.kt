@@ -165,4 +165,43 @@ class HotelRepositoryImpl @Inject constructor(
             is Result.Error -> Result.Error(result.error)
         }
     }
+
+    override suspend fun searchHotels(
+        destination: String,
+        checkIn: String,
+        checkOut: String,
+        occupancies: List<com.example.domain.model.hotel.Occupancy>
+    ): Result<List<NearbyHotel>, DataError> {
+        val request = HotelSearchRequestDto(
+            checkIn = checkIn,
+            checkOut = checkOut,
+            occupancies = occupancies.map { it.toDto() },
+            destinationName = destination,
+            hotelCodes = listOf(0)
+        )
+        val result = safeApiCall {
+            api.searchHotels(request)
+        }
+
+        return when (result) {
+            is Result.Success -> {
+                val response = result.data
+                if (!response.success) {
+                    Result.Error(DataError.Logical(response.message))
+                } else {
+                    val hotels = response.data?.hotels?.map { it.toDomain() } ?: emptyList()
+                    Result.Success(hotels)
+                }
+            }
+            is Result.Error -> Result.Error(result.error)
+        }
+    }
+
+    private fun com.example.domain.model.hotel.Occupancy.toDto(): OccupancyDto {
+        return OccupancyDto(
+            adults = this.adults,
+            children = this.children,
+            childrenAges = this.childrenAges
+        )
+    }
 }

@@ -13,6 +13,7 @@ sealed interface HomeEvent {
     data object NavigateToSearch : HomeEvent
     data object RequestLocationPermission : HomeEvent
     data class NavigateToHotelDetails(val code: Int) : HomeEvent
+    data object NavigateToHotelSearch : HomeEvent
 }
 
 sealed interface HomeSection {
@@ -40,4 +41,5 @@ sealed interface HomeAction {
     data object OnSeeAllFlightsClicked : HomeAction
     data class OnRetrySection(val section: HomeSection) : HomeAction
     data class OnLocationPermissionResult(val granted: Boolean) : HomeAction
+    data object OnSeeAllNearbyHotelsClicked : HomeAction
 }

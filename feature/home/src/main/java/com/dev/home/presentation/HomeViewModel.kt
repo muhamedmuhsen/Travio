@@ -84,6 +84,7 @@ class HomeViewModel @Inject constructor(
             is HomeAction.OnDestinationItemVisible -> onDestinationItemVisible(action.index)
             is HomeAction.OnLocationPermissionResult -> onLocationPermissionResult(action.granted)
             HomeAction.OnSeeAllFlightsClicked -> navigateToSeeAllFlights()
+            HomeAction.OnSeeAllNearbyHotelsClicked -> navigateToHotelSearch()
         }
     }
 
@@ -218,6 +219,10 @@ class HomeViewModel @Inject constructor(
 
     private fun navigateToSeeAllFlights() {
         viewModelScope.launch { _event.send(HomeEvent.NavigateToSeeAllFlights) }
+    }
+
+    private fun navigateToHotelSearch() {
+        viewModelScope.launch { _event.send(HomeEvent.NavigateToHotelSearch) }
     }
 
     private fun navigateToDestination(id: String) {
