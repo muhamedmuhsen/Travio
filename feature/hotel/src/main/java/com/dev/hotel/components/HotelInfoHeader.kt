@@ -59,7 +59,7 @@ fun HotelInfoHeader(
             Box(
                 modifier = Modifier
                     .clip(RoundedCornerShape(8.dp))
-                    .background(Color(0xFF008080)) // Teal color as per image
+                    .background(MaterialTheme.colorScheme.primary) // Teal color as per image
                     .padding(horizontal = 8.dp, vertical = 4.dp),
                 contentAlignment = Alignment.Center
             ) {
