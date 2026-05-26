@@ -174,7 +174,7 @@ fun PlanGenerationScreenContent(
                     Spacer(modifier = Modifier.height(8.dp))
 
                     Text(
-                        text = state.message,
+                        text = state.message.asString(),
                         fontSize = 14.sp,
                         color = subtitleColor,
                         textAlign = TextAlign.Center,
@@ -416,7 +416,7 @@ fun PlanGenerationScreenLoadingPreview() {
 @Composable
 fun PlanGenerationScreenErrorPreview() {
     PlanGenerationScreenContent(
-        state = PlanGenerationUiState.Error("Failed to fetch server response"),
+        state = PlanGenerationUiState.Error(com.dev.utils.uitext.UiText.DynamicString("Failed to fetch server response")),
         onDismiss = {},
         onRetry = {}
     )

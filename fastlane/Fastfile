@@ -30,7 +30,7 @@ platform :android do
 
     firebase_app_distribution(
       app: ENV["FIREBASE_APP_ID"],
-      android_artifact_path: "app/build/outputs/apk/deviceTester/release/app-deviceTester-release.apk",
+      android_artifact_path: "app/build/outputs/apk/deviceTester/release/app-deviceTester-release-unsigned.apk",
       testers: ENV["FIREBASE_TESTERS"],
       firebase_cli_token: ENV["FIREBASE_CLI_TOKEN"],
       release_notes: "Tester device release - #{git_branch} - #{last_git_commit[:message]}"

@@ -22,6 +22,7 @@ import com.example.data.repository.hotel.HotelRepositoryImpl
 import com.example.data.repository.review.ReviewRepositoryImpl
 import com.example.data.repository.search.RecentSearchRepositoryImpl
 import com.example.data.repository.survey.SurveyPreferencesRepositoryImpl
+import com.example.data.repository.trip.TripApiRepositoryImpl
 import com.example.domain.repository.auth.EmailVerificationRepository
 import com.example.domain.repository.auth.LoginRepository
 import com.example.domain.repository.auth.PasswordResetRepository
@@ -44,6 +45,7 @@ import com.example.domain.repository.hotel.HotelRepository
 import com.example.domain.repository.review.ReviewRepository
 import com.example.domain.repository.search.RecentSearchRepository
 import com.example.domain.repository.survey.SurveyPreferencesRepository
+import com.example.domain.repository.trip.TripApiRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -149,4 +151,8 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindFlightDetailsRepository(flightDetailsRepositoryImpl: FlightDetailsRepositoryImpl): FlightDetailsRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindTripApiRepository(tripApiRepositoryImpl: TripApiRepositoryImpl): TripApiRepository
 }

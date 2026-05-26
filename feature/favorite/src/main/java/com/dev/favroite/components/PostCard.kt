@@ -19,13 +19,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import coil.compose.AsyncImage
 import com.example.designsystem.theme.TravioTheme
 import com.example.designsystem.theme.elevation
 import com.example.designsystem.theme.spacing
@@ -35,8 +32,9 @@ import com.example.feature.favorite.R
 fun TripCard(
     modifier: Modifier = Modifier,
     title: String,
-    ownerName: String,
-    imageUrl: String,
+    destinationName: String,
+    totalDays: Int,
+    createdAt: String,
     isFavorite: Boolean,
     onFavoriteClick: () -> Unit,
     onClick: () -> Unit
@@ -51,8 +49,9 @@ fun TripCard(
     ) {
         PostContent(
             title = title,
-            ownerName = ownerName,
-            imageUrl = imageUrl,
+            destinationName = destinationName,
+            totalDays = totalDays,
+            createdAt = createdAt,
             isFavorite = isFavorite,
             onFavoriteClick = onFavoriteClick
         )
@@ -62,32 +61,52 @@ fun TripCard(
 @Composable
 private fun PostContent(
     title: String,
-    ownerName: String,
-    imageUrl: String,
+    destinationName: String,
+    totalDays: Int,
+    createdAt: String,
     isFavorite: Boolean,
     onFavoriteClick: () -> Unit
 ) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(MaterialTheme.spacing.sm),
+            .padding(MaterialTheme.spacing.md),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        Row(
+        Column(
             modifier = Modifier.weight(1f),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.sm)
+            verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.xs)
         ) {
-            AsyncImage(
-                model = imageUrl,
-                contentDescription = title,
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .size(MaterialTheme.spacing.xxxl * 2)
-                    .clip(MaterialTheme.shapes.medium)
+            Text(
+                text = title,
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onBackground,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis
             )
-            PostDetails(title = title, ownerName = ownerName)
+            Text(
+                text = destinationName,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.sm),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = stringResource(R.string.trip_days_format, totalDays),
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.primary
+                )
+                Text(
+                    text = stringResource(R.string.trip_created_format, createdAt),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
         }
         PostFavoriteIcon(isFavorite = isFavorite, onFavoriteClick = onFavoriteClick)
     }
@@ -119,7 +138,11 @@ private fun PostFavoriteIcon(
         ) {
             Icon(
                 painter = painterResource(id = R.drawable.favorite_icon),
-                contentDescription = stringResource(R.string.favorite_remove_cd),
+                contentDescription = if (isFavorite) {
+                    stringResource(R.string.favorite_remove_cd)
+                } else {
+                    stringResource(R.string.favorite_add_cd)
+                },
                 tint = if (isFavorite) {
                     MaterialTheme.colorScheme.error
                 } else {
@@ -131,28 +154,7 @@ private fun PostFavoriteIcon(
     }
 }
 
-@Composable
-private fun PostDetails(
-    title: String,
-    ownerName: String
-) {
-    Column(verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.xxs)) {
-        Text(
-            text = title,
-            style = MaterialTheme.typography.titleMedium,
-            color = MaterialTheme.colorScheme.onBackground,
-            maxLines = 2,
-            overflow = TextOverflow.Ellipsis
-        )
-        Text(
-            text = ownerName,
-            style = MaterialTheme.typography.labelMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis
-        )
-    }
-}
+// Removed PostDetails as it's merged into PostContent
 
 @Preview(showBackground = true)
 @Composable
@@ -160,8 +162,9 @@ private fun PostCardPreview() {
     TravioTheme {
         TripCard(
             title = "Top 10 places to visit in Europe",
-            ownerName = "John Doe",
-            imageUrl = "",
+            destinationName = "Europe",
+            totalDays = 10,
+            createdAt = "2026-05-26",
             isFavorite = true,
             onFavoriteClick = {},
             onClick = {}

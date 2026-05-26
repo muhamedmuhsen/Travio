@@ -3,6 +3,8 @@ package com.example.feature.chat.data.remote
 import com.example.feature.chat.data.notification.PlanNotificationManager
 import com.example.feature.chat.data.remote.dto.PlanStatusDto
 import com.example.feature.chat.domain.model.ConnectionState
+import com.example.network.clients.AuthInterceptor
+import com.example.network.clients.TokenAuthenticator
 import com.example.network.config.EnvironmentConfig
 import com.microsoft.signalr.Action
 import com.microsoft.signalr.HubConnection
@@ -37,6 +39,8 @@ class SignalRServiceImplTest {
     private lateinit var mockHubConnection: HubConnection
     private lateinit var mockNotificationManager: PlanNotificationManager
     private lateinit var environmentConfig: EnvironmentConfig
+    private lateinit var mockAuthInterceptor: AuthInterceptor
+    private lateinit var mockTokenAuthenticator: TokenAuthenticator
     private lateinit var service: TestSignalRServiceImpl
     private var onClosedCallback: Any? = null
 
@@ -45,6 +49,8 @@ class SignalRServiceImplTest {
         mockHubConnection = mock()
         mockNotificationManager = mock()
         environmentConfig = mock()
+        mockAuthInterceptor = mock()
+        mockTokenAuthenticator = mock()
         whenever(environmentConfig.enableDebugDiagnostics).thenReturn(false)
 
         org.mockito.Mockito.doAnswer(object : org.mockito.stubbing.Answer<Unit> {
@@ -61,6 +67,8 @@ class SignalRServiceImplTest {
             baseUrl = "https://example.com/api/",
             environmentConfig = environmentConfig,
             notificationManager = mockNotificationManager,
+            authInterceptor = mockAuthInterceptor,
+            tokenAuthenticator = mockTokenAuthenticator,
             mockHubConnection = mockHubConnection
         )
     }
@@ -92,6 +100,8 @@ class SignalRServiceImplTest {
             baseUrl = "https://example.com/api/",
             environmentConfig = environmentConfig,
             notificationManager = mockNotificationManager,
+            authInterceptor = mockAuthInterceptor,
+            tokenAuthenticator = mockTokenAuthenticator,
             mockHubConnection = mockHubConnection,
             scope = this,
             ioDispatcher = StandardTestDispatcher(testScheduler),
@@ -134,6 +144,8 @@ class SignalRServiceImplTest {
             baseUrl = "https://example.com/api/",
             environmentConfig = environmentConfig,
             notificationManager = mockNotificationManager,
+            authInterceptor = mockAuthInterceptor,
+            tokenAuthenticator = mockTokenAuthenticator,
             mockHubConnection = mockHubConnection,
             scope = this,
             ioDispatcher = StandardTestDispatcher(testScheduler),
@@ -182,11 +194,13 @@ class SignalRServiceImplTest {
         baseUrl: String,
         environmentConfig: EnvironmentConfig,
         notificationManager: PlanNotificationManager,
+        authInterceptor: AuthInterceptor,
+        tokenAuthenticator: TokenAuthenticator,
         private val mockHubConnection: HubConnection,
         override val scope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Default),
         override val ioDispatcher: CoroutineDispatcher = Dispatchers.Unconfined,
         override val initialRetryDelayMs: Long = 1000L
-    ) : SignalRServiceImpl(baseUrl, environmentConfig, notificationManager) {
+    ) : SignalRServiceImpl(baseUrl, environmentConfig, notificationManager, authInterceptor, tokenAuthenticator) {
 
         companion object {
             var tempMockHubConnection: HubConnection? = null

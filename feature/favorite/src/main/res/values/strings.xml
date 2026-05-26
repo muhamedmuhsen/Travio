@@ -27,5 +27,11 @@
     <!-- Favorite Screen - Content Descriptions -->
     <string name="favorite_icon_cd">Favorite destination</string>
     <string name="favorite_remove_cd">Remove from favorites</string>
+    <string name="favorite_add_cd">Add to favorites</string>
+
+    <!-- Trip Card -->
+    <string name="trip_days_format">%d Days</string>
+    <string name="trip_created_format">Created: %s</string>
+    <string name="error_invalid_trip_id">Invalid trip ID</string>
 </resources>
 

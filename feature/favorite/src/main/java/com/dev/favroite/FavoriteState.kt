@@ -3,7 +3,7 @@ package com.dev.favroite
 import com.dev.favroite.components.SectionTab
 import com.dev.utils.uitext.UiText
 import com.example.domain.model.favorite.Place
-import com.example.domain.model.favorite.Trip
+import com.example.domain.model.trip.TripItem
 
 sealed interface FavoritesTabUiState<out T> {
     data object Loading : FavoritesTabUiState<Nothing>
@@ -29,20 +29,20 @@ data class FavoriteState(
     val selectedItem: Int = 1,
     val selectedTab: SectionTab = SectionTab.Destinations,
     val destinationsState: FavoritesTabUiState<Place> = FavoritesTabUiState.Loading,
-    val tripsState: FavoritesTabUiState<Trip> = FavoritesTabUiState.Loading,
+    val tripsState: FavoritesTabUiState<TripItem> = FavoritesTabUiState.Loading,
     val favoriteIds: Set<Int> = emptySet(),
     val destinationsPagination: FavoritesPaginationState = FavoritesPaginationState(),
     val tripsPagination: FavoritesPaginationState = FavoritesPaginationState(),
     val inFlightMutationIds: Set<Int> = emptySet(),
     val loadedDestinations: List<Place> = emptyList(),
-    val loadedTrips: List<Trip> = emptyList()
+    val loadedTrips: List<TripItem> = emptyList()
 ) {
     val totalFavoriteCount: Int get() = loadedDestinations.size + loadedTrips.size
 
     val displayedDestinations: List<Place>
         get() = if (selectedTab == SectionTab.Destinations) loadedDestinations else emptyList()
 
-    val displayedTrips: List<Trip>
+    val displayedTrips: List<TripItem>
         get() = if (selectedTab == SectionTab.Trips) loadedTrips else emptyList()
 
     val currentTabState: FavoritesTabUiState<*>

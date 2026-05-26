@@ -2,6 +2,8 @@ package com.example.feature.chat.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.dev.utils.uitext.UiText
+import com.example.feature.chat.R
 import com.example.feature.chat.domain.model.PlanStatus
 import com.example.feature.chat.domain.usecase.ObservePlanStatusUseCase
 import com.example.feature.chat.presentation.state.PlanGenerationUiState
@@ -29,14 +31,20 @@ class PlanGenerationViewModel @Inject constructor(
                         _state.update {
                             when (planState.status) {
                                 PlanStatus.COMPLETED -> PlanGenerationUiState.Success(planState.tripId ?: "")
-                                PlanStatus.FAILED -> PlanGenerationUiState.Error(planState.error ?: "Unknown error")
+                                PlanStatus.FAILED -> {
+                                    val errorText = when (planState.error) {
+                                        "sync_trip_id_failed" -> UiText.StringResource(R.string.error_sync_trip_id_failed)
+                                        else -> UiText.DynamicString(planState.error ?: "Unknown error")
+                                    }
+                                    PlanGenerationUiState.Error(errorText)
+                                }
                                 PlanStatus.IN_PROGRESS -> PlanGenerationUiState.Loading(PlanStatus.IN_PROGRESS)
                             }
                         }
                     }
                 }
             } catch (e: kotlinx.coroutines.TimeoutCancellationException) {
-                _state.value = PlanGenerationUiState.Error("Plan generation timed out")
+                _state.value = PlanGenerationUiState.Error(UiText.StringResource(R.string.plan_generation_timed_out))
             }
         }
     }

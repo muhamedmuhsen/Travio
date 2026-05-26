@@ -34,9 +34,11 @@ class FavoriteTripRepositoryImpl @Inject constructor(
     }
 
     override fun isTripFavorite(tripId: String): Flow<Boolean> {
-        return favoritePostDao.isPostFavorite(tripId).flowOn(ioDispatcher)
+        return favoritePostDao.isPostFavorite(tripId)
+            .flowOn(ioDispatcher)
     }
 
+//
     override suspend fun addTripToFavorite(trip: Trip): Result<Unit, DataError.Local> {
         return withContext(ioDispatcher) {
             try {
