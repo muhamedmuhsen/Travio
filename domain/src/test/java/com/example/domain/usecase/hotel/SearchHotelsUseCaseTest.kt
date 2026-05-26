@@ -198,6 +198,12 @@ class SearchHotelsUseCaseTest {
         ): Result<com.example.domain.model.hotel.HotelDetails, DataError> {
             return Result.Error(DataError.UnknownError)
         }
+
+        override suspend fun checkoutHotel(
+            request: com.example.domain.model.hotel.HotelCheckoutRequest
+        ): Result<com.example.domain.model.hotel.HotelCheckoutResult, DataError> {
+            return Result.Error(DataError.UnknownError)
+        }
     }
 
     private companion object {

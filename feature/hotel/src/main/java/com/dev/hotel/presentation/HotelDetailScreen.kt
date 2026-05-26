@@ -42,11 +42,21 @@ import com.dev.hotel.components.RoomCard
 import com.dev.utils.uistate.UiState
 import com.example.domain.model.hotel.HotelDetails
 import com.example.feature.hotel.R
+import java.time.format.DateTimeFormatter
 
 @Composable
 fun HotelDetailScreen(
     viewModel: HotelDetailViewModel = hiltViewModel(),
-    onBackClick: () -> Unit = {}
+    onBackClick: () -> Unit = {},
+    onBookRoom: (
+        rateKey: String,
+        hotelCode: Int,
+        checkIn: String,
+        checkOut: String,
+        adults: Int,
+        children: Int,
+        childrenAges: String?
+    ) -> Unit = { _, _, _, _, _, _, _ -> }
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
@@ -63,7 +73,21 @@ fun HotelDetailScreen(
                     snackbarHostState.showSnackbar("Exploring ${event.name} coming soon")
                 }
                 is HotelDetailEvent.NavigateToBooking -> {
-                    snackbarHostState.showSnackbar("Booking process coming soon")
+                    val hotelData = (uiState.hotelState as? UiState.Success)?.data
+                    val actualRateKey = event.rateKey ?: hotelData?.rooms?.firstOrNull()?.rates?.firstOrNull()?.rateKey
+                    if (actualRateKey != null && hotelData != null) {
+                        onBookRoom(
+                            actualRateKey,
+                            hotelData.code,
+                            uiState.checkInDate.format(DateTimeFormatter.ISO_LOCAL_DATE),
+                            uiState.checkOutDate.format(DateTimeFormatter.ISO_LOCAL_DATE),
+                            uiState.adults,
+                            uiState.children,
+                            if (uiState.children > 0) uiState.childrenAges.joinToString(",") else null
+                        )
+                    } else {
+                        snackbarHostState.showSnackbar("No available rates for booking")
+                    }
                 }
                 is HotelDetailEvent.ShowMessage -> {
                     snackbarHostState.showSnackbar(event.message.asString(context))

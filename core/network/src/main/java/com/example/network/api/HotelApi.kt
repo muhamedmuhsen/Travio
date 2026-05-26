@@ -1,5 +1,7 @@
 package com.example.network.api
 
+import com.example.network.dto.hotel.HotelCheckoutRequestDto
+import com.example.network.dto.hotel.HotelCheckoutResponseDto
 import com.example.network.dto.hotel.HotelDetailsResponseDto
 import com.example.network.dto.hotel.HotelSearchRequestDto
 import com.example.network.dto.hotel.HotelSearchResponseDto
@@ -22,4 +24,7 @@ interface HotelApi {
         @Query("children") children: Int? = null,
         @Query("childrenAges") childrenAges: String? = null
     ): HotelDetailsResponseDto
+
+    @POST("Hotels/checkout")
+    suspend fun checkoutHotel(@Body request: HotelCheckoutRequestDto): HotelCheckoutResponseDto
 }

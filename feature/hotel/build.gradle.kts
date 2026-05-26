@@ -10,6 +10,20 @@ android {
     namespace = "com.example.feature.hotel"
     compileSdk = 36
 
+    flavorDimensions += "environment"
+
+    productFlavors {
+        create("emulator") {
+            dimension = "environment"
+        }
+        create("deviceTester") {
+            dimension = "environment"
+        }
+        create("production") {
+            dimension = "environment"
+        }
+    }
+
     defaultConfig {
         minSdk = 29
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -34,6 +48,7 @@ android {
 
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 }
 
@@ -68,6 +83,9 @@ dependencies {
     implementation(libs.timber)
     // Maps
     implementation(libs.maps.compose)
+
+    // Stripe
+    implementation(libs.stripe.android)
 
     // Unit Tests
     testImplementation(libs.junit)

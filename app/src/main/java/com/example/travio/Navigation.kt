@@ -389,7 +389,20 @@ fun TravioNavHost(
             )
         ) {
             HotelDetailScreen(
-                onBackClick = { navController.popBackStack() }
+                onBackClick = { navController.popBackStack() },
+                onBookRoom = { rateKey, hotelCode, checkIn, checkOut, adults, children, childrenAges ->
+                    navController.navigate(
+                        Screen.HotelCheckoutScreen.createRoute(
+                            rateKey = rateKey,
+                            hotelCode = hotelCode,
+                            checkIn = checkIn,
+                            checkOut = checkOut,
+                            adults = adults,
+                            children = children,
+                            childrenAges = childrenAges
+                        )
+                    )
+                }
             )
         }
 
@@ -605,6 +618,58 @@ fun TravioNavHost(
                     // For now, just pop back or show a toast
                     // In real app, might navigate to a confirmation screen
                     navController.popBackStack()
+                }
+            )
+        }
+
+        composable(
+            route = Screen.HotelCheckoutScreen.routePattern,
+            arguments = listOf(
+                navArgument(Screen.HotelCheckoutScreen.ARG_RATE_KEY) { type = NavType.StringType },
+                navArgument(Screen.HotelCheckoutScreen.ARG_HOTEL_CODE) { type = NavType.IntType },
+                navArgument("checkIn") { type = NavType.StringType },
+                navArgument("checkOut") { type = NavType.StringType },
+                navArgument("adults") { type = NavType.IntType },
+                navArgument("children") { type = NavType.IntType },
+                navArgument("childrenAges") {
+                    type = NavType.StringType
+                    nullable = true
+                    defaultValue = null
+                }
+            )
+        ) {
+            com.dev.hotel.checkout.HotelCheckoutScreen(
+                onBackClick = { navController.popBackStack() },
+                onSuccess = { bookingId, hotelName, checkIn, checkOut ->
+                    navController.navigate(
+                        Screen.BookingSuccessScreen.createRoute(
+                            bookingId = bookingId,
+                            hotelName = hotelName,
+                            checkIn = checkIn,
+                            checkOut = checkOut
+                        )
+                    ) {
+                        popUpTo(Screen.HotelCheckoutScreen.routePattern) { inclusive = true }
+                    }
+                }
+            )
+        }
+
+        composable(
+            route = Screen.BookingSuccessScreen.routePattern,
+            arguments = listOf(
+                navArgument(Screen.BookingSuccessScreen.ARG_BOOKING_ID) { type = NavType.StringType },
+                navArgument("hotelName") { type = NavType.StringType },
+                navArgument("checkIn") { type = NavType.StringType },
+                navArgument("checkOut") { type = NavType.StringType }
+            )
+        ) {
+            com.dev.hotel.checkout.BookingSuccessScreen(
+                onNavigateToHome = {
+                    navController.navigate(Screen.HomeScreen.route) {
+                        popUpTo(Screen.HomeScreen.route) { inclusive = false }
+                        launchSingleTop = true
+                    }
                 }
             )
         }

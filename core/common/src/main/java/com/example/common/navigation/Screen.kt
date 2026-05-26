@@ -77,6 +77,48 @@ sealed class Screen(val route: String) {
 
         fun createRoute(offerId: String): String = "$route/$offerId"
     }
+
+    // EXCEPTION: S-03 — Added legacy routes for compatibility with task requirements while implementing type-safe serializable routes.
+    data object HotelCheckoutScreen : Screen(Screens.HOTEL_CHECKOUT.name) {
+        const val ARG_RATE_KEY = "rateKey"
+        const val ARG_HOTEL_CODE = "hotelCode"
+        val routePattern = "$route/{$ARG_RATE_KEY}/{$ARG_HOTEL_CODE}" +
+            "?checkIn={checkIn}&checkOut={checkOut}&adults={adults}&children={children}&childrenAges={childrenAges}"
+
+        fun createRoute(
+            rateKey: String,
+            hotelCode: Int,
+            checkIn: String,
+            checkOut: String,
+            adults: Int,
+            children: Int,
+            childrenAges: String? = null
+        ): String {
+            val builder = StringBuilder("$route/$rateKey/$hotelCode")
+            builder.append("?checkIn=").append(checkIn)
+                .append("&checkOut=").append(checkOut)
+                .append("&adults=").append(adults)
+                .append("&children=").append(children)
+            if (childrenAges != null) {
+                builder.append("&childrenAges=").append(childrenAges)
+            }
+            return builder.toString()
+        }
+    }
+
+    data object BookingSuccessScreen : Screen(Screens.BOOKING_SUCCESS.name) {
+        const val ARG_BOOKING_ID = "bookingId"
+        val routePattern = "$route/{$ARG_BOOKING_ID}?hotelName={hotelName}&checkIn={checkIn}&checkOut={checkOut}"
+
+        fun createRoute(
+            bookingId: String,
+            hotelName: String,
+            checkIn: String,
+            checkOut: String
+        ): String {
+            return "$route/$bookingId?hotelName=$hotelName&checkIn=$checkIn&checkOut=$checkOut"
+        }
+    }
 }
 
 enum class Screens {
@@ -106,5 +148,7 @@ enum class Screens {
     SEE_ALL_FLIGHTS,
     FLIGHT_DETAIL,
     HOTEL_DETAIL,
-    HOTEL_SEARCH
+    HOTEL_SEARCH,
+    HOTEL_CHECKOUT,
+    BOOKING_SUCCESS
 }
