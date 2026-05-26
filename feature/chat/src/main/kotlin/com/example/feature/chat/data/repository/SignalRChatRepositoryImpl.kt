@@ -78,28 +78,35 @@ class SignalRChatRepositoryImpl @Inject constructor(
                 val itinerary = apiResponse.data?.itinerary
                 if (!itinerary.isNullOrEmpty()) {
                     Timber.d("Retrieved itinerary with ${itinerary.size} days: $itinerary")
-                    val tripId = java.util.UUID.randomUUID().toString()
-                    val featureDto = apiResponse.toFeatureDto()
+                    val existingTrips = tripRepository.getTripsForThread(threadId)
+                    val completedTrip = existingTrips.find { it.status == TripPlanStatus.COMPLETED }
 
-                    saveTripIfNew(threadId, tripId, featureDto)
+                    // If we don't have a completed trip locally, we should prefer waiting for SignalR
+                    // so we can get the real Integer ID, rather than instantly generating a UUID.
+                    if (completedTrip != null) {
+                        val tripId = completedTrip.id
+                        val featureDto = apiResponse.toFeatureDto()
 
-                    emit(
-                        PlanGenerationState(
-                            threadId = threadId,
-                            status = com.example.feature.chat.domain.model.PlanStatus.COMPLETED,
-                            tripId = tripId
+                        saveTripIfNew(threadId, tripId, featureDto)
+
+                        emit(
+                            PlanGenerationState(
+                                threadId = threadId,
+                                status = com.example.feature.chat.domain.model.PlanStatus.COMPLETED,
+                                tripId = tripId
+                            )
                         )
-                    )
+                    } else {
+                        Timber.d(
+                            "REST API returned completed itinerary, but no local completed trip found. " +
+                                "Deferring to SignalR to acquire the correct Trip ID."
+                        )
+                    }
                 }
             } catch (e: Exception) {
                 Timber.e(e, "REST API fallback failed")
-                emit(
-                    PlanGenerationState(
-                        threadId = threadId,
-                        status = com.example.feature.chat.domain.model.PlanStatus.FAILED,
-                        error = e.message ?: "REST API fallback failed"
-                    )
-                )
+                // Don't emit FAILED here, let SignalR handle errors if possible.
+                // We only emit FAILED if SignalR also fails, but for now we just log.
             }
 
             signalRFlow.collect { emit(it) }

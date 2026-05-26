@@ -1,5 +1,6 @@
 package com.example.feature.chat.presentation.state
 
+import com.dev.utils.uitext.UiText
 import com.example.feature.chat.domain.model.PlanStatus
 
 sealed interface PlanGenerationUiState {
@@ -11,5 +12,5 @@ sealed interface PlanGenerationUiState {
 
     data class Success(val tripId: String) : PlanGenerationUiState
 
-    data class Error(val message: String) : PlanGenerationUiState
+    data class Error(val message: UiText) : PlanGenerationUiState
 }

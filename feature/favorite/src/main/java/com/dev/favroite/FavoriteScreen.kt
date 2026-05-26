@@ -41,18 +41,19 @@ import com.example.designsystem.components.AppBottomBar
 import com.example.designsystem.theme.TravioTheme
 import com.example.designsystem.theme.spacing
 import com.example.domain.model.favorite.Place
-import com.example.domain.model.favorite.Trip
+import com.example.domain.model.trip.TripItem
 import com.example.feature.favorite.R
 
 @Composable
 fun FavoriteScreen(
-    modifier: Modifier = Modifier,
-    viewModel: FavoriteViewModel = hiltViewModel(),
-    navigateToProfile: () -> Unit,
     navigateToHome: () -> Unit,
+    navigateToProfile: () -> Unit,
+    navigateToCommunity: () -> Unit,
+    navigateToTrips: () -> Unit,
     navigateToDestinationDetails: (String) -> Unit,
-    navigateToCommunity: () -> Unit = {},
-    navigateToTrips: () -> Unit = {}
+    navigateToTripDetails: (String) -> Unit,
+    modifier: Modifier = Modifier,
+    viewModel: FavoriteViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
@@ -64,12 +65,14 @@ fun FavoriteScreen(
             val destinationId = placeId.toIntOrNull() ?: return@FavoriteContent
             viewModel.onDestinationFavoriteToggled(destinationId = destinationId, shouldFavorite = false)
         },
-        onDeleteTrip = viewModel::onDeleteTrip,
+        onFavoriteTripToggled = viewModel::onFavoriteTripToggled,
         onRetryCurrentTab = viewModel::onRetryCurrentTab,
         onLoadMoreCurrentTab = viewModel::onLoadMoreCurrentTab,
         onRetryLoadMoreCurrentTab = viewModel::onRetryLoadMoreCurrentTab,
         onDestinationItemVisible = viewModel::onDestinationItemVisible,
+        onTripItemVisible = viewModel::onTripItemVisible,
         onDestinationClick = navigateToDestinationDetails,
+        onTripClick = navigateToTripDetails,
         onBottomBarItemSelected = { index ->
             when (index) {
                 0 -> navigateToHome()
@@ -87,12 +90,14 @@ fun FavoriteContent(
     state: FavoriteState,
     onTabSelected: (SectionTab) -> Unit,
     onDeletePlace: (String) -> Unit,
-    onDeleteTrip: (String) -> Unit,
+    onFavoriteTripToggled: (Int, Boolean) -> Unit,
     onRetryCurrentTab: () -> Unit,
     onLoadMoreCurrentTab: () -> Unit,
     onRetryLoadMoreCurrentTab: () -> Unit,
     onDestinationItemVisible: (Int) -> Unit,
+    onTripItemVisible: (Int) -> Unit,
     onDestinationClick: (String) -> Unit,
+    onTripClick: (String) -> Unit,
     onBottomBarItemSelected: (Int) -> Unit
 ) {
     Scaffold(
@@ -145,11 +150,13 @@ fun FavoriteContent(
                         trips = state.displayedTrips,
                         paginationState = state.currentPaginationState,
                         onDeletePlace = onDeletePlace,
-                        onDeleteTrip = onDeleteTrip,
+                        onFavoriteTripToggled = onFavoriteTripToggled,
                         onLoadMore = onLoadMoreCurrentTab,
                         onRetryLoadMore = onRetryLoadMoreCurrentTab,
                         onDestinationItemVisible = onDestinationItemVisible,
+                        onTripItemVisible = onTripItemVisible,
                         onDestinationClick = onDestinationClick,
+                        onTripClick = onTripClick,
                         inFlightMutationIds = state.inFlightMutationIds
                     )
                 }
@@ -206,14 +213,16 @@ private fun FavoriteHeaderIcon() {
 private fun FavoriteList(
     modifier: Modifier = Modifier,
     destinations: List<Place>,
-    trips: List<Trip>,
+    trips: List<TripItem>,
     paginationState: FavoritesPaginationState,
     onDeletePlace: (String) -> Unit,
-    onDeleteTrip: (String) -> Unit,
+    onFavoriteTripToggled: (Int, Boolean) -> Unit,
     onLoadMore: () -> Unit,
     onRetryLoadMore: () -> Unit,
     onDestinationItemVisible: (Int) -> Unit,
+    onTripItemVisible: (Int) -> Unit,
     onDestinationClick: (String) -> Unit,
+    onTripClick: (String) -> Unit,
     inFlightMutationIds: Set<Int>
 ) {
     LazyColumn(
@@ -249,13 +258,23 @@ private fun FavoriteList(
             items = trips,
             key = { trip -> "trip_${trip.id}" }
         ) { trip ->
+            val index = trips.indexOf(trip)
+            if (index >= 0) {
+                LaunchedEffect(index, trips.size, paginationState.hasMore, paginationState.isLoadingMore) {
+                    val remainingItems = trips.lastIndex - index
+                    if (!paginationState.isLoadingMore && paginationState.hasMore && remainingItems <= 3) {
+                        onTripItemVisible(index)
+                    }
+                }
+            }
             TripCard(
                 title = trip.title,
-                ownerName = trip.ownerName,
-                imageUrl = trip.imageUrl,
-                isFavorite = true,
-                onFavoriteClick = { onDeleteTrip(trip.id.toString()) },
-                onClick = {}
+                destinationName = trip.destinationName,
+                totalDays = trip.totalDays,
+                createdAt = trip.createdAt,
+                isFavorite = trip.isFavorite,
+                onFavoriteClick = { onFavoriteTripToggled(trip.id, !trip.isFavorite) },
+                onClick = { onTripClick(trip.id.toString()) }
             )
         }
 
@@ -419,12 +438,14 @@ private fun FavoriteScreenEmptyPreview() {
             ),
             onTabSelected = {},
             onDeletePlace = {},
-            onDeleteTrip = {},
+            onFavoriteTripToggled = { _, _ -> },
             onRetryCurrentTab = {},
             onLoadMoreCurrentTab = {},
             onRetryLoadMoreCurrentTab = {},
             onDestinationItemVisible = {},
+            onTripItemVisible = {},
             onDestinationClick = {},
+            onTripClick = {},
             onBottomBarItemSelected = {}
         )
     }
@@ -455,12 +476,13 @@ private fun FavoriteScreenWithDataPreview() {
                     )
                 ),
                 loadedTrips = listOf(
-                    Trip(
+                    TripItem(
                         id = 1,
                         title = "Top 10 places in Europe",
-                        savedAt = "2026-04-11T10:00:00Z",
-                        imageUrl = "",
-                        ownerName = "Jane Doe"
+                        destinationName = "Europe",
+                        totalDays = 10,
+                        isFavorite = true,
+                        createdAt = "2026-04-11T10:00:00Z"
                     )
                 ),
                 destinationsState = FavoritesTabUiState.Success(
@@ -470,24 +492,27 @@ private fun FavoriteScreenWithDataPreview() {
                 ),
                 tripsState = FavoritesTabUiState.Success(
                     listOf(
-                        Trip(
+                        TripItem(
                             id = 1,
                             title = "Top 10 places in Europe",
-                            ownerName = "Jane Doe",
-                            imageUrl = "",
-                            savedAt = "2026-04-11T10:00:00Z"
+                            destinationName = "Europe",
+                            totalDays = 10,
+                            isFavorite = true,
+                            createdAt = "2026-04-11T10:00:00Z"
                         )
                     )
                 )
             ),
             onTabSelected = {},
             onDeletePlace = {},
-            onDeleteTrip = {},
+            onFavoriteTripToggled = { _, _ -> },
             onRetryCurrentTab = {},
             onLoadMoreCurrentTab = {},
             onRetryLoadMoreCurrentTab = {},
             onDestinationItemVisible = {},
+            onTripItemVisible = {},
             onDestinationClick = {},
+            onTripClick = {},
             onBottomBarItemSelected = {}
         )
     }

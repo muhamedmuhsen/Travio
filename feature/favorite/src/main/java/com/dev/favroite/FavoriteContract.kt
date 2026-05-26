@@ -22,7 +22,9 @@ sealed interface FavoriteEvent {
 
     data class OnUnfavoriteDestination(val destinationId: String) : FavoriteEvent
 
-    data class OnUnfavoriteTrip(val tripId: String) : FavoriteEvent
+    data class OnFavoriteTripToggled(val tripId: Int, val isFavorite: Boolean) : FavoriteEvent
+
+    data class OnTripItemVisible(val index: Int) : FavoriteEvent
 
     data class OnBottomNavSelected(val index: Int) : FavoriteEvent
 }

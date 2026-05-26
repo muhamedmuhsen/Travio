@@ -33,11 +33,14 @@ import kotlin.coroutines.resumeWithException
 open class SignalRServiceImpl @Inject constructor(
     @BaseUrl private val baseUrl: String,
     private val environmentConfig: com.example.network.config.EnvironmentConfig,
-    private val notificationManager: com.example.feature.chat.data.notification.PlanNotificationManager
+    private val notificationManager: com.example.feature.chat.data.notification.PlanNotificationManager,
+    private val authInterceptor: com.example.network.clients.AuthInterceptor,
+    private val tokenAuthenticator: com.example.network.clients.TokenAuthenticator
 ) : SignalRService {
 
     private var hubConnection: HubConnection? = null
     private var currentThreadId: String? = null
+    private val lastSavedTripId = java.util.concurrent.atomic.AtomicReference<String?>(null)
 
     private val connectionState = MutableStateFlow(ConnectionState.DISCONNECTED)
     override fun observeConnectionState(): Flow<ConnectionState> = connectionState.asStateFlow()
@@ -112,27 +115,50 @@ open class SignalRServiceImpl @Inject constructor(
             Timber.d("SignalR System Message: $message")
         }, String::class.java)
 
+        // 4b. TripSaved
+        hubConnection?.on("TripSaved", { tripSaved: BackendTripSavedDto ->
+            Timber.d("Trip saved with ID: ${tripSaved.tripId}")
+            lastSavedTripId.set(tripSaved.tripId.toString())
+        }, BackendTripSavedDto::class.java)
+
         // 5. ReceiveItineraryStatus
         hubConnection?.on("ReceiveItineraryStatus", { statusResponse: BackendItineraryStatusDto ->
             Timber.d("Received itinerary status: ${statusResponse.status}")
             scope.launch {
                 val isCompleted = statusResponse.status?.lowercase() in listOf("completed", "success") || statusResponse.data != null
-                val isFailed = statusResponse.status?.lowercase() in listOf("failed", "error")
-                val tripId = java.util.UUID.randomUUID().toString()
+                var isFailed = statusResponse.status?.lowercase() in listOf("failed", "error")
+                var errorMsg = if (isFailed) statusResponse.message else null
+
+                if (isCompleted && lastSavedTripId.get() == null) {
+                    Timber.d("Itinerary completed but lastSavedTripId is null. Waiting for TripSaved event...")
+                    var waited = 0
+                    while (lastSavedTripId.get() == null && waited < 5000) {
+                        kotlinx.coroutines.delay(100)
+                        waited += 100
+                    }
+                }
+
+                val tripId = lastSavedTripId.get()
+                val finalCompleted = isCompleted && tripId != null
+                if (isCompleted && tripId == null) {
+                    isFailed = true
+                    errorMsg = "sync_trip_id_failed"
+                }
 
                 planStatusFlow.emit(
                     PlanStatusDto(
                         threadId = currentThreadId ?: "unknown",
-                        isCompleted = isCompleted,
+                        isCompleted = finalCompleted,
                         isFailed = isFailed,
-                        errorMessage = if (isFailed) statusResponse.message else null,
+                        errorMessage = errorMsg,
                         data = statusResponse.data,
                         tripId = tripId
                     )
                 )
 
-                if (isCompleted) {
+                if (finalCompleted && tripId != null) {
                     notificationManager.showPlanCompletedNotification(currentThreadId ?: "unknown", tripId)
+                    lastSavedTripId.set(null)
                 }
             }
         }, BackendItineraryStatusDto::class.java)
@@ -309,6 +335,8 @@ open class SignalRServiceImpl @Inject constructor(
     internal open fun createHubConnection(url: String): HubConnection {
         return HubConnectionBuilder.create(url)
             .setHttpClientBuilderCallback { builder ->
+                builder.addInterceptor(authInterceptor)
+                builder.authenticator(tokenAuthenticator)
                 if (environmentConfig.enableDebugDiagnostics) {
                     addUnsafeTrustManager(builder)
                 }
@@ -327,4 +355,9 @@ private data class BackendItineraryStatusDto(
     val status: String? = null,
     val message: String? = null,
     val data: com.example.feature.chat.data.remote.dto.AiStatusResponseDto? = null
+)
+
+private data class BackendTripSavedDto(
+    val tripId: Int = 0,
+    val title: String? = null
 )

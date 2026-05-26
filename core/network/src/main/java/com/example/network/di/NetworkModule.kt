@@ -10,6 +10,7 @@ import com.example.network.api.FavoritesApi
 import com.example.network.api.HotelApi
 import com.example.network.api.ReviewsApi
 import com.example.network.api.SurveyApi
+import com.example.network.api.TripApi
 import com.example.network.api.UserManagementApi
 import com.example.network.clients.AuthInterceptor
 import com.example.network.clients.TokenAuthenticator
@@ -181,6 +182,12 @@ object NetworkModule {
     @Singleton
     fun provideHotelApi(retrofit: Retrofit): HotelApi {
         return retrofit.create(HotelApi::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideTripApi(retrofit: Retrofit): TripApi {
+        return retrofit.create(TripApi::class.java)
     }
 
     @Provides

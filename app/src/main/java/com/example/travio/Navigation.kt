@@ -332,6 +332,9 @@ fun TravioNavHost(
                     id.toIntOrNull()?.let { destinationId ->
                         navController.navigate(DestinationDetailRoute(destinationId))
                     }
+                },
+                navigateToTripDetails = { tripId ->
+                    navController.navigate(Screen.TripDetailScreen.createRoute(tripId))
                 }
             )
         }
@@ -562,6 +565,7 @@ fun TravioNavHost(
             val tripId = backStackEntry.arguments?.getString(Screen.TripDetailScreen.ARG_TRIP_ID) ?: ""
             com.example.feature.chat.presentation.ui.TripDetailScreen(
                 tripId = tripId,
+                onNavigateBack = { navController.popBackStack() },
                 navigateToHome = {
                     navController.navigate(Screen.HomeScreen.route) {
                         popUpTo(Screen.HomeScreen.route) { inclusive = false }

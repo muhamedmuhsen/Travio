@@ -20,25 +20,33 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Attractions
 import androidx.compose.material.icons.filled.BreakfastDining
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.DinnerDining
 import androidx.compose.material.icons.filled.DirectionsWalk
 import androidx.compose.material.icons.filled.Explore
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.LocalCafe
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.LunchDining
 import androidx.compose.material.icons.filled.Museum
 import androidx.compose.material.icons.filled.Restaurant
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -68,6 +76,7 @@ import com.example.feature.chat.presentation.viewmodel.TripDetailViewModel
 @Composable
 fun TripDetailScreen(
     tripId: String,
+    onNavigateBack: () -> Unit,
     navigateToHome: () -> Unit,
     navigateToFavorite: () -> Unit,
     navigateToCommunity: () -> Unit,
@@ -77,12 +86,74 @@ fun TripDetailScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
+    val context = androidx.compose.ui.platform.LocalContext.current
+
+    LaunchedEffect(viewModel.uiEvent) {
+        viewModel.uiEvent.collect { event ->
+            when (event) {
+                is com.example.feature.chat.presentation.state.TripDetailUiEvent.ShowToast -> {
+                    android.widget.Toast.makeText(
+                        context,
+                        event.message.asString(context),
+                        android.widget.Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+        }
+    }
+
     LaunchedEffect(tripId) {
         viewModel.loadTrip(tripId)
     }
 
+    LaunchedEffect(uiState.deleteSuccess) {
+        if (uiState.deleteSuccess) {
+            onNavigateBack()
+        }
+    }
+
+    if (uiState.isDeleteDialogVisible) {
+        AlertDialog(
+            onDismissRequest = { viewModel.hideDeleteDialog() },
+            title = { Text(stringResource(R.string.delete_trip_title)) },
+            text = { Text(stringResource(R.string.delete_trip_message)) },
+            confirmButton = {
+                TextButton(onClick = { viewModel.deleteTrip() }) {
+                    Text(stringResource(R.string.delete))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { viewModel.hideDeleteDialog() }) {
+                    Text(stringResource(R.string.cancel))
+                }
+            }
+        )
+    }
+
     Scaffold(
         modifier = modifier.fillMaxSize(),
+        topBar = {
+            TopAppBar(
+                title = { Text("") },
+                navigationIcon = {
+                    IconButton(onClick = onNavigateBack) {
+                        Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Back")
+                    }
+                },
+                actions = {
+                    IconButton(onClick = { viewModel.toggleFavorite() }) {
+                        Icon(
+                            imageVector = if (uiState.isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                            contentDescription = if (uiState.isFavorite) "Remove from favorites" else "Add to favorites",
+                            tint = if (uiState.isFavorite) Color.Red else MaterialTheme.colorScheme.onSurface
+                        )
+                    }
+                    IconButton(onClick = { viewModel.showDeleteDialog() }) {
+                        Icon(imageVector = Icons.Default.Delete, contentDescription = "Delete Trip")
+                    }
+                }
+            )
+        },
         bottomBar = {
             AppBottomBar(
                 selectedItem = 3,
