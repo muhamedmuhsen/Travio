@@ -1,5 +1,7 @@
 package com.example.domain.repository.hotel
 
+import com.example.domain.model.hotel.HotelCheckoutRequest
+import com.example.domain.model.hotel.HotelCheckoutResult
 import com.example.domain.model.hotel.NearbyHotel
 import com.example.domain.utils.DataError
 import com.example.domain.utils.Result
@@ -30,4 +32,6 @@ interface HotelRepository {
         children: Int? = null,
         childrenAges: String? = null
     ): Result<com.example.domain.model.hotel.HotelDetails, DataError>
+
+    suspend fun checkoutHotel(request: HotelCheckoutRequest): Result<HotelCheckoutResult, DataError>
 }

@@ -62,6 +62,21 @@ class GetHotelDetailsUseCaseTest {
                 )
             )
         }
+
+        override suspend fun searchHotels(
+            destination: String,
+            checkIn: String,
+            checkOut: String,
+            occupancies: List<com.example.domain.model.hotel.Occupancy>
+        ): Result<List<com.example.domain.model.hotel.NearbyHotel>, DataError> {
+            return Result.Success(emptyList())
+        }
+
+        override suspend fun checkoutHotel(
+            request: com.example.domain.model.hotel.HotelCheckoutRequest
+        ): Result<com.example.domain.model.hotel.HotelCheckoutResult, DataError> {
+            return Result.Error(DataError.UnknownError)
+        }
     }
 
     private val useCase = GetHotelDetailsUseCase(fakeRepository)

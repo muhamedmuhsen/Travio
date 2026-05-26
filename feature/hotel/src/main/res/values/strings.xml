@@ -73,5 +73,46 @@
     <string name="hotel_search_validation_checkout_after_checkin">Check-out date must be after check-in date</string>
     <string name="hotel_search_validation_invalid_occupancy">Please enter valid guests (1-6 adults, 0-4 children)</string>
     <string name="hotel_search_validation_child_ages_missing">Please select ages for all children</string>
+
+    <!-- Hotel Checkout & Payment Strings -->
+    <string name="hotel_checkout_title">Hotel Checkout</string>
+    <string name="hotel_checkout_holder_section">Booking Holder Details</string>
+    <string name="hotel_checkout_first_name_label">First Name</string>
+    <string name="hotel_checkout_last_name_label">Last Name</string>
+    <string name="hotel_checkout_first_name_required">First name is required</string>
+    <string name="hotel_checkout_first_name_too_short">First name must be at least 2 characters</string>
+    <string name="hotel_checkout_last_name_required">Last name is required</string>
+    <string name="hotel_checkout_last_name_too_short">Last name must be at least 2 characters</string>
+    
+    <string name="hotel_checkout_guests_section">Room Guests</string>
+    <string name="hotel_checkout_room_header">Room %1$d</string>
+    <string name="hotel_checkout_guest_header">Guest %1$d (%2$s)</string>
+    <string name="hotel_checkout_guest_first_name_required">Guest first name is required</string>
+    <string name="hotel_checkout_guest_last_name_required">Guest last name is required</string>
+    <string name="hotel_checkout_child_age_required">Child age is required</string>
+    <string name="hotel_checkout_child_age_invalid">Child age must be between 0 and 17</string>
+    <string name="hotel_checkout_room_needs_adult">Each room must have at least one adult</string>
+    <string name="hotel_checkout_room_empty">Room must have at least one guest</string>
+    
+    <string name="hotel_checkout_remarks_section">Special Remarks (Optional)</string>
+    <string name="hotel_checkout_remarks_hint">e.g. late check-in, dietary requirements</string>
+    
+    <string name="hotel_checkout_price_section">Price Summary</string>
+    <string name="hotel_checkout_total_price">Total Price</string>
+    <string name="hotel_checkout_taxes_fees">All taxes and fees included</string>
+    <string name="hotel_checkout_button">Proceed to Payment</string>
+    <string name="hotel_checkout_submitting">Submitting booking...</string>
+    <string name="hotel_checkout_processing_payment">Processing payment...</string>
+    
+    <string name="hotel_checkout_payment_failed">Payment failed. Please try again.</string>
+    <string name="hotel_checkout_payment_canceled">Payment was cancelled.</string>
+    <string name="hotel_checkout_retry">Retry Payment</string>
+    <string name="hotel_checkout_try_again">Try Again</string>
+    <string name="hotel_checkout_error_loading_details">Failed to load booking details.</string>
+    
+    <string name="hotel_checkout_success_title">Booking Successful!</string>
+    <string name="hotel_checkout_success_message">Thank you for booking with Travio. Your reservation is confirmed.</string>
+    <string name="hotel_checkout_booking_reference">Booking Reference</string>
+    <string name="hotel_checkout_done">Done</string>
 </resources>
 

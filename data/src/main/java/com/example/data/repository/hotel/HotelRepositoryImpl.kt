@@ -2,9 +2,12 @@ package com.example.data.repository.hotel
 
 import com.example.data.mapper.hotel.toCached
 import com.example.data.mapper.hotel.toDomain
+import com.example.data.mapper.hotel.toDto
 import com.example.data.utils.safeApiCall
 import com.example.database.hotel.HotelDetailsDao
 import com.example.database.hotel.NearbyHotelDao
+import com.example.domain.model.hotel.HotelCheckoutRequest
+import com.example.domain.model.hotel.HotelCheckoutResult
 import com.example.domain.model.hotel.HotelDetails
 import com.example.domain.model.hotel.NearbyHotel
 import com.example.domain.repository.hotel.HotelRepository
@@ -20,6 +23,27 @@ class HotelRepositoryImpl @Inject constructor(
     private val nearbyHotelDao: NearbyHotelDao,
     private val hotelDetailsDao: HotelDetailsDao
 ) : HotelRepository {
+
+    override suspend fun checkoutHotel(request: HotelCheckoutRequest): Result<HotelCheckoutResult, DataError> {
+        val requestDto = request.toDto()
+        val result = safeApiCall {
+            api.checkoutHotel(requestDto)
+        }
+        return when (result) {
+            is Result.Success -> {
+                val response = result.data
+                val dataDto = response.data
+                if (!response.success) {
+                    Result.Error(DataError.Logical(response.message))
+                } else if (dataDto == null) {
+                    Result.Error(DataError.Data.NotFound)
+                } else {
+                    Result.Success(dataDto.toDomain())
+                }
+            }
+            is Result.Error -> Result.Error(result.error)
+        }
+    }
 
     override suspend fun searchNearbyHotels(
         latitude: Double,

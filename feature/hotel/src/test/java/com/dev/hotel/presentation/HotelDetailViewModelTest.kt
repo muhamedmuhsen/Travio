@@ -175,6 +175,12 @@ class FakeHotelRepository : HotelRepository {
         hotelCode: Int, checkIn: String, checkOut: String, adults: Int,
         children: Int?, childrenAges: String?
     ): Result<HotelDetails, DataError> = detailsResult
+
+    override suspend fun checkoutHotel(
+        request: com.example.domain.model.hotel.HotelCheckoutRequest
+    ): Result<com.example.domain.model.hotel.HotelCheckoutResult, DataError> {
+        return Result.Error(DataError.UnknownError)
+    }
 }
 
 private class FakeLocationRepository : LocationRepository {
