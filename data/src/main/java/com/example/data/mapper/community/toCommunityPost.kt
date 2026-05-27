@@ -12,8 +12,9 @@ import java.time.OffsetDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
-fun PostDto.toCommunityPost(): CommunityPost =
-    CommunityPost(
+fun PostDto.toCommunityPost(): CommunityPost {
+    val mappedComments = this.commentDto?.map { it.toComment() }.orEmpty()
+    return CommunityPost(
         id = this.postId,
         author = this.authorName.orEmpty(),
         avatarUrl = this.authorAvatarUrl?.let(::resolveImageUrl).orEmpty(),
@@ -22,35 +23,39 @@ fun PostDto.toCommunityPost(): CommunityPost =
         content = this.content.orEmpty(),
         imageUrls = this.imageUrls?.map(::resolveImageUrl).orEmpty(),
         likesCount = this.likesCount,
-        commentsCount = this.commentsCount,
-        rating = 0.0f,
-        isLiked = this.isLiked,
-        isBookmarked = false
-    )
-
-fun PostWithCommentsDto.toCommunityPost(): CommunityPost =
-    CommunityPost(
-        id = this.postId,
-        author = this.authorName.orEmpty(),
-        avatarUrl = this.authorAvatarUrl?.let(::resolveImageUrl).orEmpty(),
-        location = this.location.orEmpty(),
-        createdAt = parseCreatedAt(this.createdAt) ?: Instant.now(),
-        content = this.content.orEmpty(),
-        imageUrls = this.imageUrls?.map(::resolveImageUrl).orEmpty(),
-        likesCount = this.likesCount,
-        commentsCount = this.commentsCount,
+        commentsCount = maxOf(this.commentsCount, mappedComments.size),
         rating = 0.0f,
         isLiked = this.isLiked,
         isBookmarked = false,
-        comments = this.commentDto.map { it.toComment() }
+        comments = mappedComments
     )
+}
+
+fun PostWithCommentsDto.toCommunityPost(): CommunityPost {
+    val mappedComments = this.commentDto?.map { it.toComment() }.orEmpty()
+    return CommunityPost(
+        id = this.postId,
+        author = this.authorName.orEmpty(),
+        avatarUrl = this.authorAvatarUrl?.let(::resolveImageUrl).orEmpty(),
+        location = this.location.orEmpty(),
+        createdAt = parseCreatedAt(this.createdAt) ?: Instant.now(),
+        content = this.content.orEmpty(),
+        imageUrls = this.imageUrls?.map(::resolveImageUrl).orEmpty(),
+        likesCount = this.likesCount,
+        commentsCount = maxOf(this.commentsCount, mappedComments.size),
+        rating = 0.0f,
+        isLiked = this.isLiked,
+        isBookmarked = false,
+        comments = mappedComments
+    )
+}
 
 fun CommentDto.toComment(): Comment =
     Comment(
         id = id,
         authorName = authorName.orEmpty(),
         avatarUrl = authorAvatarUrl?.let(::resolveImageUrl).orEmpty(),
-        text = content,
+        text = content.orEmpty(),
         createdAt = parseCreatedAt(createdAt) ?: Instant.now()
     )
 

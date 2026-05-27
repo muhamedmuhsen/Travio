@@ -14,5 +14,5 @@ data class PostWithCommentsDto(
     @SerializedName("likesCount") val likesCount: Int,
     @SerializedName("commentsCount") val commentsCount: Int,
     @SerializedName("isLikedByCurrentUser") val isLiked: Boolean,
-    @SerializedName("comments") val commentDto: List<CommentDto>
+    @SerializedName("comments") val commentDto: List<CommentDto>?
 )

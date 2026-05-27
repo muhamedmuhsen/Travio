@@ -7,5 +7,5 @@ data class CommentDto(
     @SerializedName("authorName") val authorName: String? = null,
     @SerializedName("authorProfilePictureUrl") val authorAvatarUrl: String? = null,
     @SerializedName("creationDate") val createdAt: String? = null,
-    @SerializedName("content") val content: String
+    @SerializedName("content") val content: String?
 )
