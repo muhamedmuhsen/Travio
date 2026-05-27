@@ -36,6 +36,25 @@ class ReviewMapperTest {
     }
 
     @Test
+    fun `should parse timestamp without offset as UTC`() {
+        val dto = ReviewDto(
+            id = 1,
+            authorName = "John Doe",
+            authorAvatarUrl = null,
+            rating = 4,
+            content = "I loved it here!",
+            createdAt = "2026-04-22T10:00:00",
+            helpfulCount = 0,
+            isOwnedByCurrentUser = true
+        )
+
+        val review = dto.toReview()
+
+        // Should be exactly 10:00:00 UTC, regardless of system default timezone
+        assertEquals(Instant.parse("2026-04-22T10:00:00Z"), review.createdAt)
+    }
+
+    @Test
     fun `should handle nullable fields in ReviewDto`() {
         val dto = ReviewDto(
             id = 1,

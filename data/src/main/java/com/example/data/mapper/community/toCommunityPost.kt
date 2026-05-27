@@ -64,14 +64,14 @@ private fun resolveImageUrl(path: String): String {
 private fun parseCreatedAt(value: String?): Instant? {
     if (value.isNullOrBlank()) return null
 
-    // Backend currently returns timestamps without an offset; treat those as device local time.
+    // Backend returns timestamps without an offset; treat those as UTC.
     return runCatching { Instant.parse(value) }.getOrNull()
         ?: runCatching {
             OffsetDateTime.parse(value, DateTimeFormatter.ISO_OFFSET_DATE_TIME).toInstant()
         }.getOrNull()
         ?: runCatching {
             LocalDateTime.parse(value, DateTimeFormatter.ISO_LOCAL_DATE_TIME)
-                .atZone(ZoneId.systemDefault())
+                .atZone(ZoneId.of("UTC"))
                 .toInstant()
         }.getOrNull()
 }
