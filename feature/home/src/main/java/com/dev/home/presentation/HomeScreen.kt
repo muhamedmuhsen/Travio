@@ -5,11 +5,9 @@ import android.annotation.SuppressLint
 import android.content.res.Configuration
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -47,7 +45,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -64,6 +61,7 @@ import com.dev.home.components.LoadingNearbyHotelCard
 import com.dev.home.components.LoadingRecentViewedCard
 import com.dev.home.components.NearbyHotelCard
 import com.dev.home.components.RecentViewedCard
+import com.dev.home.components.SectionHeader
 import com.dev.home.presentation.HomeAction.OnLocationPermissionResult
 import com.dev.home.presentation.flights.FlightsSectionUiState
 import com.dev.utils.uistate.UiState
@@ -298,7 +296,8 @@ private fun FlightsStateHandling(
 
         is FlightsSectionUiState.Error -> ErrorSection(
             title = stringResource(R.string.section_flights),
-            onRetry = onRetry
+            onRetry = onRetry,
+            onSeeAllClick = { onAction(HomeAction.OnSeeAllFlightsClicked) }
         )
 
         is FlightsSectionUiState.Success -> {
@@ -356,19 +355,13 @@ private fun HomeTopSection(
 @Composable
 private fun ErrorSection(
     title: String,
-    onRetry: () -> Unit
+    onRetry: () -> Unit,
+    onSeeAllClick: (() -> Unit)? = null
 ) {
     Column {
-        Text(
-            text = title,
-            style = MaterialTheme.typography.titleLarge.copy(
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onSurface
-            ),
-            modifier = Modifier.padding(
-                horizontal = MaterialTheme.spacing.lg,
-                vertical = MaterialTheme.spacing.sm
-            )
+        SectionHeader(
+            title = title,
+            onSeeAllClick = onSeeAllClick
         )
         Box(
             modifier = Modifier
@@ -390,19 +383,13 @@ private fun ErrorSection(
 private fun EmptySection(
     title: String,
     message: String,
-    icon: androidx.compose.ui.graphics.vector.ImageVector = Icons.Outlined.SearchOff
+    icon: androidx.compose.ui.graphics.vector.ImageVector = Icons.Outlined.SearchOff,
+    onSeeAllClick: (() -> Unit)? = null
 ) {
     Column {
-        Text(
-            text = title,
-            style = MaterialTheme.typography.titleLarge.copy(
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onSurface
-            ),
-            modifier = Modifier.padding(
-                horizontal = MaterialTheme.spacing.lg,
-                vertical = MaterialTheme.spacing.sm
-            )
+        SectionHeader(
+            title = title,
+            onSeeAllClick = onSeeAllClick
         )
         Column(
             modifier = Modifier
@@ -618,12 +605,14 @@ private fun NearbyHotelsStateHandling(
                 EmptySection(
                     title = stringResource(R.string.section_nearby_hotels),
                     message = stringResource(R.string.nearby_hotels_location_rationale),
-                    icon = Icons.Outlined.LocationOff
+                    icon = Icons.Outlined.LocationOff,
+                    onSeeAllClick = { onAction(HomeAction.OnSeeAllNearbyHotelsClicked) }
                 )
             } else {
                 ErrorSection(
                     title = stringResource(R.string.section_nearby_hotels),
-                    onRetry = onRetry
+                    onRetry = onRetry,
+                    onSeeAllClick = { onAction(HomeAction.OnSeeAllNearbyHotelsClicked) }
                 )
             }
         }
@@ -640,7 +629,8 @@ private fun NearbyHotelsStateHandling(
             if (hotels.isEmpty()) {
                 EmptySection(
                     title = stringResource(R.string.section_nearby_hotels),
-                    message = stringResource(R.string.nearby_hotels_no_results)
+                    message = stringResource(R.string.nearby_hotels_no_results),
+                    onSeeAllClick = { onAction(HomeAction.OnSeeAllNearbyHotelsClicked) }
                 )
             } else {
                 HorizontalSection(
@@ -668,37 +658,10 @@ private fun HorizontalSection(
     content: LazyListScope.() -> Unit
 ) {
     Column {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(
-                    horizontal = MaterialTheme.spacing.lg,
-                    vertical = MaterialTheme.spacing.sm
-                ),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = title,
-                style = MaterialTheme.typography.titleLarge.copy(
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSurface
-                ),
-                modifier = Modifier.weight(1f)
-            )
-            if (onSeeAllClick != null) {
-                Text(
-                    text = stringResource(R.string.section_see_all),
-                    style = MaterialTheme.typography.labelLarge.copy(
-                        fontWeight = FontWeight.SemiBold,
-                        color = MaterialTheme.colorScheme.primary
-                    ),
-                    modifier = Modifier
-                        .clickable { onSeeAllClick() }
-                        .padding(MaterialTheme.spacing.xs)
-                )
-            }
-        }
+        SectionHeader(
+            title = title,
+            onSeeAllClick = onSeeAllClick
+        )
         LazyRow(
             horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.sm),
             content = content,
@@ -759,8 +722,11 @@ private fun HomeScreenErrorPreview() {
             modifier = Modifier,
             onAction = {},
             state = HomeUiState(
-                recommendedDestinationsState = UiState.Error(
-                    com.dev.utils.uitext.UiText.StringResource(R.string.error_failed_load_destinations)
+                flightsState = FlightsSectionUiState.Error(
+                    com.dev.utils.uitext.UiText.DynamicString("Flights error")
+                ),
+                nearbyHotelsState = UiState.Error(
+                    com.dev.utils.uitext.UiText.DynamicString("Hotels error")
                 )
             ),
             snackbarHostState = SnackbarHostState(),
