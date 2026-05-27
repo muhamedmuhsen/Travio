@@ -17,9 +17,7 @@ sealed interface HotelDetailAction {
     // Booking Card Actions
     data class OnCheckInDateSelected(val date: LocalDate) : HotelDetailAction
     data class OnCheckOutDateSelected(val date: LocalDate) : HotelDetailAction
-    data class OnAdultsCountChanged(val count: Int) : HotelDetailAction
-    data class OnChildrenCountChanged(val count: Int) : HotelDetailAction
-    data class OnChildAgeChanged(val index: Int, val age: Int) : HotelDetailAction
+    data class OnOccupancyChanged(val occupancy: com.example.domain.model.hotel.Occupancy) : HotelDetailAction
     data class OnRoomsCountChanged(val count: Int) : HotelDetailAction
     data object CheckAvailabilityClicked : HotelDetailAction
 }

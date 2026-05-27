@@ -104,26 +104,13 @@ class HotelDetailViewModel @Inject constructor(
             is HotelDetailAction.OnCheckOutDateSelected -> {
                 _uiState.update { it.copy(checkOutDate = action.date) }
             }
-            is HotelDetailAction.OnAdultsCountChanged -> {
-                _uiState.update { it.copy(adults = action.count) }
-            }
-            is HotelDetailAction.OnChildrenCountChanged -> {
+            is HotelDetailAction.OnOccupancyChanged -> {
                 _uiState.update { state ->
-                    val newAges = if (action.count > state.childrenAges.size) {
-                        state.childrenAges + List(action.count - state.childrenAges.size) { 5 }
-                    } else {
-                        state.childrenAges.take(action.count)
-                    }
-                    state.copy(children = action.count, childrenAges = newAges)
-                }
-            }
-            is HotelDetailAction.OnChildAgeChanged -> {
-                _uiState.update { state ->
-                    val newAges = state.childrenAges.toMutableList()
-                    if (action.index in newAges.indices) {
-                        newAges[action.index] = action.age
-                    }
-                    state.copy(childrenAges = newAges)
+                    state.copy(
+                        adults = action.occupancy.adults,
+                        children = action.occupancy.children,
+                        childrenAges = action.occupancy.childrenAges
+                    )
                 }
             }
             is HotelDetailAction.OnRoomsCountChanged -> {
