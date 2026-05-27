@@ -12,7 +12,7 @@ import java.time.OffsetDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
-fun PostDto.toCommunityPost(): CommunityPost {
+fun PostDto.toCommunityPost(bookmarkedIds: Set<Int> = emptySet()): CommunityPost {
     val mappedComments = this.commentDto?.map { it.toComment() }.orEmpty()
     return CommunityPost(
         id = this.postId,
@@ -26,12 +26,12 @@ fun PostDto.toCommunityPost(): CommunityPost {
         commentsCount = maxOf(this.commentsCount, mappedComments.size),
         rating = 0.0f,
         isLiked = this.isLiked,
-        isBookmarked = false,
+        isBookmarked = this.postId in bookmarkedIds,
         comments = mappedComments
     )
 }
 
-fun PostWithCommentsDto.toCommunityPost(): CommunityPost {
+fun PostWithCommentsDto.toCommunityPost(bookmarkedIds: Set<Int> = emptySet()): CommunityPost {
     val mappedComments = this.commentDto?.map { it.toComment() }.orEmpty()
     return CommunityPost(
         id = this.postId,
@@ -45,7 +45,7 @@ fun PostWithCommentsDto.toCommunityPost(): CommunityPost {
         commentsCount = maxOf(this.commentsCount, mappedComments.size),
         rating = 0.0f,
         isLiked = this.isLiked,
-        isBookmarked = false,
+        isBookmarked = this.postId in bookmarkedIds,
         comments = mappedComments
     )
 }

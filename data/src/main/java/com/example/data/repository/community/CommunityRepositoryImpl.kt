@@ -18,6 +18,7 @@ import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.update
@@ -42,19 +43,29 @@ class CommunityRepositoryImpl @Inject constructor(
 
     @OptIn(ExperimentalCoroutinesApi::class)
     override fun getAllPost(): Flow<Result<List<CommunityPost>, DataError>> =
-        refreshTrigger.flatMapLatest {
-            flow {
-                emit(
-                    safeApiCall {
-                        api.getAllPosts().data.map { it.toCommunityPost() }
-                    }
+        combine(
+            refreshTrigger.flatMapLatest {
+                flow {
+                    emit(
+                        safeApiCall {
+                            api.getAllPosts().data
+                        }
+                    )
+                }
+            },
+            bookmarkedIds
+        ) { result, bookmarks ->
+            when (result) {
+                is Result.Success -> Result.Success(
+                    result.data.map { it.toCommunityPost(bookmarks) }
                 )
+                is Result.Error -> Result.Error(result.error)
             }
         }
 
     override suspend fun getPostById(postId: Int): Result<CommunityPost, DataError> =
         safeApiCall {
-            api.getPostById(postId).data.toCommunityPost()
+            api.getPostById(postId).data.toCommunityPost(bookmarkedIds.value)
         }
 
     override suspend fun addPost(
@@ -121,10 +132,16 @@ class CommunityRepositoryImpl @Inject constructor(
         return result
     }
 
-    override suspend fun toggleLike(postId: Int): Result<Unit, DataError> =
-        safeApiCall {
+    override suspend fun toggleLike(postId: Int): Result<Unit, DataError> {
+        val result = safeApiCall {
             api.likePost(postId)
+            Unit
         }
+        if (result is Result.Success) {
+            refreshPosts()
+        }
+        return result
+    }
 
     override suspend fun toggleBookmark(postId: Int): Result<Unit, DataError> {
         bookmarkedIds.update { ids -> if (postId in ids) ids - postId else ids + postId }

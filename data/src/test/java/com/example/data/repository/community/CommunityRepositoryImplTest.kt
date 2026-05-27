@@ -217,4 +217,70 @@ class CommunityRepositoryImplTest {
         
         job.cancel()
     }
+
+    @Test
+    fun should_triggerRefresh_when_toggleLikeSucceeds() = runTest {
+        var apiCallCount = 0
+        val api = object : FakeCommunityApi() {
+            override suspend fun likePost(postId: Int): LikePostResponse {
+                return LikePostResponse(true, emptyList(), "OK", true)
+            }
+            override suspend fun getAllPosts(): BaseResponse<List<PostDto>> {
+                apiCallCount++
+                return BaseResponse(listOf(samplePostDto(apiCallCount)), true, "OK", emptyList())
+            }
+        }
+        val mockContext = mock<Context>()
+        val repo = CommunityRepositoryImpl(api, mockContext)
+
+        val emissions = mutableListOf<Result<List<CommunityPost>, DataError>>()
+        val job = launch {
+            repo.getAllPost().collect {
+                emissions.add(it)
+            }
+        }
+
+        advanceUntilIdle()
+        assertEquals(1, emissions.size)
+        
+        val result = repo.toggleLike(1)
+        advanceUntilIdle()
+        
+        assertTrue(result is Result.Success)
+        assertEquals(2, emissions.size)
+        
+        job.cancel()
+    }
+
+    @Test
+    fun should_synchronizeBookmarks_when_toggleBookmarkCalled() = runTest {
+        val api = object : FakeCommunityApi() {
+            override suspend fun getAllPosts(): BaseResponse<List<PostDto>> {
+                return BaseResponse(listOf(samplePostDto(1)), true, "OK", emptyList())
+            }
+        }
+        val mockContext = mock<Context>()
+        val repo = CommunityRepositoryImpl(api, mockContext)
+
+        val emissions = mutableListOf<Result<List<CommunityPost>, DataError>>()
+        val job = launch {
+            repo.getAllPost().collect {
+                emissions.add(it)
+            }
+        }
+
+        advanceUntilIdle()
+        assertEquals(1, emissions.size)
+        val initialPosts = (emissions.first() as Result.Success).data
+        assertEquals(false, initialPosts.first().isBookmarked)
+        
+        repo.toggleBookmark(1)
+        advanceUntilIdle()
+        
+        assertEquals(2, emissions.size)
+        val updatedPosts = (emissions.last() as Result.Success).data
+        assertEquals(true, updatedPosts.first().isBookmarked)
+        
+        job.cancel()
+    }
 }
