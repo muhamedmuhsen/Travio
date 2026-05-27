@@ -84,8 +84,8 @@ fun HotelGallery(
                     IconButton(
                         onClick = onBackClick,
                         colors = IconButtonDefaults.iconButtonColors(
-                            containerColor = Color.White.copy(alpha = 0.8f),
-                            contentColor = Color.Black
+                            containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.8f),
+                            contentColor = MaterialTheme.colorScheme.onSurface
                         ),
                         modifier = Modifier.size(40.dp)
                     ) {

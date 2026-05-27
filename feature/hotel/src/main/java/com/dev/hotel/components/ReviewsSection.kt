@@ -47,9 +47,9 @@ fun ReviewsSection(
             .fillMaxWidth()
             .padding(horizontal = 16.dp),
         shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
-        border = BorderStroke(1.dp, Color.LightGray.copy(alpha = 0.5f))
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
     ) {
         Column(
             modifier = Modifier.padding(16.dp)
@@ -72,7 +72,7 @@ fun ReviewsSection(
                         text = "4.9",
                         style = MaterialTheme.typography.displayMedium,
                         fontWeight = FontWeight.Bold,
-                        color = Color.Black
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                     Row {
                         repeat(5) {
@@ -140,7 +140,7 @@ private fun ReviewItem(
             modifier = Modifier
                 .size(40.dp)
                 .clip(CircleShape)
-                .background(Color(0xFF008080).copy(alpha = 0.2f)),
+                .background(MaterialTheme.colorScheme.primaryContainer),
             contentAlignment = Alignment.Center
         ) {
             if (avatarUrl != null) {
@@ -154,7 +154,7 @@ private fun ReviewItem(
                 Text(
                     text = name.take(1),
                     fontWeight = FontWeight.Bold,
-                    color = Color(0xFF008080)
+                    color = MaterialTheme.colorScheme.onPrimaryContainer
                 )
             }
         }
