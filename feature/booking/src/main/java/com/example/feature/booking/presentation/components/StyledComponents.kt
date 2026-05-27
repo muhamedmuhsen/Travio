@@ -1,16 +1,13 @@
 package com.example.feature.booking.presentation.components
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -25,16 +22,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.designsystem.theme.spacing
 import com.example.feature.booking.R
-
-@Composable
-fun BottomSheetDragHandle(modifier: Modifier = Modifier) {
-    Box(
-        modifier = modifier
-            .padding(vertical = MaterialTheme.spacing.sm)
-            .size(width = MaterialTheme.spacing.xl, height = MaterialTheme.spacing.xxs)
-            .background(MaterialTheme.colorScheme.outlineVariant, MaterialTheme.shapes.extraSmall)
-    )
-}
 
 @Composable
 fun GenderSelector(

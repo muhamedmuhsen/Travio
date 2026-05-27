@@ -48,13 +48,13 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.designsystem.components.AppSnackBar
+import com.example.designsystem.components.BottomSheetDragHandle
 import com.example.designsystem.components.SnackBarType
 import com.example.designsystem.components.showAppSnackbar
 import com.example.designsystem.theme.elevation
 import com.example.designsystem.theme.spacing
 import com.example.domain.model.booking.Passenger
 import com.example.feature.booking.R
-import com.example.feature.booking.presentation.components.BottomSheetDragHandle
 import com.example.feature.booking.presentation.components.PassengerForm
 import com.stripe.android.paymentsheet.PaymentSheetResult
 import com.stripe.android.paymentsheet.rememberPaymentSheet

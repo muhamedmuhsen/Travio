@@ -1,8 +1,5 @@
 package com.dev.hotel.checkout
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -12,33 +9,39 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.CardMembership
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Notes
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -48,6 +51,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -60,7 +64,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.dev.utils.uistate.UiState
+import com.example.designsystem.components.AppButton
 import com.example.designsystem.components.AppTextField
+import com.example.designsystem.components.BottomSheetDragHandle
+import com.example.designsystem.theme.elevation
+import com.example.designsystem.theme.spacing
 import com.example.domain.model.hotel.HotelBookingPax
 import com.example.domain.model.hotel.HotelBookingRoom
 import com.example.domain.model.hotel.HotelDetails
@@ -141,136 +149,156 @@ fun HotelCheckoutScreen(
     snackbarHostState: SnackbarHostState,
     onAction: (HotelCheckoutAction) -> Unit
 ) {
-    Scaffold(
-        snackbarHost = { SnackbarHost(snackbarHostState) },
-        topBar = {
-            CenterAlignedTopAppBar(
-                title = {
-                    Text(
-                        text = stringResource(R.string.hotel_checkout_title),
-                        fontWeight = FontWeight.Bold,
-                        style = MaterialTheme.typography.titleMedium
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+
+    ModalBottomSheet(
+        onDismissRequest = { onAction(HotelCheckoutAction.BackClicked) },
+        sheetState = sheetState,
+        dragHandle = { BottomSheetDragHandle() },
+        shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp),
+        containerColor = MaterialTheme.colorScheme.surface,
+        scrimColor = Color.Black.copy(alpha = 0.4f),
+        modifier = Modifier.statusBarsPadding()
+    ) {
+        Scaffold(
+            modifier = Modifier.fillMaxSize().imePadding(),
+            snackbarHost = { SnackbarHost(snackbarHostState) },
+            topBar = {
+                HotelCheckoutTopBar(onBack = { onAction(HotelCheckoutAction.BackClicked) })
+            },
+            bottomBar = {
+                val hotelData = (uiState.hotelState as? UiState.Success)?.data
+                if (hotelData != null && hotelData.minRate != null) {
+                    CheckoutBottomBar(
+                        price = hotelData.minRate!!,
+                        currency = hotelData.currency ?: "USD",
+                        isSubmitting = uiState.isSubmitting || uiState.isPaymentProcessing,
+                        onSubmitClick = { onAction(HotelCheckoutAction.SubmitCheckout) }
                     )
-                },
-                navigationIcon = {
-                    IconButton(
-                        onClick = { onAction(HotelCheckoutAction.BackClicked) },
-                        modifier = Modifier.size(48.dp)
-                    ) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back",
-                            tint = MaterialTheme.colorScheme.onSurface
-                        )
-                    }
-                },
-                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.surface
-                )
-            )
-        },
-        bottomBar = {
-            val hotelData = (uiState.hotelState as? UiState.Success)?.data
-            if (hotelData != null && hotelData.minRate != null) {
-                CheckoutBottomBar(
-                    price = hotelData.minRate!!,
-                    currency = hotelData.currency ?: "USD",
-                    isSubmitting = uiState.isSubmitting || uiState.isPaymentProcessing,
-                    onSubmitClick = { onAction(HotelCheckoutAction.SubmitCheckout) }
-                )
-            }
-        }
-    ) { paddingValues ->
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-                .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f))
-        ) {
-            when (val state = uiState.hotelState) {
-                is UiState.Idle,
-                is UiState.Loading -> {
-                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        CircularProgressIndicator()
-                    }
                 }
-                is UiState.Error -> {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(24.dp),
-                        verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Info,
-                            contentDescription = "Error icon",
-                            tint = MaterialTheme.colorScheme.error,
-                            modifier = Modifier.size(64.dp)
-                        )
-                        Spacer(modifier = Modifier.height(16.dp))
-                        Text(
-                            text = stringResource(R.string.hotel_checkout_error_loading_details),
-                            style = MaterialTheme.typography.bodyLarge,
-                            textAlign = TextAlign.Center,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Text(
-                            text = state.message.asString(),
-                            style = MaterialTheme.typography.bodyMedium,
-                            textAlign = TextAlign.Center,
-                            color = MaterialTheme.colorScheme.error
-                        )
-                        Spacer(modifier = Modifier.height(24.dp))
-                        Button(
-                            onClick = { onAction(HotelCheckoutAction.BackClicked) },
-                            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
+            },
+            containerColor = MaterialTheme.colorScheme.surface
+        ) { paddingValues ->
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues)
+                    .background(MaterialTheme.colorScheme.surface)
+            ) {
+                when (val state = uiState.hotelState) {
+                    is UiState.Idle,
+                    is UiState.Loading -> {
+                        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                            CircularProgressIndicator()
+                        }
+                    }
+                    is UiState.Error -> {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(24.dp),
+                            verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = Alignment.CenterHorizontally
                         ) {
-                            Text(text = stringResource(R.string.hotel_checkout_try_again))
+                            Icon(
+                                imageVector = Icons.Default.Info,
+                                contentDescription = "Error icon",
+                                tint = MaterialTheme.colorScheme.error,
+                                modifier = Modifier.size(64.dp)
+                            )
+                            Spacer(modifier = Modifier.height(16.dp))
+                            Text(
+                                text = stringResource(R.string.hotel_checkout_error_loading_details),
+                                style = MaterialTheme.typography.bodyLarge,
+                                textAlign = TextAlign.Center,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Text(
+                                text = state.message.asString(),
+                                style = MaterialTheme.typography.bodyMedium,
+                                textAlign = TextAlign.Center,
+                                color = MaterialTheme.colorScheme.error
+                            )
+                            Spacer(modifier = Modifier.height(24.dp))
+                            Button(
+                                onClick = { onAction(HotelCheckoutAction.BackClicked) },
+                                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
+                            ) {
+                                Text(text = stringResource(R.string.hotel_checkout_try_again))
+                            }
+                        }
+                    }
+                    is UiState.Success -> {
+                        state.data?.let { hotelDetails ->
+                            CheckoutContent(
+                                hotelDetails = hotelDetails,
+                                uiState = uiState,
+                                onAction = onAction
+                            )
                         }
                     }
                 }
-                is UiState.Success -> {
-                    state.data?.let { hotelDetails ->
-                        CheckoutContent(
-                            hotelDetails = hotelDetails,
-                            uiState = uiState,
-                            onAction = onAction
-                        )
-                    }
-                }
-            }
 
-            AnimatedVisibility(
-                visible = uiState.isSubmitting || uiState.isPaymentProcessing,
-                enter = fadeIn(),
-                exit = fadeOut()
-            ) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.7f)),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
-                        Spacer(modifier = Modifier.height(16.dp))
-                        Text(
-                            text = stringResource(
-                                if (uiState.isPaymentProcessing) {
-                                    R.string.hotel_checkout_processing_payment
-                                } else {
-                                    R.string.hotel_checkout_submitting
-                                }
-                            ),
-                            style = MaterialTheme.typography.bodyLarge,
-                            fontWeight = FontWeight.Medium
-                        )
+                if (uiState.isSubmitting || uiState.isPaymentProcessing) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.7f)),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
+                            Spacer(modifier = Modifier.height(16.dp))
+                            Text(
+                                text = stringResource(
+                                    if (uiState.isPaymentProcessing) {
+                                        R.string.hotel_checkout_processing_payment
+                                    } else {
+                                        R.string.hotel_checkout_submitting
+                                    }
+                                ),
+                                style = MaterialTheme.typography.bodyLarge,
+                                fontWeight = FontWeight.Medium
+                            )
+                        }
                     }
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun HotelCheckoutTopBar(onBack: () -> Unit) {
+    Column {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = MaterialTheme.spacing.md, vertical = MaterialTheme.spacing.xs)
+        ) {
+            IconButton(
+                onClick = onBack,
+                modifier = Modifier.align(Alignment.CenterStart)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Close,
+                    contentDescription = stringResource(id = com.example.designsystem.R.string.close),
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.size(MaterialTheme.spacing.lg)
+                )
+            }
+            Text(
+                text = stringResource(id = R.string.hotel_checkout_title),
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.align(Alignment.Center)
+            )
+        }
+        HorizontalDivider(
+            thickness = MaterialTheme.elevation.xs,
+            color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
+        )
     }
 }
 
@@ -730,72 +758,83 @@ private fun CheckoutBottomBar(
     isSubmitting: Boolean,
     onSubmitClick: () -> Unit
 ) {
-    Card(
+    Surface(
+        shadowElevation = MaterialTheme.elevation.sm,
         modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
+        color = MaterialTheme.colorScheme.surface
     ) {
         Column(
-            modifier = Modifier.padding(20.dp)
+            modifier = Modifier
+                .fillMaxWidth()
+                .navigationBarsPadding()
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Column {
-                    Text(
-                        text = stringResource(R.string.hotel_checkout_total_price),
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                    val symbol = when (currency.uppercase()) {
-                        "USD" -> "$"
-                        "EUR" -> "€"
-                        "GBP" -> "£"
-                        else -> "$currency "
-                    }
-                    Text(
-                        text = String.format("%s%.2f", symbol, price),
-                        style = MaterialTheme.typography.titleLarge,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.primary
-                    )
-                }
-                Button(
-                    onClick = onSubmitClick,
-                    enabled = !isSubmitting,
-                    modifier = Modifier
-                        .height(48.dp)
-                        .width(180.dp),
-                    shape = RoundedCornerShape(12.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.primary,
-                        disabledContainerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)
-                    )
-                ) {
-                    if (isSubmitting) {
-                        CircularProgressIndicator(
-                            color = MaterialTheme.colorScheme.onPrimary,
-                            modifier = Modifier.size(24.dp),
-                            strokeWidth = 2.dp
-                        )
-                    } else {
-                        Text(
-                            text = stringResource(R.string.hotel_checkout_button),
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.onPrimary
-                        )
-                    }
-                }
-            }
-            Spacer(modifier = Modifier.height(4.dp))
-            Text(
-                text = stringResource(R.string.hotel_checkout_taxes_fees),
-                style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+            HorizontalDivider(
+                thickness = 0.5.dp,
+                color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f)
             )
+            Column(
+                modifier = Modifier.padding(MaterialTheme.spacing.lg),
+                verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.md)
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Column {
+                        Text(
+                            text = stringResource(R.string.hotel_checkout_total_price),
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                        val symbol = when (currency.uppercase()) {
+                            "USD" -> "$"
+                            "EUR" -> "€"
+                            "GBP" -> "£"
+                            else -> "$currency "
+                        }
+                        Text(
+                            text = String.format("%s%.2f", symbol, price),
+                            style = MaterialTheme.typography.headlineMedium.copy(
+                                color = MaterialTheme.colorScheme.primary,
+                                fontWeight = FontWeight.Bold
+                            )
+                        )
+                    }
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.xxs)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Lock,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.size(MaterialTheme.spacing.md)
+                        )
+                        Text(
+                            text = stringResource(R.string.hotel_checkout_secure_ssl),
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurface,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    }
+                }
+
+                AppButton(
+                    onClick = onSubmitClick,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(MaterialTheme.spacing.xxxl + MaterialTheme.spacing.xs),
+                    isEnabled = !isSubmitting,
+                    shape = MaterialTheme.shapes.medium,
+                    text = if (isSubmitting) {
+                        stringResource(R.string.hotel_checkout_submitting)
+                    } else {
+                        stringResource(R.string.hotel_checkout_button)
+                    }
+                )
+            }
         }
     }
 }

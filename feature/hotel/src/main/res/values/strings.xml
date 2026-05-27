@@ -104,6 +104,7 @@
     <string name="hotel_checkout_submitting">Submitting booking...</string>
     <string name="hotel_checkout_processing_payment">Processing payment...</string>
     
+    <string name="hotel_checkout_secure_ssl">Secure SSL</string>
     <string name="hotel_checkout_payment_failed">Payment failed. Please try again.</string>
     <string name="hotel_checkout_payment_canceled">Payment was cancelled.</string>
     <string name="hotel_checkout_retry">Retry Payment</string>
