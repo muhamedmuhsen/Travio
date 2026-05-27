@@ -110,11 +110,16 @@ class CommunityRepositoryImpl @Inject constructor(
         postId: Int,
         text: String,
         authorName: String
-    ): Result<Unit, DataError> =
-        safeApiCall {
+    ): Result<Unit, DataError> {
+        val result = safeApiCall {
             api.addComment(postId, CommentContentRequest(content = text, postId = postId))
             Unit
         }
+        if (result is Result.Success) {
+            refreshPosts()
+        }
+        return result
+    }
 
     override suspend fun toggleLike(postId: Int): Result<Unit, DataError> =
         safeApiCall {

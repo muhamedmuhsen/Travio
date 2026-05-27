@@ -183,4 +183,38 @@ class CommunityRepositoryImplTest {
         
         job.cancel()
     }
+
+    @Test
+    fun should_triggerRefresh_when_addCommentSucceeds() = runTest {
+        var apiCallCount = 0
+        val api = object : FakeCommunityApi() {
+            override suspend fun addComment(postId: Int, request: CommentContentRequest): BaseResponse<Unit> {
+                return BaseResponse(Unit, true, "OK", emptyList())
+            }
+            override suspend fun getAllPosts(): BaseResponse<List<PostDto>> {
+                apiCallCount++
+                return BaseResponse(listOf(samplePostDto(apiCallCount)), true, "OK", emptyList())
+            }
+        }
+        val mockContext = mock<Context>()
+        val repo = CommunityRepositoryImpl(api, mockContext)
+
+        val emissions = mutableListOf<Result<List<CommunityPost>, DataError>>()
+        val job = launch {
+            repo.getAllPost().collect {
+                emissions.add(it)
+            }
+        }
+
+        advanceUntilIdle()
+        assertEquals(1, emissions.size)
+        
+        val result = repo.addComment(1, "Great!", "Author")
+        advanceUntilIdle()
+        
+        assertTrue(result is Result.Success)
+        assertEquals(2, emissions.size)
+        
+        job.cancel()
+    }
 }
