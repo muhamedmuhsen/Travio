@@ -19,6 +19,12 @@
     <string name="post_detail_delete_confirm_button">حذف</string>
     <string name="post_detail_delete_cancel_button">إلغاء</string>
     <string name="post_detail_delete_error">فشل حذف المنشور. يرجى المحاولة مرة أخرى.</string>
+
+    <!-- Comment Deletion -->
+    <string name="comment_delete_confirm_title">حذف التعليق؟</string>
+    <string name="comment_delete_confirm_body">سيتم حذف هذا التعليق نهائياً.</string>
+    <string name="comment_delete_confirm_button">حذف</string>
+    <string name="comment_delete_cancel_button">إلغاء</string>
     <string name="post_detail_comments_header">التعليقات</string>
     <string name="post_detail_no_comments">لا توجد تعليقات بعد. كن أول من يعلق!</string>
     <string name="post_detail_comment_hint">أضف تعليقاً…</string>

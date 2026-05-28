@@ -38,6 +38,9 @@ interface CommunityApi {
     @DELETE("Community/posts/{postId}")
     suspend fun deletePost(@Path("postId") postId: Int)
 
+    @DELETE("Community/comments/{commentId}")
+    suspend fun deleteComment(@Path("commentId") commentId: Int): BaseResponse<Boolean>
+
     @Multipart
     @POST("Community/posts/{postId}/images")
     suspend fun uploadPostImages(

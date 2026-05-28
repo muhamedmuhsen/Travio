@@ -132,6 +132,17 @@ class CommunityRepositoryImpl @Inject constructor(
         return result
     }
 
+    override suspend fun deleteComment(commentId: Int): Result<Unit, DataError> {
+        val result = safeApiCall {
+            api.deleteComment(commentId)
+            Unit
+        }
+        if (result is Result.Success) {
+            refreshPosts()
+        }
+        return result
+    }
+
     override suspend fun toggleLike(postId: Int): Result<Unit, DataError> {
         val result = safeApiCall {
             api.likePost(postId)

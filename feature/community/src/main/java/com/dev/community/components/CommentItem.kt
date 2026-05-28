@@ -1,6 +1,8 @@
 package com.dev.community.components
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -21,14 +23,20 @@ import com.example.designsystem.theme.spacing
 import com.example.domain.model.community.Comment
 import java.time.Instant
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun CommentItem(
     comment: Comment,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onLongClick: (() -> Unit)? = null
 ) {
     Row(
         modifier = modifier
             .fillMaxWidth()
+            .combinedClickable(
+                onClick = {},
+                onLongClick = onLongClick
+            )
             .padding(
                 horizontal = MaterialTheme.spacing.md,
                 vertical = MaterialTheme.spacing.xxs

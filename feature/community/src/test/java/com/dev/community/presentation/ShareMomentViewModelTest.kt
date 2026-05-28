@@ -45,6 +45,7 @@ class FakeCommunityRepository : CommunityRepository {
     override suspend fun getPostById(postId: Int): Result<CommunityPost, DataError> = TODO()
     override suspend fun uploadPostImages(postId: Int, imageUris: List<String>): Result<Unit, DataError> = TODO()
     override suspend fun deletePost(postId: Int): Result<Unit, DataError> = TODO()
+    override suspend fun deleteComment(commentId: Int): Result<Unit, DataError> = TODO()
     override suspend fun addComment(postId: Int, text: String, authorName: String): Result<Unit, DataError> = TODO()
     override suspend fun toggleLike(postId: Int): Result<Unit, DataError> = TODO()
     override suspend fun toggleBookmark(postId: Int): Result<Unit, DataError> = TODO()

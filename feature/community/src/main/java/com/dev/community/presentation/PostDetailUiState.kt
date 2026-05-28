@@ -6,10 +6,12 @@ import com.example.domain.model.community.CommunityPost
 
 data class PostDetailUiState(
     val postState: UiState<CommunityPost> = UiState.Loading,
-    val showDeleteConfirmation: Boolean = false
+    val showDeleteConfirmation: Boolean = false,
+    val commentToDelete: Int? = null
 )
 
 sealed interface PostDetailEvent {
     data object PostDeleted : PostDetailEvent
     data class DeleteFailed(val message: UiText) : PostDetailEvent
+    data class CommentDeleteFailed(val message: UiText) : PostDetailEvent
 }

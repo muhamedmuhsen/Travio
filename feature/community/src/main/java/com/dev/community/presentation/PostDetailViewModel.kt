@@ -7,6 +7,7 @@ import com.dev.utils.uistate.UiState
 import com.dev.utils.uitext.asUiText
 import com.example.domain.model.community.Comment
 import com.example.domain.usecase.community.AddCommentUseCase
+import com.example.domain.usecase.community.DeleteCommentUseCase
 import com.example.domain.usecase.community.DeletePostUseCase
 import com.example.domain.usecase.community.GetPostByIdUseCase
 import com.example.domain.usecase.community.ToggleBookmarkUseCase
@@ -32,6 +33,7 @@ class PostDetailViewModel @Inject constructor(
     private val toggleBookmark: ToggleBookmarkUseCase,
     private val addComment: AddCommentUseCase,
     private val deletePost: DeletePostUseCase,
+    private val deleteComment: DeleteCommentUseCase,
     private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -134,6 +136,41 @@ class PostDetailViewModel @Inject constructor(
             when (val result = deletePost(postId)) {
                 is Result.Success -> _event.send(PostDetailEvent.PostDeleted)
                 is Result.Error -> _event.send(PostDetailEvent.DeleteFailed(result.error.asUiText()))
+            }
+        }
+    }
+
+    fun onCommentLongPressed(commentId: Int) {
+        _uiState.update { it.copy(commentToDelete = commentId) }
+    }
+
+    fun onCommentDeleteDismissed() {
+        _uiState.update { it.copy(commentToDelete = null) }
+    }
+
+    fun onCommentDeleteConfirmed() {
+        val commentId = _uiState.value.commentToDelete ?: return
+        _uiState.update { state ->
+            val post = (state.postState as? UiState.Success)?.data
+                ?: return@update state.copy(commentToDelete = null)
+            val updatedComments = post.comments.filter { it.id != commentId }
+            state.copy(
+                postState = UiState.Success(
+                    post.copy(
+                        comments = updatedComments,
+                        commentsCount = updatedComments.size
+                    )
+                ),
+                commentToDelete = null
+            )
+        }
+        viewModelScope.launch {
+            when (val result = deleteComment(commentId)) {
+                is Result.Success -> loadPost()
+                is Result.Error -> {
+                    loadPost()
+                    _event.send(PostDetailEvent.CommentDeleteFailed(result.error.asUiText()))
+                }
             }
         }
     }

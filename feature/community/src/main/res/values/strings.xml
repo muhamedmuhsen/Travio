@@ -19,6 +19,12 @@
     <string name="post_detail_delete_confirm_button">Delete</string>
     <string name="post_detail_delete_cancel_button">Cancel</string>
     <string name="post_detail_delete_error">Failed to delete post. Please try again.</string>
+
+    <!-- Comment Deletion -->
+    <string name="comment_delete_confirm_title">Delete comment?</string>
+    <string name="comment_delete_confirm_body">This comment will be permanently removed.</string>
+    <string name="comment_delete_confirm_button">Delete</string>
+    <string name="comment_delete_cancel_button">Cancel</string>
     <string name="post_detail_comments_header">Comments</string>
     <string name="post_detail_no_comments">No comments yet. Be the first!</string>
     <string name="post_detail_comment_hint">Add a comment…</string>

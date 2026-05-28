@@ -25,6 +25,8 @@ interface CommunityRepository {
         authorName: String
     ): Result<Unit, DataError>
 
+    suspend fun deleteComment(commentId: Int): Result<Unit, DataError>
+
     suspend fun toggleLike(postId: Int): Result<Unit, DataError>
 
     suspend fun toggleBookmark(postId: Int): Result<Unit, DataError>

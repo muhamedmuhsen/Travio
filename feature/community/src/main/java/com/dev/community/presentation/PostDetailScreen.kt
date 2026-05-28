@@ -61,6 +61,8 @@ fun PostDetailScreen(
                 PostDetailEvent.PostDeleted -> onNavigateBack()
                 is PostDetailEvent.DeleteFailed ->
                     snackbarHostState.showSnackbar(event.message.asString(context))
+                is PostDetailEvent.CommentDeleteFailed ->
+                    snackbarHostState.showSnackbar(event.message.asString(context))
             }
         }
     }
@@ -85,6 +87,9 @@ fun PostDetailScreen(
             onDeleteClicked = viewModel::onDeleteClicked,
             onDeleteConfirmed = viewModel::onDeleteConfirmed,
             onDeleteDismissed = viewModel::onDeleteDismissed,
+            onCommentLongPressed = viewModel::onCommentLongPressed,
+            onCommentDeleteConfirmed = viewModel::onCommentDeleteConfirmed,
+            onCommentDeleteDismissed = viewModel::onCommentDeleteDismissed,
             onNavigateBack = onNavigateBack,
             modifier = Modifier
                 .fillMaxSize()
@@ -101,6 +106,9 @@ fun PostDetailScreenContent(
     onDeleteClicked: () -> Unit,
     onDeleteConfirmed: () -> Unit,
     onDeleteDismissed: () -> Unit,
+    onCommentLongPressed: (Int) -> Unit,
+    onCommentDeleteConfirmed: () -> Unit,
+    onCommentDeleteDismissed: () -> Unit,
     onNavigateBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -120,6 +128,27 @@ fun PostDetailScreenContent(
             dismissButton = {
                 TextButton(onClick = onDeleteDismissed) {
                     Text(stringResource(R.string.post_detail_delete_cancel_button))
+                }
+            }
+        )
+    }
+
+    if (state.commentToDelete != null) {
+        AlertDialog(
+            onDismissRequest = onCommentDeleteDismissed,
+            title = { Text(stringResource(R.string.comment_delete_confirm_title)) },
+            text = { Text(stringResource(R.string.comment_delete_confirm_body)) },
+            confirmButton = {
+                TextButton(onClick = onCommentDeleteConfirmed) {
+                    Text(
+                        text = stringResource(R.string.comment_delete_confirm_button),
+                        color = MaterialTheme.colorScheme.error
+                    )
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = onCommentDeleteDismissed) {
+                    Text(stringResource(R.string.comment_delete_cancel_button))
                 }
             }
         )
@@ -153,6 +182,7 @@ fun PostDetailScreenContent(
                 onLikeClicked = onLikeClicked,
                 onBookmarkClicked = onBookmarkClicked,
                 onDeleteClicked = onDeleteClicked,
+                onCommentLongPressed = onCommentLongPressed,
                 onNavigateBack = onNavigateBack,
                 modifier = modifier
             )
@@ -166,6 +196,7 @@ private fun PostDetailBody(
     onLikeClicked: () -> Unit,
     onBookmarkClicked: () -> Unit,
     onDeleteClicked: () -> Unit,
+    onCommentLongPressed: (Int) -> Unit,
     onNavigateBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -254,7 +285,10 @@ private fun PostDetailBody(
             }
         } else {
             items(items = post.comments, key = { it.id }) { comment ->
-                CommentItem(comment = comment)
+                CommentItem(
+                    comment = comment,
+                    onLongClick = { onCommentLongPressed(comment.id) }
+                )
                 Spacer(modifier = Modifier.height(MaterialTheme.spacing.xs))
             }
         }
@@ -302,6 +336,9 @@ private fun PostDetailScreenPreview() {
             onDeleteClicked = {},
             onDeleteConfirmed = {},
             onDeleteDismissed = {},
+            onCommentLongPressed = {},
+            onCommentDeleteConfirmed = {},
+            onCommentDeleteDismissed = {},
             onNavigateBack = {}
         )
     }
@@ -318,6 +355,9 @@ private fun PostDetailScreenLoadingPreview() {
             onDeleteClicked = {},
             onDeleteConfirmed = {},
             onDeleteDismissed = {},
+            onCommentLongPressed = {},
+            onCommentDeleteConfirmed = {},
+            onCommentDeleteDismissed = {},
             onNavigateBack = {}
         )
     }
@@ -348,6 +388,50 @@ private fun PostDetailDeleteDialogPreview() {
             onDeleteClicked = {},
             onDeleteConfirmed = {},
             onDeleteDismissed = {},
+            onCommentLongPressed = {},
+            onCommentDeleteConfirmed = {},
+            onCommentDeleteDismissed = {},
+            onNavigateBack = {}
+        )
+    }
+}
+
+@Preview(name = "Comment Delete Confirmation", showBackground = true, showSystemUi = true)
+@Composable
+private fun CommentDeleteDialogPreview() {
+    TravioTheme {
+        PostDetailScreenContent(
+            state = PostDetailUiState(
+                postState = UiState.Success(
+                    CommunityPost(
+                        id = 1,
+                        author = "Ahmed",
+                        avatarUrl = "",
+                        location = "Cairo",
+                        createdAt = Instant.now(),
+                        content = "Hello!",
+                        likesCount = 0,
+                        commentsCount = 1,
+                        comments = listOf(
+                            Comment(
+                                id = 10,
+                                authorName = "Alex",
+                                text = "Nice!",
+                                createdAt = Instant.now()
+                            )
+                        )
+                    )
+                ),
+                commentToDelete = 10
+            ),
+            onLikeClicked = {},
+            onBookmarkClicked = {},
+            onDeleteClicked = {},
+            onDeleteConfirmed = {},
+            onDeleteDismissed = {},
+            onCommentLongPressed = {},
+            onCommentDeleteConfirmed = {},
+            onCommentDeleteDismissed = {},
             onNavigateBack = {}
         )
     }
