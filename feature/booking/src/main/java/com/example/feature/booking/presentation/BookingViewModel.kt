@@ -3,9 +3,7 @@ package com.example.feature.booking.presentation
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.domain.model.booking.BookingRequest
 import com.example.domain.model.booking.Passenger
-import com.example.domain.usecase.booking.ConfirmFlightOrderUseCase
 import com.example.domain.usecase.booking.CreatePaymentIntentUseCase
 import com.example.domain.usecase.booking.ValidatePassengersUseCase
 import com.example.domain.usecase.flights.GetFlightDetailsUseCase
@@ -24,7 +22,6 @@ import javax.inject.Inject
 class BookingViewModel @Inject constructor(
     private val validatePassengersUseCase: ValidatePassengersUseCase,
     private val createPaymentIntentUseCase: CreatePaymentIntentUseCase,
-    private val confirmFlightOrderUseCase: ConfirmFlightOrderUseCase,
     private val getFlightDetailsUseCase: GetFlightDetailsUseCase,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
@@ -132,37 +129,15 @@ class BookingViewModel @Inject constructor(
         canceled: Boolean = false
     ) {
         if (success) {
-            _uiState.update { it.copy(paymentStatus = PaymentStatus.Success) }
-            confirmBooking()
+            _uiState.update { it.copy(isProcessing = false, paymentStatus = PaymentStatus.Success) }
+            viewModelScope.launch {
+                _effect.send(BookingEffect.NavigateToConfirmation(currentPaymentIntentId ?: "Confirmed"))
+            }
         } else if (canceled) {
             _uiState.update { it.copy(isProcessing = false, paymentStatus = PaymentStatus.Canceled) }
         } else {
             _uiState.update { it.copy(isProcessing = false, paymentStatus = PaymentStatus.Failed, error = "Payment failed") }
             _effect.trySend(BookingEffect.ShowError("Payment failed"))
-        }
-    }
-
-    private fun confirmBooking() {
-        val paymentIntentId = currentPaymentIntentId ?: return
-
-        viewModelScope.launch {
-            _uiState.update { it.copy(isProcessing = true) }
-
-            val request = BookingRequest(
-                offerId = offerId,
-                passengers = _uiState.value.passengers,
-                paymentIntentId = paymentIntentId
-            )
-
-            confirmFlightOrderUseCase(request)
-                .onSuccess { result ->
-                    _uiState.update { it.copy(isProcessing = false, bookingResult = result) }
-                    _effect.send(BookingEffect.NavigateToConfirmation(result.pnr))
-                }
-                .onFailure { error ->
-                    _uiState.update { it.copy(isProcessing = false, error = error.message) }
-                    _effect.send(BookingEffect.ShowError(error.message ?: "Booking confirmation failed"))
-                }
         }
     }
 

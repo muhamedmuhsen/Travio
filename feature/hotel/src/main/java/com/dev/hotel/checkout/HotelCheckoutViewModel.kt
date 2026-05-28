@@ -37,7 +37,8 @@ class HotelCheckoutViewModel @Inject constructor(
     val event = _event.receiveAsFlow()
 
     init {
-        val rateKey = savedStateHandle.get<String>("rateKey").orEmpty()
+        val rateKeyStr = savedStateHandle.get<String>("rateKey").orEmpty()
+        val rateKey = if (rateKeyStr.isNotEmpty()) java.net.URLDecoder.decode(rateKeyStr, "UTF-8") else ""
         val hotelCode = savedStateHandle.get<Int>("hotelCode") ?: 0
         val checkIn = savedStateHandle.get<String>("checkIn").orEmpty()
         val checkOut = savedStateHandle.get<String>("checkOut").orEmpty()
@@ -259,7 +260,26 @@ class HotelCheckoutViewModel @Inject constructor(
             )
             when (result) {
                 is Result.Success -> {
-                    _uiState.update { it.copy(hotelState = UiState.Success(result.data)) }
+                    val rateKey = _uiState.value.rateKey
+                    var selectedRatePrice: Double? = null
+                    var selectedRateCurrency: String? = null
+
+                    result.data.rooms.forEach { room ->
+                        room.rates.forEach { rate ->
+                            if (rate.rateKey == rateKey) {
+                                selectedRatePrice = rate.price
+                                selectedRateCurrency = result.data.currency
+                            }
+                        }
+                    }
+
+                    _uiState.update {
+                        it.copy(
+                            hotelState = UiState.Success(result.data),
+                            selectedRatePrice = selectedRatePrice,
+                            selectedRateCurrency = selectedRateCurrency
+                        )
+                    }
                 }
                 is Result.Error -> {
                     _uiState.update { it.copy(hotelState = UiState.Error(result.error.asUiText())) }

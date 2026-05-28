@@ -150,6 +150,14 @@ fun HomeScreen(
             }
         }
     }
+
+    // Reactive safety net: whenever permission state updates to granted, notify ViewModel
+    LaunchedEffect(locationPermissions.allPermissionsGranted) {
+        if (locationPermissions.allPermissionsGranted) {
+            viewModel.onAction(HomeAction.OnLocationPermissionResult(granted = true))
+        }
+    }
+
     HomeContent(
         modifier = modifier,
         onAction = viewModel::onAction,

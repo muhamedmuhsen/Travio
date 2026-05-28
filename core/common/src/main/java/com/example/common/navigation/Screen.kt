@@ -94,7 +94,8 @@ sealed class Screen(val route: String) {
             children: Int,
             childrenAges: String? = null
         ): String {
-            val builder = StringBuilder("$route/$rateKey/$hotelCode")
+            val encodedRateKey = java.net.URLEncoder.encode(rateKey, "UTF-8")
+            val builder = StringBuilder("$route/$encodedRateKey/$hotelCode")
             builder.append("?checkIn=").append(checkIn)
                 .append("&checkOut=").append(checkOut)
                 .append("&adults=").append(adults)

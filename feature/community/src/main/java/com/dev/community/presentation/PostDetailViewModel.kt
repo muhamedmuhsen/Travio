@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.dev.utils.uistate.UiState
 import com.dev.utils.uitext.asUiText
 import com.example.domain.model.community.Comment
+import com.example.domain.repository.usermanagement.UserManagementRepository
 import com.example.domain.usecase.community.AddCommentUseCase
 import com.example.domain.usecase.community.DeleteCommentUseCase
 import com.example.domain.usecase.community.DeletePostUseCase
@@ -23,11 +24,10 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.Instant
 import javax.inject.Inject
-import javax.inject.Named
 
 @HiltViewModel
 class PostDetailViewModel @Inject constructor(
-    @Named("comment_author_you") private val commentAuthorName: String,
+    private val userManagementRepository: UserManagementRepository,
     private val getPostById: GetPostByIdUseCase,
     private val toggleLike: ToggleLikeUseCase,
     private val toggleBookmark: ToggleBookmarkUseCase,
@@ -50,8 +50,20 @@ class PostDetailViewModel @Inject constructor(
     private val _event = Channel<PostDetailEvent>(Channel.BUFFERED)
     val event = _event.receiveAsFlow()
 
+    private var currentUser: com.example.domain.model.auth.User? = null
+
     init {
         loadPost()
+        loadCurrentUser()
+    }
+
+    private fun loadCurrentUser() {
+        viewModelScope.launch {
+            when (val result = userManagementRepository.getUser()) {
+                is Result.Success -> currentUser = result.data
+                else -> { /* Fallback handled when used */ }
+            }
+        }
     }
 
     private fun loadPost() {
@@ -100,11 +112,15 @@ class PostDetailViewModel @Inject constructor(
         val text = commentText.value.trim()
         if (text.isBlank()) return
 
+        val authorName = currentUser?.let { "${it.firstName} ${it.lastName}".trim() } ?: "You"
+        val avatarUrl = currentUser?.profilePictureUrl ?: ""
+
         _uiState.update { state ->
             val post = (state.postState as? UiState.Success)?.data ?: return@update state
             val newComment = Comment(
                 id = System.currentTimeMillis().toInt(),
-                authorName = commentAuthorName,
+                authorName = authorName,
+                avatarUrl = avatarUrl,
                 text = text,
                 createdAt = Instant.now()
             )
@@ -119,7 +135,7 @@ class PostDetailViewModel @Inject constructor(
             )
         }
         savedStateHandle["commentText"] = ""
-        viewModelScope.launch { addComment(postId, text, commentAuthorName) }
+        viewModelScope.launch { addComment(postId, text, authorName) }
     }
 
     fun onDeleteClicked() {

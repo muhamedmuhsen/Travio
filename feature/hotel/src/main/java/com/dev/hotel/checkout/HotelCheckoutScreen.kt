@@ -167,10 +167,13 @@ fun HotelCheckoutScreen(
             },
             bottomBar = {
                 val hotelData = (uiState.hotelState as? UiState.Success)?.data
-                if (hotelData != null && hotelData.minRate != null) {
+                val price = uiState.selectedRatePrice ?: hotelData?.minRate
+                val currency = uiState.selectedRateCurrency ?: hotelData?.currency ?: "USD"
+
+                if (price != null) {
                     CheckoutBottomBar(
-                        price = hotelData.minRate!!,
-                        currency = hotelData.currency ?: "USD",
+                        price = price,
+                        currency = currency,
                         isSubmitting = uiState.isSubmitting || uiState.isPaymentProcessing,
                         onSubmitClick = { onAction(HotelCheckoutAction.SubmitCheckout) }
                     )

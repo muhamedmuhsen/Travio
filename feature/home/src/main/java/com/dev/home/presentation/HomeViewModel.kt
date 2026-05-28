@@ -96,8 +96,12 @@ class HomeViewModel @Inject constructor(
 
     private fun onLocationPermissionResult(granted: Boolean) {
         if (granted) {
-            loadNearbyDestinations()
-            loadNearbyHotels()
+            val isAlreadyLoadedOrLoading = _uiState.value.nearbyDestinationsState is UiState.Success ||
+                _uiState.value.nearbyDestinationsState is UiState.Loading
+            if (!isAlreadyLoadedOrLoading) {
+                loadNearbyDestinations()
+                loadNearbyHotels()
+            }
         } else {
             _uiState.update {
                 it.copy(

@@ -15,6 +15,8 @@ data class HotelCheckoutUiState(
 
     // Hotel details loaded from API
     val hotelState: UiState<com.example.domain.model.hotel.HotelDetails> = UiState.Loading,
+    val selectedRatePrice: Double? = null,
+    val selectedRateCurrency: String? = null,
 
     // Input fields
     val holderFirstName: String = "",
