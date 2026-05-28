@@ -37,6 +37,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -45,12 +46,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -58,6 +61,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.designsystem.components.AppBottomBar
+import com.example.designsystem.components.AppSnackBar
+import com.example.designsystem.components.SnackBarType
+import com.example.designsystem.components.showAppSnackbar
 import com.example.designsystem.theme.TravioTheme
 import com.example.designsystem.theme.elevation
 import com.example.designsystem.theme.spacing
@@ -101,15 +107,20 @@ fun ChatScreen(
         }
     }
 
-    val context = androidx.compose.ui.platform.LocalContext.current
-    LaunchedEffect(viewModel.toastEvent) {
-        viewModel.toastEvent.collect { message ->
-            android.widget.Toast.makeText(context, message, android.widget.Toast.LENGTH_SHORT).show()
+    val context = LocalContext.current
+    val snackbarHostState = remember { SnackbarHostState() }
+    LaunchedEffect(viewModel.snackbarEvent) {
+        viewModel.snackbarEvent.collect { message ->
+            snackbarHostState.showAppSnackbar(
+                message = message,
+                type = SnackBarType.ERROR
+            )
         }
     }
 
     ChatScreenContent(
         state = state,
+        snackbarHostState = snackbarHostState,
         onInputTextChanged = viewModel::onInputTextChanged,
         onSendMessage = viewModel::onSendMessage,
         onBottomBarItemSelected = { index ->
@@ -128,6 +139,7 @@ fun ChatScreen(
 @Composable
 fun ChatScreenContent(
     state: ChatUiState,
+    snackbarHostState: SnackbarHostState,
     onInputTextChanged: (String) -> Unit,
     onSendMessage: () -> Unit,
     onBottomBarItemSelected: (Int) -> Unit,
@@ -152,6 +164,7 @@ fun ChatScreenContent(
                 onItemSelected = onBottomBarItemSelected
             )
         },
+        snackbarHost = { AppSnackBar(hostState = snackbarHostState) },
         containerColor = MaterialTheme.colorScheme.background
     ) { paddingValues ->
         Box(
@@ -418,6 +431,7 @@ fun ChatScreenPreview() {
                     )
                 )
             ),
+            snackbarHostState = SnackbarHostState(),
             onInputTextChanged = {},
             onSendMessage = {},
             onBottomBarItemSelected = {}
@@ -433,6 +447,7 @@ fun ChatScreenEmptyPreview() {
             state = ChatUiState.Success(
                 messages = emptyList()
             ),
+            snackbarHostState = SnackbarHostState(),
             onInputTextChanged = {},
             onSendMessage = {},
             onBottomBarItemSelected = {}
@@ -446,6 +461,7 @@ fun ChatScreenLoadingPreview() {
     TravioTheme {
         ChatScreenContent(
             state = ChatUiState.Loading,
+            snackbarHostState = SnackbarHostState(),
             onInputTextChanged = {},
             onSendMessage = {},
             onBottomBarItemSelected = {}
@@ -459,6 +475,7 @@ fun ChatScreenErrorPreview() {
     TravioTheme {
         ChatScreenContent(
             state = ChatUiState.Error("Failed to load messages"),
+            snackbarHostState = SnackbarHostState(),
             onInputTextChanged = {},
             onSendMessage = {},
             onBottomBarItemSelected = {}

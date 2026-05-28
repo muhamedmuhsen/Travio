@@ -40,8 +40,8 @@ class ChatViewModel @Inject constructor(
     private val _navigationEvent = Channel<ChatNavigationEvent>()
     val navigationEvent = _navigationEvent.receiveAsFlow()
 
-    private val _toastEvent = Channel<String>()
-    val toastEvent = _toastEvent.receiveAsFlow()
+    private val _snackbarEvent = Channel<String>()
+    val snackbarEvent = _snackbarEvent.receiveAsFlow()
 
     private val currentThreadId: String = java.util.UUID.randomUUID().toString()
 
@@ -185,7 +185,7 @@ class ChatViewModel @Inject constructor(
             viewModelScope.launch {
                 val result = sendMessageUseCase(currentThreadId, content)
                 if (result is Result.Error) {
-                    _toastEvent.send("Failed to send message")
+                    _snackbarEvent.send("Failed to send message")
                 }
                 _state.update { currentState ->
                     if (currentState is ChatUiState.Success) {

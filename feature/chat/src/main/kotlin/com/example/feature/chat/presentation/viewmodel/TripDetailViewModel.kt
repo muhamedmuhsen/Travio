@@ -235,7 +235,7 @@ class TripDetailViewModel @Inject constructor(
         if (numericId == null) {
             viewModelScope.launch {
                 _uiEvent.send(
-                    TripDetailUiEvent.ShowToast(UiText.StringResource(com.example.feature.chat.R.string.error_cannot_favorite_local))
+                    TripDetailUiEvent.ShowSnackbar(UiText.StringResource(com.example.feature.chat.R.string.error_cannot_favorite_local))
                 )
             }
             return
@@ -259,7 +259,7 @@ class TripDetailViewModel @Inject constructor(
                 viewModelScope.launch {
                     val errorMsg = e.message?.let { UiText.DynamicString(it) }
                         ?: UiText.StringResource(com.example.feature.chat.R.string.error_failed_toggle_favorite)
-                    _uiEvent.send(TripDetailUiEvent.ShowToast(errorMsg))
+                    _uiEvent.send(TripDetailUiEvent.ShowSnackbar(errorMsg))
                 }
             }
             result.onSuccess {

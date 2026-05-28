@@ -43,6 +43,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -51,6 +52,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -58,12 +60,16 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.example.designsystem.components.AppBottomBar
+import com.example.designsystem.components.AppSnackBar
+import com.example.designsystem.components.SnackBarType
+import com.example.designsystem.components.showAppSnackbar
 import com.example.designsystem.theme.elevation
 import com.example.designsystem.theme.spacing
 import com.example.designsystem.theme.star
@@ -87,17 +93,17 @@ fun TripDetailScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
-    val context = androidx.compose.ui.platform.LocalContext.current
+    val context = LocalContext.current
+    val snackbarHostState = remember { SnackbarHostState() }
 
     LaunchedEffect(viewModel.uiEvent) {
         viewModel.uiEvent.collect { event ->
             when (event) {
-                is com.example.feature.chat.presentation.state.TripDetailUiEvent.ShowToast -> {
-                    android.widget.Toast.makeText(
-                        context,
-                        event.message.asString(context),
-                        android.widget.Toast.LENGTH_SHORT
-                    ).show()
+                is com.example.feature.chat.presentation.state.TripDetailUiEvent.ShowSnackbar -> {
+                    snackbarHostState.showAppSnackbar(
+                        message = event.message.asString(context),
+                        type = SnackBarType.ERROR
+                    )
                 }
             }
         }
@@ -168,6 +174,7 @@ fun TripDetailScreen(
                 }
             )
         },
+        snackbarHost = { AppSnackBar(hostState = snackbarHostState) },
         containerColor = MaterialTheme.colorScheme.background
     ) { paddingValues ->
         if (uiState.isLoading) {
