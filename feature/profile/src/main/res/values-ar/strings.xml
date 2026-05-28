@@ -4,7 +4,7 @@
     <string name="logout">تسجيل الخروج</string>
     <string name="logout_dialog_title">هل أنت متأكد أنك تريد تسجيل الخروج؟</string>
     <string name="cancel">إلغاء</string>
-    <string name="sure">تأكيد</string>
+    <string name="sure">متأكد</string>
 
     <!-- Edit Profile Screen -->
     <string name="edit_profile">تعديل الملف الشخصي</string>
@@ -29,5 +29,5 @@
     <string name="language">اللغة</string>
     <string name="dark_mode">الوضع الداكن</string>
     <string name="help_center">مركز المساعدة</string>
-    <string name="user_default">مستخدم</string>
+    <string name="user_default">المستخدم</string>
 </resources>

@@ -24,12 +24,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
 import com.example.designsystem.components.AppButton
 import com.example.designsystem.components.BottomSheetDragHandle
 import com.example.designsystem.theme.spacing
 import com.example.domain.model.hotel.Occupancy
+import com.example.feature.hotel.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -45,7 +46,7 @@ fun GuestSelectorSheet(
         onDismissRequest = onDismiss,
         sheetState = sheetState,
         dragHandle = { BottomSheetDragHandle() },
-        shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp),
+        shape = RoundedCornerShape(topStart = MaterialTheme.spacing.lg, topEnd = MaterialTheme.spacing.lg),
         containerColor = MaterialTheme.colorScheme.surface,
         scrimColor = Color.Black.copy(alpha = 0.4f),
         modifier = modifier.statusBarsPadding()
@@ -56,7 +57,7 @@ fun GuestSelectorSheet(
                 .padding(MaterialTheme.spacing.lg)
         ) {
             Text(
-                text = "Select Guests",
+                text = stringResource(R.string.hotel_search_select_guests),
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold
             )
@@ -64,8 +65,8 @@ fun GuestSelectorSheet(
 
             // Adults selector (1 - 6)
             CounterRow(
-                label = "Adults",
-                description = "Ages 18 or above",
+                label = stringResource(R.string.hotel_search_adults),
+                description = stringResource(R.string.hotel_search_adults_desc),
                 count = occupancy.adults,
                 minCount = 1,
                 maxCount = 6,
@@ -74,12 +75,12 @@ fun GuestSelectorSheet(
                 }
             )
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(MaterialTheme.spacing.md))
 
             // Children selector (0 - 4)
             CounterRow(
-                label = "Children",
-                description = "Ages 0 to 17",
+                label = stringResource(R.string.hotel_search_children),
+                description = stringResource(R.string.hotel_search_children_desc),
                 count = occupancy.children,
                 minCount = 0,
                 maxCount = 4,
@@ -100,13 +101,13 @@ fun GuestSelectorSheet(
 
             // Children Ages selector
             if (occupancy.children > 0) {
-                Spacer(modifier = Modifier.height(24.dp))
+                Spacer(modifier = Modifier.height(MaterialTheme.spacing.lg))
                 Text(
-                    text = "Children's Ages",
+                    text = stringResource(R.string.hotel_search_children_ages_label),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.SemiBold
                 )
-                Spacer(modifier = Modifier.height(12.dp))
+                Spacer(modifier = Modifier.height(MaterialTheme.spacing.sm))
 
                 occupancy.childrenAges.forEachIndexed { index, age ->
                     ChildAgeSelector(
@@ -118,7 +119,7 @@ fun GuestSelectorSheet(
                             onOccupancyChanged(occupancy.copy(childrenAges = updatedAges))
                         }
                     )
-                    Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(MaterialTheme.spacing.xs))
                 }
             }
 
@@ -127,7 +128,7 @@ fun GuestSelectorSheet(
             AppButton(
                 onClick = onDismiss,
                 modifier = Modifier.fillMaxWidth(),
-                text = "Apply",
+                text = stringResource(R.string.hotel_search_apply),
                 buttonHeight = 56
             )
         }
@@ -156,19 +157,19 @@ private fun CounterRow(
         }
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+            horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.xs)
         ) {
             IconButton(
                 onClick = { if (count > minCount) onCountChanged(count - 1) },
                 enabled = count > minCount
             ) {
-                Icon(imageVector = Icons.Default.Remove, contentDescription = "Decrease")
+                Icon(imageVector = Icons.Default.Remove, contentDescription = stringResource(id = com.example.designsystem.R.string.close))
             }
             Text(
                 text = count.toString(),
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
-                modifier = Modifier.width(24.dp),
+                modifier = Modifier.width(MaterialTheme.spacing.lg),
                 onTextLayout = {}
             )
             IconButton(
@@ -195,13 +196,13 @@ private fun ChildAgeSelector(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            text = "Child ${index + 1} Age",
+            text = stringResource(R.string.hotel_search_child_age_label, index + 1),
             style = MaterialTheme.typography.bodyMedium,
             fontWeight = FontWeight.Medium
         )
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+            horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.xs)
         ) {
             IconButton(
                 onClick = { if (age > 0) onAgeChanged(age - 1) },
@@ -210,10 +211,16 @@ private fun ChildAgeSelector(
                 Icon(imageVector = Icons.Default.Remove, contentDescription = "Decrease age")
             }
             Text(
-                text = "$age yrs",
+                text = if (age < 1) {
+                    stringResource(
+                        R.string.hotel_search_child_under_one
+                    )
+                } else {
+                    stringResource(R.string.hotel_search_child_years, age)
+                },
                 style = MaterialTheme.typography.bodyMedium,
                 fontWeight = FontWeight.Bold,
-                modifier = Modifier.width(48.dp),
+                modifier = Modifier.width(MaterialTheme.spacing.xxxl),
                 onTextLayout = {}
             )
             IconButton(

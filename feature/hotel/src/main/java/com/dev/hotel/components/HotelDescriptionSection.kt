@@ -18,7 +18,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.dp
+import com.example.designsystem.theme.elevation
+import com.example.designsystem.theme.spacing
 import com.example.feature.hotel.R
 
 @Composable
@@ -33,14 +34,14 @@ fun HotelDescriptionSection(
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp),
-        shape = RoundedCornerShape(16.dp),
+            .padding(horizontal = MaterialTheme.spacing.md),
+        shape = RoundedCornerShape(MaterialTheme.spacing.md),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer),
-        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
+        elevation = CardDefaults.cardElevation(defaultElevation = MaterialTheme.elevation.none),
+        border = BorderStroke(MaterialTheme.elevation.xs, MaterialTheme.colorScheme.outlineVariant)
     ) {
         Column(
-            modifier = Modifier.padding(16.dp)
+            modifier = Modifier.padding(MaterialTheme.spacing.md)
         ) {
             Text(
                 text = stringResource(R.string.hotel_details_about),
@@ -49,7 +50,7 @@ fun HotelDescriptionSection(
                 color = MaterialTheme.colorScheme.onSurface
             )
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(MaterialTheme.spacing.xs))
 
             Column(
                 modifier = Modifier
@@ -64,7 +65,7 @@ fun HotelDescriptionSection(
                     overflow = TextOverflow.Ellipsis
                 )
 
-                Spacer(modifier = Modifier.height(4.dp))
+                Spacer(modifier = Modifier.height(MaterialTheme.spacing.xxs))
 
                 if (description.length > 150) {
                     Text(

@@ -20,9 +20,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import com.dev.feature.community.R
 import com.example.designsystem.theme.TravioTheme
+import com.example.designsystem.theme.favorite
 import com.example.designsystem.theme.spacing
 
 @Composable
@@ -46,16 +46,16 @@ fun PostDetailActions(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Start
     ) {
-        IconButton(onClick = onLikeClicked, modifier = Modifier.size(36.dp)) {
+        IconButton(onClick = onLikeClicked, modifier = Modifier.size(MaterialTheme.spacing.xl + MaterialTheme.spacing.xxs)) {
             Icon(
                 imageVector = if (isLiked) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
                 contentDescription = stringResource(R.string.community_like_cd),
                 tint = if (isLiked) {
-                    MaterialTheme.colorScheme.error
+                    MaterialTheme.colorScheme.favorite
                 } else {
                     MaterialTheme.colorScheme.onSurfaceVariant
                 },
-                modifier = Modifier.size(20.dp)
+                modifier = Modifier.size(MaterialTheme.spacing.lg - MaterialTheme.spacing.xxs)
             )
         }
         Text(
@@ -66,17 +66,17 @@ fun PostDetailActions(
 
         Spacer(modifier = Modifier.width(MaterialTheme.spacing.sm))
 
-        IconButton(onClick = onCommentClicked, modifier = Modifier.size(36.dp)) {
+        IconButton(onClick = onCommentClicked, modifier = Modifier.size(MaterialTheme.spacing.xl + MaterialTheme.spacing.xxs)) {
             Icon(
                 painter = painterResource(R.drawable.comment_icon),
                 contentDescription = stringResource(R.string.community_comment_cd),
                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier
-                    .padding(start = 4.dp)
-                    .size(18.dp)
+                    .padding(start = MaterialTheme.spacing.xxs)
+                    .size(MaterialTheme.spacing.md + MaterialTheme.spacing.xxs)
             )
         }
-        Spacer(modifier = Modifier.width(4.dp))
+        Spacer(modifier = Modifier.width(MaterialTheme.spacing.xxs))
         Text(
             text = commentsCount.toString(),
             style = MaterialTheme.typography.labelMedium,

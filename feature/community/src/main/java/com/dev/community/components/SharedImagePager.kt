@@ -44,6 +44,7 @@ import coil.request.ImageRequest
 import com.dev.feature.community.R
 import com.example.designsystem.components.shimmerEffect
 import com.example.designsystem.theme.TravioTheme
+import com.example.designsystem.theme.spacing
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -108,10 +109,13 @@ fun SharedImagePager(
             Box(
                 modifier = Modifier
                     .align(Alignment.TopEnd)
-                    .padding(8.dp)
+                    .padding(MaterialTheme.spacing.xs)
                     .clip(MaterialTheme.shapes.extraLarge)
                     .background(MaterialTheme.colorScheme.primaryContainer)
-                    .padding(horizontal = 8.dp, vertical = 3.dp)
+                    .padding(
+                        horizontal = MaterialTheme.spacing.xs,
+                        vertical = MaterialTheme.spacing.xxs / 2 + (MaterialTheme.spacing.xxs / 4)
+                    )
             ) {
                 Text(
                     text = "${pagerState.currentPage + 1}/${imageUrls.size}",
@@ -151,16 +155,16 @@ private fun BoxScope.PagerLeftArrow(
             },
             modifier = Modifier
                 .align(Alignment.CenterStart)
-                .padding(start = 8.dp)
+                .padding(start = MaterialTheme.spacing.xs)
                 .clip(CircleShape)
                 .background(Color.Black.copy(alpha = 0.35f))
-                .size(36.dp)
+                .size(MaterialTheme.spacing.xl + MaterialTheme.spacing.xxs)
         ) {
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
                 contentDescription = stringResource(R.string.pager_previous_cd),
                 tint = Color.White,
-                modifier = Modifier.size(22.dp)
+                modifier = Modifier.size(MaterialTheme.spacing.lg - MaterialTheme.spacing.xxs)
             )
         }
     }
@@ -182,17 +186,17 @@ private fun BoxScope.PagerRightArrow(
             },
             modifier = Modifier
                 .align(Alignment.CenterEnd)
-                .padding(end = 8.dp)
+                .padding(end = MaterialTheme.spacing.xs)
                 .clip(CircleShape)
                 .background(Color.Black.copy(alpha = 0.35f))
-                .size(36.dp)
+                .size(MaterialTheme.spacing.xl + MaterialTheme.spacing.xxs)
 
         ) {
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                 contentDescription = stringResource(R.string.pager_next_cd),
                 tint = Color.White,
-                modifier = Modifier.size(22.dp)
+                modifier = Modifier.size(MaterialTheme.spacing.lg - MaterialTheme.spacing.xxs)
             )
         }
     }
@@ -205,28 +209,28 @@ private fun BoxScope.PagerPillIndicator(
 ) {
     Row(
         modifier = Modifier
-            .height(24.dp)
+            .height(MaterialTheme.spacing.lg)
             .fillMaxWidth()
             .align(Alignment.BottomCenter)
-            .padding(bottom = 12.dp),
+            .padding(bottom = MaterialTheme.spacing.sm),
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically
     ) {
         repeat(imageUrls.size) { iteration ->
             val isSelected = pagerState.currentPage == iteration
             val width by animateDpAsState(
-                targetValue = if (isSelected) 24.dp else 8.dp,
+                targetValue = if (isSelected) MaterialTheme.spacing.lg else MaterialTheme.spacing.xs,
                 label = "indicator_width"
             )
             Box(
                 modifier = Modifier
-                    .padding(horizontal = 4.dp)
+                    .padding(horizontal = MaterialTheme.spacing.xxs)
                     .clip(CircleShape)
                     .background(
                         if (isSelected) Color.White else Color.White.copy(alpha = 0.5f)
                     )
                     .width(width)
-                    .height(8.dp)
+                    .height(MaterialTheme.spacing.xs)
             )
         }
     }
@@ -242,7 +246,7 @@ private fun SharedImagePagerPreview() {
                 "https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?w=800",
                 "https://images.unsplash.com/photo-1601581975053-7c199b540f7e?w=800"
             ),
-            modifier = Modifier.padding(16.dp)
+            modifier = Modifier.padding(MaterialTheme.spacing.md)
         )
     }
 }
@@ -257,7 +261,7 @@ private fun SharedImagePagerNoArrowsPreview() {
                 "https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?w=800"
             ),
             showArrows = false,
-            modifier = Modifier.padding(16.dp)
+            modifier = Modifier.padding(MaterialTheme.spacing.md)
         )
     }
 }

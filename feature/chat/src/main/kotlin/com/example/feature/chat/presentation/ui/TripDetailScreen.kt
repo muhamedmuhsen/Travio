@@ -61,11 +61,12 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.example.designsystem.components.AppBottomBar
+import com.example.designsystem.theme.elevation
 import com.example.designsystem.theme.spacing
+import com.example.designsystem.theme.star
 import com.example.feature.chat.R
 import com.example.feature.chat.presentation.viewmodel.ActivityItem
 import com.example.feature.chat.presentation.viewmodel.DayItinerary
@@ -252,8 +253,8 @@ fun DaySelectorTabs(
                 color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surface,
                 border = if (!isSelected) {
                     androidx.compose.foundation.BorderStroke(
-                        1.dp,
-                        MaterialTheme.colorScheme.outlineVariant
+                        width = MaterialTheme.elevation.xs / 2,
+                        color = MaterialTheme.colorScheme.outlineVariant
                     )
                 } else {
                     null
@@ -303,21 +304,21 @@ fun HotelRecommendationCard(
 ) {
     Card(
         modifier = modifier
-            .width(220.dp)
-            .height(180.dp),
-        shape = RoundedCornerShape(20.dp),
+            .width(MaterialTheme.spacing.xxxl * 4 + MaterialTheme.spacing.lg + MaterialTheme.spacing.xxs)
+            .height(MaterialTheme.spacing.xxxl * 3 + MaterialTheme.spacing.xl + MaterialTheme.spacing.xs),
+        shape = RoundedCornerShape(MaterialTheme.spacing.md),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = MaterialTheme.elevation.sm)
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
             AsyncImage(
-                model = hotel.imageUrl ?: com.example.designsystem.R.drawable.ishan_seefromthesky,
+                model = hotel.imageUrl ?: com.example.designsystem.R.drawable.image_placeholder,
                 contentDescription = hotel.name,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(1f)
-                    .clip(RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp))
+                    .clip(RoundedCornerShape(topStart = MaterialTheme.spacing.md, topEnd = MaterialTheme.spacing.md))
             )
 
             Column(
@@ -342,8 +343,8 @@ fun HotelRecommendationCard(
                         Icon(
                             imageVector = Icons.Default.Star,
                             contentDescription = "Rating",
-                            tint = Color(0xFFFFC107),
-                            modifier = Modifier.size(16.dp)
+                            tint = MaterialTheme.colorScheme.star,
+                            modifier = Modifier.size(MaterialTheme.spacing.md)
                         )
                         Text(
                             text = hotel.rating.toString(),
@@ -355,15 +356,15 @@ fun HotelRecommendationCard(
 
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.padding(top = 4.dp)
+                    modifier = Modifier.padding(top = MaterialTheme.spacing.xxs)
                 ) {
                     Icon(
                         imageVector = Icons.Default.LocationOn,
                         contentDescription = "Location",
                         tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.size(14.dp)
+                        modifier = Modifier.size(MaterialTheme.spacing.md - MaterialTheme.spacing.xxs / 2)
                     )
-                    Spacer(modifier = Modifier.width(4.dp))
+                    Spacer(modifier = Modifier.width(MaterialTheme.spacing.xxs))
                     Text(
                         text = hotel.location,
                         style = MaterialTheme.typography.bodySmall,
@@ -401,6 +402,9 @@ fun TimelineActivityNode(
         else -> Icons.Default.LocationOn
     }
 
+    val strokeWidthDp = MaterialTheme.elevation.sm
+    val xDp = MaterialTheme.spacing.sm
+    val startYDp = MaterialTheme.spacing.lg
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -408,9 +412,9 @@ fun TimelineActivityNode(
             .drawBehind {
                 if (!isLast) {
                     // Draw a line down the left side connecting to the next item
-                    val strokeWidth = 2.dp.toPx()
-                    val x = 12.dp.toPx() // Centers with the circular icon
-                    val startY = 24.dp.toPx()
+                    val strokeWidth = strokeWidthDp.toPx()
+                    val x = xDp.toPx() // Centers with the circular icon
+                    val startY = startYDp.toPx()
                     drawLine(
                         color = lineColor,
                         start = Offset(x, startY),
@@ -423,8 +427,8 @@ fun TimelineActivityNode(
         // Timeline Indicator
         Box(
             modifier = Modifier
-                .padding(top = 16.dp, end = 12.dp)
-                .size(24.dp)
+                .padding(top = MaterialTheme.spacing.md, end = MaterialTheme.spacing.sm)
+                .size(MaterialTheme.spacing.lg)
                 .clip(CircleShape)
                 .background(MaterialTheme.colorScheme.primary),
             contentAlignment = Alignment.Center
@@ -435,7 +439,7 @@ fun TimelineActivityNode(
                 imageVector = activityIcon,
                 contentDescription = activity.tag,
                 tint = MaterialTheme.colorScheme.onPrimary,
-                modifier = Modifier.size(14.dp)
+                modifier = Modifier.size(MaterialTheme.spacing.md - MaterialTheme.spacing.xxs / 2)
             )
         }
 
@@ -444,9 +448,9 @@ fun TimelineActivityNode(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = MaterialTheme.spacing.md),
-            shape = RoundedCornerShape(16.dp),
+            shape = RoundedCornerShape(MaterialTheme.spacing.md),
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+            elevation = CardDefaults.cardElevation(defaultElevation = MaterialTheme.elevation.sm)
         ) {
             Column {
                 AsyncImage(
@@ -455,7 +459,7 @@ fun TimelineActivityNode(
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(100.dp)
+                        .height(MaterialTheme.spacing.xxxl * 2 + MaterialTheme.spacing.xxs)
                 )
 
                 Column(modifier = Modifier.padding(MaterialTheme.spacing.sm)) {
@@ -472,7 +476,7 @@ fun TimelineActivityNode(
                                 text = activity.tag,
                                 style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
                                 color = MaterialTheme.colorScheme.onPrimary,
-                                modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp)
+                                modifier = Modifier.padding(horizontal = MaterialTheme.spacing.xs, vertical = MaterialTheme.spacing.xxs / 2)
                             )
                         }
 
@@ -486,14 +490,14 @@ fun TimelineActivityNode(
                     Text(
                         text = activity.title,
                         style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                        modifier = Modifier.padding(top = 8.dp)
+                        modifier = Modifier.padding(top = MaterialTheme.spacing.xs)
                     )
 
                     Text(
                         text = activity.description,
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.padding(top = 4.dp),
+                        modifier = Modifier.padding(top = MaterialTheme.spacing.xxs),
                         maxLines = 2,
                         overflow = TextOverflow.Ellipsis
                     )

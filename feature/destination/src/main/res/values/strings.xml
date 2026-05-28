@@ -4,6 +4,7 @@
     <string name="destination_tab_overview">Overview</string>
     <string name="destination_tab_reviews">Reviews</string>
     <string name="destination_hero_image_cd">Destination hero image</string>
+    <string name="destination_image_cd">Destination image %1$d</string>
     <string name="destination_back_cd">Back</string>
     <string name="destination_favorite_cd">Toggle favorite</string>
     <string name="destination_location_cd">Location</string>
@@ -33,5 +34,8 @@
     <string name="pager_previous_cd">Previous image</string>
     <string name="pager_next_cd">Next image</string>
     <string name="image_n_of_m">Image %1$d of %2$d</string>
+    <string name="destination_no_reviews">No reviews yet</string>
+    <string name="destination_reviews_count">%1$s reviews</string>
+    <string name="destination_helpful_count">Helpful (%1$d)</string>
 </resources>
 

@@ -42,7 +42,7 @@ fun FlightsSection(
                     content = flight,
                     onCardClick = onCardClick,
                     onCtaClick = onCtaClick,
-                    modifier = Modifier.sizeIn(minWidth = FlightCardMinWidth)
+                    modifier = Modifier.sizeIn(minWidth = MaterialTheme.spacing.xxxl * 5)
                 )
             }
         }

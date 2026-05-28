@@ -56,10 +56,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.designsystem.components.AppBottomBar
 import com.example.designsystem.theme.TravioTheme
+import com.example.designsystem.theme.elevation
 import com.example.designsystem.theme.spacing
 import com.example.feature.chat.R
 import com.example.feature.chat.domain.model.ChatMessage
@@ -219,7 +219,7 @@ fun ChatTopBar() {
         Row(
             modifier = Modifier
                 .statusBarsPadding()
-                .height(Dimensions.TopBarHeight)
+                .height(MaterialTheme.spacing.xxxl + MaterialTheme.spacing.md)
                 .padding(horizontal = MaterialTheme.spacing.md),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.sm)
@@ -233,7 +233,7 @@ fun ChatTopBar() {
             }
             Box(
                 modifier = Modifier
-                    .size(Dimensions.AvatarSize)
+                    .size(MaterialTheme.spacing.xxxl - MaterialTheme.spacing.xs)
                     .clip(CircleShape)
                     .background(Color.White.copy(alpha = 0.2f)),
                 contentAlignment = Alignment.Center
@@ -242,7 +242,7 @@ fun ChatTopBar() {
                     painter = painterResource(id = com.example.designsystem.R.drawable.ic_airplane),
                     contentDescription = null,
                     tint = Color.White,
-                    modifier = Modifier.size(Dimensions.IconSizeSmall)
+                    modifier = Modifier.size(MaterialTheme.spacing.lg - MaterialTheme.spacing.xxs)
                 )
             }
             Text(
@@ -269,7 +269,7 @@ fun EmptyStateContent(modifier: Modifier = Modifier) {
         Image(
             painter = painterResource(id = com.example.designsystem.R.drawable.ai_chat_fill),
             contentDescription = null,
-            modifier = Modifier.size(Dimensions.EmptyStateImageSize),
+            modifier = Modifier.size(MaterialTheme.spacing.xxxl * 2 + MaterialTheme.spacing.lg),
             contentScale = ContentScale.Fit
         )
         Spacer(modifier = Modifier.height(MaterialTheme.spacing.lg))
@@ -320,10 +320,10 @@ fun MessageItem(message: ChatMessage) {
             Surface(
                 color = bubbleColor,
                 shape = RoundedCornerShape(
-                    topStart = Dimensions.BubbleCornerLarge,
-                    topEnd = Dimensions.BubbleCornerLarge,
-                    bottomStart = if (isUser) Dimensions.BubbleCornerLarge else Dimensions.BubbleCornerSmall,
-                    bottomEnd = if (isUser) Dimensions.BubbleCornerSmall else Dimensions.BubbleCornerLarge
+                    topStart = MaterialTheme.spacing.lg - MaterialTheme.spacing.xxs,
+                    topEnd = MaterialTheme.spacing.lg - MaterialTheme.spacing.xxs,
+                    bottomStart = if (isUser) MaterialTheme.spacing.lg - MaterialTheme.spacing.xxs else MaterialTheme.spacing.xxs,
+                    bottomEnd = if (isUser) MaterialTheme.spacing.xxs else MaterialTheme.spacing.lg - MaterialTheme.spacing.xxs
                 )
             ) {
                 Text(
@@ -359,8 +359,8 @@ fun ChatInputArea(
             onValueChange = onTextChanged,
             modifier = Modifier
                 .fillMaxWidth()
-                .height(Dimensions.InputHeight)
-                .border(1.dp, MaterialTheme.colorScheme.outline, CircleShape)
+                .height(MaterialTheme.spacing.xxxl + MaterialTheme.spacing.xs)
+                .border(MaterialTheme.elevation.xs, MaterialTheme.colorScheme.outline, CircleShape)
                 .clip(CircleShape),
             placeholder = {
                 Text(
@@ -377,15 +377,15 @@ fun ChatInputArea(
                 ) {
                     if (isSending) {
                         CircularProgressIndicator(
-                            modifier = Modifier.size(Dimensions.ProgressIndicatorSize),
-                            strokeWidth = 2.dp
+                            modifier = Modifier.size(MaterialTheme.spacing.lg),
+                            strokeWidth = MaterialTheme.elevation.sm
                         )
                     } else {
                         Icon(
                             painter = painterResource(id = R.drawable.send_icon),
                             contentDescription = stringResource(R.string.send_message),
                             tint = if (text.isNotBlank()) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
-                            modifier = Modifier.size(Dimensions.IconSizeSmall)
+                            modifier = Modifier.size(MaterialTheme.spacing.lg - MaterialTheme.spacing.xxs)
                         )
                     }
                 }
@@ -482,32 +482,32 @@ fun ThinkingIndicatorItem() {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 8.dp),
+            .padding(vertical = MaterialTheme.spacing.xs),
         horizontalArrangement = Arrangement.Start,
         verticalAlignment = Alignment.CenterVertically
     ) {
         Surface(
             color = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.6f),
             shape = RoundedCornerShape(
-                topStart = Dimensions.BubbleCornerLarge,
-                topEnd = Dimensions.BubbleCornerLarge,
-                bottomStart = Dimensions.BubbleCornerSmall,
-                bottomEnd = Dimensions.BubbleCornerLarge
+                topStart = MaterialTheme.spacing.lg - MaterialTheme.spacing.xxs,
+                topEnd = MaterialTheme.spacing.lg - MaterialTheme.spacing.xxs,
+                bottomStart = MaterialTheme.spacing.xxs,
+                bottomEnd = MaterialTheme.spacing.lg - MaterialTheme.spacing.xxs
             ),
             modifier = Modifier.alpha(alpha)
         ) {
             Row(
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
+                modifier = Modifier.padding(horizontal = MaterialTheme.spacing.md, vertical = MaterialTheme.spacing.sm),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.xs)
             ) {
                 Box(
                     modifier = Modifier
-                        .size(10.dp)
+                        .size(MaterialTheme.spacing.sm - MaterialTheme.spacing.xxs / 2)
                         .background(MaterialTheme.colorScheme.primary, CircleShape)
                 )
                 Text(
-                    text = "AI is thinking...",
+                    text = stringResource(id = R.string.travel_assistant_thinking),
                     color = MaterialTheme.colorScheme.onSecondaryContainer,
                     style = MaterialTheme.typography.bodyMedium.copy(
                         fontWeight = FontWeight.Medium
@@ -518,13 +518,4 @@ fun ThinkingIndicatorItem() {
     }
 }
 
-private object Dimensions {
-    val TopBarHeight = 64.dp
-    val AvatarSize = 40.dp
-    val IconSizeSmall = 20.dp
-    val EmptyStateImageSize = 120.dp
-    val BubbleCornerLarge = 20.dp
-    val BubbleCornerSmall = 4.dp
-    val InputHeight = 54.dp
-    val ProgressIndicatorSize = 24.dp
-}
+// Removed Dimensions object as its values were replaced by MaterialTheme tokens

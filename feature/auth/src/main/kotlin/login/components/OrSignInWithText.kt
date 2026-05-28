@@ -10,7 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
+import com.example.designsystem.theme.elevation
 import com.example.designsystem.theme.spacing
 import com.example.feature.auth.R
 
@@ -23,7 +23,7 @@ fun OrSignInWithText(modifier: Modifier = Modifier) {
     ) {
         HorizontalDivider(
             modifier = Modifier.weight(1f),
-            thickness = 1.dp,
+            thickness = MaterialTheme.elevation.xs,
             color = MaterialTheme.colorScheme.outline.copy(alpha = 0.3f)
         )
         Text(
@@ -33,7 +33,7 @@ fun OrSignInWithText(modifier: Modifier = Modifier) {
         )
         HorizontalDivider(
             modifier = Modifier.weight(1f),
-            thickness = 1.dp,
+            thickness = MaterialTheme.elevation.xs,
             color = MaterialTheme.colorScheme.outline.copy(alpha = 0.3f)
         )
     }

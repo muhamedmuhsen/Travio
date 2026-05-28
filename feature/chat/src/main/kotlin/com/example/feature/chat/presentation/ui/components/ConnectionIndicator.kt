@@ -10,7 +10,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.dp
+import com.example.designsystem.theme.onWarning
+import com.example.designsystem.theme.spacing
+import com.example.designsystem.theme.warning
 import com.example.feature.chat.domain.model.ConnectionState
 
 @Composable
@@ -21,8 +23,8 @@ fun ConnectionIndicator(
     if (state == ConnectionState.CONNECTED) return
 
     val (backgroundColor, textColor, text) = when (state) {
-        ConnectionState.RECONNECTING -> Triple(Color.Yellow, Color.Black, "Reconnecting...")
-        ConnectionState.DISCONNECTED -> Triple(Color.Red, Color.White, "Disconnected")
+        ConnectionState.RECONNECTING -> Triple(MaterialTheme.colorScheme.warning, MaterialTheme.colorScheme.onWarning, "Reconnecting...")
+        ConnectionState.DISCONNECTED -> Triple(MaterialTheme.colorScheme.error, MaterialTheme.colorScheme.onError, "Disconnected")
         ConnectionState.CONNECTED -> Triple(Color.Transparent, Color.Transparent, "")
     }
 
@@ -30,7 +32,7 @@ fun ConnectionIndicator(
         modifier = modifier
             .fillMaxWidth()
             .background(backgroundColor)
-            .padding(4.dp),
+            .padding(MaterialTheme.spacing.xxs),
         contentAlignment = Alignment.Center
     ) {
         Text(

@@ -8,48 +8,49 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
+import com.example.designsystem.theme.spacing
 
 @Composable
 fun DetailLoadingState(modifier: Modifier = Modifier) {
     Column(
         modifier = modifier
             .fillMaxSize()
-            .padding(16.dp)
+            .padding(MaterialTheme.spacing.md)
     ) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(300.dp)
+                .height(MaterialTheme.spacing.xxxl * 6 + MaterialTheme.spacing.sm)
                 .background(Color.LightGray.copy(alpha = 0.5f))
         )
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(MaterialTheme.spacing.md))
         Box(
             modifier = Modifier
                 .fillMaxWidth(0.7f)
-                .height(32.dp)
+                .height(MaterialTheme.spacing.xl)
                 .background(Color.LightGray.copy(alpha = 0.5f))
         )
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(MaterialTheme.spacing.xs))
         Box(
             modifier = Modifier
                 .fillMaxWidth(0.4f)
-                .height(20.dp)
+                .height(MaterialTheme.spacing.lg - MaterialTheme.spacing.xxs)
                 .background(Color.LightGray.copy(alpha = 0.5f))
         )
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(MaterialTheme.spacing.lg))
         repeat(3) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(16.dp)
+                    .height(MaterialTheme.spacing.md)
                     .background(Color.LightGray.copy(alpha = 0.5f))
             )
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(MaterialTheme.spacing.xs))
         }
     }
 }

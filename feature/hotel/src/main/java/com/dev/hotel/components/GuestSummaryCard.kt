@@ -19,9 +19,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
+import com.example.designsystem.theme.spacing
 import com.example.domain.model.hotel.Occupancy
+import com.example.feature.hotel.R
 
 @Composable
 fun GuestSummaryCard(
@@ -29,13 +31,7 @@ fun GuestSummaryCard(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val adultsText = if (occupancy.adults == 1) "1 Adult" else "${occupancy.adults} Adults"
-    val childrenText = when (occupancy.children) {
-        0 -> ""
-        1 -> ", 1 Child"
-        else -> ", ${occupancy.children} Children"
-    }
-    val guestSummary = "$adultsText$childrenText"
+    val guestSummary = stringResource(R.string.hotel_search_guests_summary, occupancy.adults, occupancy.children)
 
     Column(
         modifier = modifier
@@ -43,25 +39,29 @@ fun GuestSummaryCard(
             .clickable { onClick() }
     ) {
         Text(
-            text = "Guests & Rooms",
+            text = stringResource(R.string.hotel_search_guests_label),
             style = MaterialTheme.typography.labelMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
-        Spacer(modifier = Modifier.height(6.dp))
+        Spacer(modifier = Modifier.height(MaterialTheme.spacing.xxs + (MaterialTheme.spacing.xxs / 2)))
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .border(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.3f), RoundedCornerShape(12.dp))
-                .padding(horizontal = 16.dp, vertical = 12.dp),
+                .border(
+                    MaterialTheme.spacing.xxs / 4,
+                    MaterialTheme.colorScheme.outline.copy(alpha = 0.3f),
+                    RoundedCornerShape(MaterialTheme.spacing.sm)
+                )
+                .padding(horizontal = MaterialTheme.spacing.md, vertical = MaterialTheme.spacing.sm),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
                 imageVector = Icons.Default.Group,
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.size(20.dp)
+                modifier = Modifier.size(MaterialTheme.spacing.lg - MaterialTheme.spacing.xxs)
             )
-            Spacer(modifier = Modifier.width(12.dp))
+            Spacer(modifier = Modifier.width(MaterialTheme.spacing.sm))
             Text(
                 text = guestSummary,
                 style = MaterialTheme.typography.bodyMedium,
@@ -75,7 +75,7 @@ fun GuestSummaryCard(
 @Composable
 fun GuestSummaryCardPreview() {
     MaterialTheme {
-        Column(modifier = Modifier.padding(16.dp)) {
+        Column(modifier = Modifier.padding(MaterialTheme.spacing.md)) {
             GuestSummaryCard(
                 occupancy = Occupancy(adults = 2, children = 1, childrenAges = listOf(8)),
                 onClick = {}

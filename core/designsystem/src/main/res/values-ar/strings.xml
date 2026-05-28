@@ -1,0 +1,38 @@
+<resources>
+    <string name="choose_language">اختر لغتك</string>
+    <string name="close">إغلاق</string>
+    <string name="skip">تخطي</string>
+    <string name="next">التالي</string>
+    <string name="onboarding_title_1">استكشف وجهات\nمذهلة</string>
+    <string name="onboarding_description_1">اكتشف أماكن جميلة حول العالم وابدأ مغامرتك القادمة.</string>
+    <string name="onboarding_title_2">ابحث عن أفضل\nالفنادق</string>
+    <string name="onboarding_description_2">احجز فنادق عالية التقييم تناسب أسلوبك وراحتك وميزانيتك.</string>
+    <string name="onboarding_title_3">خطط لرحلتك\nالمثالية</string>
+    <string name="onboarding_description_3">خطط ونظم رحلتك بسهولة من البداية إلى النهاية.</string>
+    <string name="language_english">الإنجليزية</string>
+    <string name="language_arabic">اللغة العربية</string>
+
+    <!-- Bottom Navigation -->
+    <string name="bottom_nav_home">الرئيسية</string>
+    <string name="bottom_nav_favorite">المفضلة</string>
+    <string name="bottom_nav_community">المجتمع</string>
+    <string name="bottom_nav_ai_chat">الذكاء الاصطناعي</string>
+    <string name="bottom_nav_trips">الرحلات</string>
+    <string name="bottom_nav_profile">الملف الشخصي</string>
+
+    <!-- Content Descriptions -->
+    <string name="hide_password">إخفاء كلمة المرور</string>
+    <string name="show_password">إظهار كلمة المرور</string>
+
+    <!-- Error Messages -->
+    <string name="error_no_internet">لا يوجد اتصال بالإنترنت. يرجى التحقق من الشبكة.</string>
+    <string name="error_timeout">انتهت مهلة الطلب. يرجى المحاولة مرة أخرى.</string>
+    <string name="error_server">خطأ في الخادم. يرجى المحاولة مرة أخرى لاحقاً.</string>
+    <string name="error_unknown">حدث خطأ غير متوقع.</string>
+
+    <!-- Destination Card -->
+    <string name="add_to_favorites">إضافة إلى المفضلة</string>
+    <string name="remove_from_favorites">إزالة من المفضلة</string>
+    <string name="home_explore">استكشف</string>
+    <string name="none">لا يوجد</string>
+</resources>

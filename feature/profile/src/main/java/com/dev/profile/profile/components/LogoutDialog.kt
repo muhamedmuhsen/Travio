@@ -24,7 +24,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
 import com.example.designsystem.components.AppButton
 import com.example.designsystem.components.AppOutlinedButton
@@ -54,7 +53,7 @@ fun LogoutDialog(
                     )
                     .padding(MaterialTheme.spacing.lg),
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(16.dp)
+                verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.md)
             ) {
                 LogoutIcon()
                 Text(
@@ -75,7 +74,7 @@ fun LogoutDialog(
                         style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold),
                         modifier = Modifier.weight(1f)
                     )
-                    Spacer(Modifier.size(12.dp))
+                    Spacer(Modifier.size(MaterialTheme.spacing.sm))
                     AppButton(
                         onClick = onConfirm,
                         text = stringResource(id = R.string.sure),

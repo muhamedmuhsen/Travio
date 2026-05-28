@@ -24,7 +24,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import com.dev.feature.community.R
 import com.example.designsystem.theme.TravioTheme
 import com.example.designsystem.theme.spacing
@@ -61,13 +60,13 @@ fun PostDetailHeader(
             )
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(2.dp)
+                horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.xxs / 2)
             ) {
                 Icon(
                     painter = painterResource(R.drawable.location_icon),
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.size(12.dp)
+                    modifier = Modifier.size(MaterialTheme.spacing.sm)
                 )
                 Text(
                     text = location,
@@ -86,7 +85,7 @@ fun PostDetailHeader(
                 } else {
                     MaterialTheme.colorScheme.onSurfaceVariant
                 },
-                modifier = Modifier.size(22.dp)
+                modifier = Modifier.size(MaterialTheme.spacing.lg - MaterialTheme.spacing.xxs)
             )
         }
 
@@ -95,7 +94,7 @@ fun PostDetailHeader(
                 imageVector = Icons.Filled.Delete,
                 contentDescription = stringResource(R.string.post_detail_delete_cd),
                 tint = MaterialTheme.colorScheme.error,
-                modifier = Modifier.size(22.dp)
+                modifier = Modifier.size(MaterialTheme.spacing.lg - MaterialTheme.spacing.xxs)
             )
         }
 
@@ -104,7 +103,7 @@ fun PostDetailHeader(
                 imageVector = Icons.Filled.Close,
                 contentDescription = stringResource(R.string.post_detail_close_cd),
                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.size(22.dp)
+                modifier = Modifier.size(MaterialTheme.spacing.lg - MaterialTheme.spacing.xxs)
             )
         }
     }
@@ -115,7 +114,7 @@ private fun PostDetailAvatar(
     avatarUrl: String,
     authorName: String
 ) {
-    UserAvatar(avatarUrl = avatarUrl, authorName = authorName, size = 44.dp)
+    UserAvatar(avatarUrl = avatarUrl, authorName = authorName, size = MaterialTheme.spacing.xxxl - MaterialTheme.spacing.xxs)
 }
 
 @Preview(showBackground = true)

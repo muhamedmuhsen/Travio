@@ -22,7 +22,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
+import com.example.designsystem.theme.elevation
+import com.example.designsystem.theme.spacing
 import com.example.domain.model.hotel.HotelRoom
 import com.example.feature.hotel.R
 
@@ -37,9 +38,9 @@ fun RoomCard(
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp),
+            .padding(horizontal = MaterialTheme.spacing.md, vertical = MaterialTheme.spacing.xs),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = MaterialTheme.elevation.sm)
     ) {
         Column(
             modifier = Modifier.fillMaxWidth()
@@ -49,7 +50,7 @@ fun RoomCard(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable { onToggleExpand() }
-                    .padding(16.dp),
+                    .padding(MaterialTheme.spacing.md),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Column(modifier = Modifier.weight(1f)) {
@@ -62,7 +63,7 @@ fun RoomCard(
                     if (room.rates.isNotEmpty()) {
                         val minPrice = room.rates.mapNotNull { it.price }.minOrNull()
                         if (minPrice != null) {
-                            Spacer(modifier = Modifier.height(4.dp))
+                            Spacer(modifier = Modifier.height(MaterialTheme.spacing.xxs))
                             Text(
                                 text = stringResource(R.string.hotel_details_starting_from_price, minPrice),
                                 style = MaterialTheme.typography.bodyMedium,
@@ -84,11 +85,14 @@ fun RoomCard(
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 16.dp, vertical = 8.dp)
+                        .padding(horizontal = MaterialTheme.spacing.md, vertical = MaterialTheme.spacing.xs)
                 ) {
                     if (room.images.isNotEmpty()) {
-                        HotelGallery(images = room.images, modifier = Modifier.height(150.dp))
-                        Spacer(modifier = Modifier.height(16.dp))
+                        HotelGallery(
+                            images = room.images,
+                            modifier = Modifier.height(MaterialTheme.spacing.xxxl * 3 + MaterialTheme.spacing.xs)
+                        )
+                        Spacer(modifier = Modifier.height(MaterialTheme.spacing.md))
                     }
 
                     if (room.rates.isEmpty()) {
@@ -103,10 +107,10 @@ fun RoomCard(
                             style = MaterialTheme.typography.titleSmall,
                             fontWeight = FontWeight.SemiBold
                         )
-                        Spacer(modifier = Modifier.height(8.dp))
+                        Spacer(modifier = Modifier.height(MaterialTheme.spacing.xs))
 
                         room.rates.forEachIndexed { index, rate ->
-                            if (index > 0) Divider(modifier = Modifier.padding(vertical = 8.dp))
+                            if (index > 0) Divider(modifier = Modifier.padding(vertical = MaterialTheme.spacing.xs))
                             RoomRateItem(
                                 rate = rate,
                                 onBookNowClick = { onBookRate(rate.rateKey) }

@@ -26,7 +26,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.designsystem.components.shimmerEffect
@@ -36,9 +35,7 @@ import com.example.designsystem.theme.spacing
 import com.example.domain.model.hotel.NearbyHotel
 import com.example.feature.home.R
 
-private val HOTEL_CARD_WIDTH = 260.dp
-private val HOTEL_CARD_HEIGHT = 240.dp
-private val HOTEL_CARD_IMAGE_HEIGHT = 140.dp
+// Constants were moved into composables to use MaterialTheme tokens
 
 @Composable
 fun NearbyHotelCard(
@@ -46,10 +43,13 @@ fun NearbyHotelCard(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val cardWidth = MaterialTheme.spacing.xxxl * 5 + MaterialTheme.spacing.lg
+    val cardHeight = MaterialTheme.spacing.xxxl * 5
+    val imagePadding = MaterialTheme.spacing.xxxl * 3 - MaterialTheme.spacing.xs
     Card(
         modifier = modifier
-            .width(HOTEL_CARD_WIDTH)
-            .height(HOTEL_CARD_HEIGHT)
+            .width(cardWidth)
+            .height(cardHeight)
             .clickable(onClick = onClick),
         shape = MaterialTheme.shapes.large,
         border = BorderStroke(
@@ -67,7 +67,7 @@ fun NearbyHotelCard(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(HOTEL_CARD_IMAGE_HEIGHT)
+                    .height(imagePadding)
             ) {
                 AsyncImage(
                     model = ImageRequest.Builder(LocalContext.current)
@@ -163,10 +163,13 @@ fun NearbyHotelCard(
 
 @Composable
 fun LoadingNearbyHotelCard(modifier: Modifier = Modifier) {
+    val cardWidth = MaterialTheme.spacing.xxxl * 5 + MaterialTheme.spacing.lg
+    val cardHeight = MaterialTheme.spacing.xxxl * 5
+    val imagePadding = MaterialTheme.spacing.xxxl * 3 - MaterialTheme.spacing.xs
     Card(
         modifier = modifier
-            .width(HOTEL_CARD_WIDTH)
-            .height(HOTEL_CARD_HEIGHT),
+            .width(cardWidth)
+            .height(cardHeight),
         shape = MaterialTheme.shapes.large,
         border = BorderStroke(
             MaterialTheme.spacing.xxs / 2,
@@ -183,7 +186,7 @@ fun LoadingNearbyHotelCard(modifier: Modifier = Modifier) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(HOTEL_CARD_IMAGE_HEIGHT)
+                    .height(imagePadding)
                     .shimmerEffect()
             )
 
@@ -195,7 +198,7 @@ fun LoadingNearbyHotelCard(modifier: Modifier = Modifier) {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth(0.8f)
-                        .height(16.dp)
+                        .height(MaterialTheme.spacing.md)
                         .clip(MaterialTheme.shapes.extraSmall)
                         .shimmerEffect()
                 )
@@ -208,8 +211,8 @@ fun LoadingNearbyHotelCard(modifier: Modifier = Modifier) {
                 ) {
                     Box(
                         modifier = Modifier
-                            .width(80.dp)
-                            .height(14.dp)
+                            .width(MaterialTheme.spacing.xxxl + MaterialTheme.spacing.xl)
+                            .height(MaterialTheme.spacing.sm + MaterialTheme.spacing.xxs)
                             .clip(MaterialTheme.shapes.extraSmall)
                             .shimmerEffect()
                     )
@@ -218,8 +221,8 @@ fun LoadingNearbyHotelCard(modifier: Modifier = Modifier) {
 
                     Box(
                         modifier = Modifier
-                            .width(50.dp)
-                            .height(16.dp)
+                            .width(MaterialTheme.spacing.xxxl + MaterialTheme.spacing.xxs)
+                            .height(MaterialTheme.spacing.md)
                             .clip(MaterialTheme.shapes.extraSmall)
                             .shimmerEffect()
                     )

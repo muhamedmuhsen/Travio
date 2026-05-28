@@ -13,7 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
+import com.example.designsystem.theme.spacing
 import com.example.domain.model.hotel.HotelDetails
 import com.example.feature.hotel.R
 import com.google.android.gms.maps.model.CameraPosition
@@ -42,7 +42,7 @@ fun LocationSection(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 16.dp)
+            .padding(horizontal = MaterialTheme.spacing.md, vertical = MaterialTheme.spacing.md)
     ) {
         Text(
             text = stringResource(R.string.hotel_details_location),
@@ -51,7 +51,7 @@ fun LocationSection(
             color = MaterialTheme.colorScheme.onSurface
         )
 
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(MaterialTheme.spacing.xs))
 
         val addressText = buildString {
             if (!hotelDetails.address.isNullOrBlank()) append(hotelDetails.address)
@@ -67,14 +67,14 @@ fun LocationSection(
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(MaterialTheme.spacing.md))
         }
 
         GoogleMap(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(200.dp)
-                .clip(RoundedCornerShape(8.dp)),
+                .height(MaterialTheme.spacing.xxxl * 4 + MaterialTheme.spacing.xs)
+                .clip(RoundedCornerShape(MaterialTheme.spacing.xs)),
             cameraPositionState = cameraPositionState,
             uiSettings = com.google.maps.android.compose.MapUiSettings(
                 zoomControlsEnabled = false,

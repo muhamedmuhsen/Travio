@@ -48,11 +48,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.example.designsystem.components.AppBottomBar
 import com.example.designsystem.theme.TravioTheme
+import com.example.designsystem.theme.elevation
 import com.example.designsystem.theme.spacing
 import com.example.feature.chat.R
 import com.example.feature.chat.domain.model.TripPlan
@@ -125,7 +125,7 @@ fun TripsScreen(
                 is TripsUiState.Loading -> {
                     item {
                         androidx.compose.material3.CircularProgressIndicator(
-                            modifier = Modifier.padding(16.dp).fillMaxWidth()
+                            modifier = Modifier.padding(MaterialTheme.spacing.md).fillMaxWidth()
                         )
                     }
                 }
@@ -158,12 +158,12 @@ fun AiPlanningCard(
 ) {
     Card(
         modifier = modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(24.dp),
+        shape = RoundedCornerShape(MaterialTheme.spacing.lg),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceContainer
         ),
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
-        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
+        border = BorderStroke(MaterialTheme.elevation.xs, MaterialTheme.colorScheme.outlineVariant),
+        elevation = CardDefaults.cardElevation(defaultElevation = MaterialTheme.elevation.none)
     ) {
         Column(
             modifier = Modifier
@@ -174,14 +174,14 @@ fun AiPlanningCard(
             // Illustration Cluster
             Box(
                 modifier = Modifier
-                    .size(96.dp)
+                    .size(MaterialTheme.spacing.xxxl * 2)
                     .padding(bottom = MaterialTheme.spacing.md),
                 contentAlignment = Alignment.Center
             ) {
                 // Main map circle
                 Box(
                     modifier = Modifier
-                        .size(64.dp)
+                        .size(MaterialTheme.spacing.xxxl + MaterialTheme.spacing.md)
                         .clip(CircleShape)
                         .background(MaterialTheme.colorScheme.primary),
                     contentAlignment = Alignment.Center
@@ -190,7 +190,7 @@ fun AiPlanningCard(
                         imageVector = Icons.Default.LocationOn,
                         contentDescription = null,
                         tint = Color.White,
-                        modifier = Modifier.size(32.dp)
+                        modifier = Modifier.size(MaterialTheme.spacing.xl)
                     )
                 }
 
@@ -198,7 +198,7 @@ fun AiPlanningCard(
                 Box(
                     modifier = Modifier
                         .align(Alignment.BottomStart)
-                        .size(28.dp)
+                        .size(MaterialTheme.spacing.xlg)
                         .clip(CircleShape)
                         .background(MaterialTheme.colorScheme.surface),
                     contentAlignment = Alignment.Center
@@ -207,7 +207,7 @@ fun AiPlanningCard(
                         painter = painterResource(id = com.example.designsystem.R.drawable.ic_airplane),
                         contentDescription = null,
                         tint = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.size(16.dp)
+                        modifier = Modifier.size(MaterialTheme.spacing.md)
                     )
                 }
 
@@ -215,7 +215,7 @@ fun AiPlanningCard(
                 Box(
                     modifier = Modifier
                         .align(Alignment.TopEnd)
-                        .size(28.dp)
+                        .size(MaterialTheme.spacing.xlg)
                         .clip(CircleShape)
                         .background(MaterialTheme.colorScheme.surface),
                     contentAlignment = Alignment.Center
@@ -224,7 +224,7 @@ fun AiPlanningCard(
                         imageVector = Icons.Rounded.AutoAwesome,
                         contentDescription = null,
                         tint = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.size(16.dp)
+                        modifier = Modifier.size(MaterialTheme.spacing.md)
                     )
                 }
             }
@@ -248,14 +248,14 @@ fun AiPlanningCard(
                 onClick = onPlanClick,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(50.dp),
+                    .height(MaterialTheme.spacing.xxxl + MaterialTheme.spacing.xxs),
                 shape = CircleShape,
                 colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
             ) {
                 Icon(
                     imageVector = Icons.Rounded.AutoAwesome,
                     contentDescription = null,
-                    modifier = Modifier.size(20.dp)
+                    modifier = Modifier.size(MaterialTheme.spacing.lg - MaterialTheme.spacing.xxs)
                 )
                 Spacer(modifier = Modifier.width(MaterialTheme.spacing.sm))
                 Text(
@@ -277,10 +277,10 @@ fun TripCard(
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .height(110.dp),
-        shape = RoundedCornerShape(16.dp),
+            .height(MaterialTheme.spacing.xxxl * 2 + MaterialTheme.spacing.sm),
+        shape = RoundedCornerShape(MaterialTheme.spacing.md),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = MaterialTheme.elevation.sm),
         onClick = onClick
     ) {
         Row(modifier = Modifier.fillMaxSize()) {
@@ -289,7 +289,7 @@ fun TripCard(
                 contentDescription = trip.title,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
-                    .width(100.dp)
+                    .width(MaterialTheme.spacing.xxxl * 2 + MaterialTheme.spacing.xxs)
                     .fillMaxSize()
             )
 
@@ -306,17 +306,17 @@ fun TripCard(
                         color = MaterialTheme.colorScheme.onSurface,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
-                        modifier = Modifier.padding(end = 24.dp)
+                        modifier = Modifier.padding(end = MaterialTheme.spacing.lg)
                     )
 
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(4.dp)
+                        horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.xxs)
                     ) {
                         Icon(
                             imageVector = Icons.Default.DateRange,
                             contentDescription = null,
-                            modifier = Modifier.size(16.dp),
+                            modifier = Modifier.size(MaterialTheme.spacing.md),
                             tint = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                         val formattedDate = remember(trip.createdAt) {
@@ -343,14 +343,14 @@ fun TripCard(
                     onClick = onRemove,
                     modifier = Modifier
                         .align(Alignment.TopEnd)
-                        .size(32.dp)
-                        .padding(4.dp)
+                        .size(MaterialTheme.spacing.xl)
+                        .padding(MaterialTheme.spacing.xxs)
                 ) {
                     Icon(
                         imageVector = Icons.Default.Close,
                         contentDescription = stringResource(R.string.remove),
                         tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.size(16.dp)
+                        modifier = Modifier.size(MaterialTheme.spacing.md)
                     )
                 }
             }
@@ -362,7 +362,7 @@ fun TripCard(
 @Composable
 fun AiPlanningCardPreview() {
     TravioTheme {
-        Box(modifier = Modifier.padding(16.dp)) {
+        Box(modifier = Modifier.padding(MaterialTheme.spacing.md)) {
             AiPlanningCard(onPlanClick = {})
         }
     }

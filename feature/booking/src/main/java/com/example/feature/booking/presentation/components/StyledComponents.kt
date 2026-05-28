@@ -19,7 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
+import com.example.designsystem.theme.elevation
 import com.example.designsystem.theme.spacing
 import com.example.feature.booking.R
 
@@ -47,12 +47,12 @@ fun GenderSelector(
                 OutlinedButton(
                     onClick = { onGenderSelected(gender) },
                     modifier = Modifier
-                        .height(56.dp)
+                        .height(MaterialTheme.spacing.xxxl + MaterialTheme.spacing.xs)
                         .weight(1f),
                     shape = MaterialTheme.shapes.small,
-                    contentPadding = PaddingValues(horizontal = 4.dp),
+                    contentPadding = PaddingValues(horizontal = MaterialTheme.spacing.xxs),
                     border = BorderStroke(
-                        width = 1.dp,
+                        width = MaterialTheme.elevation.xs,
                         color = if (isSelected) {
                             MaterialTheme.colorScheme.primary
                         } else if (isError) {
@@ -118,12 +118,12 @@ fun TitleSelector(
                 OutlinedButton(
                     onClick = { onTitleSelected(title) },
                     modifier = Modifier
-                        .height(56.dp)
+                        .height(MaterialTheme.spacing.xxxl + MaterialTheme.spacing.xs)
                         .weight(1f),
                     shape = MaterialTheme.shapes.small,
-                    contentPadding = PaddingValues(horizontal = 4.dp),
+                    contentPadding = PaddingValues(horizontal = MaterialTheme.spacing.xxs),
                     border = BorderStroke(
-                        width = 1.dp,
+                        width = MaterialTheme.elevation.xs,
                         color = if (isSelected) {
                             MaterialTheme.colorScheme.primary
                         } else if (isError) {

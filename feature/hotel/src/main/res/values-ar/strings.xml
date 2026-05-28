@@ -1,0 +1,107 @@
+<resources>
+    <string name="hotel_details_no_images">لا توجد صور متاحة</string>
+    <string name="hotel_details_gallery_image_desc">صورة الفندق %1$d</string>
+    <string name="hotel_details_error_loading">تعذر تحميل تفاصيل الفندق. يرجى التحقق من الاتصال والمحاولة مرة أخرى.</string>
+    <string name="hotel_details_retry">إعادة المحاولة</string>
+    <string name="hotel_details_no_rooms">لا توجد غرف متاحة</string>
+
+    <string name="hotel_details_room_only">غرفة فقط</string>
+    <string name="hotel_details_free_cancellation">إلغاء مجاني</string>
+    <string name="hotel_details_non_refundable">غير قابل للاسترداد</string>
+    <string name="hotel_details_rooms_left">تبقى %1$d غرف فقط</string>
+    <string name="hotel_details_price_on_request">السعر عند الطلب</string>
+    <string name="hotel_details_book_now">احجز الآن</string>
+    <string name="hotel_details_starting_from_price">تبدأ من %1$.2f$</string>
+    <string name="hotel_details_pricing_unavailable">الأسعار غير متوفرة</string>
+    <string name="hotel_details_available_rates">الأسعار المتاحة</string>
+    <string name="hotel_details_rooms">اختر غرفة</string>
+
+    <string name="hotel_details_facilities">المرافق</string>
+    <string name="hotel_details_about">عن هذا الفندق</string>
+    <string name="hotel_details_read_more">قراءة المزيد</string>
+    <string name="hotel_details_read_less">عرض أقل</string>
+
+    <string name="hotel_details_location">الموقع</string>
+    <string name="hotel_details_contact">معلومات الاتصال</string>
+    <string name="hotel_details_call">اتصال</string>
+    <string name="hotel_details_email">بريد إلكتروني</string>
+    <string name="hotel_details_website">الموقع الإلكتروني</string>
+    <string name="hotel_details_reviews_and_ratings">التقييمات والمراجعات</string>
+    <string name="hotel_details_show_all_reviews">عرض جميع المراجعات</string>
+    <string name="hotel_details_popular_nearby">أماكن شهيرة قريبة</string>
+    <string name="hotel_details_per_night">/ ليلة</string>
+    <string name="hotel_details_check_availability">التحقق من التوفر</string>
+    <string name="hotel_details_check_in">تسجيل الوصول</string>
+    <string name="hotel_details_check_out">تسجيل المغادرة</string>
+    <string name="hotel_details_guests">الضيوف</string>
+    <string name="hotel_details_cleanliness">النظافة</string>
+    <string name="hotel_details_service">الخدمة</string>
+    <string name="hotel_details_amenities">المرافق</string>
+    <string name="hotel_details_value">القيمة</string>
+    <string name="hotel_details_added_to_favorites">تمت الإضافة إلى المفضلة</string>
+    <string name="hotel_details_removed_from_favorites">تمت الإزالة من المفضلة</string>
+    <string name="hotel_details_rooms_updated">تم تحديث توفر الغرف</string>
+    <string name="hotel_details_reviews_count">%1$s تقييم</string>
+    <string name="hotel_details_starting_from">تبدأ من</string>
+    <string name="hotel_details_hotel_label">فندق</string>
+
+    <!-- Hotel Search Strings -->
+    <string name="hotel_search_title">ابحث عن فنادق</string>
+    <string name="hotel_search_destination_label">الوجهة</string>
+    <string name="hotel_search_destination_placeholder">إلى أين أنت ذاهب؟</string>
+    <string name="hotel_search_destination_required">الوجهة مطلوبة</string>
+    <string name="hotel_search_check_in_label">تسجيل الوصول</string>
+    <string name="hotel_search_check_out_label">تسجيل المغادرة</string>
+    <string name="hotel_search_guests_label">الضيوف والغرف</string>
+    <string name="hotel_search_guests_summary">%1$d كبار، %2$d أطفال</string>
+    <string name="hotel_search_button">البحث عن فنادق</string>
+    <string name="hotel_search_no_results">لم يتم العثور على فنادق</string>
+    <string name="hotel_search_no_results_desc">حاول البحث عن وجهة أخرى أو تاريخ مختلف.</string>
+    <string name="hotel_search_error_title">فشل البحث</string>
+    <string name="hotel_search_error_desc">حدث خطأ أثناء البحث عن فنادق. يرجى المحاولة مرة أخرى.</string>
+    <string name="hotel_search_start_searching">ابدأ البحث عن فنادق</string>
+
+    <!-- Guest Selector Bottom Sheet -->
+    <string name="hotel_search_select_guests">اختر الضيوف</string>
+    <string name="hotel_search_adults">الكبار</string>
+    <string name="hotel_search_adults_desc">18 عاماً فأكثر</string>
+    <string name="hotel_search_children">الأطفال</string>
+    <string name="hotel_search_children_desc">من 0 إلى 17 عاماً</string>
+    <string name="hotel_search_children_ages_label">أعمار الأطفال</string>
+    <string name="hotel_search_child_age_label">عمر الطفل %1$d</string>
+    <string name="hotel_search_child_years">%1$d سنوات</string>
+    <string name="hotel_search_child_under_one">أقل من عام</string>
+    <string name="hotel_search_apply">تطبيق</string>
+
+    <!-- Hotel Checkout & Payment Strings -->
+    <string name="hotel_checkout_title">إتمام الحجز</string>
+    <string name="hotel_checkout_holder_section">تفاصيل صاحب الحجز</string>
+    <string name="hotel_checkout_first_name_label">الاسم الأول</string>
+    <string name="hotel_checkout_last_name_label">اسم العائلة</string>
+    <string name="hotel_checkout_first_name_required">الاسم الأول مطلوب</string>
+    <string name="hotel_checkout_last_name_required">اسم العائلة مطلوب</string>
+
+    <string name="hotel_checkout_guests_section">ضيوف الغرف</string>
+    <string name="hotel_checkout_room_header">غرفة %1$d</string>
+    <string name="hotel_checkout_guest_header">ضيف %1$d (%2$s)</string>
+
+    <string name="hotel_checkout_remarks_section">ملاحظات خاصة (اختياري)</string>
+    <string name="hotel_checkout_remarks_hint">مثلاً: تسجيل وصول متأخر، متطلبات غذائية</string>
+
+    <string name="hotel_checkout_price_section">ملخص السعر</string>
+    <string name="hotel_checkout_total_price">السعر الإجمالي</string>
+    <string name="hotel_checkout_taxes_fees">جميع الضرائب والرسوم مشمولة</string>
+    <string name="hotel_checkout_button">المتابعة للدفع</string>
+    <string name="hotel_checkout_submitting">جاري إرسال الحجز...</string>
+    <string name="hotel_checkout_processing_payment">جاري معالجة الدفع...</string>
+
+    <string name="hotel_checkout_secure_ssl">اتصال آمن SSL</string>
+    <string name="hotel_checkout_payment_failed">فشل الدفع. يرجى المحاولة مرة أخرى.</string>
+    <string name="hotel_checkout_retry">إعادة محاولة الدفع</string>
+    <string name="hotel_checkout_try_again">حاول مرة أخرى</string>
+
+    <string name="hotel_checkout_success_title">تم الحجز بنجاح!</string>
+    <string name="hotel_checkout_success_message">شكراً لحجزكم مع ترافيو. تم تأكيد حجزكم.</string>
+    <string name="hotel_checkout_booking_reference">رقم الحجز</string>
+    <string name="hotel_checkout_done">تم</string>
+</resources>

@@ -33,14 +33,16 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.designsystem.theme.elevation
+import com.example.designsystem.theme.onSuccess
+import com.example.designsystem.theme.spacing
+import com.example.designsystem.theme.success
 import com.example.feature.hotel.R
 
 @Composable
@@ -75,9 +77,9 @@ fun BookingSuccessScreen(
                 onClick = { onAction(BookingSuccessAction.DoneClicked) },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(24.dp)
-                    .height(56.dp),
-                shape = RoundedCornerShape(16.dp),
+                    .padding(MaterialTheme.spacing.lg)
+                    .height(MaterialTheme.spacing.xxxl + MaterialTheme.spacing.xs),
+                shape = RoundedCornerShape(MaterialTheme.spacing.md),
                 colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
             ) {
                 Row(
@@ -89,7 +91,7 @@ fun BookingSuccessScreen(
                         contentDescription = "Home Icon",
                         tint = MaterialTheme.colorScheme.onPrimary
                     )
-                    Spacer(modifier = Modifier.width(8.dp))
+                    Spacer(modifier = Modifier.width(MaterialTheme.spacing.xs))
                     Text(
                         text = stringResource(R.string.hotel_checkout_done),
                         fontWeight = FontWeight.Bold,
@@ -105,35 +107,35 @@ fun BookingSuccessScreen(
                 .fillMaxSize()
                 .padding(paddingValues)
                 .background(MaterialTheme.colorScheme.background)
-                .padding(horizontal = 24.dp),
+                .padding(horizontal = MaterialTheme.spacing.lg),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
             // Success Animated Icon Wrapper
             Box(
                 modifier = Modifier
-                    .size(100.dp)
+                    .size(MaterialTheme.spacing.xxxl * 2)
                     .clip(CircleShape)
-                    .background(Color(0xFFE8F5E9)),
+                    .background(MaterialTheme.colorScheme.success.copy(alpha = 0.1f)),
                 contentAlignment = Alignment.Center
             ) {
                 Box(
                     modifier = Modifier
-                        .size(72.dp)
+                        .size(MaterialTheme.spacing.xxxl + MaterialTheme.spacing.lg)
                         .clip(CircleShape)
-                        .background(Color(0xFF4CAF50)),
+                        .background(MaterialTheme.colorScheme.success),
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
                         imageVector = Icons.Default.Check,
                         contentDescription = "Success tick icon",
-                        tint = Color.White,
-                        modifier = Modifier.size(40.dp)
+                        tint = MaterialTheme.colorScheme.onSuccess,
+                        modifier = Modifier.size(MaterialTheme.spacing.xxl)
                     )
                 }
             }
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(MaterialTheme.spacing.lg))
 
             Text(
                 text = stringResource(R.string.hotel_checkout_success_title),
@@ -142,7 +144,7 @@ fun BookingSuccessScreen(
                 color = MaterialTheme.colorScheme.onBackground
             )
 
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(MaterialTheme.spacing.sm))
 
             Text(
                 text = stringResource(R.string.hotel_checkout_success_message),
@@ -151,17 +153,16 @@ fun BookingSuccessScreen(
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
 
-            Spacer(modifier = Modifier.height(40.dp))
+            Spacer(modifier = Modifier.height(MaterialTheme.spacing.xxl))
 
-            // Booking summary card
             Card(
                 modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(20.dp),
+                shape = RoundedCornerShape(MaterialTheme.spacing.lg),
                 colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.4f)),
-                elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
+                elevation = CardDefaults.cardElevation(defaultElevation = MaterialTheme.elevation.none)
             ) {
                 Column(
-                    modifier = Modifier.padding(20.dp)
+                    modifier = Modifier.padding(MaterialTheme.spacing.lg)
                 ) {
                     Text(
                         text = uiState.hotelName,
@@ -170,7 +171,7 @@ fun BookingSuccessScreen(
                         color = MaterialTheme.colorScheme.onSurface
                     )
 
-                    Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(MaterialTheme.spacing.md))
 
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -180,9 +181,9 @@ fun BookingSuccessScreen(
                             imageVector = Icons.Default.DateRange,
                             contentDescription = "Calendar icon",
                             tint = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier.size(20.dp)
+                            modifier = Modifier.size(MaterialTheme.spacing.lg - MaterialTheme.spacing.xxs)
                         )
-                        Spacer(modifier = Modifier.width(8.dp))
+                        Spacer(modifier = Modifier.width(MaterialTheme.spacing.xs))
                         Text(
                             text = "${uiState.checkIn}  →  ${uiState.checkOut}",
                             style = MaterialTheme.typography.bodyMedium,
@@ -191,7 +192,7 @@ fun BookingSuccessScreen(
                         )
                     }
 
-                    Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(MaterialTheme.spacing.md))
 
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -203,9 +204,9 @@ fun BookingSuccessScreen(
                                 imageVector = Icons.Default.Info,
                                 contentDescription = "Booking info icon",
                                 tint = MaterialTheme.colorScheme.primary,
-                                modifier = Modifier.size(20.dp)
+                                modifier = Modifier.size(MaterialTheme.spacing.lg - MaterialTheme.spacing.xxs)
                             )
-                            Spacer(modifier = Modifier.width(8.dp))
+                            Spacer(modifier = Modifier.width(MaterialTheme.spacing.xs))
                             Text(
                                 text = stringResource(R.string.hotel_checkout_booking_reference),
                                 style = MaterialTheme.typography.bodyMedium,

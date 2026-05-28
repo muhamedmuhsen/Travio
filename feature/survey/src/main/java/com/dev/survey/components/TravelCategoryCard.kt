@@ -27,7 +27,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import com.example.designsystem.theme.TravioTheme
 import com.example.designsystem.theme.elevation
 import com.example.designsystem.theme.spacing
@@ -127,7 +126,7 @@ fun TravelCategoryCard(
 @Composable
 fun TravelCategoryCardPreview() {
     TravioTheme {
-        Box(modifier = Modifier.padding(16.dp)) {
+        Box(modifier = Modifier.padding(MaterialTheme.spacing.md)) {
             TravelCategoryCard(
                 category = TravelCategory.BEACHES,
                 isSelected = false,
@@ -141,7 +140,7 @@ fun TravelCategoryCardPreview() {
 @Composable
 fun TravelCategoryCardSelectedPreview() {
     TravioTheme {
-        Box(modifier = Modifier.padding(16.dp)) {
+        Box(modifier = Modifier.padding(MaterialTheme.spacing.md)) {
             TravelCategoryCard(
                 category = TravelCategory.NATURE,
                 isSelected = true,

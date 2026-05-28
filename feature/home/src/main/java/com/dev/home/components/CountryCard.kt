@@ -19,7 +19,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.designsystem.components.shimmerEffect
@@ -66,7 +65,7 @@ fun CountryCard(
 fun LoadingCountryCard(modifier: Modifier = Modifier) {
     Box(
         modifier = modifier
-            .size(140.dp)
+            .size(MaterialTheme.spacing.xxxl * 3)
             .clip(MaterialTheme.shapes.medium)
             .shimmerEffect()
     )
@@ -104,7 +103,7 @@ private fun CountryCardPreview() {
         Surface(color = MaterialTheme.colorScheme.background) {
             CountryCard(
                 country = mockCountry,
-                modifier = Modifier.size(160.dp)
+                modifier = Modifier.size(MaterialTheme.spacing.xxxl * 3 + MaterialTheme.spacing.md)
             )
         }
     }

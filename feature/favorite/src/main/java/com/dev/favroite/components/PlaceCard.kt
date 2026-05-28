@@ -20,7 +20,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -32,6 +31,7 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.designsystem.theme.TravioTheme
 import com.example.designsystem.theme.elevation
+import com.example.designsystem.theme.favorite
 import com.example.designsystem.theme.spacing
 import com.example.feature.favorite.R
 
@@ -144,7 +144,7 @@ private fun FavoriteIcon(
                         R.string.favorite_icon_cd
                     }
                 ),
-                tint = Color(0xFFCB2323),
+                tint = MaterialTheme.colorScheme.favorite,
                 modifier = Modifier.size(MaterialTheme.spacing.sm)
             )
         }

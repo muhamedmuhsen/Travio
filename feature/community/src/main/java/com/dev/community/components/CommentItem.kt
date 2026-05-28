@@ -15,7 +15,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import com.dev.community.presentation.rememberRelativeTimeText
 import com.example.designsystem.theme.TravioTheme
 import com.example.designsystem.theme.spacing
@@ -67,8 +66,8 @@ fun CommentItem(
                 style = MaterialTheme.typography.labelSmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.padding(
-                    top = 4.dp,
-                    start = 4.dp
+                    top = MaterialTheme.spacing.xxs,
+                    start = MaterialTheme.spacing.xxs
                 )
             )
         }
@@ -80,7 +79,7 @@ private fun CommentAvatar(
     avatarUrl: String,
     authorName: String
 ) {
-    UserAvatar(avatarUrl = avatarUrl, authorName = authorName, size = 36.dp)
+    UserAvatar(avatarUrl = avatarUrl, authorName = authorName, size = MaterialTheme.spacing.xl + MaterialTheme.spacing.xxs)
 }
 
 @Preview(showBackground = true, backgroundColor = 0xFFF7FAFA)

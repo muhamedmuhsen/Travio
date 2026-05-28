@@ -28,13 +28,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import com.example.designsystem.theme.elevation
+import com.example.designsystem.theme.spacing
+import com.example.designsystem.theme.star
 import com.example.feature.hotel.R
 
 @Composable
@@ -45,14 +46,14 @@ fun ReviewsSection(
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp),
-        shape = RoundedCornerShape(16.dp),
+            .padding(horizontal = MaterialTheme.spacing.md),
+        shape = RoundedCornerShape(MaterialTheme.spacing.md),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer),
-        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
+        elevation = CardDefaults.cardElevation(defaultElevation = MaterialTheme.elevation.none),
+        border = BorderStroke(MaterialTheme.elevation.xs, MaterialTheme.colorScheme.outlineVariant)
     ) {
         Column(
-            modifier = Modifier.padding(16.dp)
+            modifier = Modifier.padding(MaterialTheme.spacing.md)
         ) {
             Text(
                 text = stringResource(R.string.hotel_details_reviews_and_ratings),
@@ -60,7 +61,7 @@ fun ReviewsSection(
                 fontWeight = FontWeight.Bold
             )
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(MaterialTheme.spacing.md))
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -79,20 +80,20 @@ fun ReviewsSection(
                             Icon(
                                 imageVector = Icons.Default.Star,
                                 contentDescription = null,
-                                tint = Color(0xFFFFB300),
-                                modifier = Modifier.size(16.dp)
+                                tint = MaterialTheme.colorScheme.star,
+                                modifier = Modifier.size(MaterialTheme.spacing.md)
                             )
                         }
                     }
                     Text(
-                        text = "2300 reviews",
+                        text = stringResource(R.string.hotel_details_reviews_count, "2300"),
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
             }
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(MaterialTheme.spacing.lg))
 
             // Review Items
             ReviewItem(
@@ -103,7 +104,7 @@ fun ReviewsSection(
                 avatarUrl = null
             )
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(MaterialTheme.spacing.md))
 
             ReviewItem(
                 name = "Michael Chen",
@@ -113,12 +114,12 @@ fun ReviewsSection(
                 avatarUrl = null
             )
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(MaterialTheme.spacing.md))
 
             OutlinedButton(
                 onClick = onShowAllReviews,
                 modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(8.dp),
+                shape = RoundedCornerShape(MaterialTheme.spacing.xs),
                 colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.onSurface)
             ) {
                 Text(text = stringResource(R.string.hotel_details_show_all_reviews))
@@ -138,7 +139,7 @@ private fun ReviewItem(
     Row(modifier = Modifier.fillMaxWidth()) {
         Box(
             modifier = Modifier
-                .size(40.dp)
+                .size(MaterialTheme.spacing.xxl)
                 .clip(CircleShape)
                 .background(MaterialTheme.colorScheme.primaryContainer),
             contentAlignment = Alignment.Center
@@ -159,7 +160,7 @@ private fun ReviewItem(
             }
         }
 
-        Spacer(modifier = Modifier.width(12.dp))
+        Spacer(modifier = Modifier.width(MaterialTheme.spacing.sm))
 
         Column(modifier = Modifier.weight(1f)) {
             Row(
@@ -175,12 +176,12 @@ private fun ReviewItem(
                     Icon(
                         imageVector = Icons.Default.Star,
                         contentDescription = null,
-                        tint = Color(0xFFFFB300),
-                        modifier = Modifier.size(12.dp)
+                        tint = MaterialTheme.colorScheme.star,
+                        modifier = Modifier.size(MaterialTheme.spacing.sm)
                     )
                 }
             }
-            Spacer(modifier = Modifier.height(4.dp))
+            Spacer(modifier = Modifier.height(MaterialTheme.spacing.xxs))
             Text(
                 text = comment,
                 style = MaterialTheme.typography.bodySmall,

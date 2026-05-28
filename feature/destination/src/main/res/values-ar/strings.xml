@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="destination_share_title">مشاركة الوجهة</string>
+    <string name="destination_tab_overview">نظرة عامة</string>
+    <string name="destination_tab_reviews">المراجعات</string>
+    <string name="destination_hero_image_cd">صورة الوجهة الرئيسية</string>
+    <string name="destination_image_cd">صورة الوجهة %1$d</string>
+    <string name="destination_back_cd">رجوع</string>
+    <string name="destination_favorite_cd">تبديل المفضلة</string>
+    <string name="destination_location_cd">الموقع</string>
+    <string name="destination_default_interest">معلم سياحي</string>
+    <string name="destination_rating_cd">التقييم</string>
+    <string name="destination_reviews_placeholder">محتوى المراجعات قريباً</string>
+    <string name="destination_related_loading">جاري تحميل الوجهات المقترحة…</string>
+    <string name="destination_related_error">تعذر تحميل الوجهات المقترحة</string>
+    <string name="destination_failed_to_load">فشل التحميل</string>
+    <string name="destination_tap_to_retry">حدث خطأ ما. يرجى المحاولة مرة أخرى.</string>
+    <string name="destination_retry">إعادة المحاولة</string>
+
+    <string name="destination_about_title">عن المكان</string>
+    <string name="destination_suggested_title">وجهات مقترحة</string>
+    <string name="destination_suggested_favorite_cd">تبديل مفضلة الوجهة المقترحة</string>
+    <string name="destination_explore">استكشف</string>
+
+    <string name="destination_error_icon_cd">خطأ</string>
+    <string name="delete_review">حذف المراجعة</string>
+    <string name="saved_to_favourites">تم الحفظ في المفضلة</string>
+    <string name="removed_from_favourites">تمت الإزالة من المفضلة</string>
+    <string name="error_no_internet">لا يوجد اتصال بالإنترنت. تحقق من الشبكة وحاول مرة أخرى.</string>
+    <string name="error_timeout">انتهت مهلة الطلب. يرجى المحاولة مرة أخرى.</string>
+    <string name="error_server">خطأ في الخادم أثناء تحديث المفضلة. يرجى المحاولة مرة أخرى.</string>
+    <string name="error_destination_not_available">هذه الوجهة لم تعد متاحة للمفضلة.</string>
+    <string name="error_unknown">تعذر تحديث المفضلة. يرجى المحاولة مرة أخرى.</string>
+    <string name="pager_previous_cd">الصورة السابقة</string>
+    <string name="pager_next_cd">الصورة التالية</string>
+    <string name="image_n_of_m">صورة %1$d من %2$d</string>
+    <string name="destination_no_reviews">لا توجد مراجعات بعد</string>
+    <string name="destination_reviews_count">%1$s مراجعة</string>
+    <string name="destination_helpful_count">مفيد (%1$d)</string>
+</resources>

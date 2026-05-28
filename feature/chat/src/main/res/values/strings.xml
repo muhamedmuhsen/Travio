@@ -3,6 +3,7 @@
     <string name="travel_assistant">Travel Assistant</string>
     <string name="travel_ai_assistant">Travel AI Assistant</string>
     <string name="travel_ai_assistant_subtitle">Your intelligent companion for discovering amazing destinations and planning perfect trips</string>
+    <string name="travel_assistant_thinking">AI is thinking...</string>
     <string name="ask_chatgpt">Ask ChatGPT</string>
     <string name="send_message">Send Message</string>
     <string name="ask_anything">Ask anything...</string>

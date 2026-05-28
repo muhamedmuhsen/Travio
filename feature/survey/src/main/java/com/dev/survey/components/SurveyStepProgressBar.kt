@@ -14,7 +14,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import com.example.designsystem.theme.TravioTheme
 import com.example.designsystem.theme.elevation
 import com.example.designsystem.theme.spacing
@@ -52,7 +51,7 @@ fun SurveyStepProgressBar(
 @Composable
 private fun SurveyStepProgressBarPreview() {
     TravioTheme {
-        Surface(modifier = Modifier.padding(16.dp)) {
+        Surface(modifier = Modifier.padding(MaterialTheme.spacing.md)) {
             SurveyStepProgressBar(
                 currentStep = 2,
                 totalSteps = 5

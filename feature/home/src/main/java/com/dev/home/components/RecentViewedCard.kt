@@ -23,9 +23,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import coil.compose.AsyncImage
@@ -33,6 +33,7 @@ import com.example.designsystem.components.shimmerEffect
 import com.example.designsystem.theme.TravioTheme
 import com.example.designsystem.theme.elevation
 import com.example.designsystem.theme.spacing
+import com.example.designsystem.theme.star
 import com.example.feature.home.R
 
 @Composable
@@ -181,14 +182,14 @@ private fun CardContent(
             Icon(
                 imageVector = Icons.Filled.Star,
                 contentDescription = null,
-                tint = Color(0xFFFFD700),
+                tint = MaterialTheme.colorScheme.star,
                 modifier = Modifier.size(MaterialTheme.spacing.md + MaterialTheme.spacing.xxs)
             )
 
             Spacer(modifier = Modifier.width(MaterialTheme.spacing.xs))
 
             Text(
-                text = "$rating ($reviewCount)",
+                text = stringResource(id = R.string.recent_viewed_rating, rating, reviewCount),
                 style = MaterialTheme.typography.labelLarge.copy(
                     fontWeight = FontWeight.SemiBold
                 ),

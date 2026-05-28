@@ -1,55 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="search_placeholder">استكشاف الوجهات</string>
+    <string name="search_placeholder">استكشف الوجهات</string>
     <string name="error_image_description">توضيح الخطأ</string>
     <string name="failed_to_load">فشل التحميل</string>
     <string name="tap_to_retry">حدث خطأ ما. يرجى المحاولة مرة أخرى.</string>
     <string name="retry">إعادة المحاولة</string>
 
     <!-- Section Titles -->
-    <string name="section_famous_places">أماكن مشهورة</string>
-    <string name="section_famous_countries">دول مشهورة</string>
-    <string name="section_recently_viewed">شوهدت مؤخراً</string>
-    <string name="section_recommended_destinations">الوجهات الموصى بها</string>
-    <string name="section_nearby_destinations">الوجهات القريبة</string>
+    <string name="section_famous_places">أماكن شهيرة</string>
+    <string name="section_famous_countries">دول شهيرة</string>
+    <string name="section_recently_viewed">شوهد مؤخراً</string>
+    <string name="section_recommended_destinations">وجهات موصى بها</string>
+    <string name="section_nearby_destinations">وجهات قريبة</string>
 
     <!-- Snackbar Messages -->
     <string name="saved_to_favourites">تم الحفظ في المفضلة</string>
-    <string name="removed_from_favourites">تم الحذف من المفضلة</string>
+    <string name="removed_from_favourites">تمت الإزالة من المفضلة</string>
 
     <!-- Destination Card -->
     <string name="add_to_favorites">إضافة إلى المفضلة</string>
-    <string name="remove_from_favorites">حذف من المفضلة</string>
-    <string name="price_from_prefix">من </string>
+    <string name="remove_from_favorites">إزالة من المفضلة</string>
+    <string name="price_from_prefix">تبدأ من </string>
     <string name="country_destination_cd">الوجهة: %s</string>
     <string name="home_price_per_adult">%1$s/ شخص بالغ</string>
 
     <!-- Empty States -->
     <string name="no_destinations_found">لم يتم العثور على وجهات.</string>
     <string name="nearby_no_destinations_found">لم يتم العثور على وجهات بالقرب من موقعك.</string>
-    <string name="nearby_location_permission_rationale">اسمح بالوصول إلى الموقع حتى نتمكن من إظهار الوجهات القريبة منك.</string>
+    <string name="nearby_location_permission_rationale">اسمح بالوصول إلى الموقع حتى نتمكن من عرض الوجهات القريبة منك.</string>
     <string name="recently_viewed_empty">لم يتم عرض أي وجهات بعد. ابدأ الاستكشاف!</string>
+    <string name="recent_viewed_rating">%1$.1f (%2$d تقييم)</string>
 
     <!-- Pagination -->
     <string name="destinations_load_more_retry_label">إعادة المحاولة</string>
     <string name="destinations_load_more_retry_content_description">إعادة محاولة تحميل المزيد من الوجهات</string>
 
     <!-- Flights Section -->
-    <string name="section_flights">رحلات طيران</string>
+    <string name="section_flights">الرحلات الجوية</string>
     <string name="section_see_all">عرض الكل</string>
     <string name="flight_status_unknown">غير معروف</string>
-    <string name="flight_city_unavailable">المدينة غير متاحة</string>
-    <string name="flight_value_unavailable">غير متاح</string>
-    <string name="flight_stops_default">بدون توقف</string>
+    <string name="flight_city_unavailable">المدينة غير متوفرة</string>
+    <string name="flight_value_unavailable">غير متوفر</string>
+    <string name="flight_stops_default">مباشرة</string>
     <string name="flight_book_now">احجز الآن</string>
     <string name="flight_airline_logo_cd">شعار %1$s</string>
     <string name="flight_card_cd">رحلة %1$s %2$s من %3$s إلى %4$s</string>
     <string name="flight_status_badge_cd">حالة الرحلة: %1$s</string>
     <string name="flight_path_icon_cd">أيقونة مسار الرحلة</string>
-    <string name="home_explore">استكشاف</string>
+    <string name="home_explore">استكشف</string>
     <string name="home_one_way">ذهاب فقط</string>
     <string name="home_round_trip">ذهاب وعودة</string>
     <string name="home_on_time">في الموعد</string>
-    <string name="error_failed_load_destinations">فشل في تحميل الوجهات</string>
+    <string name="error_failed_load_destinations">فشل تحميل الوجهات</string>
     <string name="error_load_more_failed">فشل تحميل المزيد</string>
+
+    <!-- Nearby Hotels -->
+    <string name="section_nearby_hotels">فنادق قريبة</string>
+    <string name="nearby_hotels_no_results">لم يتم العثور على فنادق بالقرب من موقعك.</string>
+    <string name="nearby_hotels_error">فشل تحميل الفنادق القريبة.</string>
+    <string name="nearby_hotels_location_rationale">اسمح بالوصول إلى الموقع حتى نتمكن من عرض الفنادق القريبة منك.</string>
+    <string name="nearby_hotel_card_cd">فندق قريب %1$s في %2$s</string>
+    <string name="nearby_hotel_price_from">تبدأ من %1$s</string>
 </resources>

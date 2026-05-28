@@ -22,17 +22,19 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.example.common.extensions.toCurrencySymbol
 import com.example.designsystem.components.shimmerEffect
+import com.example.designsystem.theme.spacing
+import com.example.designsystem.theme.star
 import com.example.domain.model.hotel.NearbyHotel
+import com.example.feature.hotel.R
 
 @Composable
 fun HotelSearchResultItem(
@@ -50,7 +52,7 @@ fun HotelSearchResultItem(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(12.dp),
+                .padding(MaterialTheme.spacing.sm),
             verticalAlignment = Alignment.CenterVertically
         ) {
             AsyncImage(
@@ -60,15 +62,15 @@ fun HotelSearchResultItem(
                 placeholder = painterResource(com.example.designsystem.R.drawable.image_placeholder),
                 error = painterResource(com.example.designsystem.R.drawable.image_placeholder),
                 modifier = Modifier
-                    .size(80.dp)
+                    .size(MaterialTheme.spacing.xxxl + MaterialTheme.spacing.xl)
                     .clip(MaterialTheme.shapes.medium)
             )
 
-            Spacer(modifier = Modifier.width(16.dp))
+            Spacer(modifier = Modifier.width(MaterialTheme.spacing.md))
 
             Column(
                 modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(4.dp)
+                verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.xxs)
             ) {
                 Text(
                     text = hotel.name,
@@ -89,27 +91,27 @@ fun HotelSearchResultItem(
 
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(4.dp)
+                    horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.xxs)
                 ) {
                     Icon(
                         imageVector = Icons.Default.Star,
                         contentDescription = null,
-                        tint = Color(0xFFFFD700),
-                        modifier = Modifier.size(16.dp)
+                        tint = MaterialTheme.colorScheme.star,
+                        modifier = Modifier.size(MaterialTheme.spacing.md)
                     )
                     Text(
-                        text = hotel.categoryName ?: "Hotel",
+                        text = hotel.categoryName ?: stringResource(R.string.hotel_details_hotel_label),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
             }
 
-            Spacer(modifier = Modifier.width(8.dp))
+            Spacer(modifier = Modifier.width(MaterialTheme.spacing.xs))
 
             Column(
                 horizontalAlignment = Alignment.End,
-                verticalArrangement = Arrangement.spacedBy(2.dp)
+                verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.xxs / 2)
             ) {
                 val rate = hotel.minRate
                 if (rate != null) {
@@ -120,13 +122,13 @@ fun HotelSearchResultItem(
                         color = MaterialTheme.colorScheme.primary
                     )
                     Text(
-                        text = "per night",
+                        text = stringResource(R.string.hotel_details_per_night),
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 } else {
                     Text(
-                        text = "N/A",
+                        text = stringResource(com.example.designsystem.R.string.none),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -147,60 +149,63 @@ fun LoadingHotelSearchResultItem(modifier: Modifier = Modifier) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(12.dp),
+                .padding(MaterialTheme.spacing.sm),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Box(
                 modifier = Modifier
-                    .size(80.dp)
+                    .size(MaterialTheme.spacing.xxxl + MaterialTheme.spacing.xl)
                     .clip(MaterialTheme.shapes.medium)
                     .shimmerEffect()
             )
 
-            Spacer(modifier = Modifier.width(16.dp))
+            Spacer(modifier = Modifier.width(MaterialTheme.spacing.md))
 
             Column(
                 modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+                verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.xs)
             ) {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth(0.7f)
-                        .height(16.dp)
+                        .height(MaterialTheme.spacing.md)
                         .clip(MaterialTheme.shapes.extraSmall)
                         .shimmerEffect()
                 )
                 Box(
                     modifier = Modifier
                         .fillMaxWidth(0.4f)
-                        .height(14.dp)
+                        .height(MaterialTheme.spacing.sm + MaterialTheme.spacing.xxs)
                         .clip(MaterialTheme.shapes.extraSmall)
                         .shimmerEffect()
                 )
                 Box(
                     modifier = Modifier
                         .fillMaxWidth(0.3f)
-                        .height(12.dp)
+                        .height(MaterialTheme.spacing.sm)
                         .clip(MaterialTheme.shapes.extraSmall)
                         .shimmerEffect()
                 )
             }
 
-            Spacer(modifier = Modifier.width(16.dp))
+            Spacer(modifier = Modifier.width(MaterialTheme.spacing.md))
 
             Column(
                 horizontalAlignment = Alignment.End,
-                verticalArrangement = Arrangement.spacedBy(4.dp)
+                verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.xxs)
             ) {
                 Box(
                     modifier = Modifier
-                        .size(width = 50.dp, height = 18.dp)
+                        .size(
+                            width = MaterialTheme.spacing.xxxl + MaterialTheme.spacing.xxs,
+                            height = MaterialTheme.spacing.lg - MaterialTheme.spacing.xxs
+                        )
                         .clip(MaterialTheme.shapes.extraSmall)
                         .shimmerEffect()
                 )
                 Box(
                     modifier = Modifier
-                        .size(width = 40.dp, height = 12.dp)
+                        .size(width = MaterialTheme.spacing.xxxl - MaterialTheme.spacing.xs, height = MaterialTheme.spacing.sm)
                         .clip(MaterialTheme.shapes.extraSmall)
                         .shimmerEffect()
                 )
@@ -213,7 +218,7 @@ fun LoadingHotelSearchResultItem(modifier: Modifier = Modifier) {
 @Composable
 fun HotelSearchResultItemPreview() {
     MaterialTheme {
-        Column(modifier = Modifier.padding(16.dp)) {
+        Column(modifier = Modifier.padding(MaterialTheme.spacing.md)) {
             HotelSearchResultItem(
                 hotel = NearbyHotel(
                     code = 1,
@@ -230,7 +235,7 @@ fun HotelSearchResultItemPreview() {
                 ),
                 onClick = {}
             )
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(MaterialTheme.spacing.md))
             LoadingHotelSearchResultItem()
         }
     }

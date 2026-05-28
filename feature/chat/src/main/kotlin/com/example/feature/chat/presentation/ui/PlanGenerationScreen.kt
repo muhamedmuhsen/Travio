@@ -44,9 +44,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.designsystem.theme.elevation
+import com.example.designsystem.theme.spacing
 import com.example.feature.chat.R
 import com.example.feature.chat.presentation.state.PlanGenerationUiState
 import com.example.feature.chat.presentation.viewmodel.PlanGenerationViewModel
@@ -90,20 +91,26 @@ fun PlanGenerationScreenContent(
     val isDark = isSystemInDarkTheme()
 
     // Curated soft teal / light cyan premium color palette
-    val backgroundColor = if (isDark) Color(0xFF0B2422) else Color(0xFFE6F4F1)
-    val cardBgColor = if (isDark) Color(0xFF123230) else Color(0xFFFFFFFF)
-    val titleColor = if (isDark) Color(0xFFE0F2F1) else Color(0xFF072321)
-    val subtitleColor = if (isDark) Color(0xFF8BAEA9) else Color(0xFF4A6B66)
-    val buttonColor = if (isDark) Color(0xFF26A69A) else Color(0xFF00796B)
-    val buttonTextColor = Color.White
-    val starColor = if (isDark) Color(0xFFFFD54F) else Color(0xFFFFC107)
+    val backgroundColor = if (isDark) MaterialTheme.colorScheme.background else MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
+    val cardBgColor = if (isDark) MaterialTheme.colorScheme.surfaceContainerHigh else MaterialTheme.colorScheme.surface
+    val titleColor = if (isDark) MaterialTheme.colorScheme.onBackground else MaterialTheme.colorScheme.onSurface
+    val subtitleColor = if (isDark) {
+        MaterialTheme.colorScheme.onSurfaceVariant
+    } else {
+        MaterialTheme.colorScheme.onSurfaceVariant.copy(
+            alpha = 0.8f
+        )
+    }
+    val buttonColor = MaterialTheme.colorScheme.primary
+    val buttonTextColor = MaterialTheme.colorScheme.onPrimary
+    val starColor = MaterialTheme.colorScheme.secondary
 
     // Background radial/linear brush
     val backgroundBrush = Brush.verticalGradient(
         colors = if (isDark) {
-            listOf(Color(0xFF081C1B), Color(0xFF0E302D))
+            listOf(MaterialTheme.colorScheme.background, MaterialTheme.colorScheme.surfaceContainerLow)
         } else {
-            listOf(Color(0xFFF2FAF9), Color(0xFFD6EEEC))
+            listOf(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f), MaterialTheme.colorScheme.surface)
         }
     )
 
@@ -119,14 +126,14 @@ fun PlanGenerationScreenContent(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(24.dp),
+                .padding(MaterialTheme.spacing.xl),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
             // Glowing pulsing central AI Icon
             GlowingAiIcon(isDark = isDark)
 
-            Spacer(modifier = Modifier.height(36.dp))
+            Spacer(modifier = Modifier.height(MaterialTheme.spacing.xxxl - MaterialTheme.spacing.sm))
 
             when (state) {
                 is PlanGenerationUiState.Idle -> {
@@ -139,25 +146,25 @@ fun PlanGenerationScreenContent(
                 is PlanGenerationUiState.Loading, is PlanGenerationUiState.Success -> {
                     Text(
                         text = stringResource(R.string.building_trip_title),
-                        fontSize = 24.sp,
+                        style = MaterialTheme.typography.headlineMedium,
                         fontWeight = FontWeight.Bold,
                         color = titleColor,
                         textAlign = TextAlign.Center,
-                        modifier = Modifier.padding(horizontal = 16.dp)
+                        modifier = Modifier.padding(horizontal = MaterialTheme.spacing.md)
                     )
 
-                    Spacer(modifier = Modifier.height(12.dp))
+                    Spacer(modifier = Modifier.height(MaterialTheme.spacing.sm))
 
                     Text(
                         text = stringResource(R.string.building_trip_subtitle),
-                        fontSize = 15.sp,
+                        style = MaterialTheme.typography.bodyLarge,
                         color = subtitleColor,
                         textAlign = TextAlign.Center,
                         lineHeight = 22.sp,
-                        modifier = Modifier.padding(horizontal = 24.dp)
+                        modifier = Modifier.padding(horizontal = MaterialTheme.spacing.lg)
                     )
 
-                    Spacer(modifier = Modifier.height(32.dp))
+                    Spacer(modifier = Modifier.height(MaterialTheme.spacing.xl))
 
                     // Pulse ● ● ● Indicators
                     PulsingDots(dotColor = buttonColor)
@@ -165,23 +172,23 @@ fun PlanGenerationScreenContent(
                 is PlanGenerationUiState.Error -> {
                     Text(
                         text = stringResource(R.string.plan_creation_failed),
-                        fontSize = 20.sp,
+                        style = MaterialTheme.typography.titleLarge,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.error,
                         textAlign = TextAlign.Center
                     )
 
-                    Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(MaterialTheme.spacing.xs))
 
                     Text(
                         text = state.message.asString(),
-                        fontSize = 14.sp,
+                        style = MaterialTheme.typography.bodyMedium,
                         color = subtitleColor,
                         textAlign = TextAlign.Center,
-                        modifier = Modifier.padding(horizontal = 24.dp)
+                        modifier = Modifier.padding(horizontal = MaterialTheme.spacing.lg)
                     )
 
-                    Spacer(modifier = Modifier.height(24.dp))
+                    Spacer(modifier = Modifier.height(MaterialTheme.spacing.lg))
 
                     Button(
                         onClick = onRetry,
@@ -189,8 +196,8 @@ fun PlanGenerationScreenContent(
                             containerColor = buttonColor,
                             contentColor = buttonTextColor
                         ),
-                        shape = RoundedCornerShape(28.dp),
-                        modifier = Modifier.height(50.dp)
+                        shape = RoundedCornerShape(MaterialTheme.spacing.xlg),
+                        modifier = Modifier.height(MaterialTheme.spacing.xxxl + MaterialTheme.spacing.xxs)
                     ) {
                         Text(
                             text = stringResource(R.string.retry),
@@ -206,8 +213,8 @@ fun PlanGenerationScreenContent(
         Box(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
-                .padding(bottom = 48.dp)
-                .padding(horizontal = 24.dp)
+                .padding(bottom = MaterialTheme.spacing.xxxl)
+                .padding(horizontal = MaterialTheme.spacing.lg)
                 .fillMaxWidth(),
             contentAlignment = Alignment.Center
         ) {
@@ -217,15 +224,15 @@ fun PlanGenerationScreenContent(
                     containerColor = buttonColor,
                     contentColor = buttonTextColor
                 ),
-                shape = RoundedCornerShape(28.dp),
-                contentPadding = PaddingValues(horizontal = 32.dp, vertical = 16.dp),
+                shape = RoundedCornerShape(MaterialTheme.spacing.xlg),
+                contentPadding = PaddingValues(horizontal = MaterialTheme.spacing.xl, vertical = MaterialTheme.spacing.md),
                 elevation = ButtonDefaults.buttonElevation(
-                    defaultElevation = 4.dp,
-                    pressedElevation = 8.dp
+                    defaultElevation = MaterialTheme.elevation.md,
+                    pressedElevation = MaterialTheme.elevation.lg
                 ),
                 modifier = Modifier
                     .fillMaxWidth(0.85f)
-                    .height(56.dp)
+                    .height(MaterialTheme.spacing.xxxl + MaterialTheme.spacing.xs)
             ) {
                 Text(
                     text = stringResource(R.string.keep_explore),
@@ -272,15 +279,15 @@ fun GlowingAiIcon(
         // Glowing Outer Circle
         Box(
             modifier = Modifier
-                .size(110.dp)
+                .size(MaterialTheme.spacing.xxxl * 2 + MaterialTheme.spacing.sm)
                 .graphicsLayer(scaleX = scale, scaleY = scale)
                 .clip(CircleShape)
                 .background(
                     Brush.radialGradient(
                         colors = if (isDark) {
-                            listOf(Color(0xFF00796B).copy(alpha = 0.4f), Color.Transparent)
+                            listOf(MaterialTheme.colorScheme.primary.copy(alpha = 0.4f), Color.Transparent)
                         } else {
-                            listOf(Color(0xFF80CBC4).copy(alpha = 0.5f), Color.Transparent)
+                            listOf(MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.5f), Color.Transparent)
                         }
                     )
                 )
@@ -289,12 +296,12 @@ fun GlowingAiIcon(
         // Inner Circle Icon Container
         Box(
             modifier = Modifier
-                .size(72.dp)
+                .size(MaterialTheme.spacing.xxxl + MaterialTheme.spacing.lg)
                 .graphicsLayer(rotationZ = rotate)
                 .clip(CircleShape)
                 .background(
                     Brush.linearGradient(
-                        colors = listOf(Color(0xFF26A69A), Color(0xFF004D40))
+                        colors = listOf(MaterialTheme.colorScheme.primary, MaterialTheme.colorScheme.secondary)
                     )
                 ),
             contentAlignment = Alignment.Center
@@ -304,7 +311,7 @@ fun GlowingAiIcon(
                 contentDescription = null,
                 tint = Color.White,
                 modifier = Modifier
-                    .size(36.dp)
+                    .size(MaterialTheme.spacing.xl + MaterialTheme.spacing.xxs)
                     .graphicsLayer(rotationZ = -rotate)
             )
         }
@@ -335,8 +342,11 @@ fun FloatingSparkles(
             tint = starColor.copy(alpha = 0.55f),
             modifier = Modifier
                 .align(Alignment.TopStart)
-                .padding(start = 50.dp, top = 140.dp)
-                .size(24.dp)
+                .padding(
+                    start = MaterialTheme.spacing.xxxl + MaterialTheme.spacing.xxs,
+                    top = MaterialTheme.spacing.xxxl * 3 - MaterialTheme.spacing.xs
+                )
+                .size(MaterialTheme.spacing.lg)
                 .graphicsLayer(translationY = floatAnim)
         )
 
@@ -347,8 +357,11 @@ fun FloatingSparkles(
             tint = starColor.copy(alpha = 0.65f),
             modifier = Modifier
                 .align(Alignment.CenterEnd)
-                .padding(end = 45.dp, bottom = 80.dp)
-                .size(30.dp)
+                .padding(
+                    end = MaterialTheme.spacing.xxxl - MaterialTheme.spacing.xs,
+                    bottom = MaterialTheme.spacing.xxxl * 2 - MaterialTheme.spacing.md
+                )
+                .size(MaterialTheme.spacing.xl - MaterialTheme.spacing.xxs)
                 .graphicsLayer(translationY = -floatAnim)
         )
 
@@ -359,8 +372,11 @@ fun FloatingSparkles(
             tint = starColor.copy(alpha = 0.45f),
             modifier = Modifier
                 .align(Alignment.BottomStart)
-                .padding(start = 70.dp, bottom = 220.dp)
-                .size(20.dp)
+                .padding(
+                    start = MaterialTheme.spacing.xxxl + MaterialTheme.spacing.lg - MaterialTheme.spacing.xxs,
+                    bottom = MaterialTheme.spacing.xxxl * 4 + MaterialTheme.spacing.xlg
+                )
+                .size(MaterialTheme.spacing.md + MaterialTheme.spacing.xs)
                 .graphicsLayer(translationY = floatAnim * 0.7f)
         )
     }
@@ -388,13 +404,13 @@ fun PulsingDots(
 
     Row(
         modifier = modifier,
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.xs),
         verticalAlignment = Alignment.CenterVertically
     ) {
         dots.forEach { alpha ->
             Box(
                 modifier = Modifier
-                    .size(10.dp)
+                    .size(MaterialTheme.spacing.sm - MaterialTheme.spacing.xxs / 2)
                     .clip(CircleShape)
                     .background(dotColor.copy(alpha = alpha.value))
             )

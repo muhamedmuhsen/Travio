@@ -42,6 +42,9 @@
     <string name="hotel_details_added_to_favorites">Added to favorites</string>
     <string name="hotel_details_removed_from_favorites">Removed from favorites</string>
     <string name="hotel_details_rooms_updated">Room availability updated</string>
+    <string name="hotel_details_reviews_count">%1$s reviews</string>
+    <string name="hotel_details_starting_from">Starting from</string>
+    <string name="hotel_details_hotel_label">Hotel</string>
 
     <!-- Hotel Search Strings -->
     <string name="hotel_search_title">Find Hotels</string>
@@ -57,13 +60,15 @@
     <string name="hotel_search_no_results_desc">Try searching for a different destination or date range.</string>
     <string name="hotel_search_error_title">Search Failed</string>
     <string name="hotel_search_error_desc">An error occurred while searching for hotels. Please try again.</string>
-    
+    <string name="hotel_search_start_searching">Start searching for hotels</string>
+
     <!-- Guest Selector Bottom Sheet -->
     <string name="hotel_search_select_guests">Select Guests</string>
     <string name="hotel_search_adults">Adults</string>
     <string name="hotel_search_adults_desc">Age 18 or above</string>
     <string name="hotel_search_children">Children</string>
     <string name="hotel_search_children_desc">Ages 0 to 17</string>
+    <string name="hotel_search_children_ages_label">Children\'s Ages</string>
     <string name="hotel_search_child_age_label">Child %1$d Age</string>
     <string name="hotel_search_child_years">%1$d years old</string>
     <string name="hotel_search_child_under_one">Under 1 year old</string>

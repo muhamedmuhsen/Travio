@@ -32,8 +32,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import com.example.designsystem.theme.TravioTheme
+import com.example.designsystem.theme.elevation
+import com.example.designsystem.theme.spacing
 import com.example.designsystem.theme.success
 
 enum class SnackBarType {
@@ -102,8 +103,8 @@ fun ErrorSnackBar(
     text: String
 ) {
     Snackbar(
-        modifier = modifier.padding(16.dp),
-        shape = RoundedCornerShape(14.dp),
+        modifier = modifier.padding(MaterialTheme.spacing.md),
+        shape = RoundedCornerShape(MaterialTheme.spacing.md - MaterialTheme.spacing.xxs / 2),
         contentColor = MaterialTheme.colorScheme.onError,
         containerColor = MaterialTheme.colorScheme.error
     ) {
@@ -118,7 +119,7 @@ fun ErrorSnackBar(
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.onError
                 )
-                Spacer(modifier = Modifier.width(8.dp))
+                Spacer(modifier = Modifier.width(MaterialTheme.spacing.xs))
             }
             Text(
                 text = text,
@@ -140,23 +141,23 @@ fun SuccessSnackBar(
     onDismiss: (() -> Unit)? = null
 ) {
     Surface(
-        modifier = modifier.padding(16.dp),
-        shape = RoundedCornerShape(14.dp),
+        modifier = modifier.padding(MaterialTheme.spacing.md),
+        shape = RoundedCornerShape(MaterialTheme.spacing.md - MaterialTheme.spacing.xxs / 2),
         color = MaterialTheme.colorScheme.surfaceContainerHighest,
-        shadowElevation = 6.dp
+        shadowElevation = MaterialTheme.elevation.lg - MaterialTheme.elevation.sm
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 14.dp)
+                .padding(horizontal = MaterialTheme.spacing.md, vertical = MaterialTheme.spacing.md - MaterialTheme.spacing.xxs / 2)
         ) {
             // Green circular outlined checkmark
             Box(
                 modifier = Modifier
-                    .size(24.dp)
+                    .size(MaterialTheme.spacing.lg)
                     .border(
-                        width = 1.5.dp,
+                        width = MaterialTheme.elevation.xs + MaterialTheme.elevation.xs / 2,
                         color = MaterialTheme.colorScheme.success,
                         shape = CircleShape
                     ),
@@ -166,11 +167,11 @@ fun SuccessSnackBar(
                     imageVector = Icons.Default.Check,
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.success,
-                    modifier = Modifier.size(16.dp)
+                    modifier = Modifier.size(MaterialTheme.spacing.md)
                 )
             }
 
-            Spacer(modifier = Modifier.width(12.dp))
+            Spacer(modifier = Modifier.width(MaterialTheme.spacing.sm))
 
             Text(
                 text = text,
@@ -182,16 +183,16 @@ fun SuccessSnackBar(
             )
 
             if (onDismiss != null) {
-                Spacer(modifier = Modifier.width(12.dp))
+                Spacer(modifier = Modifier.width(MaterialTheme.spacing.sm))
                 IconButton(
                     onClick = onDismiss,
-                    modifier = Modifier.size(24.dp)
+                    modifier = Modifier.size(MaterialTheme.spacing.lg)
                 ) {
                     Icon(
                         imageVector = Icons.Default.Close,
                         contentDescription = "Dismiss",
                         tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
-                        modifier = Modifier.size(20.dp)
+                        modifier = Modifier.size(MaterialTheme.spacing.lg - MaterialTheme.spacing.xxs)
                     )
                 }
             }

@@ -18,8 +18,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import com.dev.destination.R
+import com.example.designsystem.theme.spacing
 
 @Composable
 fun DetailErrorState(
@@ -36,15 +36,15 @@ fun DetailErrorState(
             imageVector = Icons.Default.Warning,
             contentDescription = stringResource(id = R.string.destination_error_icon_cd),
             tint = MaterialTheme.colorScheme.error,
-            modifier = Modifier.size(64.dp)
+            modifier = Modifier.size(MaterialTheme.spacing.xxxl + MaterialTheme.spacing.md)
         )
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(MaterialTheme.spacing.md))
         Text(
             text = message,
             style = MaterialTheme.typography.titleMedium,
             textAlign = TextAlign.Center
         )
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(MaterialTheme.spacing.lg))
         Button(onClick = onRetry) {
             Text(stringResource(id = R.string.destination_retry))
         }

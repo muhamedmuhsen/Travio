@@ -36,7 +36,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.dev.utils.localization.AppLanguage
 import com.example.designsystem.R
@@ -130,7 +129,7 @@ fun OnboardingScreen(
                     modifier = Modifier
                         .align(Alignment.TopStart) // Better placement
                         .padding(MaterialTheme.spacing.md)
-                        .padding(top = 36.dp)
+                        .padding(top = MaterialTheme.spacing.xxxl - MaterialTheme.spacing.sm)
                         .clickable { viewModel.onFinishClicked() },
                     style = MaterialTheme.typography.titleLarge,
                     color = Color.White

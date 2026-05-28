@@ -24,14 +24,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import com.dev.feature.community.R
 import com.example.designsystem.theme.TravioTheme
+import com.example.designsystem.theme.elevation
 import com.example.designsystem.theme.spacing
 
 @Composable
@@ -42,7 +41,7 @@ fun CommunityTopBar(
     Surface(
         modifier = modifier.fillMaxWidth(),
         color = MaterialTheme.colorScheme.surface,
-        shadowElevation = 2.dp
+        shadowElevation = MaterialTheme.elevation.sm
     ) {
         Row(
             modifier = Modifier
@@ -57,13 +56,13 @@ fun CommunityTopBar(
         ) {
             Box(
                 modifier = Modifier
-                    .size(52.dp)
+                    .size(MaterialTheme.spacing.xxxl + MaterialTheme.spacing.xxs)
                     .clip(CircleShape)
                     .background(MaterialTheme.colorScheme.surfaceVariant)
                     .border(
-                        width = 2.dp,
+                        width = MaterialTheme.elevation.sm,
                         brush = Brush.linearGradient(
-                            colors = listOf(Color(0xFF0C6A72), Color(0xFF20DCEE)),
+                            colors = listOf(MaterialTheme.colorScheme.primary, MaterialTheme.colorScheme.secondary),
                             start = Offset(0f, 0f),
                             end = Offset(Float.POSITIVE_INFINITY, 0f)
                         ),
@@ -75,7 +74,7 @@ fun CommunityTopBar(
                     painter = painterResource(id = R.drawable.community_fill_icon),
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.size(28.dp)
+                    modifier = Modifier.size(MaterialTheme.spacing.xlg)
                 )
             }
 
@@ -95,7 +94,7 @@ fun CommunityTopBar(
             IconButton(
                 onClick = onShareClicked,
                 modifier = Modifier
-                    .size(46.dp)
+                    .size(MaterialTheme.spacing.xxxl - MaterialTheme.spacing.xxs)
                     .clip(CircleShape)
                     .background(MaterialTheme.colorScheme.primary)
             ) {
@@ -103,7 +102,7 @@ fun CommunityTopBar(
                     painter = painterResource(id = R.drawable.share_icon),
                     contentDescription = stringResource(R.string.community_share_cd),
                     tint = MaterialTheme.colorScheme.onPrimary,
-                    modifier = Modifier.size(20.dp)
+                    modifier = Modifier.size(MaterialTheme.spacing.lg - MaterialTheme.spacing.xxs)
                 )
             }
         }

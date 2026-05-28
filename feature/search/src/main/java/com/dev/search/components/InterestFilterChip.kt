@@ -19,8 +19,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
+import com.example.designsystem.theme.spacing
 import com.example.domain.model.destination.SupportedInterests
+import com.example.feature.search.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -31,16 +32,16 @@ fun InterestFilterChipsRow(
 ) {
     LazyRow(
         modifier = modifier,
-        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        contentPadding = PaddingValues(horizontal = MaterialTheme.spacing.md, vertical = MaterialTheme.spacing.xs),
+        horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.xs),
         verticalAlignment = Alignment.CenterVertically
     ) {
         item {
             Icon(
-                painter = painterResource(id = com.example.feature.search.R.drawable.filter_icon),
+                painter = painterResource(id = R.drawable.filter_icon),
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.size(24.dp)
+                modifier = Modifier.size(MaterialTheme.spacing.lg)
             )
         }
         items(SupportedInterests.all) { interest ->
@@ -57,7 +58,7 @@ fun InterestFilterChipsRow(
                     selectedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer
                 ),
                 modifier = Modifier.semantics {
-                    contentDescription = "Filter by $label"
+                    contentDescription = label // The label is already translated
                 }
             )
         }

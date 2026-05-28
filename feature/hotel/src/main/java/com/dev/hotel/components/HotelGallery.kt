@@ -28,8 +28,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import com.example.designsystem.theme.spacing
 import com.example.domain.model.hotel.HotelImage
 import com.example.feature.hotel.R
 
@@ -46,7 +46,7 @@ fun HotelGallery(
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .height(280.dp)
+            .height(MaterialTheme.spacing.xxxl * 6)
             .background(MaterialTheme.colorScheme.surfaceVariant)
     ) {
         if (images.isEmpty()) {
@@ -77,7 +77,7 @@ fun HotelGallery(
                     modifier = Modifier
                         .statusBarsPadding()
                         .fillMaxWidth()
-                        .padding(start = 16.dp, end = 16.dp),
+                        .padding(start = MaterialTheme.spacing.md, end = MaterialTheme.spacing.md),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -87,12 +87,12 @@ fun HotelGallery(
                             containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.8f),
                             contentColor = MaterialTheme.colorScheme.onSurface
                         ),
-                        modifier = Modifier.size(40.dp)
+                        modifier = Modifier.size(MaterialTheme.spacing.xxl)
                     ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Back",
-                            modifier = Modifier.size(20.dp)
+                            modifier = Modifier.size(MaterialTheme.spacing.lg - MaterialTheme.spacing.xxs)
                         )
                     }
                 }
@@ -104,18 +104,18 @@ fun HotelGallery(
                     .wrapContentHeight()
                     .fillMaxWidth()
                     .align(Alignment.BottomCenter)
-                    .padding(bottom = 16.dp),
+                    .padding(bottom = MaterialTheme.spacing.md),
                 horizontalArrangement = Arrangement.Center
             ) {
                 repeat(pagerState.pageCount) { iteration ->
                     val color = if (pagerState.currentPage == iteration) Color.White else Color.White.copy(alpha = 0.5f)
-                    val width = if (pagerState.currentPage == iteration) 16.dp else 8.dp
+                    val width = if (pagerState.currentPage == iteration) MaterialTheme.spacing.md else MaterialTheme.spacing.xs
                     Box(
                         modifier = Modifier
-                            .padding(2.dp)
+                            .padding(MaterialTheme.spacing.xxs / 2)
                             .clip(CircleShape)
                             .background(color)
-                            .size(width = width, height = 4.dp)
+                            .size(width = width, height = MaterialTheme.spacing.xxs)
                     )
                 }
             }

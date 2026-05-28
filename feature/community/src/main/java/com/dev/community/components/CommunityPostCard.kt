@@ -35,7 +35,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDirection
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.dev.community.presentation.rememberRelativeTimeText
 import com.dev.feature.community.R
@@ -92,7 +91,7 @@ fun CommunityPostCard(
                     )
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(2.dp)
+                        horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.xxs / 2)
                     ) {
                         Icon(
                             painter = painterResource(R.drawable.location_icon),
@@ -179,7 +178,7 @@ fun CommunityPostCard(
                             contentDescription = stringResource(R.string.community_comment_cd),
                             tint = MaterialTheme.colorScheme.onSurfaceVariant,
                             modifier = Modifier
-                                .padding(start = 4.dp)
+                                .padding(start = MaterialTheme.spacing.xxs)
                                 .size(MaterialTheme.spacing.md)
                         )
                     }
@@ -214,7 +213,7 @@ private fun StarBadge(rating: Float) {
             .background(MaterialTheme.colorScheme.primaryContainer)
             .padding(horizontal = MaterialTheme.spacing.xs, vertical = MaterialTheme.spacing.xxs),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(3.dp)
+        horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.xxs / 2 + (MaterialTheme.spacing.xxs / 4))
     ) {
         Icon(
             imageVector = Icons.Filled.Star,
@@ -269,19 +268,19 @@ fun LoadingCommunityPostCard(modifier: Modifier = Modifier) {
                 Spacer(modifier = Modifier.width(MaterialTheme.spacing.sm))
                 Column(
                     modifier = Modifier.weight(1f),
-                    verticalArrangement = Arrangement.spacedBy(6.dp)
+                    verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.xxs + (MaterialTheme.spacing.xxs / 2))
                 ) {
                     Box(
                         modifier = Modifier
                             .fillMaxWidth(0.4f)
-                            .height(14.dp)
+                            .height(MaterialTheme.spacing.sm + (MaterialTheme.spacing.xxs / 2))
                             .clip(MaterialTheme.shapes.extraSmall)
                             .shimmerEffect()
                     )
                     Box(
                         modifier = Modifier
                             .fillMaxWidth(0.3f)
-                            .height(11.dp)
+                            .height(MaterialTheme.spacing.sm - (MaterialTheme.spacing.xxs / 4))
                             .clip(MaterialTheme.shapes.extraSmall)
                             .shimmerEffect()
                     )
@@ -311,26 +310,26 @@ fun LoadingCommunityPostCard(modifier: Modifier = Modifier) {
                         horizontal = MaterialTheme.spacing.md,
                         vertical = MaterialTheme.spacing.sm
                     ),
-                verticalArrangement = Arrangement.spacedBy(6.dp)
+                verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.xxs + (MaterialTheme.spacing.xxs / 2))
             ) {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(13.dp)
+                        .height(MaterialTheme.spacing.sm + (MaterialTheme.spacing.xxs / 4))
                         .clip(MaterialTheme.shapes.extraSmall)
                         .shimmerEffect()
                 )
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(13.dp)
+                        .height(MaterialTheme.spacing.sm + (MaterialTheme.spacing.xxs / 4))
                         .clip(MaterialTheme.shapes.extraSmall)
                         .shimmerEffect()
                 )
                 Box(
                     modifier = Modifier
                         .fillMaxWidth(0.6f)
-                        .height(13.dp)
+                        .height(MaterialTheme.spacing.sm + (MaterialTheme.spacing.xxs / 4))
                         .clip(MaterialTheme.shapes.extraSmall)
                         .shimmerEffect()
                 )
@@ -361,20 +360,26 @@ fun LoadingCommunityPostCard(modifier: Modifier = Modifier) {
                 ) {
                     Box(
                         modifier = Modifier
-                            .size(width = 48.dp, height = 14.dp)
+                            .size(width = MaterialTheme.spacing.xxxl, height = MaterialTheme.spacing.sm + (MaterialTheme.spacing.xxs / 2))
                             .clip(MaterialTheme.shapes.extraSmall)
                             .shimmerEffect()
                     )
                     Box(
                         modifier = Modifier
-                            .size(width = 36.dp, height = 14.dp)
+                            .size(
+                                width = MaterialTheme.spacing.xxxl - MaterialTheme.spacing.sm,
+                                height = MaterialTheme.spacing.sm + (MaterialTheme.spacing.xxs / 2)
+                            )
                             .clip(MaterialTheme.shapes.extraSmall)
                             .shimmerEffect()
                     )
                 }
                 Box(
                     modifier = Modifier
-                        .size(width = 60.dp, height = 11.dp)
+                        .size(
+                            width = MaterialTheme.spacing.xxxl + MaterialTheme.spacing.md,
+                            height = MaterialTheme.spacing.sm - (MaterialTheme.spacing.xxs / 4)
+                        )
                         .clip(MaterialTheme.shapes.extraSmall)
                         .shimmerEffect()
                 )
@@ -403,7 +408,7 @@ private val previewPost = CommunityPost(
 @Composable
 private fun CommunityPostCardLightPreview() {
     TravioTheme(dynamicColor = false) {
-        CommunityPostCard(modifier = Modifier.padding(16.dp), post = previewPost)
+        CommunityPostCard(modifier = Modifier.padding(MaterialTheme.spacing.md), post = previewPost)
     }
 }
 
@@ -411,7 +416,7 @@ private fun CommunityPostCardLightPreview() {
 @Composable
 private fun CommunityPostCardDarkPreview() {
     TravioTheme(dynamicColor = false) {
-        CommunityPostCard(modifier = Modifier.padding(16.dp), post = previewPost)
+        CommunityPostCard(modifier = Modifier.padding(MaterialTheme.spacing.md), post = previewPost)
     }
 }
 
@@ -419,7 +424,7 @@ private fun CommunityPostCardDarkPreview() {
 @Composable
 private fun CommunityPostCardLightArabicPreview() {
     TravioTheme(dynamicColor = false) {
-        CommunityPostCard(modifier = Modifier.padding(16.dp), post = previewPost)
+        CommunityPostCard(modifier = Modifier.padding(MaterialTheme.spacing.md), post = previewPost)
     }
 }
 
@@ -432,7 +437,7 @@ private fun CommunityPostCardLightArabicPreview() {
 @Composable
 private fun CommunityPostCardDarkArabicPreview() {
     TravioTheme(dynamicColor = false) {
-        CommunityPostCard(modifier = Modifier.padding(16.dp), post = previewPost)
+        CommunityPostCard(modifier = Modifier.padding(MaterialTheme.spacing.md), post = previewPost)
     }
 }
 
@@ -440,7 +445,7 @@ private fun CommunityPostCardDarkArabicPreview() {
 @Composable
 private fun LoadingCommunityPostCardLightPreview() {
     TravioTheme(dynamicColor = false) {
-        LoadingCommunityPostCard(modifier = Modifier.padding(16.dp))
+        LoadingCommunityPostCard(modifier = Modifier.padding(MaterialTheme.spacing.md))
     }
 }
 
@@ -448,6 +453,6 @@ private fun LoadingCommunityPostCardLightPreview() {
 @Composable
 private fun LoadingCommunityPostCardDarkPreview() {
     TravioTheme(dynamicColor = false) {
-        LoadingCommunityPostCard(modifier = Modifier.padding(16.dp))
+        LoadingCommunityPostCard(modifier = Modifier.padding(MaterialTheme.spacing.md))
     }
 }

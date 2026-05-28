@@ -27,7 +27,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import com.dev.feature.community.R
 import com.example.designsystem.theme.TravioTheme
 import com.example.designsystem.theme.spacing
@@ -56,7 +55,7 @@ fun ShareMomentTopBar(
             // Camera icon in a rounded-square light-tinted box
             Box(
                 modifier = Modifier
-                    .size(48.dp)
+                    .size(MaterialTheme.spacing.xxxl)
                     .clip(MaterialTheme.shapes.medium)
                     .background(Color.White.copy(alpha = 0.2f)),
                 contentAlignment = Alignment.Center
@@ -65,7 +64,7 @@ fun ShareMomentTopBar(
                     painter = painterResource(id = R.drawable.camera_icon),
                     contentDescription = null,
                     tint = Color.White,
-                    modifier = Modifier.size(26.dp)
+                    modifier = Modifier.size(MaterialTheme.spacing.xlg - MaterialTheme.spacing.xxs)
                 )
             }
 
@@ -82,11 +81,10 @@ fun ShareMomentTopBar(
                 )
             }
 
-            // Close button — semi-transparent white circle
             IconButton(
                 onClick = onCloseClicked,
                 modifier = Modifier
-                    .size(32.dp)
+                    .size(MaterialTheme.spacing.xl)
                     .clip(CircleShape)
                     .background(Color.White.copy(alpha = 0.2f))
             ) {
@@ -94,7 +92,7 @@ fun ShareMomentTopBar(
                     imageVector = Icons.Default.Close,
                     contentDescription = stringResource(R.string.share_moment_close_cd),
                     tint = Color.White,
-                    modifier = Modifier.size(18.dp)
+                    modifier = Modifier.size(MaterialTheme.spacing.lg - MaterialTheme.spacing.xs)
                 )
             }
         }

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="travel_assistant">مساعد السفر</string>
+    <string name="travel_ai_assistant">مساعد السفر الذكي</string>
+    <string name="travel_ai_assistant_subtitle">رفيقك الذكي لاكتشاف وجهات مذهلة والتخطيط لرحلات مثالية</string>
+    <string name="travel_assistant_thinking">الذكاء الاصطناعي يفكر...</string>
+    <string name="ask_chatgpt">اسأل ChatGPT</string>
+    <string name="send_message">إرسال رسالة</string>
+    <string name="ask_anything">اسأل عن أي شيء...</string>
+    <string name="creating_your_plan">جاري إنشاء خطتك...</string>
+    <string name="dismiss">تجاهل</string>
+    <string name="plan_created_successfully">تم إنشاء الخطة بنجاح!</string>
+    <string name="waiting_to_start">بانتظار البدء...</string>
+    <string name="my_previous_trips">رحلاتي السابقة</string>
+    <string name="ai_powered_planning">تخطيط السفر بالذكاء الاصطناعي</string>
+    <string name="ai_planning_subtitle">احصل على توصيات شخصية ومسارات رحلات منسقة مصممة خصيصاً لك.</string>
+    <string name="plan_with_ai">خطط بالذكاء الاصطناعي</string>
+    <string name="recommended_hotels">فنادق موصى بها</string>
+    <string name="building_trip_title">جاري بناء رحلة خصيصاً لك</string>
+    <string name="building_trip_subtitle">نحن نجمع كل توصياتك في مكان واحد.</string>
+    <string name="keep_explore">استمر في الاستكشاف</string>
+    <string name="plan_creation_failed">فشل إنشاء الخطة</string>
+    <string name="unknown_error">خطأ غير معروف</string>
+    <string name="remove">إزالة</string>
+    <string name="days_trip_count">رحلة لمدة %1$d أيام</string>
+    <string name="notification_title_completed">خطة رحلتك بالذكاء الاصطناعي جاهزة 🎉</string>
+    <string name="notification_body_completed">اضغط لفتح واستكشاف مسار رحلتك</string>
+    <string name="notification_title_failed">فشل إنشاء الخطة</string>
+    <string name="notification_body_failed">فشل إنشاء الخطة لموضوع %1$s.</string>
+    <string name="retry">إعادة المحاولة</string>
+    <string name="trip_detail_error">فشل تحميل تفاصيل الرحلة</string>
+    <string name="delete_trip_title">حذف الرحلة</string>
+    <string name="delete_trip_message">هل أنت متأكد أنك تريد حذف هذه الرحلة؟ لا يمكن التراجع عن هذا الإجراء.</string>
+    <string name="delete">حذف</string>
+    <string name="cancel">إلغاء</string>
+    <string name="error_cannot_favorite_local">لا يمكن إضافة الرحلات المخزنة محلياً للمفضلة. يرجى انتظار المزامنة.</string>
+    <string name="error_failed_toggle_favorite">فشل تحديث حالة المفضلة.</string>
+    <string name="error_sync_trip_id_failed">فشل استرداد رقم الرحلة المتزامن من الخادم. يرجى إعادة المحاولة.</string>
+    <string name="plan_generation_timed_out">انتهت مهلة إنشاء الخطة</string>
+</resources>

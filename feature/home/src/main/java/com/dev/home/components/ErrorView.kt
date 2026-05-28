@@ -25,8 +25,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import com.example.designsystem.theme.TravioTheme
+import com.example.designsystem.theme.elevation
 import com.example.designsystem.theme.spacing
 import com.example.feature.home.R
 
@@ -43,7 +43,7 @@ fun ErrorView(
         Image(
             painter = painterResource(R.drawable.error_card),
             contentDescription = stringResource(R.string.error_image_description),
-            modifier = Modifier.size(64.dp)
+            modifier = Modifier.size(MaterialTheme.spacing.xxxl + MaterialTheme.spacing.md)
         )
 
         Spacer(modifier = Modifier.height(MaterialTheme.spacing.xs))
@@ -71,7 +71,7 @@ fun ErrorView(
         OutlinedButton(
             onClick = onClick,
             shape = MaterialTheme.shapes.large,
-            border = BorderStroke(width = 0.5.dp, color = MaterialTheme.colorScheme.error),
+            border = BorderStroke(width = MaterialTheme.elevation.xs / 2, color = MaterialTheme.colorScheme.error),
             colors = ButtonDefaults.outlinedButtonColors(
                 contentColor = MaterialTheme.colorScheme.error,
                 containerColor = MaterialTheme.colorScheme.errorContainer
@@ -80,7 +80,7 @@ fun ErrorView(
             Icon(
                 imageVector = Icons.Outlined.Refresh,
                 contentDescription = null,
-                modifier = Modifier.size(16.dp)
+                modifier = Modifier.size(MaterialTheme.spacing.md)
             )
             Spacer(modifier = Modifier.width(MaterialTheme.spacing.xxs))
             Text(

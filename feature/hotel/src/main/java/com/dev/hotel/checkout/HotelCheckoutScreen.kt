@@ -59,7 +59,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
@@ -155,7 +154,7 @@ fun HotelCheckoutScreen(
         onDismissRequest = { onAction(HotelCheckoutAction.BackClicked) },
         sheetState = sheetState,
         dragHandle = { BottomSheetDragHandle() },
-        shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp),
+        shape = RoundedCornerShape(topStart = MaterialTheme.spacing.lg, topEnd = MaterialTheme.spacing.lg),
         containerColor = MaterialTheme.colorScheme.surface,
         scrimColor = Color.Black.copy(alpha = 0.4f),
         modifier = Modifier.statusBarsPadding()
@@ -196,7 +195,7 @@ fun HotelCheckoutScreen(
                         Column(
                             modifier = Modifier
                                 .fillMaxSize()
-                                .padding(24.dp),
+                                .padding(MaterialTheme.spacing.lg),
                             verticalArrangement = Arrangement.Center,
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
@@ -204,23 +203,23 @@ fun HotelCheckoutScreen(
                                 imageVector = Icons.Default.Info,
                                 contentDescription = "Error icon",
                                 tint = MaterialTheme.colorScheme.error,
-                                modifier = Modifier.size(64.dp)
+                                modifier = Modifier.size(MaterialTheme.spacing.xxxl + MaterialTheme.spacing.md)
                             )
-                            Spacer(modifier = Modifier.height(16.dp))
+                            Spacer(modifier = Modifier.height(MaterialTheme.spacing.md))
                             Text(
                                 text = stringResource(R.string.hotel_checkout_error_loading_details),
                                 style = MaterialTheme.typography.bodyLarge,
                                 textAlign = TextAlign.Center,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
-                            Spacer(modifier = Modifier.height(8.dp))
+                            Spacer(modifier = Modifier.height(MaterialTheme.spacing.xs))
                             Text(
                                 text = state.message.asString(),
                                 style = MaterialTheme.typography.bodyMedium,
                                 textAlign = TextAlign.Center,
                                 color = MaterialTheme.colorScheme.error
                             )
-                            Spacer(modifier = Modifier.height(24.dp))
+                            Spacer(modifier = Modifier.height(MaterialTheme.spacing.lg))
                             Button(
                                 onClick = { onAction(HotelCheckoutAction.BackClicked) },
                                 colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
@@ -249,7 +248,7 @@ fun HotelCheckoutScreen(
                     ) {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
                             CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
-                            Spacer(modifier = Modifier.height(16.dp))
+                            Spacer(modifier = Modifier.height(MaterialTheme.spacing.md))
                             Text(
                                 text = stringResource(
                                     if (uiState.isPaymentProcessing) {
@@ -311,10 +310,10 @@ private fun CheckoutContent(
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
-            .padding(horizontal = 16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+            .padding(horizontal = MaterialTheme.spacing.md),
+        verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.md)
     ) {
-        item { Spacer(modifier = Modifier.height(8.dp)) }
+        item { Spacer(modifier = Modifier.height(MaterialTheme.spacing.xs)) }
 
         // Hotel Info Summary Card
         item {
@@ -349,7 +348,7 @@ private fun CheckoutContent(
                     colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.errorContainer)
                 ) {
                     Row(
-                        modifier = Modifier.padding(16.dp),
+                        modifier = Modifier.padding(MaterialTheme.spacing.md),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Icon(
@@ -357,7 +356,7 @@ private fun CheckoutContent(
                             contentDescription = "Error",
                             tint = MaterialTheme.colorScheme.error
                         )
-                        Spacer(modifier = Modifier.width(12.dp))
+                        Spacer(modifier = Modifier.width(MaterialTheme.spacing.sm))
                         Text(
                             text = uiState.errorMessage,
                             style = MaterialTheme.typography.bodyMedium,
@@ -368,7 +367,7 @@ private fun CheckoutContent(
             }
         }
 
-        item { Spacer(modifier = Modifier.height(32.dp)) }
+        item { Spacer(modifier = Modifier.height(MaterialTheme.spacing.xl)) }
     }
 }
 
@@ -379,14 +378,14 @@ private fun HotelCheckoutSummaryCard(
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(16.dp),
+        shape = RoundedCornerShape(MaterialTheme.spacing.md),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = MaterialTheme.elevation.xs)
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(12.dp),
+                .padding(MaterialTheme.spacing.sm),
             verticalAlignment = Alignment.CenterVertically
         ) {
             val thumbnail = hotelDetails.images.firstOrNull()?.url
@@ -395,11 +394,11 @@ private fun HotelCheckoutSummaryCard(
                 contentDescription = "Hotel thumbnail",
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
-                    .size(80.dp)
-                    .clip(RoundedCornerShape(12.dp))
+                    .size(MaterialTheme.spacing.xxxl + MaterialTheme.spacing.xl)
+                    .clip(RoundedCornerShape(MaterialTheme.spacing.sm))
                     .background(MaterialTheme.colorScheme.surfaceVariant)
             )
-            Spacer(modifier = Modifier.width(16.dp))
+            Spacer(modifier = Modifier.width(MaterialTheme.spacing.md))
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = hotelDetails.name,
@@ -408,7 +407,7 @@ private fun HotelCheckoutSummaryCard(
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
-                Spacer(modifier = Modifier.height(4.dp))
+                Spacer(modifier = Modifier.height(MaterialTheme.spacing.xxs))
                 Text(
                     text = hotelDetails.address + ", " + hotelDetails.city,
                     style = MaterialTheme.typography.bodySmall,
@@ -416,9 +415,9 @@ private fun HotelCheckoutSummaryCard(
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(MaterialTheme.spacing.xs))
                 Row(
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.xs)
                 ) {
                     DateBlock(
                         label = stringResource(R.string.hotel_details_check_in),
@@ -462,12 +461,12 @@ private fun RoomOccupancyCard(
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(16.dp),
+        shape = RoundedCornerShape(MaterialTheme.spacing.md),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = MaterialTheme.elevation.xs)
     ) {
         Column(
-            modifier = Modifier.padding(16.dp)
+            modifier = Modifier.padding(MaterialTheme.spacing.md)
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically
@@ -476,16 +475,16 @@ private fun RoomOccupancyCard(
                     imageVector = Icons.Default.CardMembership,
                     contentDescription = "Room details",
                     tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.size(20.dp)
+                    modifier = Modifier.size(MaterialTheme.spacing.lg - MaterialTheme.spacing.xxs)
                 )
-                Spacer(modifier = Modifier.width(8.dp))
+                Spacer(modifier = Modifier.width(MaterialTheme.spacing.xs))
                 Text(
                     text = stringResource(R.string.hotel_search_guests_label),
                     style = MaterialTheme.typography.titleSmall,
                     fontWeight = FontWeight.Bold
                 )
             }
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(MaterialTheme.spacing.sm))
             Text(
                 text = stringResource(
                     R.string.hotel_search_guests_summary,
@@ -512,12 +511,12 @@ private fun BookingHolderCard(
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(16.dp),
+        shape = RoundedCornerShape(MaterialTheme.spacing.md),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = MaterialTheme.elevation.xs)
     ) {
         Column(
-            modifier = Modifier.padding(16.dp)
+            modifier = Modifier.padding(MaterialTheme.spacing.md)
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically
@@ -526,16 +525,16 @@ private fun BookingHolderCard(
                     imageVector = Icons.Default.Person,
                     contentDescription = "Holder details",
                     tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.size(20.dp)
+                    modifier = Modifier.size(MaterialTheme.spacing.lg - MaterialTheme.spacing.xxs)
                 )
-                Spacer(modifier = Modifier.width(8.dp))
+                Spacer(modifier = Modifier.width(MaterialTheme.spacing.xs))
                 Text(
                     text = stringResource(R.string.hotel_checkout_holder_section),
                     style = MaterialTheme.typography.titleSmall,
                     fontWeight = FontWeight.Bold
                 )
             }
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(MaterialTheme.spacing.md))
 
             val holderFirstNameError = uiState.validationErrors.firstOrNull {
                 it == HotelCheckoutValidationError.EmptyHolderFirstName || it == HotelCheckoutValidationError.ShortHolderFirstName
@@ -552,11 +551,11 @@ private fun BookingHolderCard(
                     text = holderFirstNameError.asString(),
                     color = MaterialTheme.colorScheme.error,
                     style = MaterialTheme.typography.bodySmall,
-                    modifier = Modifier.padding(start = 4.dp, top = 4.dp)
+                    modifier = Modifier.padding(start = MaterialTheme.spacing.xxs, top = MaterialTheme.spacing.xxs)
                 )
             }
 
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(MaterialTheme.spacing.sm))
 
             val holderLastNameError = uiState.validationErrors.firstOrNull {
                 it == HotelCheckoutValidationError.EmptyHolderLastName || it == HotelCheckoutValidationError.ShortHolderLastName
@@ -573,7 +572,7 @@ private fun BookingHolderCard(
                     text = holderLastNameError.asString(),
                     color = MaterialTheme.colorScheme.error,
                     style = MaterialTheme.typography.bodySmall,
-                    modifier = Modifier.padding(start = 4.dp, top = 4.dp)
+                    modifier = Modifier.padding(start = MaterialTheme.spacing.xxs, top = MaterialTheme.spacing.xxs)
                 )
             }
         }
@@ -589,12 +588,12 @@ private fun RoomGuestsCard(
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(16.dp),
+        shape = RoundedCornerShape(MaterialTheme.spacing.md),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = MaterialTheme.elevation.xs)
     ) {
         Column(
-            modifier = Modifier.padding(16.dp)
+            modifier = Modifier.padding(MaterialTheme.spacing.md)
         ) {
             Text(
                 text = stringResource(R.string.hotel_checkout_room_header, roomIndex + 1),
@@ -602,7 +601,7 @@ private fun RoomGuestsCard(
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.primary
             )
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(MaterialTheme.spacing.sm))
 
             val roomError = uiState.validationErrors.firstOrNull { error ->
                 when (error) {
@@ -617,7 +616,7 @@ private fun RoomGuestsCard(
                     text = roomError.asString(),
                     color = MaterialTheme.colorScheme.error,
                     style = MaterialTheme.typography.bodySmall,
-                    modifier = Modifier.padding(bottom = 8.dp)
+                    modifier = Modifier.padding(bottom = MaterialTheme.spacing.xs)
                 )
             }
 
@@ -625,16 +624,22 @@ private fun RoomGuestsCard(
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(vertical = 8.dp)
+                        .padding(vertical = MaterialTheme.spacing.xs)
                 ) {
-                    val paxTypeLabel = if (pax.type == "AD") "Adult" else "Child"
+                    val paxTypeLabel = if (pax.type == "AD") {
+                        stringResource(
+                            R.string.hotel_search_adults
+                        )
+                    } else {
+                        stringResource(R.string.hotel_search_children)
+                    }
                     Text(
                         text = stringResource(R.string.hotel_checkout_guest_header, pIdx + 1, paxTypeLabel),
                         style = MaterialTheme.typography.bodySmall,
                         fontWeight = FontWeight.SemiBold,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
-                    Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(MaterialTheme.spacing.xs))
 
                     val paxNameError = uiState.validationErrors.firstOrNull {
                         it is HotelCheckoutValidationError.EmptyPaxName && it.roomIndex == roomIndex && it.paxIndex == pIdx
@@ -651,11 +656,11 @@ private fun RoomGuestsCard(
                             text = paxNameError.asString(),
                             color = MaterialTheme.colorScheme.error,
                             style = MaterialTheme.typography.bodySmall,
-                            modifier = Modifier.padding(start = 4.dp, top = 4.dp)
+                            modifier = Modifier.padding(start = MaterialTheme.spacing.xxs, top = MaterialTheme.spacing.xxs)
                         )
                     }
 
-                    Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(MaterialTheme.spacing.xs))
 
                     val paxSurnameError = uiState.validationErrors.firstOrNull {
                         it is HotelCheckoutValidationError.EmptyPaxSurname && it.roomIndex == roomIndex && it.paxIndex == pIdx
@@ -672,12 +677,12 @@ private fun RoomGuestsCard(
                             text = paxSurnameError.asString(),
                             color = MaterialTheme.colorScheme.error,
                             style = MaterialTheme.typography.bodySmall,
-                            modifier = Modifier.padding(start = 4.dp, top = 4.dp)
+                            modifier = Modifier.padding(start = MaterialTheme.spacing.xxs, top = MaterialTheme.spacing.xxs)
                         )
                     }
 
                     if (pax.type == "CH") {
-                        Spacer(modifier = Modifier.height(8.dp))
+                        Spacer(modifier = Modifier.height(MaterialTheme.spacing.xs))
                         val childAgeError = uiState.validationErrors.firstOrNull { error ->
                             when (error) {
                                 is HotelCheckoutValidationError.MissingChildAge -> error.roomIndex == roomIndex && error.paxIndex == pIdx
@@ -691,7 +696,7 @@ private fun RoomGuestsCard(
                                 val ageVal = it.toIntOrNull()
                                 onAction(HotelCheckoutAction.UpdatePaxAge(roomIndex, pIdx, ageVal))
                             },
-                            placeholder = "Child Age",
+                            placeholder = stringResource(R.string.hotel_search_child_age_label, pIdx + 1),
                             isError = childAgeError != null,
                             modifier = Modifier.fillMaxWidth()
                         )
@@ -700,7 +705,7 @@ private fun RoomGuestsCard(
                                 text = childAgeError.asString(),
                                 color = MaterialTheme.colorScheme.error,
                                 style = MaterialTheme.typography.bodySmall,
-                                modifier = Modifier.padding(start = 4.dp, top = 4.dp)
+                                modifier = Modifier.padding(start = MaterialTheme.spacing.xxs, top = MaterialTheme.spacing.xxs)
                             )
                         }
                     }
@@ -717,12 +722,12 @@ private fun RemarksCard(
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(16.dp),
+        shape = RoundedCornerShape(MaterialTheme.spacing.md),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = MaterialTheme.elevation.xs)
     ) {
         Column(
-            modifier = Modifier.padding(16.dp)
+            modifier = Modifier.padding(MaterialTheme.spacing.md)
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically
@@ -731,16 +736,16 @@ private fun RemarksCard(
                     imageVector = Icons.Default.Notes,
                     contentDescription = "Remarks Icon",
                     tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.size(20.dp)
+                    modifier = Modifier.size(MaterialTheme.spacing.lg - MaterialTheme.spacing.xxs)
                 )
-                Spacer(modifier = Modifier.width(8.dp))
+                Spacer(modifier = Modifier.width(MaterialTheme.spacing.xs))
                 Text(
                     text = stringResource(R.string.hotel_checkout_remarks_section),
                     style = MaterialTheme.typography.titleSmall,
                     fontWeight = FontWeight.Bold
                 )
             }
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(MaterialTheme.spacing.sm))
             AppTextField(
                 value = uiState.remark,
                 onValueChange = { onAction(HotelCheckoutAction.UpdateRemark(it)) },
@@ -769,7 +774,7 @@ private fun CheckoutBottomBar(
                 .navigationBarsPadding()
         ) {
             HorizontalDivider(
-                thickness = 0.5.dp,
+                thickness = MaterialTheme.elevation.xs,
                 color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f)
             )
             Column(

@@ -14,10 +14,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
+import com.dev.destination.R
+import com.example.designsystem.theme.spacing
+import com.example.designsystem.theme.star
 
 @Composable
 fun DestinationInfoOverlay(
@@ -34,27 +36,27 @@ fun DestinationInfoOverlay(
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.onSurface
         )
-        Spacer(modifier = Modifier.height(4.dp))
+        Spacer(modifier = Modifier.height(MaterialTheme.spacing.xxs))
         Text(
             text = city,
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(MaterialTheme.spacing.xs))
         Row(verticalAlignment = Alignment.CenterVertically) {
             Icon(
                 imageVector = Icons.Default.Star,
-                contentDescription = "Rating star",
-                tint = Color(0xFFFFD700),
-                modifier = Modifier.size(20.dp)
+                contentDescription = stringResource(id = R.string.destination_rating_cd),
+                tint = MaterialTheme.colorScheme.star,
+                modifier = Modifier.size(MaterialTheme.spacing.lg - MaterialTheme.spacing.xxs)
             )
-            Spacer(modifier = Modifier.width(4.dp))
+            Spacer(modifier = Modifier.width(MaterialTheme.spacing.xxs))
 
             val validRating = rating.coerceIn(0.0, 5.0)
             val formatRating = if (totalReviews > 0) {
-                "%.1f (%d reviews)".format(validRating, totalReviews)
+                stringResource(id = R.string.destination_reviews_count, "%.1f (%d)".format(validRating, totalReviews))
             } else {
-                "No reviews yet"
+                stringResource(id = R.string.destination_no_reviews)
             }
 
             Text(

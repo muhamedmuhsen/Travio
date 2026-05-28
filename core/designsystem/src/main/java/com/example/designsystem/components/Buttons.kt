@@ -27,6 +27,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.designsystem.R
 import com.example.designsystem.theme.TravioTheme
+import com.example.designsystem.theme.elevation
 import com.example.designsystem.theme.spacing
 
 @Composable
@@ -88,7 +89,7 @@ fun AppOutlinedButton(
         colors = ButtonDefaults.outlinedButtonColors(
             contentColor = MaterialTheme.colorScheme.onBackground
         ),
-        border = BorderStroke(width = 1.dp, color = MaterialTheme.colorScheme.primary)
+        border = BorderStroke(width = MaterialTheme.elevation.xs, color = MaterialTheme.colorScheme.primary)
     ) {
         Text(text = text, style = style)
     }
@@ -102,14 +103,14 @@ fun SigninOptionsButton(
     @DrawableRes icon: Int
 ) {
     OutlinedButton(
-        modifier = modifier.height(48.dp),
+        modifier = modifier.height(MaterialTheme.spacing.xxxl),
         onClick = onClick,
         shape = MaterialTheme.shapes.extraLarge,
         colors = ButtonDefaults.outlinedButtonColors(
             contentColor = MaterialTheme.colorScheme.primary,
             containerColor = MaterialTheme.colorScheme.background
         ),
-        border = BorderStroke(width = 1.dp, color = MaterialTheme.colorScheme.primary)
+        border = BorderStroke(width = MaterialTheme.elevation.xs, color = MaterialTheme.colorScheme.primary)
     ) {
         Row(
             modifier = Modifier,

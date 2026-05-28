@@ -21,7 +21,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -38,10 +37,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.dev.feature.community.R
 import com.example.designsystem.theme.TravioTheme
+import com.example.designsystem.theme.elevation
 import com.example.designsystem.theme.spacing
 
 /**
@@ -68,8 +67,8 @@ fun AddPhotoBox(
     val density = LocalDensity.current
 
     // Memoize px conversions so they aren't recomputed on every recomposition.
-    val cornerRadiusPx = remember(density) { with(density) { 16.dp.toPx() } }
-    val strokePx = remember(density) { with(density) { 1.5.dp.toPx() } }
+    val cornerRadiusPx = with(density) { MaterialTheme.spacing.md.toPx() }
+    val strokePx = with(density) { (MaterialTheme.elevation.xs + (MaterialTheme.elevation.xs / 2)).toPx() }
 
     if (photoUris.isEmpty()) {
         Box(
@@ -104,12 +103,12 @@ fun AddPhotoBox(
                 Box(
                     modifier = Modifier
                         .shadow(
-                            elevation = 8.dp,
+                            elevation = MaterialTheme.elevation.lg,
                             shape = CircleShape,
                             ambientColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.3f),
                             spotColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.4f)
                         )
-                        .size(56.dp)
+                        .size(MaterialTheme.spacing.xxxl + MaterialTheme.spacing.xs)
                         .background(MaterialTheme.colorScheme.primary, CircleShape),
                     contentAlignment = Alignment.Center
                 ) {
@@ -117,7 +116,7 @@ fun AddPhotoBox(
                         painter = painterResource(R.drawable.image_icon),
                         contentDescription = null,
                         tint = MaterialTheme.colorScheme.onPrimary,
-                        modifier = Modifier.size(28.dp)
+                        modifier = Modifier.size(MaterialTheme.spacing.xlg)
                     )
                 }
                 Text(
@@ -163,7 +162,7 @@ private fun PhotoThumbnail(
 ) {
     Box(
         modifier = modifier
-            .size(100.dp)
+            .size(MaterialTheme.spacing.xxxl * 2 + MaterialTheme.spacing.xxs)
             .clip(MaterialTheme.shapes.medium)
     ) {
         AsyncImage(
@@ -173,18 +172,16 @@ private fun PhotoThumbnail(
             modifier = Modifier.fillMaxSize()
         )
 
-        // Remove button — uses a Box wrapper so the scrim background renders
-        // correctly as a circle around the icon, not on the icon drawable itself.
         IconButton(
             onClick = onRemove,
             modifier = Modifier
                 .align(Alignment.TopEnd)
                 // 48 dp satisfies Material's minimum touch-target requirement.
-                .size(48.dp)
+                .size(MaterialTheme.spacing.xxxl)
         ) {
             Box(
                 modifier = Modifier
-                    .size(24.dp)
+                    .size(MaterialTheme.spacing.lg)
                     .background(
                         // FIX: Use inverseSurface instead of scrim. In dark mode,
                         // scrim is near-black (#000) and blends into dark thumbnails.
@@ -202,7 +199,7 @@ private fun PhotoThumbnail(
                     // inverseSurface by the Material3 spec — replaces onPrimary
                     // which had no such guarantee here.
                     tint = MaterialTheme.colorScheme.inverseOnSurface,
-                    modifier = Modifier.size(14.dp)
+                    modifier = Modifier.size(MaterialTheme.spacing.sm + (MaterialTheme.spacing.xxs / 2))
                 )
             }
         }
@@ -216,7 +213,7 @@ private fun AddMorePhotoButton(
 ) {
     Box(
         modifier = modifier
-            .size(100.dp)
+            .size(MaterialTheme.spacing.xxxl * 2 + MaterialTheme.spacing.xxs)
             .clip(MaterialTheme.shapes.medium)
             // FIX: Replace surfaceVariant with surfaceContainerHigh. In dark mode,
             // surfaceVariant can render very close in luminance to onSurfaceVariant,
@@ -236,7 +233,7 @@ private fun AddMorePhotoButton(
             // FIX: onSurface has a higher contrast guarantee against
             // surfaceContainerHigh than onSurfaceVariant did against surfaceVariant.
             tint = MaterialTheme.colorScheme.onSurface,
-            modifier = Modifier.size(32.dp)
+            modifier = Modifier.size(MaterialTheme.spacing.xl)
         )
     }
 }

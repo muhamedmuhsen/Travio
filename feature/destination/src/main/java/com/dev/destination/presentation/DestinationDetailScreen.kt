@@ -25,7 +25,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Favorite
@@ -72,7 +71,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
@@ -84,6 +82,10 @@ import com.dev.destination.components.DetailErrorState
 import com.dev.destination.components.DetailLoadingState
 import com.example.designsystem.components.shimmerEffect
 import com.example.designsystem.theme.TravioTheme
+import com.example.designsystem.theme.elevation
+import com.example.designsystem.theme.favorite
+import com.example.designsystem.theme.spacing
+import com.example.designsystem.theme.star
 import com.example.domain.model.destination.Destination
 import com.example.domain.model.destination.Interest
 import com.example.domain.model.review.Review
@@ -172,7 +174,7 @@ private fun DestinationDetailContent(
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(300.dp)
+                            .height(MaterialTheme.spacing.xxxl * 6 + MaterialTheme.spacing.sm)
                     ) {
                         // Background Image Pager
                         if (destination.imageUrls.isNotEmpty()) {
@@ -232,20 +234,24 @@ private fun DestinationDetailContent(
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(start = 16.dp, top = 8.dp, end = 16.dp),
+                                .padding(
+                                    start = MaterialTheme.spacing.md,
+                                    top = MaterialTheme.spacing.xs,
+                                    end = MaterialTheme.spacing.md
+                                ),
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
                             Surface(
                                 shape = CircleShape,
                                 color = MaterialTheme.colorScheme.surface.copy(alpha = 0.8f),
-                                modifier = Modifier.size(40.dp)
+                                modifier = Modifier.size(MaterialTheme.spacing.xxxl)
                             ) {
                                 IconButton(onClick = { onAction(DestinationDetailAction.OnBackClicked) }) {
                                     Icon(
                                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                                         contentDescription = stringResource(id = R.string.destination_back_cd),
                                         tint = MaterialTheme.colorScheme.onSurface,
-                                        modifier = Modifier.size(20.dp)
+                                        modifier = Modifier.size(MaterialTheme.spacing.lg - MaterialTheme.spacing.xxs)
                                     )
                                 }
                             }
@@ -253,7 +259,7 @@ private fun DestinationDetailContent(
                             Surface(
                                 shape = CircleShape,
                                 color = MaterialTheme.colorScheme.surface.copy(alpha = 0.8f),
-                                modifier = Modifier.size(40.dp)
+                                modifier = Modifier.size(MaterialTheme.spacing.xxxl)
                             ) {
                                 IconButton(
                                     enabled = !uiState.isFavoriteMutationInFlight,
@@ -263,11 +269,11 @@ private fun DestinationDetailContent(
                                         imageVector = if (uiState.isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
                                         contentDescription = stringResource(id = R.string.destination_favorite_cd),
                                         tint = if (uiState.isFavorite) {
-                                            MaterialTheme.colorScheme.error
+                                            MaterialTheme.colorScheme.favorite
                                         } else {
                                             MaterialTheme.colorScheme.onSurface
                                         },
-                                        modifier = Modifier.size(20.dp)
+                                        modifier = Modifier.size(MaterialTheme.spacing.lg - MaterialTheme.spacing.xxs)
                                     )
                                 }
                             }
@@ -277,7 +283,7 @@ private fun DestinationDetailContent(
                         Column(
                             modifier = Modifier
                                 .align(Alignment.BottomStart)
-                                .padding(16.dp)
+                                .padding(MaterialTheme.spacing.md)
                         ) {
                             Row(
                                 verticalAlignment = Alignment.CenterVertically
@@ -286,9 +292,9 @@ private fun DestinationDetailContent(
                                     imageVector = Icons.Default.LocationOn,
                                     contentDescription = stringResource(id = R.string.destination_location_cd),
                                     tint = overlayContentColor,
-                                    modifier = Modifier.size(16.dp)
+                                    modifier = Modifier.size(MaterialTheme.spacing.md)
                                 )
-                                Spacer(modifier = Modifier.width(4.dp))
+                                Spacer(modifier = Modifier.width(MaterialTheme.spacing.xxs))
                                 Text(
                                     // Fallback text acting as subtitle category
                                     text = destination.interests.firstOrNull()?.interestName
@@ -298,7 +304,7 @@ private fun DestinationDetailContent(
                                 )
                             }
 
-                            Spacer(modifier = Modifier.height(4.dp))
+                            Spacer(modifier = Modifier.height(MaterialTheme.spacing.xxs))
 
                             Text(
                                 text = "${destination.name}, ${destination.cityName}",
@@ -309,30 +315,33 @@ private fun DestinationDetailContent(
                                 overflow = TextOverflow.Ellipsis
                             )
 
-                            Spacer(modifier = Modifier.height(8.dp))
+                            Spacer(modifier = Modifier.height(MaterialTheme.spacing.xs))
 
                             // Rating Pill Container
                             val displayedSummary = uiState.reviewSummary
                             Surface(
                                 shape = CircleShape,
                                 color = MaterialTheme.colorScheme.surface.copy(alpha = 0.2f),
-                                modifier = Modifier.padding(bottom = 8.dp)
+                                modifier = Modifier.padding(bottom = MaterialTheme.spacing.xs)
                             ) {
                                 Row(
-                                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 8.dp),
+                                    modifier = Modifier.padding(horizontal = MaterialTheme.spacing.xs, vertical = MaterialTheme.spacing.xs),
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
                                     Icon(
                                         imageVector = Icons.Default.Star,
                                         contentDescription = stringResource(id = R.string.destination_rating_cd),
-                                        tint = Color(0xFFFFD700),
-                                        modifier = Modifier.size(18.dp)
+                                        tint = MaterialTheme.colorScheme.star,
+                                        modifier = Modifier.size(MaterialTheme.spacing.lg - MaterialTheme.spacing.xxs)
                                     )
-                                    Spacer(modifier = Modifier.width(4.dp))
+                                    Spacer(modifier = Modifier.width(MaterialTheme.spacing.xxs))
                                     Text(
                                         text =
-                                        "${displayedSummary?.averageRating ?: destination.rating.toInt()} " +
-                                            "(${displayedSummary?.totalReviews ?: destination.totalReviews} reviews)",
+                                        stringResource(
+                                            id = R.string.destination_reviews_count,
+                                            "${displayedSummary?.averageRating ?: destination.rating.toInt()} " +
+                                                "(${displayedSummary?.totalReviews ?: destination.totalReviews})"
+                                        ),
                                         style = MaterialTheme.typography.labelLarge,
                                         color = overlayContentColor
                                     )
@@ -377,11 +386,11 @@ private fun DestinationDetailContent(
                     // Content Below Tabs
                     if (selectedTabIndex == 0) {
                         Column(
-                            modifier = Modifier.padding(16.dp)
+                            modifier = Modifier.padding(MaterialTheme.spacing.md)
                         ) {
                             AboutSection(
                                 description = destination.description,
-                                modifier = Modifier.padding(bottom = 24.dp)
+                                modifier = Modifier.padding(bottom = MaterialTheme.spacing.lg)
                             )
 
                             RelatedDestinationsStateHandling(
@@ -390,14 +399,14 @@ private fun DestinationDetailContent(
                                 onDestinationClick = { destinationId ->
                                     onAction(DestinationDetailAction.OnRelatedDestinationClicked(destinationId))
                                 },
-                                modifier = Modifier.padding(bottom = 16.dp)
+                                modifier = Modifier.padding(bottom = MaterialTheme.spacing.md)
                             )
                         }
                     } else {
                         ReviewSection(
                             uiState = uiState,
                             onAction = onAction,
-                            modifier = Modifier.padding(16.dp)
+                            modifier = Modifier.padding(MaterialTheme.spacing.md)
                         )
                     }
                 }
@@ -454,12 +463,12 @@ private fun RelatedDestinationsLoadingSection(modifier: Modifier = Modifier) {
             style = MaterialTheme.typography.titleLarge,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.onSurface,
-            modifier = Modifier.padding(horizontal = 16.dp)
+            modifier = Modifier.padding(horizontal = MaterialTheme.spacing.md)
         )
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(MaterialTheme.spacing.md))
         LazyRow(
-            contentPadding = PaddingValues(horizontal = 16.dp),
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
+            contentPadding = PaddingValues(horizontal = MaterialTheme.spacing.md),
+            horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.md)
         ) {
             items(items = listOf(1, 2, 3), key = { it }) {
                 RelatedDestinationLoadingCard()
@@ -472,11 +481,11 @@ private fun RelatedDestinationsLoadingSection(modifier: Modifier = Modifier) {
 private fun RelatedDestinationLoadingCard(modifier: Modifier = Modifier) {
     Card(
         modifier = modifier
-            .width(230.dp)
-            .height(340.dp),
-        shape = RoundedCornerShape(16.dp),
-        border = BorderStroke(4.dp, MaterialTheme.colorScheme.surfaceContainer),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+            .width(MaterialTheme.spacing.xxxl * 4 + MaterialTheme.spacing.xl + MaterialTheme.spacing.xs)
+            .height(MaterialTheme.spacing.xxxl * 7 + MaterialTheme.spacing.xxs),
+        shape = RoundedCornerShape(MaterialTheme.spacing.md),
+        border = BorderStroke(MaterialTheme.spacing.xxs, MaterialTheme.colorScheme.surfaceContainer),
+        elevation = CardDefaults.cardElevation(defaultElevation = MaterialTheme.elevation.sm)
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
             Box(
@@ -489,28 +498,28 @@ private fun RelatedDestinationLoadingCard(modifier: Modifier = Modifier) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .align(Alignment.BottomCenter)
-                    .padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+                    .padding(MaterialTheme.spacing.md),
+                verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.xs)
             ) {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth(0.6f)
-                        .height(28.dp)
-                        .clip(RoundedCornerShape(6.dp))
+                        .height(MaterialTheme.spacing.xlg)
+                        .clip(MaterialTheme.shapes.extraSmall)
                         .shimmerEffect()
                 )
                 Box(
                     modifier = Modifier
                         .fillMaxWidth(0.4f)
-                        .height(20.dp)
-                        .clip(RoundedCornerShape(6.dp))
+                        .height(MaterialTheme.spacing.lg - MaterialTheme.spacing.xxs)
+                        .clip(MaterialTheme.shapes.extraSmall)
                         .shimmerEffect()
                 )
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(MaterialTheme.spacing.xs))
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(48.dp)
+                        .height(MaterialTheme.spacing.xxxl)
                         .clip(CircleShape)
                         .shimmerEffect()
                 )
@@ -530,12 +539,12 @@ private fun RelatedDestinationsErrorSection(
             style = MaterialTheme.typography.titleLarge,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.onSurface,
-            modifier = Modifier.padding(horizontal = 16.dp)
+            modifier = Modifier.padding(horizontal = MaterialTheme.spacing.md)
         )
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 12.dp),
+                .padding(horizontal = MaterialTheme.spacing.md, vertical = MaterialTheme.spacing.sm),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
@@ -544,20 +553,20 @@ private fun RelatedDestinationsErrorSection(
                 style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold),
                 color = MaterialTheme.colorScheme.onSurface
             )
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(MaterialTheme.spacing.xs))
             Text(
                 text = stringResource(id = R.string.destination_tap_to_retry),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(MaterialTheme.spacing.xs))
             OutlinedButton(onClick = onRetry) {
                 Icon(
                     imageVector = Icons.Outlined.Refresh,
                     contentDescription = null,
-                    modifier = Modifier.size(16.dp)
+                    modifier = Modifier.size(MaterialTheme.spacing.md)
                 )
-                Spacer(modifier = Modifier.width(6.dp))
+                Spacer(modifier = Modifier.width(MaterialTheme.spacing.xxs + (MaterialTheme.spacing.xxs / 2)))
                 Text(text = stringResource(id = R.string.destination_retry))
             }
         }
@@ -578,7 +587,7 @@ private fun ReviewSection(
             onTextChanged = { onAction(DestinationDetailAction.OnReviewTextChanged(it)) },
             onRatingChanged = { onAction(DestinationDetailAction.OnReviewRatingChanged(it)) },
             onSubmitClicked = { onAction(DestinationDetailAction.OnSubmitReviewClicked) },
-            modifier = Modifier.padding(bottom = 24.dp)
+            modifier = Modifier.padding(bottom = MaterialTheme.spacing.lg)
         )
 
         when (val state = uiState.reviewsState) {
@@ -586,7 +595,7 @@ private fun ReviewSection(
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(200.dp),
+                        .height(MaterialTheme.spacing.xxxl * 4 + MaterialTheme.spacing.xs),
                     contentAlignment = Alignment.Center
                 ) {
                     CircularProgressIndicator()
@@ -598,11 +607,11 @@ private fun ReviewSection(
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(200.dp),
+                            .height(MaterialTheme.spacing.xxxl * 4 + MaterialTheme.spacing.xs),
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = "No reviews yet. Be the first to review!",
+                            text = stringResource(id = R.string.destination_no_reviews),
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -616,7 +625,7 @@ private fun ReviewSection(
                             } else {
                                 null
                             },
-                            modifier = Modifier.padding(bottom = 16.dp)
+                            modifier = Modifier.padding(bottom = MaterialTheme.spacing.md)
                         )
                     }
                 }
@@ -626,7 +635,7 @@ private fun ReviewSection(
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(vertical = 32.dp),
+                        .padding(vertical = MaterialTheme.spacing.xl),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
@@ -634,9 +643,11 @@ private fun ReviewSection(
                         color = MaterialTheme.colorScheme.error,
                         style = MaterialTheme.typography.bodyMedium
                     )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    OutlinedButton(onClick = { /* ViewModel already triggers load on init, maybe add retry action? */ }) {
-                        Text("Retry")
+                    Spacer(modifier = Modifier.height(MaterialTheme.spacing.xs))
+                    OutlinedButton(onClick = {
+                        // ViewModel already triggers load on init, maybe add retry action?
+                    }) {
+                        Text(stringResource(id = R.string.destination_retry))
                     }
                 }
             }
@@ -658,29 +669,29 @@ private fun ReviewSubmissionCard(
 ) {
     Card(
         modifier = modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(16.dp),
+        shape = RoundedCornerShape(MaterialTheme.spacing.md),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
         )
     ) {
         Column(
-            modifier = Modifier.padding(16.dp),
+            modifier = Modifier.padding(MaterialTheme.spacing.md),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             InteractiveRatingBar(
                 rating = rating,
                 onRatingChanged = onRatingChanged,
-                modifier = Modifier.padding(bottom = 16.dp)
+                modifier = Modifier.padding(bottom = MaterialTheme.spacing.md)
             )
 
             OutlinedTextField(
                 value = text,
                 onValueChange = onTextChanged,
-                placeholder = { Text("Write your review...") },
+                placeholder = { Text(stringResource(id = R.string.destination_reviews_placeholder)) },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(100.dp),
-                shape = RoundedCornerShape(12.dp),
+                    .height(MaterialTheme.spacing.xxxl * 2 + MaterialTheme.spacing.xxs),
+                shape = MaterialTheme.shapes.medium,
                 colors = TextFieldDefaults.colors(
                     focusedContainerColor = Color.Transparent,
                     unfocusedContainerColor = Color.Transparent,
@@ -689,22 +700,22 @@ private fun ReviewSubmissionCard(
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done)
             )
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(MaterialTheme.spacing.md))
 
             Button(
                 onClick = onSubmitClicked,
                 modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(12.dp),
+                shape = RoundedCornerShape(MaterialTheme.spacing.sm),
                 enabled = !isSubmitting && text.isNotBlank() && rating > 0
             ) {
                 if (isSubmitting) {
                     CircularProgressIndicator(
-                        modifier = Modifier.size(24.dp),
+                        modifier = Modifier.size(MaterialTheme.spacing.lg),
                         color = MaterialTheme.colorScheme.onPrimary,
-                        strokeWidth = 2.dp
+                        strokeWidth = MaterialTheme.elevation.sm
                     )
                 } else {
-                    Text("Submit Review")
+                    Text(stringResource(id = com.example.designsystem.R.string.next))
                 }
             }
         }
@@ -720,16 +731,16 @@ private fun InteractiveRatingBar(
 ) {
     Row(
         modifier = modifier,
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
+        horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.xs)
     ) {
         repeat(starCount) { index ->
             val starRating = index + 1
             Icon(
                 imageVector = if (rating >= starRating) Icons.Filled.Star else Icons.Outlined.Star,
                 contentDescription = null,
-                tint = if (rating >= starRating) Color(0xFFFFD700) else MaterialTheme.colorScheme.outline,
+                tint = if (rating >= starRating) MaterialTheme.colorScheme.star else MaterialTheme.colorScheme.outline,
                 modifier = Modifier
-                    .size(32.dp)
+                    .size(MaterialTheme.spacing.xl)
                     .clickable { onRatingChanged(starRating) }
             )
         }
@@ -744,12 +755,12 @@ private fun ReviewItem(
 ) {
     Card(
         modifier = modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(16.dp),
+        shape = RoundedCornerShape(MaterialTheme.spacing.md),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f)
         )
     ) {
-        Column(modifier = Modifier.padding(16.dp)) {
+        Column(modifier = Modifier.padding(MaterialTheme.spacing.md)) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -765,11 +776,11 @@ private fun ReviewItem(
                             .build(),
                         contentDescription = null,
                         modifier = Modifier
-                            .size(40.dp)
+                            .size(MaterialTheme.spacing.xxxl - MaterialTheme.spacing.xs)
                             .clip(CircleShape),
                         contentScale = ContentScale.Crop
                     )
-                    Spacer(modifier = Modifier.width(12.dp))
+                    Spacer(modifier = Modifier.width(MaterialTheme.spacing.sm))
                     Column {
                         Text(
                             text = review.authorName,
@@ -797,31 +808,37 @@ private fun ReviewItem(
                 }
             }
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(MaterialTheme.spacing.xs))
 
-            Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+            Row(horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.xxs)) {
                 repeat(5) { index ->
                     Icon(
                         imageVector = Icons.Filled.Star,
                         contentDescription = null,
-                        tint = if (index < review.rating) Color(0xFFFFD700) else MaterialTheme.colorScheme.outline.copy(alpha = 0.3f),
-                        modifier = Modifier.size(16.dp)
+                        tint = if (index < review.rating) {
+                            MaterialTheme.colorScheme.star
+                        } else {
+                            MaterialTheme.colorScheme.outline.copy(
+                                alpha = 0.3f
+                            )
+                        },
+                        modifier = Modifier.size(MaterialTheme.spacing.md)
                     )
                 }
             }
 
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(MaterialTheme.spacing.sm))
 
             Text(
                 text = review.content,
                 style = MaterialTheme.typography.bodyMedium
             )
 
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(MaterialTheme.spacing.sm))
 
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
-                    text = "Helpful (${review.helpfulCount})",
+                    text = stringResource(id = R.string.destination_helpful_count, review.helpfulCount),
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.primary,
                     fontWeight = FontWeight.SemiBold
@@ -907,16 +924,16 @@ private fun androidx.compose.foundation.layout.BoxScope.PagerLeftArrow(
             },
             modifier = Modifier
                 .align(Alignment.CenterStart)
-                .padding(start = 8.dp)
+                .padding(start = MaterialTheme.spacing.xs)
                 .clip(CircleShape)
                 .background(Color.Black.copy(alpha = 0.35f))
-                .size(36.dp)
+                .size(MaterialTheme.spacing.xl + MaterialTheme.spacing.xxs)
         ) {
             Icon(
-                imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
+                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                 contentDescription = stringResource(R.string.pager_previous_cd),
                 tint = Color.White,
-                modifier = Modifier.size(22.dp)
+                modifier = Modifier.size(MaterialTheme.spacing.lg - MaterialTheme.spacing.xxs / 2)
             )
         }
     }
@@ -938,17 +955,17 @@ private fun androidx.compose.foundation.layout.BoxScope.PagerRightArrow(
             },
             modifier = Modifier
                 .align(Alignment.CenterEnd)
-                .padding(end = 8.dp)
+                .padding(end = MaterialTheme.spacing.xs)
                 .clip(CircleShape)
                 .background(Color.Black.copy(alpha = 0.35f))
-                .size(36.dp)
+                .size(MaterialTheme.spacing.xl + MaterialTheme.spacing.xxs)
 
         ) {
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                 contentDescription = stringResource(R.string.pager_next_cd),
                 tint = Color.White,
-                modifier = Modifier.size(22.dp)
+                modifier = Modifier.size(MaterialTheme.spacing.lg - MaterialTheme.spacing.xxs / 2)
             )
         }
     }
@@ -961,28 +978,28 @@ private fun androidx.compose.foundation.layout.BoxScope.PagerPillIndicator(
 ) {
     Row(
         modifier = Modifier
-            .height(24.dp)
+            .height(MaterialTheme.spacing.lg)
             .fillMaxWidth()
             .align(Alignment.BottomCenter)
-            .padding(bottom = 12.dp),
+            .padding(bottom = MaterialTheme.spacing.sm),
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically
     ) {
         repeat(imageUrls.size) { iteration ->
             val isSelected = pagerState.currentPage == iteration
             val width by androidx.compose.animation.core.animateDpAsState(
-                targetValue = if (isSelected) 24.dp else 8.dp,
+                targetValue = if (isSelected) MaterialTheme.spacing.lg else MaterialTheme.spacing.xs,
                 label = "indicator_width"
             )
             Box(
                 modifier = Modifier
-                    .padding(horizontal = 4.dp)
+                    .padding(horizontal = MaterialTheme.spacing.xxs)
                     .clip(CircleShape)
                     .background(
                         if (isSelected) Color.White else Color.White.copy(alpha = 0.5f)
                     )
                     .width(width)
-                    .height(8.dp)
+                    .height(MaterialTheme.spacing.xs)
             )
         }
     }

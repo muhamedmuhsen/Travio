@@ -23,9 +23,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import com.dev.feature.community.R
 import com.example.designsystem.theme.TravioTheme
+import com.example.designsystem.theme.elevation
 import com.example.designsystem.theme.spacing
 
 @Composable
@@ -38,7 +38,7 @@ fun CommentInputBar(
     Surface(
         modifier = modifier.fillMaxWidth(),
         color = MaterialTheme.colorScheme.surface,
-        shadowElevation = 8.dp
+        shadowElevation = MaterialTheme.elevation.lg
     ) {
         Row(
             modifier = Modifier
@@ -62,7 +62,7 @@ fun CommentInputBar(
                 modifier = Modifier
                     .weight(1f)
                     .padding(end = MaterialTheme.spacing.sm)
-                    .heightIn(max = 48.dp),
+                    .heightIn(max = MaterialTheme.spacing.xxxl),
                 shape = MaterialTheme.shapes.extraLarge,
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Send),
@@ -78,14 +78,14 @@ fun CommentInputBar(
             IconButton(
                 onClick = onSendClicked,
                 modifier = Modifier
-                    .size(44.dp)
+                    .size(MaterialTheme.spacing.xxxl - MaterialTheme.spacing.xxs)
                     .clip(CircleShape)
             ) {
                 Icon(
                     painter = painterResource(R.drawable.send_icon),
                     contentDescription = stringResource(R.string.post_detail_send_cd),
                     tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.size(24.dp)
+                    modifier = Modifier.size(MaterialTheme.spacing.lg)
                 )
             }
         }

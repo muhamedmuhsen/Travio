@@ -14,17 +14,18 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.dev.feature.community.R
 import com.example.designsystem.theme.TravioTheme
+import com.example.designsystem.theme.spacing
 
 @Composable
 fun PostDetailRatingRow(
     rating: Float,
     modifier: Modifier = Modifier,
-    starSize: Dp = 20.dp
+    starSize: Dp = 18.dp
 ) {
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(4.dp)
+        horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.xxs)
     ) {
         repeat(5) { index ->
             val threshold = index + 1

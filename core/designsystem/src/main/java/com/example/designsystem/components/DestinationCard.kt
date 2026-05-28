@@ -41,18 +41,16 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.designsystem.R
 import com.example.designsystem.theme.TravioTheme
 import com.example.designsystem.theme.elevation
+import com.example.designsystem.theme.favorite
 import com.example.designsystem.theme.spacing
+import com.example.designsystem.theme.star
 
-// Single source of truth for the card dimensions
-private val DESTINATION_CARD_WIDTH: Dp = 240.dp
-private val DESTINATION_CARD_HEIGHT: Dp = 340.dp
+// Constants were moved into composables to use MaterialTheme tokens
 
 @Composable
 fun DestinationCard(
@@ -68,12 +66,14 @@ fun DestinationCard(
     onFavoriteClicked: () -> Unit,
     onCardClicked: () -> Unit = {}
 ) {
+    val cardWidth = MaterialTheme.spacing.xxxl * 5
+    val cardHeight = MaterialTheme.spacing.xxxl * 7 + MaterialTheme.spacing.xxs
     val overlayContentColor = Color.White
 
     Card(
         modifier = modifier
-            .width(DESTINATION_CARD_WIDTH)
-            .height(DESTINATION_CARD_HEIGHT)
+            .width(cardWidth)
+            .height(cardHeight)
             .clickable(onClick = onCardClicked),
         shape = MaterialTheme.shapes.extraLarge,
         border = BorderStroke(MaterialTheme.spacing.xxs / 2, MaterialTheme.colorScheme.surfaceContainer),
@@ -179,12 +179,14 @@ fun DestinationCard(
 
 @Composable
 fun LoadingDestinationCard(modifier: Modifier = Modifier) {
+    val cardWidth = MaterialTheme.spacing.xxxl * 5
+    val cardHeight = MaterialTheme.spacing.xxxl * 7 + MaterialTheme.spacing.xxs
     Card(
         modifier = modifier
-            .width(DESTINATION_CARD_WIDTH)
-            .height(DESTINATION_CARD_HEIGHT),
+            .width(cardWidth)
+            .height(cardHeight),
         shape = MaterialTheme.shapes.extraLarge,
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
+        border = BorderStroke(MaterialTheme.elevation.xs, MaterialTheme.colorScheme.outlineVariant),
         elevation = CardDefaults.cardElevation(defaultElevation = MaterialTheme.elevation.xs)
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
@@ -261,7 +263,7 @@ private fun FavoriteButton(
                 } else {
                     stringResource(R.string.add_to_favorites)
                 },
-                tint = if (isFavorite) Color(0xFFCB2323) else Color.Gray,
+                tint = if (isFavorite) MaterialTheme.colorScheme.favorite else Color.Gray,
                 modifier = Modifier.size(MaterialTheme.spacing.lg - MaterialTheme.spacing.xxs)
             )
         }
@@ -281,7 +283,7 @@ private fun RatingBadge(
         Icon(
             imageVector = Icons.Filled.Star,
             contentDescription = null,
-            tint = Color(0xFFFFD700),
+            tint = MaterialTheme.colorScheme.star,
             modifier = Modifier.size(MaterialTheme.spacing.lg - MaterialTheme.spacing.xxs)
         )
         Text(

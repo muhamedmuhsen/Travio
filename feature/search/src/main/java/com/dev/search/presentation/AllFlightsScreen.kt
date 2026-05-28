@@ -68,7 +68,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.dev.search.presentation.flights.FlightSearchAction
@@ -166,7 +165,7 @@ fun AllFlightsScreenRoute(
             hostState = snackbarHostState,
             modifier = Modifier
                 .align(Alignment.TopCenter)
-                .padding(top = 16.dp)
+                .padding(top = MaterialTheme.spacing.md)
         )
     }
 }
@@ -314,7 +313,7 @@ fun AllFlightsScreen(
 @Composable
 private fun FlightResultCardPreview() {
     MaterialTheme {
-        Box(modifier = Modifier.padding(16.dp)) {
+        Box(modifier = Modifier.padding(MaterialTheme.spacing.md)) {
             FlightResultCard(
                 offer = FlightOffer(
                     offerId = "1",
@@ -788,7 +787,7 @@ private fun FlightResultCard(
                     Box(contentAlignment = Alignment.Center) {
                         Box(
                             modifier = Modifier
-                                .width(1.dp)
+                                .width(MaterialTheme.elevation.xs)
                                 .height(MaterialTheme.spacing.xxxl + MaterialTheme.spacing.md)
                                 .background(MaterialTheme.colorScheme.outlineVariant)
                         )

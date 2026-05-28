@@ -44,7 +44,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.designsystem.components.AppSnackBar
@@ -117,7 +116,7 @@ fun BookingScreen(
         onDismissRequest = onBack,
         sheetState = sheetState,
         dragHandle = { BottomSheetDragHandle() },
-        shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp),
+        shape = RoundedCornerShape(topStart = MaterialTheme.spacing.lg, topEnd = MaterialTheme.spacing.lg),
         containerColor = MaterialTheme.colorScheme.surface,
         scrimColor = Color.Black.copy(alpha = 0.4f),
         modifier = modifier
@@ -149,7 +148,7 @@ fun BookingScreen(
                 hostState = snackbarHostState,
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
-                    .padding(bottom = 16.dp)
+                    .padding(bottom = MaterialTheme.spacing.md)
             )
         }
     }
@@ -270,7 +269,7 @@ private fun BookingBottomBar(
                 .navigationBarsPadding()
         ) {
             HorizontalDivider(
-                thickness = 0.5.dp,
+                thickness = MaterialTheme.elevation.xs / 2,
                 color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f)
             )
             Column(

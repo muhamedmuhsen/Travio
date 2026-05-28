@@ -57,7 +57,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
@@ -180,7 +179,7 @@ private fun FlightDetailsBottomBar(
                 .navigationBarsPadding()
         ) {
             HorizontalDivider(
-                thickness = 0.5.dp,
+                thickness = MaterialTheme.elevation.xs,
                 color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f)
             )
             Row(
@@ -208,8 +207,8 @@ private fun FlightDetailsBottomBar(
                 com.example.designsystem.components.AppButton(
                     onClick = onBookNow,
                     modifier = Modifier
-                        .height(56.dp)
-                        .width(160.dp),
+                        .height(MaterialTheme.spacing.xxxl + MaterialTheme.spacing.xs)
+                        .width(MaterialTheme.spacing.xxxl * 3 + MaterialTheme.spacing.lg),
                     text = stringResource(id = R.string.all_flights_book_now),
                     shape = MaterialTheme.shapes.medium
                 )
@@ -281,10 +280,10 @@ private fun AirlineHeaderCard(summary: FlightDetailsSummaryUi) {
         ) {
             Box(
                 modifier = Modifier
-                    .size(56.dp)
+                    .size(MaterialTheme.spacing.xxxl + MaterialTheme.spacing.xs)
                     .clip(CircleShape)
                     // Light lavender/grey
-                    .background(Color(0xFFE8EAF6)),
+                    .background(MaterialTheme.colorScheme.surfaceVariant),
                 contentAlignment = Alignment.Center
             ) {
                 if (summary.airlineLogoUrl != null) {
@@ -381,19 +380,20 @@ private fun FlightSummaryCard(data: FlightDetailsUiModel) {
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     Spacer(modifier = Modifier.height(MaterialTheme.spacing.xs))
+                    val dashLengthDp = MaterialTheme.spacing.xxs
+                    val strokeWidthDp = MaterialTheme.elevation.xs
                     Box(contentAlignment = Alignment.Center) {
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                             modifier = Modifier.drawBehind {
-                                val dashLength = 4.dp.toPx()
-                                val gapLength = 4.dp.toPx()
+                                val dashLengthPx = dashLengthDp.toPx()
                                 drawLine(
                                     color = Color.Gray.copy(alpha = 0.5f),
                                     start = Offset(0f, size.height / 2),
                                     end = Offset(size.width, size.height / 2),
-                                    strokeWidth = 1.dp.toPx(),
+                                    strokeWidth = strokeWidthDp.toPx(),
                                     pathEffect = PathEffect.dashPathEffect(
-                                        floatArrayOf(dashLength, gapLength),
+                                        floatArrayOf(dashLengthPx, dashLengthPx),
                                         0f
                                     )
                                 )
@@ -401,28 +401,28 @@ private fun FlightSummaryCard(data: FlightDetailsUiModel) {
                         ) {
                             Box(
                                 modifier = Modifier
-                                    .size(6.dp)
-                                    .background(Color(0xFF2E7D32), CircleShape)
+                                    .size(MaterialTheme.spacing.xs - MaterialTheme.spacing.xxs / 2)
+                                    .background(MaterialTheme.colorScheme.success, CircleShape)
                             )
                             Spacer(modifier = Modifier.width(MaterialTheme.spacing.xxxl + MaterialTheme.spacing.md))
                             Box(
                                 modifier = Modifier
-                                    .size(6.dp)
-                                    .background(Color(0xFFD32F2F), CircleShape)
+                                    .size(MaterialTheme.spacing.xs - MaterialTheme.spacing.xxs / 2)
+                                    .background(MaterialTheme.colorScheme.error, CircleShape)
                             )
                         }
                         Box(
                             modifier = Modifier
-                                .size(28.dp)
-                                .background(Color(0xFF006064), CircleShape)
-                                .border(2.dp, Color.White, CircleShape),
+                                .size(MaterialTheme.spacing.xlg)
+                                .background(MaterialTheme.colorScheme.primary, CircleShape)
+                                .border(MaterialTheme.elevation.sm, Color.White, CircleShape),
                             contentAlignment = Alignment.Center
                         ) {
                             Icon(
                                 painter = painterResource(R.drawable.plane_icon),
                                 contentDescription = null,
                                 tint = Color.White,
-                                modifier = Modifier.size(16.dp)
+                                modifier = Modifier.size(MaterialTheme.spacing.md)
                             )
                         }
                     }
@@ -433,7 +433,7 @@ private fun FlightSummaryCard(data: FlightDetailsUiModel) {
                                 color = MaterialTheme.colorScheme.error.copy(alpha = 0.12f),
                                 shape = CircleShape
                             )
-                            .padding(horizontal = 12.dp, vertical = 4.dp)
+                            .padding(horizontal = MaterialTheme.spacing.sm, vertical = MaterialTheme.spacing.xxs)
                     ) {
                         Text(
                             text = data.summary.stopsLabel.asString(),
@@ -563,7 +563,7 @@ private fun FeatureIcon(
     title: String,
     subtitle: String
 ) {
-    Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(4.dp)) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.xxs)) {
         Icon(
             painter = icon,
             contentDescription = null,
@@ -670,7 +670,7 @@ private fun PriceRow(
         Box(
             modifier = Modifier
                 .weight(1f)
-                .height(1.dp)
+                .height(MaterialTheme.elevation.xs)
                 .drawWithContent {
                     val pathEffect = PathEffect.dashPathEffect(floatArrayOf(5f, 5f), 0f)
                     drawLine(
@@ -760,7 +760,7 @@ private fun FlightInformationCard(
                             )
                         )
                     )
-                    .border(1.dp, MaterialTheme.colorScheme.outlineVariant, MaterialTheme.shapes.small)
+                    .border(MaterialTheme.elevation.xs, MaterialTheme.colorScheme.outlineVariant, MaterialTheme.shapes.small)
                     .padding(horizontal = MaterialTheme.spacing.sm),
                 contentAlignment = Alignment.CenterStart
             ) {
@@ -841,7 +841,7 @@ private fun FlightLabelWithPill(
         Box(
             modifier = Modifier
                 .background(color = pillColor, shape = MaterialTheme.shapes.medium)
-                .padding(horizontal = MaterialTheme.spacing.sm, vertical = 4.dp)
+                .padding(horizontal = MaterialTheme.spacing.sm, vertical = MaterialTheme.spacing.xxs)
         ) {
             Text(
                 text = value,
@@ -914,15 +914,15 @@ private fun TimelineItem(
             }
             Box(
                 modifier = Modifier
-                    .size(16.dp)
-                    .border(width = 1.5.dp, color = color, shape = CircleShape)
-                    .padding(3.dp)
+                    .size(MaterialTheme.spacing.md)
+                    .border(width = MaterialTheme.elevation.xs + MaterialTheme.elevation.xs / 2, color = color, shape = CircleShape)
+                    .padding(MaterialTheme.spacing.xxs / 2 + (MaterialTheme.spacing.xxs / 4))
                     .background(color = color, shape = CircleShape)
             )
             if (!isLast) {
                 Box(
                     modifier = Modifier
-                        .width(2.dp)
+                        .width(MaterialTheme.elevation.sm)
                         .fillMaxHeight()
                         .background(color.copy(alpha = 0.4f))
                 )
@@ -951,7 +951,7 @@ private fun TimelineItem(
                     Spacer(modifier = Modifier.height(MaterialTheme.spacing.xs))
                     Box(
                         modifier = Modifier
-                            .border(1.dp, MaterialTheme.colorScheme.outlineVariant, MaterialTheme.shapes.small)
+                            .border(MaterialTheme.elevation.xs, MaterialTheme.colorScheme.outlineVariant, MaterialTheme.shapes.small)
                             .padding(horizontal = MaterialTheme.spacing.xs, vertical = MaterialTheme.spacing.xxs)
                     ) {
                         Text(
@@ -969,14 +969,14 @@ private fun TimelineItem(
                             AsyncImage(
                                 model = item.airlineLogoUrl,
                                 contentDescription = null,
-                                modifier = Modifier.size(16.dp).clip(CircleShape)
+                                modifier = Modifier.size(MaterialTheme.spacing.md).clip(CircleShape)
                             )
                         } else {
                             Icon(
                                 imageVector = Icons.Outlined.ConfirmationNumber,
                                 contentDescription = null,
                                 tint = MaterialTheme.colorScheme.primary,
-                                modifier = Modifier.size(16.dp)
+                                modifier = Modifier.size(MaterialTheme.spacing.md)
                             )
                         }
                         Spacer(modifier = Modifier.width(MaterialTheme.spacing.xs))
@@ -1011,8 +1011,11 @@ private fun TimelineItem(
                     Box(
                         modifier = Modifier
                             .background(MaterialTheme.colorScheme.warningContainer, CircleShape)
-                            .border(1.dp, MaterialTheme.colorScheme.warning, CircleShape)
-                            .padding(horizontal = MaterialTheme.spacing.md, vertical = 6.dp)
+                            .border(MaterialTheme.elevation.xs, MaterialTheme.colorScheme.warning, CircleShape)
+                            .padding(
+                                horizontal = MaterialTheme.spacing.md,
+                                vertical = MaterialTheme.spacing.xxs + (MaterialTheme.spacing.xxs / 2)
+                            )
                     ) {
                         Text(
                             text = stringResource(R.string.flight_details_wait, item.duration),
@@ -1044,7 +1047,7 @@ private fun TimelineItem(
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Box(
                             modifier = Modifier
-                                .border(1.dp, MaterialTheme.colorScheme.outlineVariant, MaterialTheme.shapes.small)
+                                .border(MaterialTheme.elevation.xs, MaterialTheme.colorScheme.outlineVariant, MaterialTheme.shapes.small)
                                 .padding(horizontal = MaterialTheme.spacing.xs, vertical = MaterialTheme.spacing.xxs)
                         ) {
                             Text(
@@ -1058,7 +1061,7 @@ private fun TimelineItem(
                         Box(
                             modifier = Modifier
                                 .background(MaterialTheme.colorScheme.error, MaterialTheme.shapes.extraSmall)
-                                .padding(horizontal = 4.dp, vertical = 2.dp)
+                                .padding(horizontal = MaterialTheme.spacing.xxs, vertical = MaterialTheme.spacing.xxs / 2)
                         ) {
                             Text(
                                 text = "+1",
@@ -1139,7 +1142,7 @@ private fun BaggageCancelRow(data: FlightDetailsUiModel) {
             } else {
                 Spacer(modifier = Modifier.height(MaterialTheme.spacing.xxs))
                 Text(
-                    text = "No refund available for this offer.",
+                    text = stringResource(id = R.string.flight_details_no_refund),
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -1183,7 +1186,7 @@ private fun BaggageItem(
             painter = painterResource(R.drawable.refund_icon),
             contentDescription = null,
             tint = MaterialTheme.colorScheme.secondaryContainer,
-            modifier = Modifier.size(14.dp)
+            modifier = Modifier.size(MaterialTheme.spacing.md - MaterialTheme.spacing.xxs / 2)
         )
         Spacer(modifier = Modifier.width(MaterialTheme.spacing.xxs))
         Column {
@@ -1218,7 +1221,7 @@ private fun LayeredCard(
         Surface(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(start = 4.dp),
+                .padding(start = MaterialTheme.spacing.xxs),
             color = MaterialTheme.colorScheme.surface,
             shape = MaterialTheme.shapes.large,
             shadowElevation = MaterialTheme.elevation.xs

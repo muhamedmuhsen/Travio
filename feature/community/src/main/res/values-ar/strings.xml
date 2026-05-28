@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Community Top Bar -->
+    <string name="community_title">المجتمع</string>
+    <string name="community_subtitle">سافر &#x2022; استكشف &#x2022; شارك</string>
+    <string name="community_share_cd">مشاركة</string>
+    <string name="community_empty_state">لا توجد منشورات بعد. كن أول من يشارك رحلته!</string>
+
+    <!-- Community Post Card -->
+    <string name="community_like_cd">إعجاب</string>
+    <string name="community_comment_cd">تعليق</string>
+
+    <!-- Post Detail Screen -->
+    <string name="post_detail_bookmark_cd">حفظ المنشور</string>
+    <string name="post_detail_close_cd">إغلاق</string>
+    <string name="post_detail_delete_cd">حذف المنشور</string>
+    <string name="post_detail_delete_confirm_title">حذف المنشور؟</string>
+    <string name="post_detail_delete_confirm_body">لا يمكن التراجع عن هذا الإجراء.</string>
+    <string name="post_detail_delete_confirm_button">حذف</string>
+    <string name="post_detail_delete_cancel_button">إلغاء</string>
+    <string name="post_detail_delete_error">فشل حذف المنشور. يرجى المحاولة مرة أخرى.</string>
+    <string name="post_detail_comments_header">التعليقات</string>
+    <string name="post_detail_no_comments">لا توجد تعليقات بعد. كن أول من يعلق!</string>
+    <string name="post_detail_comment_hint">أضف تعليقاً…</string>
+    <string name="post_detail_send_cd">إرسال التعليق</string>
+    <string name="post_detail_not_found">المنشور غير موجود.</string>
+
+    <!-- Image Pager -->
+    <string name="image_n_of_m">صورة %1$d من %2$d</string>
+    <string name="pager_previous_cd">الصورة السابقة</string>
+    <string name="pager_next_cd">الصورة التالية</string>
+
+    <!-- Comment author (current user) -->
+    <string name="comment_author_you">أنت</string>
+
+    <!-- Share Moment Screen -->
+    <string name="share_moment_title">شارك لحظة</string>
+    <string name="share_moment_subtitle">سجل وشارك مغامرتك</string>
+    <string name="share_moment_close_cd">إغلاق</string>
+    <string name="share_moment_add_photo_title">إضافة صورة</string>
+    <string name="share_moment_add_photo_subtitle">اضغط لرفع صورة سفرك</string>
+    <string name="share_moment_add_photo_cd">إضافة صورة</string>
+    <string name="share_moment_selected_photo_cd">الصورة المختارة</string>
+    <string name="share_moment_remove_photo_cd">إزالة الصورة</string>
+    <string name="share_moment_location_label">الموقع</string>
+    <string name="share_moment_location_hint">أين هذا المكان؟</string>
+    <string name="share_moment_description_label">الوصف</string>
+    <string name="share_moment_description_hint">أخبرنا عن تجربتك…</string>
+    <string name="share_moment_post_button">انشر الآن</string>
+    <string name="share_moment_error_photo_required">يرجى إضافة صورة قبل النشر.</string>
+    <string name="share_moment_error_location_required">يرجى إدخال الموقع قبل النشر.</string>
+
+    <!-- Location Picker Screen -->
+    <string name="location_picker_title">اختر الموقع</string>
+    <string name="location_picker_back_cd">رجوع</string>
+    <string name="location_picker_confirm_cd">تأكيد الموقع</string>
+    <string name="location_picker_pin_title">الموقع المختار</string>
+
+    <!-- Relative time -->
+    <string name="relative_time_just_now">الآن</string>
+    <plurals name="relative_time_minutes_ago">
+        <item quantity="zero">منذ %d دقيقة</item>
+        <item quantity="one">منذ دقيقة</item>
+        <item quantity="two">منذ دقيقتين</item>
+        <item quantity="few">منذ %d دقائق</item>
+        <item quantity="many">منذ %d دقيقة</item>
+        <item quantity="other">منذ %d دقيقة</item>
+    </plurals>
+    <plurals name="relative_time_hours_ago">
+        <item quantity="zero">منذ %d ساعة</item>
+        <item quantity="one">منذ ساعة</item>
+        <item quantity="two">منذ ساعتين</item>
+        <item quantity="few">منذ %d ساعات</item>
+        <item quantity="many">منذ %d ساعة</item>
+        <item quantity="other">منذ %d ساعة</item>
+    </plurals>
+    <plurals name="relative_time_days_ago">
+        <item quantity="zero">منذ %d يوم</item>
+        <item quantity="one">منذ يوم</item>
+        <item quantity="two">منذ يومين</item>
+        <item quantity="few">منذ %d أيام</item>
+        <item quantity="many">منذ %d يوماً</item>
+        <item quantity="other">منذ %d يوم</item>
+    </plurals>
+    <plurals name="relative_time_months_ago">
+        <item quantity="zero">منذ %d شهر</item>
+        <item quantity="one">منذ شهر</item>
+        <item quantity="two">منذ شهرين</item>
+        <item quantity="few">منذ %d أشهر</item>
+        <item quantity="many">منذ %d شهراً</item>
+        <item quantity="other">منذ %d شهر</item>
+    </plurals>
+    <plurals name="relative_time_years_ago">
+        <item quantity="zero">منذ %d سنة</item>
+        <item quantity="one">منذ سنة</item>
+        <item quantity="two">منذ سنتين</item>
+        <item quantity="few">منذ %d سنوات</item>
+        <item quantity="many">منذ %d سنة</item>
+        <item quantity="other">منذ %d سنة</item>
+    </plurals>
+</resources>

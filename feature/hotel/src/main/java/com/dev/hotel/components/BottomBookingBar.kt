@@ -20,8 +20,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.designsystem.theme.elevation
+import com.example.designsystem.theme.spacing
 import com.example.feature.hotel.R
 
 @Composable
@@ -33,20 +34,20 @@ fun BottomBookingBar(
     Surface(
         modifier = modifier
             .fillMaxWidth(),
-        shadowElevation = 8.dp,
+        shadowElevation = MaterialTheme.elevation.lg,
         color = MaterialTheme.colorScheme.surface
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .navigationBarsPadding()
-                .padding(horizontal = 16.dp, vertical = 12.dp),
+                .padding(horizontal = MaterialTheme.spacing.md, vertical = MaterialTheme.spacing.sm),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
             Column {
                 Text(
-                    text = "Starting from",
+                    text = stringResource(R.string.hotel_details_starting_from),
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -57,12 +58,12 @@ fun BottomBookingBar(
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.primary
                     )
-                    Spacer(modifier = Modifier.width(4.dp))
+                    Spacer(modifier = Modifier.width(MaterialTheme.spacing.xxs))
                     Text(
                         text = stringResource(R.string.hotel_details_per_night),
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.padding(bottom = 2.dp)
+                        modifier = Modifier.padding(bottom = MaterialTheme.spacing.xxs / 2)
                     )
                 }
             }
@@ -70,9 +71,9 @@ fun BottomBookingBar(
             Button(
                 onClick = onBookNowClick,
                 modifier = Modifier
-                    .width(160.dp)
-                    .height(48.dp),
-                shape = RoundedCornerShape(12.dp),
+                    .width(MaterialTheme.spacing.xxxl * 3 + MaterialTheme.spacing.lg)
+                    .height(MaterialTheme.spacing.xxxl),
+                shape = RoundedCornerShape(MaterialTheme.spacing.sm),
                 colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
             ) {
                 Text(

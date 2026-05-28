@@ -25,7 +25,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
+import com.example.designsystem.theme.spacing
 import com.example.domain.model.hotel.HotelDetails
 import com.example.feature.hotel.R
 
@@ -45,7 +45,7 @@ fun ContactSection(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 16.dp)
+            .padding(horizontal = MaterialTheme.spacing.md, vertical = MaterialTheme.spacing.md)
     ) {
         Text(
             text = stringResource(R.string.hotel_details_contact),
@@ -54,7 +54,7 @@ fun ContactSection(
             color = MaterialTheme.colorScheme.onSurface
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(MaterialTheme.spacing.md))
 
         if (hasPhones) {
             hotelDetails.phones.forEach { phone ->
@@ -109,16 +109,16 @@ private fun ContactItem(
         modifier = Modifier
             .fillMaxWidth()
             .clickable(onClick = onClick)
-            .padding(vertical = 12.dp),
+            .padding(vertical = MaterialTheme.spacing.sm),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(
             imageVector = icon,
             contentDescription = null,
             tint = MaterialTheme.colorScheme.primary,
-            modifier = Modifier.size(24.dp)
+            modifier = Modifier.size(MaterialTheme.spacing.lg)
         )
-        Spacer(modifier = Modifier.width(16.dp))
+        Spacer(modifier = Modifier.width(MaterialTheme.spacing.md))
         Text(
             text = text,
             style = MaterialTheme.typography.bodyLarge,

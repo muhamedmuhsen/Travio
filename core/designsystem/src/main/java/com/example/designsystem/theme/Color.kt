@@ -291,3 +291,15 @@ val androidx.compose.material3.ColorScheme.warningContainer: Color
 val androidx.compose.material3.ColorScheme.onWarningContainer: Color
     @androidx.compose.runtime.Composable
     get() = if (androidx.compose.foundation.isSystemInDarkTheme()) onWarningContainerDark else onWarningContainerLight
+
+// Star and Favorite Colors
+val starGold = Color(0xFFFFD700)
+val favoriteRed = Color(0xFFCB2323)
+
+val androidx.compose.material3.ColorScheme.star: Color
+    @androidx.compose.runtime.Composable
+    get() = starGold
+
+val androidx.compose.material3.ColorScheme.favorite: Color
+    @androidx.compose.runtime.Composable
+    get() = favoriteRed

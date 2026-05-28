@@ -6,20 +6,24 @@ import com.example.domain.model.favorite.FavoriteMutationResult
 import com.example.domain.model.favorite.FavoritesPage
 import com.example.domain.model.favorite.Place
 import com.example.domain.model.favorite.Trip
+import com.example.domain.model.trip.FavoriteTripsPage
+import com.example.domain.model.trip.TripDetails
+import com.example.domain.model.trip.TripItem
+import com.example.domain.model.trip.TripSyncEvent
 import com.example.domain.repository.favorite.FavoriteDestinationRepository
 import com.example.domain.repository.favorite.FavoritePlaceRepository
 import com.example.domain.repository.favorite.FavoriteTabPreferenceRepository
-import com.example.domain.repository.favorite.FavoriteTripRepository
+import com.example.domain.repository.trip.TripApiRepository
 import com.example.domain.usecase.favorite.destination.AddDestinationFavoriteUseCase
 import com.example.domain.usecase.favorite.destination.GetFavoriteDestinationsPageUseCase
 import com.example.domain.usecase.favorite.destination.ObserveFavoriteDestinationIdsUseCase
 import com.example.domain.usecase.favorite.destination.RemoveDestinationFavoriteUseCase
 import com.example.domain.usecase.favorite.place.DeletePlaceUseCase
-import com.example.domain.usecase.favorite.place.GetAllPlacesUseCase
 import com.example.domain.usecase.favorite.preference.GetFavoriteSelectedTabUseCase
 import com.example.domain.usecase.favorite.preference.SaveFavoriteSelectedTabUseCase
-import com.example.domain.usecase.favorite.trip.DeleteTripUseCase
-import com.example.domain.usecase.favorite.trip.GetAllTripsUseCase
+import com.example.domain.usecase.trip.GetFavoriteTripsUseCase
+import com.example.domain.usecase.trip.ObserveTripSyncEventsUseCase
+import com.example.domain.usecase.trip.ToggleFavoriteTripUseCase
 import com.example.domain.utils.DataError
 import com.example.domain.utils.Result
 import kotlinx.coroutines.CompletableDeferred
@@ -127,19 +131,20 @@ class FavoriteViewModelRemoveTest {
         observeUseCase: ObserveFavoriteDestinationIdsUseCase? = null
     ): FavoriteViewModel {
         val placeRepo = FakeFavoritePlaceRepository()
-        val tripRepo = FakeFavoriteTripRepository()
+        val tripRepo = FakeTripApiRepository()
         val prefRepo = InMemoryFavoriteTabPreferenceRepository()
 
         return FavoriteViewModel(
-            getAllTripsUseCase = GetAllTripsUseCase(tripRepo),
+            getFavoriteTripsUseCase = GetFavoriteTripsUseCase(tripRepo),
             deletePlaceUseCase = DeletePlaceUseCase(placeRepo),
-            deleteTripUseCase = DeleteTripUseCase(tripRepo),
             addDestinationFavoriteUseCase = AddDestinationFavoriteUseCase(destinationRepo),
             removeDestinationFavoriteUseCase = RemoveDestinationFavoriteUseCase(destinationRepo),
             observeFavoriteDestinationIdsUseCase = observeUseCase ?: ObserveFavoriteDestinationIdsUseCase(destinationRepo),
             getFavoriteSelectedTabUseCase = GetFavoriteSelectedTabUseCase(prefRepo),
             saveFavoriteSelectedTabUseCase = SaveFavoriteSelectedTabUseCase(prefRepo),
-            getFavoriteDestinationsPageUseCase = GetFavoriteDestinationsPageUseCase(destinationRepo)
+            getFavoriteDestinationsPageUseCase = GetFavoriteDestinationsPageUseCase(destinationRepo),
+            toggleFavoriteTripUseCase = ToggleFavoriteTripUseCase(tripRepo),
+            observeTripSyncEventsUseCase = ObserveTripSyncEventsUseCase(tripRepo)
         )
     }
 
@@ -207,26 +212,31 @@ class FavoriteViewModelRemoveTest {
         override suspend fun deletePlaceFromFavorite(placeId: String): Result<Unit, DataError.Local> = Result.Success(Unit)
     }
 
-    private class FakeFavoriteTripRepository : FavoriteTripRepository {
+    private class FakeTripApiRepository : TripApiRepository {
         private val items = MutableStateFlow(
             listOf(
-                Trip(
+                TripItem(
                     id = 2,
                     title = "Weekend",
-                    ownerName = "Aylin",
-                    imageUrl = "",
-                    savedAt = "2026-04-11T10:00:00Z"
+                    destinationName = "Aylin",
+                    totalDays = 3,
+                    isFavorite = true,
+                    createdAt = "2026-04-11T10:00:00Z"
                 )
             )
         )
 
-        override fun getFavoriteTrips(): Flow<List<Trip>> = items
+        override suspend fun getFavoriteTrips(pageIndex: Int, pageSize: Int): kotlin.Result<FavoriteTripsPage> {
+            return kotlin.Result.success(FavoriteTripsPage(pageIndex, pageSize, items.value.size, items.value))
+        }
 
-        override fun isTripFavorite(tripId: String): Flow<Boolean> = flowOf(true)
+        override suspend fun getTripDetails(id: Int): kotlin.Result<TripDetails> = kotlin.Result.failure(Exception())
 
-        override suspend fun addTripToFavorite(trip: Trip): Result<Unit, DataError.Local> = Result.Success(Unit)
+        override suspend fun toggleFavorite(id: Int, isFavorite: Boolean): kotlin.Result<Unit> = kotlin.Result.success(Unit)
 
-        override suspend fun deleteTripFromFavorite(tripId: String): Result<Unit, DataError.Local> = Result.Success(Unit)
+        override suspend fun deleteTrip(id: Int): kotlin.Result<Unit> = kotlin.Result.success(Unit)
+
+        override fun observeSyncEvents(): Flow<TripSyncEvent> = flowOf()
     }
 }
 

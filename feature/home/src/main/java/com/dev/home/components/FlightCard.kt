@@ -39,7 +39,6 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.dev.home.presentation.flights.FlightCardContent
 import com.dev.home.presentation.flights.FlightStatusTone
@@ -49,8 +48,7 @@ import com.example.designsystem.theme.spacing
 import com.example.designsystem.theme.success
 import com.example.feature.home.R
 
-internal val FlightCardMinWidth = 240.dp
-internal val FlightCardMinHeight = 340.dp
+// Constants were moved into composables to use MaterialTheme tokens
 
 @Composable
 fun FlightCard(
@@ -59,6 +57,8 @@ fun FlightCard(
     onCtaClick: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val minWidth = MaterialTheme.spacing.xxxl * 5
+    val minHeight = MaterialTheme.spacing.xxxl * 7 + MaterialTheme.spacing.xxs
     val context = LocalContext.current
     val cardDescription = stringResource(
         R.string.flight_card_cd,
@@ -70,8 +70,8 @@ fun FlightCard(
 
     Card(
         modifier = modifier
-            .width(FlightCardMinWidth)
-            .height(FlightCardMinHeight)
+            .width(minWidth)
+            .height(minHeight)
             .clip(MaterialTheme.shapes.extraLarge)
             .clickable(onClick = { onCardClick(content.id) })
             .semantics {
@@ -124,10 +124,12 @@ fun FlightCard(
 
 @Composable
 fun LoadingFlightCard(modifier: Modifier = Modifier) {
+    val minWidth = MaterialTheme.spacing.xxxl * 5
+    val minHeight = MaterialTheme.spacing.xxxl * 7 + MaterialTheme.spacing.xxs
     Card(
         modifier = modifier
-            .width(FlightCardMinWidth)
-            .height(FlightCardMinHeight)
+            .width(minWidth)
+            .height(minHeight)
             .clip(MaterialTheme.shapes.extraLarge),
         shape = MaterialTheme.shapes.extraLarge,
         colors = CardDefaults.cardColors(
@@ -155,9 +157,9 @@ private fun FlightCardHeader(content: FlightCardContent) {
     ) {
         Box(
             modifier = Modifier
-                .size(40.dp)
+                .size(MaterialTheme.spacing.xxxl - MaterialTheme.spacing.xs)
                 .clip(CircleShape)
-                .background(Color(0xFFE8EAF6)),
+                .background(MaterialTheme.colorScheme.surfaceVariant),
             contentAlignment = Alignment.Center
         ) {
             if (content.airlineLogoUrl != null) {
@@ -231,7 +233,7 @@ private fun FlightStatusBadge(content: FlightCardContent) {
         color = containerColor,
         shape = MaterialTheme.shapes.extraLarge,
         border = if (content.status.tone == FlightStatusTone.POSITIVE) {
-            BorderStroke(1.dp, MaterialTheme.colorScheme.success.copy(alpha = 0.5f))
+            BorderStroke(MaterialTheme.elevation.xs, MaterialTheme.colorScheme.success.copy(alpha = 0.5f))
         } else {
             null
         },
@@ -382,7 +384,7 @@ private fun FlightPathDivider() {
                     Image(
                         painter = painterResource(R.drawable.plane_icon2),
                         contentDescription = null,
-                        modifier = Modifier.size(MaterialTheme.spacing.md).padding(2.dp),
+                        modifier = Modifier.size(MaterialTheme.spacing.md).padding(MaterialTheme.spacing.xxs / 2),
                         colorFilter = ColorFilter.tint(Color.White)
 
                     )

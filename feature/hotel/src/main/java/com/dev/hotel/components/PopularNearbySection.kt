@@ -15,11 +15,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
 import com.dev.utils.uistate.UiState
 import com.example.common.extensions.toCurrencySymbol
 import com.example.designsystem.components.DestinationCard
 import com.example.designsystem.components.LoadingDestinationCard
+import com.example.designsystem.theme.spacing
 import com.example.domain.model.hotel.NearbyHotel
 import com.example.feature.hotel.R
 
@@ -38,14 +38,14 @@ fun PopularNearbySection(
             text = stringResource(R.string.hotel_details_popular_nearby),
             style = MaterialTheme.typography.titleLarge,
             fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(horizontal = 16.dp)
+            modifier = Modifier.padding(horizontal = MaterialTheme.spacing.md)
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(MaterialTheme.spacing.md))
 
         LazyRow(
-            contentPadding = PaddingValues(horizontal = 16.dp),
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
+            contentPadding = PaddingValues(horizontal = MaterialTheme.spacing.md),
+            horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.md)
         ) {
             when (nearbyHotelsState) {
                 is UiState.Loading -> {

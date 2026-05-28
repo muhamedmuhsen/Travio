@@ -24,7 +24,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.dev.hotel.components.BookingCard
@@ -40,6 +39,7 @@ import com.dev.hotel.components.PopularNearbySection
 import com.dev.hotel.components.ReviewsSection
 import com.dev.hotel.components.RoomCard
 import com.dev.utils.uistate.UiState
+import com.example.designsystem.theme.spacing
 import com.example.domain.model.hotel.HotelDetails
 import com.example.feature.hotel.R
 import java.time.format.DateTimeFormatter
@@ -136,7 +136,7 @@ fun HotelDetailScreen(
                 is UiState.Error -> {
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
-                        modifier = Modifier.padding(16.dp)
+                        modifier = Modifier.padding(MaterialTheme.spacing.md)
                     ) {
                         Text(
                             text = stringResource(R.string.hotel_details_error_loading),
@@ -144,7 +144,7 @@ fun HotelDetailScreen(
                             textAlign = TextAlign.Center,
                             color = MaterialTheme.colorScheme.error
                         )
-                        Spacer(modifier = Modifier.height(16.dp))
+                        Spacer(modifier = Modifier.height(MaterialTheme.spacing.md))
                         Button(onClick = { onAction(HotelDetailAction.Retry) }) {
                             Text(text = stringResource(R.string.hotel_details_retry))
                         }
@@ -190,7 +190,7 @@ private fun HotelDetailContent(
                 uiState = uiState,
                 onAction = onAction
             )
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(MaterialTheme.spacing.lg))
         }
 
         item {
@@ -214,7 +214,7 @@ private fun HotelDetailContent(
 
         item {
             ReviewsSection(onShowAllReviews = { onAction(HotelDetailAction.LoadReviews) })
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(MaterialTheme.spacing.lg))
         }
 
         item {
@@ -222,7 +222,7 @@ private fun HotelDetailContent(
                 nearbyHotelsState = uiState.nearbyHotelsState,
                 onExploreClick = { onAction(HotelDetailAction.NearbyExploreClicked(it)) }
             )
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(MaterialTheme.spacing.lg))
         }
 
         if (hotelDetails.rooms.isNotEmpty()) {
@@ -231,7 +231,7 @@ private fun HotelDetailContent(
                     text = stringResource(R.string.hotel_details_rooms),
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 16.dp)
+                    modifier = Modifier.padding(horizontal = MaterialTheme.spacing.md, vertical = MaterialTheme.spacing.md)
                 )
             }
 
@@ -255,7 +255,7 @@ private fun HotelDetailContent(
 
         item {
             ContactSection(hotelDetails = hotelDetails)
-            Spacer(modifier = Modifier.height(32.dp))
+            Spacer(modifier = Modifier.height(MaterialTheme.spacing.xl))
         }
     }
 }

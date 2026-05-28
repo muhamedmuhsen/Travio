@@ -24,10 +24,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.dp
+import com.example.designsystem.theme.spacing
 import com.example.domain.model.hotel.HotelDetails
+import com.example.feature.hotel.R
 
 @Composable
 fun HotelInfoHeader(
@@ -37,9 +39,9 @@ fun HotelInfoHeader(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp)
+            .padding(horizontal = MaterialTheme.spacing.md)
     ) {
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(MaterialTheme.spacing.md))
 
         // Name
         Text(
@@ -49,7 +51,7 @@ fun HotelInfoHeader(
             color = MaterialTheme.colorScheme.onSurface
         )
 
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(MaterialTheme.spacing.xs))
 
         // Rating and Reviews count
         Row(
@@ -57,9 +59,9 @@ fun HotelInfoHeader(
         ) {
             Box(
                 modifier = Modifier
-                    .clip(RoundedCornerShape(8.dp))
+                    .clip(RoundedCornerShape(MaterialTheme.spacing.xs))
                     .background(MaterialTheme.colorScheme.primary) // Teal color as per image
-                    .padding(horizontal = 8.dp, vertical = 4.dp),
+                    .padding(horizontal = MaterialTheme.spacing.xs, vertical = MaterialTheme.spacing.xxs),
                 contentAlignment = Alignment.Center
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
@@ -67,9 +69,9 @@ fun HotelInfoHeader(
                         imageVector = Icons.Default.Star,
                         contentDescription = null,
                         tint = MaterialTheme.colorScheme.onPrimary,
-                        modifier = Modifier.size(14.dp)
+                        modifier = Modifier.size(MaterialTheme.spacing.md - MaterialTheme.spacing.xxs)
                     )
-                    Spacer(modifier = Modifier.width(4.dp))
+                    Spacer(modifier = Modifier.width(MaterialTheme.spacing.xxs))
                     Text(
                         text = "4.9",
                         style = MaterialTheme.typography.labelMedium,
@@ -79,16 +81,16 @@ fun HotelInfoHeader(
                 }
             }
 
-            Spacer(modifier = Modifier.width(8.dp))
+            Spacer(modifier = Modifier.width(MaterialTheme.spacing.xs))
 
             Text(
-                text = "2,300 reviews",
+                text = stringResource(R.string.hotel_details_reviews_count, "2,300"),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
 
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(MaterialTheme.spacing.xs))
 
         // Location
         val locationText = buildString {
@@ -105,9 +107,9 @@ fun HotelInfoHeader(
                     imageVector = Icons.Default.LocationOn,
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.size(14.dp)
+                    modifier = Modifier.size(MaterialTheme.spacing.md - MaterialTheme.spacing.xxs)
                 )
-                Spacer(modifier = Modifier.width(4.dp))
+                Spacer(modifier = Modifier.width(MaterialTheme.spacing.xxs))
                 Text(
                     text = locationText,
                     style = MaterialTheme.typography.bodySmall,
@@ -116,13 +118,13 @@ fun HotelInfoHeader(
                     overflow = TextOverflow.Ellipsis
                 )
             }
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(MaterialTheme.spacing.sm))
         }
 
         // Tags / Categories
         Row(
             modifier = Modifier.horizontalScroll(rememberScrollState()),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+            horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.xs)
         ) {
             if (!hotelDetails.categoryName.isNullOrBlank()) {
                 TagChip(text = hotelDetails.categoryName!!)
@@ -132,7 +134,7 @@ fun HotelInfoHeader(
             }
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(MaterialTheme.spacing.md))
     }
 }
 
@@ -140,9 +142,9 @@ fun HotelInfoHeader(
 private fun TagChip(text: String) {
     Box(
         modifier = Modifier
-            .clip(RoundedCornerShape(8.dp))
+            .clip(RoundedCornerShape(MaterialTheme.spacing.xs))
             .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f))
-            .padding(horizontal = 12.dp, vertical = 6.dp)
+            .padding(horizontal = MaterialTheme.spacing.sm, vertical = MaterialTheme.spacing.xxs + (MaterialTheme.spacing.xxs / 2))
     ) {
         Text(
             text = text,

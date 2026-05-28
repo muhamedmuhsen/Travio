@@ -19,9 +19,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import com.example.designsystem.icon.getIcon
 import com.example.designsystem.theme.TravioTheme
+import com.example.designsystem.theme.spacing
 import com.example.domain.model.hotel.Amenity
 
 @Composable
@@ -32,16 +32,16 @@ fun AmenityItem(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .padding(8.dp),
+            .padding(MaterialTheme.spacing.xs),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(
             imageVector = amenity.getIcon(),
             contentDescription = amenity.displayName,
-            modifier = Modifier.size(24.dp),
+            modifier = Modifier.size(MaterialTheme.spacing.lg),
             tint = MaterialTheme.colorScheme.primary
         )
-        Spacer(modifier = Modifier.width(12.dp))
+        Spacer(modifier = Modifier.width(MaterialTheme.spacing.sm))
         Column {
             Text(
                 text = amenity.displayName,
@@ -62,10 +62,10 @@ fun AmenitiesPreview() {
     TravioTheme {
         Surface {
             LazyVerticalGrid(
-                columns = GridCells.Adaptive(minSize = 150.dp),
-                modifier = Modifier.padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                columns = GridCells.Adaptive(minSize = MaterialTheme.spacing.xxxl * 3 + MaterialTheme.spacing.xs),
+                modifier = Modifier.padding(MaterialTheme.spacing.md),
+                verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.xs),
+                horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.xs)
             ) {
                 items(Amenity.entries) { amenity ->
                     AmenityItem(amenity = amenity)

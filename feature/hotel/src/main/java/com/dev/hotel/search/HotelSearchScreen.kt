@@ -51,7 +51,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.dev.hotel.components.GuestSelectorSheet
@@ -61,6 +60,8 @@ import com.dev.hotel.components.LoadingHotelSearchResultItem
 import com.dev.utils.uistate.UiState
 import com.example.designsystem.components.AppTextField
 import com.example.designsystem.theme.TravioTheme
+import com.example.designsystem.theme.elevation
+import com.example.designsystem.theme.spacing
 import com.example.feature.hotel.R
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -131,7 +132,7 @@ fun HotelSearchScreenContent(
                 navigationIcon = {
                     IconButton(
                         onClick = { onAction(HotelSearchAction.BackClicked) },
-                        modifier = Modifier.size(48.dp)
+                        modifier = Modifier.size(MaterialTheme.spacing.xxxl)
                     ) {
                         Icon(
                             imageVector = Icons.Default.ArrowBack,
@@ -157,8 +158,8 @@ fun HotelSearchScreenContent(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 8.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
+                    .padding(horizontal = MaterialTheme.spacing.md, vertical = MaterialTheme.spacing.xs),
+                verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.md)
             ) {
                 // Destination Input
                 Column(modifier = Modifier.fillMaxWidth()) {
@@ -167,7 +168,7 @@ fun HotelSearchScreenContent(
                         style = MaterialTheme.typography.labelMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
-                    Spacer(modifier = Modifier.height(6.dp))
+                    Spacer(modifier = Modifier.height(MaterialTheme.spacing.xxs + MaterialTheme.spacing.xxs / 2))
                     AppTextField(
                         value = state.destination,
                         onValueChange = { onAction(HotelSearchAction.OnDestinationChanged(it)) },
@@ -180,7 +181,7 @@ fun HotelSearchScreenContent(
                             text = state.destinationError,
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.error,
-                            modifier = Modifier.padding(top = 4.dp, start = 4.dp)
+                            modifier = Modifier.padding(top = MaterialTheme.spacing.xxs, start = MaterialTheme.spacing.xxs)
                         )
                     }
                 }
@@ -188,7 +189,7 @@ fun HotelSearchScreenContent(
                 // Date Selection Row
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(16.dp)
+                    horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.md)
                 ) {
                     // Check-In Date
                     DatePickerField(
@@ -212,7 +213,7 @@ fun HotelSearchScreenContent(
                         text = state.dateError,
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.error,
-                        modifier = Modifier.padding(start = 4.dp)
+                        modifier = Modifier.padding(start = MaterialTheme.spacing.xxs)
                     )
                 }
 
@@ -227,8 +228,8 @@ fun HotelSearchScreenContent(
                     onClick = { onAction(HotelSearchAction.SearchClicked) },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(48.dp),
-                    shape = RoundedCornerShape(12.dp)
+                        .height(MaterialTheme.spacing.xxxl),
+                    shape = RoundedCornerShape(MaterialTheme.spacing.sm)
                 ) {
                     Text(
                         text = stringResource(R.string.hotel_search_button),
@@ -238,33 +239,33 @@ fun HotelSearchScreenContent(
                 }
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(MaterialTheme.spacing.md))
 
             // Search Results Section
             Box(
                 modifier = Modifier
                     .weight(1f)
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp)
+                    .padding(horizontal = MaterialTheme.spacing.md)
             ) {
                 when (val resultState = state.searchState) {
                     UiState.Idle -> {
                         Column(
                             modifier = Modifier
                                 .fillMaxSize()
-                                .padding(32.dp),
+                                .padding(MaterialTheme.spacing.xl),
                             verticalArrangement = Arrangement.Center,
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Hotel,
                                 contentDescription = null,
-                                modifier = Modifier.size(64.dp),
+                                modifier = Modifier.size(MaterialTheme.spacing.xxxl + MaterialTheme.spacing.md),
                                 tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.4f)
                             )
-                            Spacer(modifier = Modifier.height(16.dp))
+                            Spacer(modifier = Modifier.height(MaterialTheme.spacing.md))
                             Text(
-                                text = "Start searching for hotels",
+                                text = stringResource(R.string.hotel_search_start_searching),
                                 style = MaterialTheme.typography.titleMedium,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 textAlign = TextAlign.Center
@@ -274,8 +275,8 @@ fun HotelSearchScreenContent(
                     UiState.Loading -> {
                         LazyColumn(
                             modifier = Modifier.fillMaxSize(),
-                            verticalArrangement = Arrangement.spacedBy(12.dp),
-                            contentPadding = PaddingValues(bottom = 16.dp)
+                            verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.sm),
+                            contentPadding = PaddingValues(bottom = MaterialTheme.spacing.md)
                         ) {
                             items(4) {
                                 LoadingHotelSearchResultItem()
@@ -286,7 +287,7 @@ fun HotelSearchScreenContent(
                         Column(
                             modifier = Modifier
                                 .fillMaxSize()
-                                .padding(32.dp),
+                                .padding(MaterialTheme.spacing.xl),
                             verticalArrangement = Arrangement.Center,
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
@@ -297,19 +298,19 @@ fun HotelSearchScreenContent(
                                 color = MaterialTheme.colorScheme.error,
                                 textAlign = TextAlign.Center
                             )
-                            Spacer(modifier = Modifier.height(8.dp))
+                            Spacer(modifier = Modifier.height(MaterialTheme.spacing.xs))
                             Text(
                                 text = resultState.message.asString(LocalContext.current),
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 textAlign = TextAlign.Center
                             )
-                            Spacer(modifier = Modifier.height(16.dp))
+                            Spacer(modifier = Modifier.height(MaterialTheme.spacing.md))
                             Button(
                                 onClick = { onAction(HotelSearchAction.RetryClicked) },
-                                modifier = Modifier.height(40.dp)
+                                modifier = Modifier.height(MaterialTheme.spacing.xxl)
                             ) {
-                                Text(text = "Retry")
+                                Text(text = stringResource(R.string.hotel_details_retry))
                             }
                         }
                     }
@@ -319,7 +320,7 @@ fun HotelSearchScreenContent(
                             Column(
                                 modifier = Modifier
                                     .fillMaxSize()
-                                    .padding(32.dp),
+                                    .padding(MaterialTheme.spacing.xl),
                                 verticalArrangement = Arrangement.Center,
                                 horizontalAlignment = Alignment.CenterHorizontally
                             ) {
@@ -330,7 +331,7 @@ fun HotelSearchScreenContent(
                                     color = MaterialTheme.colorScheme.onSurface,
                                     textAlign = TextAlign.Center
                                 )
-                                Spacer(modifier = Modifier.height(8.dp))
+                                Spacer(modifier = Modifier.height(MaterialTheme.spacing.xs))
                                 Text(
                                     text = stringResource(R.string.hotel_search_no_results_desc),
                                     style = MaterialTheme.typography.bodyMedium,
@@ -341,8 +342,8 @@ fun HotelSearchScreenContent(
                         } else {
                             LazyColumn(
                                 modifier = Modifier.fillMaxSize(),
-                                verticalArrangement = Arrangement.spacedBy(12.dp),
-                                contentPadding = PaddingValues(bottom = 16.dp)
+                                verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.sm),
+                                contentPadding = PaddingValues(bottom = MaterialTheme.spacing.md)
                             ) {
                                 items(hotels, key = { it.code }) { hotel ->
                                     HotelSearchResultItem(
@@ -416,22 +417,26 @@ private fun DatePickerField(
             style = MaterialTheme.typography.labelMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
-        Spacer(modifier = Modifier.height(6.dp))
+        Spacer(modifier = Modifier.height(MaterialTheme.spacing.xxs + (MaterialTheme.spacing.xxs / 2)))
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .border(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.3f), RoundedCornerShape(12.dp))
+                .border(
+                    MaterialTheme.elevation.xs,
+                    MaterialTheme.colorScheme.outline.copy(alpha = 0.3f),
+                    RoundedCornerShape(MaterialTheme.spacing.sm)
+                )
                 .clickable { onClick() }
-                .padding(horizontal = 16.dp, vertical = 12.dp),
+                .padding(horizontal = MaterialTheme.spacing.md, vertical = MaterialTheme.spacing.sm),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
                 imageVector = Icons.Default.CalendarToday,
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.size(20.dp)
+                modifier = Modifier.size(MaterialTheme.spacing.lg - MaterialTheme.spacing.xxs)
             )
-            Spacer(modifier = Modifier.width(12.dp))
+            Spacer(modifier = Modifier.width(MaterialTheme.spacing.sm))
             Text(
                 text = displayText,
                 style = MaterialTheme.typography.bodyMedium,
@@ -469,17 +474,17 @@ private fun DatePickerHelperDialog(
                         onDateSelected(date)
                     }
                 },
-                modifier = Modifier.size(height = 48.dp, width = 80.dp)
+                modifier = Modifier.size(height = MaterialTheme.spacing.xxxl, width = MaterialTheme.spacing.xxxl + MaterialTheme.spacing.xl)
             ) {
-                Text("OK")
+                Text(stringResource(id = com.example.designsystem.R.string.next))
             }
         },
         dismissButton = {
             TextButton(
                 onClick = onDismiss,
-                modifier = Modifier.size(height = 48.dp, width = 80.dp)
+                modifier = Modifier.size(height = MaterialTheme.spacing.xxxl, width = MaterialTheme.spacing.xxxl + MaterialTheme.spacing.xl)
             ) {
-                Text("Cancel")
+                Text(stringResource(id = com.example.designsystem.R.string.close))
             }
         }
     ) {
@@ -488,7 +493,7 @@ private fun DatePickerHelperDialog(
             title = {
                 Text(
                     text = if (type == DatePickerType.CHECK_IN) "Select Check-in Date" else "Select Check-out Date",
-                    modifier = Modifier.padding(16.dp),
+                    modifier = Modifier.padding(MaterialTheme.spacing.md),
                     style = MaterialTheme.typography.titleMedium
                 )
             }

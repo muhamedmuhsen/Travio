@@ -13,7 +13,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
+import com.example.designsystem.theme.spacing
 import com.example.domain.model.hotel.RoomRate
 import com.example.feature.hotel.R
 
@@ -26,7 +26,7 @@ fun RoomRateItem(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .padding(vertical = 12.dp)
+            .padding(vertical = MaterialTheme.spacing.sm)
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -39,7 +39,7 @@ fun RoomRateItem(
                     fontWeight = FontWeight.SemiBold
                 )
 
-                Spacer(modifier = Modifier.height(4.dp))
+                Spacer(modifier = Modifier.height(MaterialTheme.spacing.xxs))
 
                 val cancelPolicy = rate.cancellationPolicies.firstOrNull()
                 if (cancelPolicy != null && cancelPolicy.amount == 0.0) {
@@ -58,7 +58,7 @@ fun RoomRateItem(
 
                 val allotment = rate.allotment
                 if (allotment != null && allotment <= 3) {
-                    Spacer(modifier = Modifier.height(4.dp))
+                    Spacer(modifier = Modifier.height(MaterialTheme.spacing.xxs))
                     Text(
                         text = stringResource(R.string.hotel_details_rooms_left, allotment),
                         style = MaterialTheme.typography.labelMedium,
@@ -82,7 +82,7 @@ fun RoomRateItem(
                     )
                 }
 
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(MaterialTheme.spacing.xs))
 
                 BookNowButton(onClick = onBookNowClick)
             }

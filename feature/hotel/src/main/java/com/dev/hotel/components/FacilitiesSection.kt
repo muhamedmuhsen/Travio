@@ -29,9 +29,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.designsystem.icon.getIcon
+import com.example.designsystem.theme.elevation
+import com.example.designsystem.theme.spacing
 import com.example.domain.model.hotel.Amenity
 import com.example.domain.model.hotel.HotelFacility
 import com.example.feature.hotel.R
@@ -55,14 +56,14 @@ fun FacilitiesSection(
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .padding(16.dp),
-        shape = RoundedCornerShape(16.dp),
+            .padding(MaterialTheme.spacing.md),
+        shape = RoundedCornerShape(MaterialTheme.spacing.md),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer),
-        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
+        elevation = CardDefaults.cardElevation(defaultElevation = MaterialTheme.elevation.none),
+        border = BorderStroke(MaterialTheme.elevation.xs, MaterialTheme.colorScheme.outlineVariant)
     ) {
         Column(
-            modifier = Modifier.padding(16.dp)
+            modifier = Modifier.padding(MaterialTheme.spacing.md)
         ) {
             Text(
                 text = stringResource(R.string.hotel_details_facilities),
@@ -70,13 +71,13 @@ fun FacilitiesSection(
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onSurface
             )
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(MaterialTheme.spacing.md))
 
             // Standard grid layout to avoid FlowRow binary compatibility issues (NoSuchMethodError)
             val rowCount = (uniqueFacilities.size + 3) / 4
             Column(
                 modifier = Modifier.fillMaxWidth(),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
+                verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.md)
             ) {
                 for (rowIndex in 0 until rowCount) {
                     Row(
@@ -91,11 +92,11 @@ fun FacilitiesSection(
                                     icon = data.first,
                                     name = data.second,
                                     // Fixed width for consistent grid
-                                    modifier = Modifier.width(72.dp)
+                                    modifier = Modifier.width(MaterialTheme.spacing.xxxl + MaterialTheme.spacing.lg)
                                 )
                             } else {
                                 // Empty space for grid alignment
-                                Spacer(modifier = Modifier.width(72.dp))
+                                Spacer(modifier = Modifier.width(MaterialTheme.spacing.xxxl + MaterialTheme.spacing.lg))
                             }
                         }
                     }
@@ -117,8 +118,8 @@ private fun FacilityItem(
     ) {
         Box(
             modifier = Modifier
-                .size(56.dp) // Adjusted for container internal space
-                .clip(RoundedCornerShape(12.dp))
+                .size(MaterialTheme.spacing.xxxl + MaterialTheme.spacing.xs) // Adjusted for container internal space
+                .clip(RoundedCornerShape(MaterialTheme.spacing.sm))
                 .background(MaterialTheme.colorScheme.primaryContainer),
             contentAlignment = Alignment.Center
         ) {
@@ -126,10 +127,10 @@ private fun FacilityItem(
                 imageVector = icon,
                 contentDescription = name,
                 tint = MaterialTheme.colorScheme.onPrimaryContainer,
-                modifier = Modifier.size(24.dp)
+                modifier = Modifier.size(MaterialTheme.spacing.lg)
             )
         }
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(MaterialTheme.spacing.xs))
         Text(
             text = name,
             style = MaterialTheme.typography.labelSmall.copy(fontSize = 10.sp),

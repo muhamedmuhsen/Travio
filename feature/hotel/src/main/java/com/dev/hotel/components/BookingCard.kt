@@ -39,9 +39,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.dp
 import com.dev.hotel.presentation.HotelDetailAction
 import com.dev.hotel.presentation.HotelDetailUiState
+import com.example.designsystem.theme.elevation
+import com.example.designsystem.theme.spacing
 import com.example.domain.model.hotel.Occupancy
 import com.example.feature.hotel.R
 import java.time.LocalDate
@@ -62,13 +63,13 @@ fun BookingCard(
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp),
-        shape = RoundedCornerShape(16.dp),
+            .padding(horizontal = MaterialTheme.spacing.md),
+        shape = RoundedCornerShape(MaterialTheme.spacing.md),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
+        elevation = CardDefaults.cardElevation(defaultElevation = MaterialTheme.elevation.sm),
+        border = BorderStroke(MaterialTheme.elevation.xs, MaterialTheme.colorScheme.outlineVariant)
     ) {
-        Column(modifier = Modifier.padding(16.dp)) {
+        Column(modifier = Modifier.padding(MaterialTheme.spacing.md)) {
             Row(verticalAlignment = Alignment.Bottom) {
                 Text(
                     text = "$$price",
@@ -76,16 +77,16 @@ fun BookingCard(
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.primary
                 )
-                Spacer(modifier = Modifier.width(4.dp))
+                Spacer(modifier = Modifier.width(MaterialTheme.spacing.xxs))
                 Text(
                     text = stringResource(R.string.hotel_details_per_night),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.padding(bottom = 4.dp)
+                    modifier = Modifier.padding(bottom = MaterialTheme.spacing.xxs)
                 )
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(MaterialTheme.spacing.md))
 
             Row(modifier = Modifier.fillMaxWidth()) {
                 BookingField(
@@ -94,7 +95,7 @@ fun BookingCard(
                     onClick = { showDatePicker = DatePickerType.CHECK_IN },
                     modifier = Modifier.weight(1f)
                 )
-                Spacer(modifier = Modifier.width(16.dp))
+                Spacer(modifier = Modifier.width(MaterialTheme.spacing.md))
                 BookingField(
                     label = stringResource(R.string.hotel_details_check_out),
                     value = uiState.checkOutDate.format(DateTimeFormatter.ofPattern("MMM dd")),
@@ -103,19 +104,19 @@ fun BookingCard(
                 )
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(MaterialTheme.spacing.md))
 
             // Updated Layout: 1st half for Guests (Adults/Children), 2nd half for Children Ages
             Row(modifier = Modifier.fillMaxWidth()) {
                 // Guests Field
                 BookingField(
                     label = stringResource(R.string.hotel_details_guests),
-                    value = "${uiState.adults + uiState.children} Guests",
+                    value = stringResource(R.string.hotel_search_guests_summary, uiState.adults, uiState.children),
                     icon = {
                         Icon(
                             imageVector = Icons.Default.Group,
                             contentDescription = null,
-                            modifier = Modifier.size(18.dp),
+                            modifier = Modifier.size(MaterialTheme.spacing.lg - MaterialTheme.spacing.xxs),
                             tint = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     },
@@ -123,36 +124,39 @@ fun BookingCard(
                     modifier = Modifier.weight(1f)
                 )
 
-                Spacer(modifier = Modifier.width(16.dp))
+                Spacer(modifier = Modifier.width(MaterialTheme.spacing.md))
 
                 // Children Ages Field
                 val agesText = if (uiState.children > 0) {
                     uiState.childrenAges.joinToString(", ")
                 } else {
-                    "None"
+                    stringResource(com.example.designsystem.R.string.none)
                 }
 
                 BookingField(
-                    label = "Children Ages",
+                    label = stringResource(R.string.hotel_search_children_desc),
                     value = agesText,
                     onClick = { if (uiState.children > 0) showGuestSheet = true },
                     modifier = Modifier.weight(1f)
                 )
             }
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(MaterialTheme.spacing.lg))
 
             Button(
                 onClick = { onAction(HotelDetailAction.CheckAvailabilityClicked) },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(48.dp),
-                shape = RoundedCornerShape(8.dp),
+                    .height(MaterialTheme.spacing.xxxl),
+                shape = RoundedCornerShape(MaterialTheme.spacing.xs),
                 colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
                 enabled = !uiState.isSearchingRooms
             ) {
                 if (uiState.isSearchingRooms) {
-                    CircularProgressIndicator(modifier = Modifier.size(24.dp), color = MaterialTheme.colorScheme.onPrimary)
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(MaterialTheme.spacing.lg),
+                        color = MaterialTheme.colorScheme.onPrimary
+                    )
                 } else {
                     Text(
                         text = stringResource(R.string.hotel_details_check_availability),
@@ -232,7 +236,10 @@ private fun HotelDatePickerDialog(
         }
     ) {
         DatePicker(state = datePickerState, title = {
-            Text(if (type == DatePickerType.CHECK_IN) "Select Check-in" else "Select Check-out", modifier = Modifier.padding(16.dp))
+            Text(
+                if (type == DatePickerType.CHECK_IN) "Select Check-in" else "Select Check-out",
+                modifier = Modifier.padding(MaterialTheme.spacing.md)
+            )
         })
     }
 }
@@ -251,24 +258,24 @@ private fun BookingField(
             style = MaterialTheme.typography.labelSmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
-        Spacer(modifier = Modifier.height(4.dp))
+        Spacer(modifier = Modifier.height(MaterialTheme.spacing.xxs))
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(8.dp))
-                .padding(horizontal = 12.dp, vertical = 8.dp),
+                .border(MaterialTheme.elevation.xs, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(MaterialTheme.spacing.xs))
+                .padding(horizontal = MaterialTheme.spacing.sm, vertical = MaterialTheme.spacing.xs),
             verticalAlignment = Alignment.CenterVertically
         ) {
             if (icon != null) {
                 icon()
-                Spacer(modifier = Modifier.width(8.dp))
+                Spacer(modifier = Modifier.width(MaterialTheme.spacing.xs))
             } else {
                 Box(
                     modifier = Modifier
-                        .size(16.dp)
-                        .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(8.dp))
+                        .size(MaterialTheme.spacing.md)
+                        .border(MaterialTheme.elevation.xs, MaterialTheme.colorScheme.outline, RoundedCornerShape(MaterialTheme.spacing.xs))
                 )
-                Spacer(modifier = Modifier.width(8.dp))
+                Spacer(modifier = Modifier.width(MaterialTheme.spacing.xs))
             }
             Text(
                 text = value,

@@ -9,7 +9,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
+import com.example.designsystem.theme.spacing
 import com.example.domain.model.destination.Interest
 
 @OptIn(ExperimentalLayoutApi::class)
@@ -22,8 +22,8 @@ fun InterestTagsRow(
 
     FlowRow(
         modifier = modifier,
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+        horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.xs),
+        verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.xs)
     ) {
         interests.forEach { interest ->
             AssistChip(

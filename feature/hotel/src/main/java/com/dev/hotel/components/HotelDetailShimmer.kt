@@ -16,13 +16,14 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.dp
+import com.example.designsystem.theme.spacing
 
 @Composable
 fun ShimmerBrush(): Brush {
@@ -62,62 +63,62 @@ fun HotelDetailShimmer(modifier: Modifier = Modifier) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(260.dp)
-                .clip(RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp))
+                .height(MaterialTheme.spacing.xxxl * 5 + MaterialTheme.spacing.lg)
+                .clip(RoundedCornerShape(bottomStart = MaterialTheme.spacing.lg, bottomEnd = MaterialTheme.spacing.lg))
                 .background(brush)
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(MaterialTheme.spacing.md))
 
         // Info Header Shimmer
-        Column(modifier = Modifier.padding(horizontal = 16.dp)) {
+        Column(modifier = Modifier.padding(horizontal = MaterialTheme.spacing.md)) {
             // Title
             Box(
                 modifier = Modifier
                     .fillMaxWidth(0.6f)
-                    .height(32.dp)
-                    .clip(RoundedCornerShape(8.dp))
+                    .height(MaterialTheme.spacing.xl)
+                    .clip(RoundedCornerShape(MaterialTheme.spacing.xs))
                     .background(brush)
             )
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(MaterialTheme.spacing.md))
 
             // Location
             Box(
                 modifier = Modifier
                     .fillMaxWidth(0.4f)
-                    .height(20.dp)
-                    .clip(RoundedCornerShape(4.dp))
+                    .height(MaterialTheme.spacing.lg - MaterialTheme.spacing.xxs)
+                    .clip(RoundedCornerShape(MaterialTheme.spacing.xxs))
                     .background(brush)
             )
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(MaterialTheme.spacing.md))
 
             // Tags
             Row {
                 Box(
                     modifier = Modifier
-                        .width(60.dp)
-                        .height(24.dp)
-                        .clip(RoundedCornerShape(12.dp))
+                        .width(MaterialTheme.spacing.xxxl + MaterialTheme.spacing.sm)
+                        .height(MaterialTheme.spacing.lg)
+                        .clip(RoundedCornerShape(MaterialTheme.spacing.sm))
                         .background(brush)
                 )
-                Spacer(modifier = Modifier.width(8.dp))
+                Spacer(modifier = Modifier.width(MaterialTheme.spacing.xs))
                 Box(
                     modifier = Modifier
-                        .width(80.dp)
-                        .height(24.dp)
-                        .clip(RoundedCornerShape(12.dp))
+                        .width(MaterialTheme.spacing.xxxl * 2 - MaterialTheme.spacing.md)
+                        .height(MaterialTheme.spacing.lg)
+                        .clip(RoundedCornerShape(MaterialTheme.spacing.sm))
                         .background(brush)
                 )
             }
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(MaterialTheme.spacing.lg))
 
             // Card
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(140.dp)
-                    .clip(RoundedCornerShape(16.dp))
+                    .height(MaterialTheme.spacing.xxxl * 3 - MaterialTheme.spacing.xs)
+                    .clip(RoundedCornerShape(MaterialTheme.spacing.md))
                     .background(brush)
             )
         }

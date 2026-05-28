@@ -103,6 +103,7 @@
     <string name="flight_details_non_refundable">NON-REFUNDABLE</string>
     <string name="flight_details_penalty">Penalty</string>
     <string name="flight_details_est_refund">Est. Refund</string>
+    <string name="flight_details_no_refund">No refund available for this offer.</string>
     <!-- Interest Filters -->
     <string name="interest_historical">Historical</string>
     <string name="interest_architecture">Architecture</string>
