@@ -39,6 +39,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.dev.home.presentation.flights.FlightCardContent
 import com.dev.home.presentation.flights.FlightStatusTone
@@ -95,9 +96,9 @@ fun FlightCard(
             FlightRouteBlock(content = content)
             Spacer(modifier = Modifier.height(MaterialTheme.spacing.sm))
             FlightPathDivider()
-            Spacer(modifier = Modifier.height(MaterialTheme.spacing.md))
-            FlightSummaryPrice(content = content)
             Spacer(modifier = Modifier.height(MaterialTheme.spacing.sm))
+            FlightSummaryPrice(content = content)
+            Spacer(modifier = Modifier.height(MaterialTheme.spacing.xs))
             Button(
                 onClick = { onCtaClick(content.id) },
                 enabled = content.cta.enabled,
@@ -105,7 +106,7 @@ fun FlightCard(
                     .fillMaxWidth()
                     .clip(MaterialTheme.shapes.small)
                     .heightIn(min = MaterialTheme.spacing.xxxl)
-                    .padding(horizontal = MaterialTheme.spacing.sm),
+                    .padding(horizontal = MaterialTheme.spacing.xs),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.primary,
                     contentColor = MaterialTheme.colorScheme.onPrimary
@@ -115,7 +116,8 @@ fun FlightCard(
                 Text(
                     text = content.cta.label.asString(context),
                     style = MaterialTheme.typography.labelLarge,
-                    fontWeight = FontWeight.SemiBold
+                    fontWeight = FontWeight.SemiBold,
+                    fontSize = 14.sp
                 )
             }
         }
