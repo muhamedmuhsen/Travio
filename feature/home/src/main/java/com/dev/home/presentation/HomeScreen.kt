@@ -57,9 +57,7 @@ import com.dev.home.components.FlightsSection
 import com.dev.home.components.HomeSearchBar
 import com.dev.home.components.LoadingCountryCard
 import com.dev.home.components.LoadingFlightCard
-import com.dev.home.components.LoadingNearbyHotelCard
 import com.dev.home.components.LoadingRecentViewedCard
-import com.dev.home.components.NearbyHotelCard
 import com.dev.home.components.RecentViewedCard
 import com.dev.home.components.SectionHeader
 import com.dev.home.presentation.HomeAction.OnLocationPermissionResult
@@ -572,6 +570,7 @@ private fun DestinationStateHandling(
                             imageUrl = destination.imageUrls.firstOrNull().orEmpty(),
                             isFavorite = favoriteIds.contains(destination.destinationID),
                             isFavoriteActionEnabled = destination.destinationID !in favoriteMutationInFlightIds,
+                            showPrice = false,
                             onFavoriteClicked = {
                                 onAction(HomeAction.OnFavoriteClicked(destination))
                             },
@@ -628,7 +627,7 @@ private fun NearbyHotelsStateHandling(
         UiState.Idle -> Unit
         UiState.Loading -> {
             HorizontalSection(title = stringResource(R.string.section_nearby_hotels)) {
-                items(3) { LoadingNearbyHotelCard() }
+                items(3) { LoadingDestinationCard() }
             }
         }
 
@@ -646,9 +645,30 @@ private fun NearbyHotelsStateHandling(
                     onSeeAllClick = { onAction(HomeAction.OnSeeAllNearbyHotelsClicked) }
                 ) {
                     items(hotels, key = { it.code }) { hotel ->
-                        NearbyHotelCard(
-                            hotel = hotel,
-                            onClick = {
+                        val rating = hotel.categoryName?.filter { it.isDigit() }?.toDoubleOrNull() ?: 4.0
+                        val priceStr = if (hotel.minRate != null) {
+                            val currencySymbol = when (hotel.currency) {
+                                "USD" -> "$"
+                                "EUR" -> "€"
+                                "GBP" -> "£"
+                                else -> hotel.currency ?: ""
+                            }
+                            "$currencySymbol${hotel.minRate!!.toInt()}"
+                        } else {
+                            "---"
+                        }
+                        DestinationCard(
+                            title = hotel.name,
+                            rating = rating,
+                            reviewCount = 0,
+                            description = hotel.destinationName ?: "",
+                            price = stringResource(R.string.home_price_per_adult, priceStr),
+                            imageUrl = hotel.thumbnailImage ?: "",
+                            showFavorite = false,
+                            showPrice = true,
+                            isFavorite = false,
+                            onFavoriteClicked = {},
+                            onCardClicked = {
                                 onAction(HomeAction.OnHotelClicked(hotel.code))
                             }
                         )

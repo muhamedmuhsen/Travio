@@ -63,6 +63,8 @@ fun DestinationCard(
     imageUrl: String,
     isFavorite: Boolean,
     isFavoriteActionEnabled: Boolean = true,
+    showFavorite: Boolean = true,
+    showPrice: Boolean = true,
     onFavoriteClicked: () -> Unit,
     onCardClicked: () -> Unit = {}
 ) {
@@ -110,14 +112,16 @@ fun DestinationCard(
                     )
             )
 
-            FavoriteButton(
-                onClick = onFavoriteClicked,
-                isFavorite = isFavorite,
-                enabled = isFavoriteActionEnabled,
-                modifier = Modifier
-                    .align(Alignment.TopEnd)
-                    .padding(MaterialTheme.spacing.md)
-            )
+            if (showFavorite) {
+                FavoriteButton(
+                    onClick = onFavoriteClicked,
+                    isFavorite = isFavorite,
+                    enabled = isFavoriteActionEnabled,
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .padding(MaterialTheme.spacing.md)
+                )
+            }
 
             Column(
                 modifier = Modifier
@@ -152,6 +156,15 @@ fun DestinationCard(
                     reviewCount = reviewCount,
                     contentColor = overlayContentColor
                 )
+
+                if (showPrice) {
+                    Spacer(modifier = Modifier.height(MaterialTheme.spacing.xs))
+
+                    PriceText(
+                        price = price,
+                        contentColor = overlayContentColor
+                    )
+                }
 
                 Spacer(modifier = Modifier.height(MaterialTheme.spacing.md))
 

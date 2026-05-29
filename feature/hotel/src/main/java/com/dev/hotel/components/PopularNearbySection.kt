@@ -67,6 +67,8 @@ fun PopularNearbySection(
                             price = "${hotel.currency?.toCurrencySymbol() ?: "$"} ${hotel.minRate ?: 0.0}",
                             imageUrl = hotel.thumbnailImage ?: "",
                             isFavorite = false,
+                            showFavorite = false,
+                            showPrice = true,
                             onFavoriteClicked = { },
                             onCardClicked = { onExploreClick(hotel.name) }
                         )
