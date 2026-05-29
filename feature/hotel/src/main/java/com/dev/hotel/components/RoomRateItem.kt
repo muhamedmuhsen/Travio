@@ -36,7 +36,8 @@ fun RoomRateItem(
                 Text(
                     text = rate.boardName ?: stringResource(R.string.hotel_details_room_only),
                     style = MaterialTheme.typography.bodyLarge,
-                    fontWeight = FontWeight.SemiBold
+                    fontWeight = FontWeight.SemiBold,
+                    color = MaterialTheme.colorScheme.onSurface
                 )
 
                 Spacer(modifier = Modifier.height(MaterialTheme.spacing.xxs))
@@ -78,7 +79,8 @@ fun RoomRateItem(
                 } else {
                     Text(
                         text = stringResource(R.string.hotel_details_price_on_request),
-                        style = MaterialTheme.typography.bodyMedium
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
 
