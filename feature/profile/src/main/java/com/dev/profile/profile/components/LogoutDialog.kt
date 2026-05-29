@@ -70,6 +70,7 @@ fun LogoutDialog(
                     AppOutlinedButton(
                         onClick = onDismiss,
                         text = stringResource(id = R.string.cancel),
+                        buttonHeight = 40,
                         shape = MaterialTheme.shapes.medium,
                         style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold),
                         modifier = Modifier.weight(1f)
@@ -83,7 +84,6 @@ fun LogoutDialog(
                         style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold),
                         shape = MaterialTheme.shapes.medium,
                         modifier = Modifier.weight(1f)
-
                     )
                 }
             }
