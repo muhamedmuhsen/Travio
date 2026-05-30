@@ -32,7 +32,7 @@ interface DestinationsRepository {
     ): Result<List<Destination>, DataError>
 
     suspend fun searchForDestinations(
-        keyword: String,
+        keyword: String? = null,
         pageIndex: Int = 1,
         pageSize: Int = 10,
         interestIds: List<Int>? = null

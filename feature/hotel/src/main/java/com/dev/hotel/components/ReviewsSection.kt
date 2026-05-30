@@ -1,6 +1,5 @@
 package com.dev.hotel.components
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -48,9 +47,8 @@ fun ReviewsSection(
             .fillMaxWidth()
             .padding(horizontal = MaterialTheme.spacing.md),
         shape = RoundedCornerShape(MaterialTheme.spacing.md),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer),
-        elevation = CardDefaults.cardElevation(defaultElevation = MaterialTheme.elevation.none),
-        border = BorderStroke(MaterialTheme.elevation.xs, MaterialTheme.colorScheme.outlineVariant)
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.background),
+        elevation = CardDefaults.cardElevation(defaultElevation = MaterialTheme.elevation.sm)
     ) {
         Column(
             modifier = Modifier.padding(MaterialTheme.spacing.md)

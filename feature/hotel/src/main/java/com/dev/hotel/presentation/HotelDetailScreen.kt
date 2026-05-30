@@ -113,6 +113,7 @@ fun HotelDetailScreen(
 
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) },
+        containerColor = MaterialTheme.colorScheme.surfaceContainer,
         bottomBar = {
             if (hotelData != null && hotelData.minRate != null) {
                 BottomBookingBar(

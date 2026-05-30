@@ -43,9 +43,9 @@ fun RoomCard(
             .fillMaxWidth()
             .padding(horizontal = MaterialTheme.spacing.md, vertical = MaterialTheme.spacing.xs),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceContainerLow
+            containerColor = MaterialTheme.colorScheme.background
         ),
-        elevation = CardDefaults.cardElevation(defaultElevation = MaterialTheme.elevation.xs)
+        elevation = CardDefaults.cardElevation(defaultElevation = MaterialTheme.elevation.sm)
     ) {
         Column(
             modifier = Modifier.fillMaxWidth()

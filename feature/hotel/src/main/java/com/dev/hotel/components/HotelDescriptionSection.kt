@@ -1,7 +1,6 @@
 package com.dev.hotel.components
 
 import androidx.compose.animation.animateContentSize
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -36,9 +35,8 @@ fun HotelDescriptionSection(
             .fillMaxWidth()
             .padding(horizontal = MaterialTheme.spacing.md),
         shape = RoundedCornerShape(MaterialTheme.spacing.md),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer),
-        elevation = CardDefaults.cardElevation(defaultElevation = MaterialTheme.elevation.none),
-        border = BorderStroke(MaterialTheme.elevation.xs, MaterialTheme.colorScheme.outlineVariant)
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.background),
+        elevation = CardDefaults.cardElevation(defaultElevation = MaterialTheme.elevation.sm)
     ) {
         Column(
             modifier = Modifier.padding(MaterialTheme.spacing.md)

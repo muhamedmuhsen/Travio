@@ -33,7 +33,7 @@ interface DestinationsApi {
 
     @GET("Destinations/search")
     suspend fun searchForDestinations(
-        @Query("keyword") keyword: String,
+        @Query("keyword") keyword: String? = null,
         @Query("pageIndex") pageIndex: Int = 1,
         @Query("pageSize") pageSize: Int = 10,
         @Query("interestIds") interestIds: List<Int>? = null

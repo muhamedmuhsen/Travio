@@ -1,9 +1,7 @@
 package com.dev.hotel.components
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -14,6 +12,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.Group
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -65,9 +64,8 @@ fun BookingCard(
             .fillMaxWidth()
             .padding(horizontal = MaterialTheme.spacing.md),
         shape = RoundedCornerShape(MaterialTheme.spacing.md),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer),
-        elevation = CardDefaults.cardElevation(defaultElevation = MaterialTheme.elevation.sm),
-        border = BorderStroke(MaterialTheme.elevation.xs, MaterialTheme.colorScheme.outlineVariant)
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.background),
+        elevation = CardDefaults.cardElevation(defaultElevation = MaterialTheme.elevation.md)
     ) {
         Column(modifier = Modifier.padding(MaterialTheme.spacing.md)) {
             Row(verticalAlignment = Alignment.Bottom) {
@@ -252,7 +250,16 @@ private fun BookingField(
     icon: (@Composable () -> Unit)? = null,
     onClick: () -> Unit
 ) {
-    Column(modifier = modifier.clickable { onClick() }) {
+    Column(
+        modifier = modifier
+            .border(
+                width = MaterialTheme.elevation.xs,
+                color = MaterialTheme.colorScheme.outlineVariant,
+                shape = RoundedCornerShape(MaterialTheme.spacing.sm)
+            )
+            .clickable { onClick() }
+            .padding(MaterialTheme.spacing.sm)
+    ) {
         Text(
             text = label,
             style = MaterialTheme.typography.labelSmall,
@@ -260,27 +267,24 @@ private fun BookingField(
         )
         Spacer(modifier = Modifier.height(MaterialTheme.spacing.xxs))
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .border(MaterialTheme.elevation.xs, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(MaterialTheme.spacing.xs))
-                .padding(horizontal = MaterialTheme.spacing.sm, vertical = MaterialTheme.spacing.xs),
             verticalAlignment = Alignment.CenterVertically
         ) {
             if (icon != null) {
                 icon()
                 Spacer(modifier = Modifier.width(MaterialTheme.spacing.xs))
             } else {
-                Box(
-                    modifier = Modifier
-                        .size(MaterialTheme.spacing.md)
-                        .border(MaterialTheme.elevation.xs, MaterialTheme.colorScheme.outline, RoundedCornerShape(MaterialTheme.spacing.xs))
+                Icon(
+                    imageVector = Icons.Default.CalendarMonth,
+                    contentDescription = null,
+                    modifier = Modifier.size(MaterialTheme.spacing.md + MaterialTheme.spacing.xxs),
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 Spacer(modifier = Modifier.width(MaterialTheme.spacing.xs))
             }
             Text(
                 text = value,
                 style = MaterialTheme.typography.bodyMedium,
-                fontWeight = FontWeight.Medium,
+                fontWeight = FontWeight.Bold,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )

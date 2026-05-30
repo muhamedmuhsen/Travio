@@ -65,7 +65,7 @@ class HomeViewModelFlightsTest {
 
             override suspend fun getNearbyDestinations(latitude: Double, longitude: Double, radiusKm: Double, count: Int): Result<List<com.example.domain.model.destination.Destination>, DataError> = Result.Success(emptyList())
 
-            override suspend fun searchForDestinations(keyword: String, pageIndex: Int, pageSize: Int, interestIds: List<Int>?): Result<List<com.example.domain.model.destination.Destination>, DataError> = Result.Success(emptyList())
+            override suspend fun searchForDestinations(keyword: String?, pageIndex: Int, pageSize: Int, interestIds: List<Int>?): Result<List<com.example.domain.model.destination.Destination>, DataError> = Result.Success(emptyList())
 
             override suspend fun getFamousCountries(): Result<List<com.example.domain.model.destination.Country>, DataError> = Result.Success(emptyList())
         }

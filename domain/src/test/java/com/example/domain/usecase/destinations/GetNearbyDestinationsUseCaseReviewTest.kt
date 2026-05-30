@@ -107,7 +107,7 @@ class GetNearbyDestinationsUseCaseReviewTest {
         }
 
         override suspend fun searchForDestinations(
-            keyword: String,
+            keyword: String?,
             pageIndex: Int,
             pageSize: Int,
             interestIds: List<Int>?

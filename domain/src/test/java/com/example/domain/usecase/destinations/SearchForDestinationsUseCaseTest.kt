@@ -23,17 +23,17 @@ class SearchForDestinationsUseCaseTest {
 
     @Test
     fun `given_emptyKeyword_when_interestsProvided_then_searchExecuted`() = runTest {
-        whenever(repository.searchForDestinations(any(), any(), any(), anyOrNull()))
+        whenever(repository.searchForDestinations(anyOrNull(), any(), any(), anyOrNull()))
             .thenReturn(Result.Success(emptyList()))
 
-        val result = useCase(keyword = "", pageIndex = 1, pageSize = 20, interestIds = listOf(1))
+        val result = useCase(keyword = null, pageIndex = 1, pageSize = 20, interestIds = listOf(1))
 
         assertTrue(result is Result.Success)
     }
 
     @Test
     fun `given_emptyKeyword_when_noInterests_then_validationError`() = runTest {
-        val result = useCase(keyword = "", pageIndex = 1, pageSize = 20, interestIds = null)
+        val result = useCase(keyword = null, pageIndex = 1, pageSize = 20, interestIds = null)
 
         assertTrue(result is Result.Error)
         // You might want to assert specific error type if available, e.g. NetworkError.Validation
@@ -41,7 +41,7 @@ class SearchForDestinationsUseCaseTest {
 
     @Test
     fun `given_keywordProvided_when_noInterests_then_searchExecuted`() = runTest {
-        whenever(repository.searchForDestinations(any(), any(), any(), anyOrNull()))
+        whenever(repository.searchForDestinations(anyOrNull(), any(), any(), anyOrNull()))
             .thenReturn(Result.Success(emptyList()))
 
         val result = useCase(keyword = "Egypt", pageIndex = 1, pageSize = 20, interestIds = null)

@@ -137,7 +137,7 @@ class HomeNearbyNavigationSmokeTest {
         }
 
         override suspend fun searchForDestinations(
-            keyword: String,
+            keyword: String?,
             pageIndex: Int,
             pageSize: Int
         ): Result<List<Destination>, DataError> {

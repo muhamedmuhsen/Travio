@@ -227,7 +227,7 @@ class DestinationDetailViewModelFavoriteAddTest {
         ): Result<List<Destination>, DataError> = Result.Success(emptyList())
 
         override suspend fun searchForDestinations(
-            keyword: String,
+            keyword: String?,
             pageIndex: Int,
             pageSize: Int,
             interestIds: List<Int>?

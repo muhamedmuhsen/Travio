@@ -8,12 +8,12 @@ import javax.inject.Inject
 
 class SearchForDestinationsUseCase @Inject constructor(private val repository: DestinationsRepository) {
     suspend operator fun invoke(
-        keyword: String,
+        keyword: String? = null,
         pageIndex: Int,
         pageSize: Int,
         interestIds: List<Int>? = null
     ): Result<List<Destination>, DataError> {
-        if (keyword.isEmpty() && interestIds.isNullOrEmpty()) {
+        if (keyword.isNullOrBlank() && interestIds.isNullOrEmpty()) {
             return Result.Error(DataError.Validation.MissingFields)
         }
         return repository.searchForDestinations(keyword, pageIndex, pageSize, interestIds)
