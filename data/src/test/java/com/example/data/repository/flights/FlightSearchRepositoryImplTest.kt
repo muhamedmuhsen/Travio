@@ -4,7 +4,6 @@ import com.example.domain.model.flights.search.FlightSearchParameters
 import com.example.domain.utils.Result
 import com.example.network.api.FlightBookingApi
 import com.example.network.dto.flights.TopOffersResponseDto
-import com.example.network.dto.flights.booking.FlightOrderRequestDto
 import com.example.network.dto.flights.booking.PaymentIntentRequestDto
 import com.example.network.dto.flights.details.FlightDetailsResponseDto
 import com.example.network.dto.flights.search.FlightOfferDto
@@ -25,7 +24,6 @@ class FlightSearchRepositoryImplTest {
         override suspend fun searchFlights(origin: String, destination: String, departureDate: String, adults: Int, cabinClass: String, maxStops: Int?): FlightSearchResponseDto = throw NotImplementedError()
         override suspend fun getFlightDetails(offerId: String): FlightDetailsResponseDto = throw NotImplementedError()
         override suspend fun createPaymentIntent(request: PaymentIntentRequestDto) = throw NotImplementedError()
-        override suspend fun confirmFlightOrder(idempotencyKey: String, request: FlightOrderRequestDto) = throw NotImplementedError()
     }
 
     @Test

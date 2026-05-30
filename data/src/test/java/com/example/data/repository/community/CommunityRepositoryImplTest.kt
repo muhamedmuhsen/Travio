@@ -47,6 +47,7 @@ class CommunityRepositoryImplTest {
         override suspend fun addComment(postId: Int, request: CommentContentRequest): BaseResponse<Unit> = throw NotImplementedError()
         override suspend fun likePost(postId: Int): LikePostResponse = throw NotImplementedError()
         override suspend fun deletePost(postId: Int) {}
+        override suspend fun deleteComment(commentId: Int): BaseResponse<Boolean> = throw NotImplementedError()
         override suspend fun uploadPostImages(postId: Int, Images: List<MultipartBody.Part>) {}
     }
 

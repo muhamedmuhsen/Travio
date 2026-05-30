@@ -1,6 +1,5 @@
 package com.example.feature.booking.presentation
 
-import com.example.domain.model.booking.BookingResult
 import com.example.domain.model.booking.Passenger
 import javax.annotation.concurrent.Immutable
 
@@ -11,7 +10,6 @@ data class BookingUiState(
     val totalPrice: String = "",
     val isProcessing: Boolean = false,
     val paymentStatus: PaymentStatus = PaymentStatus.Idle,
-    val bookingResult: BookingResult? = null,
     val error: String? = null,
     val validationErrors: Map<Int, List<com.example.domain.utils.booking.PassengerValidationError>> = emptyMap()
 )

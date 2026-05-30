@@ -1,15 +1,12 @@
 package com.example.network.api
 
 import com.example.network.dto.flights.TopOffersResponseDto
-import com.example.network.dto.flights.booking.FlightOrderRequestDto
-import com.example.network.dto.flights.booking.FlightOrderResponseDto
 import com.example.network.dto.flights.booking.PaymentIntentRequestDto
 import com.example.network.dto.flights.booking.PaymentIntentResponseWrapperDto
 import com.example.network.dto.flights.details.FlightDetailsResponseDto
 import com.example.network.dto.flights.search.FlightSearchResponseDto
 import retrofit2.http.Body
 import retrofit2.http.GET
-import retrofit2.http.Header
 import retrofit2.http.POST
 import retrofit2.http.Path
 import retrofit2.http.Query
@@ -33,10 +30,4 @@ interface FlightBookingApi {
 
     @POST("FlightBooking/checkout")
     suspend fun createPaymentIntent(@Body request: PaymentIntentRequestDto): PaymentIntentResponseWrapperDto
-
-    @POST("FlightBooking/flight/order")
-    suspend fun confirmFlightOrder(
-        @Header("Idempotency-Key") idempotencyKey: String,
-        @Body request: FlightOrderRequestDto
-    ): FlightOrderResponseDto
 }

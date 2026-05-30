@@ -3,7 +3,6 @@ package com.example.data.repository.flights
 import com.example.domain.model.flights.TopFlightOffer
 import com.example.network.dto.flights.TopOfferDto
 import com.example.network.dto.flights.TopOffersResponseDto
-import com.example.network.dto.flights.booking.FlightOrderRequestDto
 import com.example.network.dto.flights.booking.PaymentIntentRequestDto
 import com.example.domain.utils.DataError
 import com.example.domain.utils.Result
@@ -40,7 +39,6 @@ class TopFlightOffersRepositoryImplTest {
         override suspend fun searchFlights(origin: String, destination: String, departureDate: String, adults: Int, cabinClass: String, maxStops: Int?): FlightSearchResponseDto = throw NotImplementedError()
         override suspend fun getFlightDetails(offerId: String): FlightDetailsResponseDto = throw NotImplementedError()
         override suspend fun createPaymentIntent(request: PaymentIntentRequestDto) = throw NotImplementedError()
-        override suspend fun confirmFlightOrder(idempotencyKey: String, request: FlightOrderRequestDto) = throw NotImplementedError()
     }
 
     @Test

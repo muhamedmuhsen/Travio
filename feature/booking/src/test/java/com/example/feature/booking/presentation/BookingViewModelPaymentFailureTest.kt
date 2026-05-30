@@ -1,12 +1,9 @@
 package com.example.feature.booking.presentation
 
 import androidx.lifecycle.SavedStateHandle
-import com.example.domain.model.booking.BookingRequest
-import com.example.domain.model.booking.BookingResult
 import com.example.domain.model.booking.Passenger
 import com.example.domain.model.booking.PaymentIntentInfo
 import com.example.domain.repository.booking.BookingRepository
-import com.example.domain.usecase.booking.ConfirmFlightOrderUseCase
 import com.example.domain.usecase.booking.CreatePaymentIntentUseCase
 import com.example.domain.usecase.booking.ValidatePassengersUseCase
 import kotlinx.coroutines.Dispatchers
@@ -32,12 +29,10 @@ class BookingViewModelPaymentFailureTest {
         
         val fakeRepo = object : BookingRepository {
             override suspend fun createPaymentIntent(offerId: String, passengers: List<Passenger>) = Result.success(PaymentIntentInfo("secret", "pi_123"))
-            override suspend fun confirmFlightOrder(request: BookingRequest) = Result.success(BookingResult("ord_123", "ABCDEF", "confirmed"))
         }
 
         val validatePassengersUseCase = ValidatePassengersUseCase()
         val createPaymentIntentUseCase = CreatePaymentIntentUseCase(fakeRepo)
-        val confirmFlightOrderUseCase = ConfirmFlightOrderUseCase(fakeRepo)
         
         val dummyPayload = com.example.domain.model.flights.details.FlightDetailsPayload(
             offerId = "off_123",
@@ -60,7 +55,6 @@ class BookingViewModelPaymentFailureTest {
         viewModel = BookingViewModel(
             validatePassengersUseCase,
             createPaymentIntentUseCase,
-            confirmFlightOrderUseCase,
             getFlightDetailsUseCase,
             SavedStateHandle(mapOf("offerId" to "off_123"))
         )

@@ -1,7 +1,5 @@
 package com.example.domain.usecase.booking
 
-import com.example.domain.model.booking.BookingRequest
-import com.example.domain.model.booking.BookingResult
 import com.example.domain.model.booking.Passenger
 import com.example.domain.model.booking.PaymentIntentInfo
 import com.example.domain.repository.booking.BookingRepository
@@ -19,10 +17,6 @@ class CreatePaymentIntentUseCaseTest {
             } else {
                 Result.failure(Exception("Error"))
             }
-        }
-
-        override suspend fun confirmFlightOrder(request: BookingRequest): Result<BookingResult> {
-            TODO("Not needed for this test")
         }
     }
 
