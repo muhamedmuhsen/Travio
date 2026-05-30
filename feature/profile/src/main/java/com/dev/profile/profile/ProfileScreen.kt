@@ -61,6 +61,7 @@ fun ProfileScreen(
     navigateToFavorite: () -> Unit = {},
     navigateToCommunity: () -> Unit = {},
     navigateToTrips: () -> Unit = {},
+    navigateToBookings: () -> Unit = {},
     viewModel: ProfileViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -150,6 +151,7 @@ fun ProfileScreen(
             showLogoutDialog = viewModel::onLogoutClicked,
             toggleDarkMode = viewModel::toggleDarkMode,
             toggleLanguage = viewModel::toggleLanguage,
+            navigateToBookings = navigateToBookings,
             modifier = modifier.padding(innerPadding)
         )
     }
@@ -162,6 +164,7 @@ private fun ProfileContent(
     showLogoutDialog: () -> Unit,
     toggleDarkMode: () -> Unit,
     toggleLanguage: () -> Unit,
+    navigateToBookings: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -201,9 +204,10 @@ private fun ProfileContent(
                         )
                     },
                     ProfileOption(
-                        stringResource(id = R.string.addresses),
-                        R.drawable.location
+                        stringResource(id = R.string.my_bookings),
+                        R.drawable.ic_booking
                     ) {
+                        navigateToBookings()
                     }
                 )
             )
@@ -372,7 +376,8 @@ private fun ProfileScreenPreview() {
             onNavigateToDetail = {},
             showLogoutDialog = {},
             toggleDarkMode = {},
-            toggleLanguage = {}
+            toggleLanguage = {},
+            navigateToBookings = {}
         )
     }
 }

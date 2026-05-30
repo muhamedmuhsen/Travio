@@ -25,6 +25,7 @@
 
     <!-- Profile Options -->
     <string name="my_profile">My profile</string>
+    <string name="my_bookings">My Bookings</string>
     <string name="addresses">Addresses</string>
     <string name="language">Language</string>
     <string name="dark_mode">Dark Mode</string>

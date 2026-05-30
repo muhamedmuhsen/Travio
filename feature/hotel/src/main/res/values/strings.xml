@@ -120,5 +120,37 @@
     <string name="hotel_checkout_success_message">Thank you for booking with Travio. Your reservation is confirmed.</string>
     <string name="hotel_checkout_booking_reference">Booking Reference</string>
     <string name="hotel_checkout_done">Done</string>
+
+    <!-- Hotel Bookings Management -->
+    <string name="my_bookings">My Bookings</string>
+    <string name="manage_reservations">Manage your hotel reservations</string>
+    <string name="no_bookings_found">No bookings found</string>
+    <string name="no_bookings_desc">Your hotel reservations will appear here</string>
+    <string name="explore_hotels">Explore Hotels</string>
+    <string name="booking_reference">Booking Reference</string>
+    <string name="client_reference">Client Reference</string>
+    <string name="booking_status">Booking Status</string>
+    <string name="booking_date">Booking Date</string>
+    <string name="holder_name">Holder Name</string>
+    <string name="room_count">Room Count: %1$d</string>
+    <string name="cancellation_reference">Cancellation Reference</string>
+    <string name="cancel_booking">Cancel Booking</string>
+    <string name="cancel_booking_title">Cancel Booking?</string>
+    <string name="cancel_booking_message">Are you sure you want to cancel this booking?</string>
+    <string name="cancel_action">Cancel</string>
+    <string name="confirm_action">Confirm</string>
+    <string name="cancelling">Cancelling...</string>
+    <string name="booking_cancelled_success">Booking cancelled successfully</string>
+    <string name="unable_to_cancel_booking">Unable to cancel booking</string>
+    <string name="session_expired_login">Session expired. Please login again.</string>
+    <string name="status_confirmed">Confirmed</string>
+    <string name="status_pending">Pending</string>
+    <string name="status_cancelled">Cancelled</string>
+    <string name="status_unknown">Unknown</string>
+    <string name="booking_info">Booking Information</string>
+    <string name="guest_info">Guest Information</string>
+    <string name="hotel_info">Hotel Information</string>
+    <string name="payment_info">Payment Information</string>
+    <string name="cancellation_info">Cancellation Information</string>
 </resources>
 

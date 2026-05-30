@@ -1,5 +1,6 @@
 package com.example.data.repository.hotel
 
+import com.example.data.mapper.hotel.booking.toDomain
 import com.example.data.mapper.hotel.toCached
 import com.example.data.mapper.hotel.toDomain
 import com.example.data.mapper.hotel.toDto
@@ -10,6 +11,9 @@ import com.example.domain.model.hotel.HotelCheckoutRequest
 import com.example.domain.model.hotel.HotelCheckoutResult
 import com.example.domain.model.hotel.HotelDetails
 import com.example.domain.model.hotel.NearbyHotel
+import com.example.domain.model.hotel.booking.BookingDetails
+import com.example.domain.model.hotel.booking.BookingItem
+import com.example.domain.model.hotel.booking.CancellationResult
 import com.example.domain.repository.hotel.HotelRepository
 import com.example.domain.utils.DataError
 import com.example.domain.utils.Result
@@ -227,5 +231,57 @@ class HotelRepositoryImpl @Inject constructor(
             children = this.children,
             childrenAges = this.childrenAges
         )
+    }
+
+    override suspend fun getUserBookings(): Result<List<BookingItem>, DataError> {
+        val result = safeApiCall { api.getUserBookings() }
+        return when (result) {
+            is Result.Success -> {
+                val response = result.data
+                if (!response.success) {
+                    Result.Error(DataError.Logical(response.message))
+                } else {
+                    val bookings = response.data?.bookings?.map { it.toDomain() } ?: emptyList()
+                    Result.Success(bookings)
+                }
+            }
+            is Result.Error -> Result.Error(result.error)
+        }
+    }
+
+    override suspend fun getBookingDetails(reference: String): Result<BookingDetails, DataError> {
+        val result = safeApiCall { api.getBookingDetails(reference) }
+        return when (result) {
+            is Result.Success -> {
+                val response = result.data
+                val data = response.data
+                if (!response.success) {
+                    Result.Error(DataError.Logical(response.message))
+                } else if (data == null) {
+                    Result.Error(DataError.Data.NotFound)
+                } else {
+                    Result.Success(data.toDomain())
+                }
+            }
+            is Result.Error -> Result.Error(result.error)
+        }
+    }
+
+    override suspend fun cancelBooking(reference: String): Result<CancellationResult, DataError> {
+        val result = safeApiCall { api.cancelBooking(reference) }
+        return when (result) {
+            is Result.Success -> {
+                val response = result.data
+                val data = response.data
+                if (!response.success) {
+                    Result.Error(DataError.Logical(response.message))
+                } else if (data == null) {
+                    Result.Error(DataError.Data.NotFound)
+                } else {
+                    Result.Success(data.toDomain())
+                }
+            }
+            is Result.Error -> Result.Error(result.error)
+        }
     }
 }

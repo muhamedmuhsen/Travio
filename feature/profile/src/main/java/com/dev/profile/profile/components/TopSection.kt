@@ -244,7 +244,7 @@ private fun TopSectionPreview() {
         TopSection(
             options = listOf(
                 ProfileOption("My Profile", R.drawable.person) { },
-                ProfileOption("Addressess", R.drawable.location) { }
+                ProfileOption("My Bookings", R.drawable.ic_booking) { }
             )
         )
     }

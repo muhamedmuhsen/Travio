@@ -120,6 +120,14 @@ sealed class Screen(val route: String) {
             return "$route/$bookingId?hotelName=$hotelName&checkIn=$checkIn&checkOut=$checkOut"
         }
     }
+
+    data object BookingListScreen : Screen(Screens.BOOKING_LIST.name)
+    data object BookingDetailScreen : Screen(Screens.BOOKING_DETAIL.name) {
+        const val ARG_REFERENCE = "reference"
+        val routePattern = "$route/{$ARG_REFERENCE}"
+
+        fun createRoute(reference: String): String = "$route/$reference"
+    }
 }
 
 enum class Screens {
@@ -151,5 +159,7 @@ enum class Screens {
     HOTEL_DETAIL,
     HOTEL_SEARCH,
     HOTEL_CHECKOUT,
-    BOOKING_SUCCESS
+    BOOKING_SUCCESS,
+    BOOKING_LIST,
+    BOOKING_DETAIL
 }

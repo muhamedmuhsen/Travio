@@ -5,7 +5,11 @@ import com.example.network.dto.hotel.HotelCheckoutResponseDto
 import com.example.network.dto.hotel.HotelDetailsResponseDto
 import com.example.network.dto.hotel.HotelSearchRequestDto
 import com.example.network.dto.hotel.HotelSearchResponseDto
+import com.example.network.dto.hotel.booking.BookingDetailsResponseDto
+import com.example.network.dto.hotel.booking.BookingListResponseDto
+import com.example.network.dto.hotel.booking.CancelBookingResponseDto
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Path
@@ -27,4 +31,13 @@ interface HotelApi {
 
     @POST("Hotels/checkout")
     suspend fun checkoutHotel(@Body request: HotelCheckoutRequestDto): HotelCheckoutResponseDto
+
+    @GET("Hotels/bookings")
+    suspend fun getUserBookings(): BookingListResponseDto
+
+    @GET("Hotels/bookings/{reference}")
+    suspend fun getBookingDetails(@Path("reference") reference: String): BookingDetailsResponseDto
+
+    @DELETE("Hotels/bookings/{reference}")
+    suspend fun cancelBooking(@Path("reference") reference: String): CancelBookingResponseDto
 }
