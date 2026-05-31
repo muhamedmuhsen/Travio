@@ -12,6 +12,7 @@ import com.example.network.dto.hotel.booking.CancelBookingDataDto
 fun BookingItemDto.toDomain(): BookingItem {
     return BookingItem(
         reference = this.id.orEmpty(),
+        hotelbedsReference = this.hotelbedsReference,
         hotelName = this.hotelName.orEmpty(),
         status = BookingStatus.fromString(this.bookingStatus),
         checkIn = this.checkIn.orEmpty(),
@@ -28,7 +29,7 @@ fun BookingDetailsDataDto.toDomain(): BookingDetails {
         clientReference = this.clientReference.orEmpty(),
         status = BookingStatus.fromString(this.status),
         creationDate = this.creationDate.orEmpty(),
-        holderName = this.holder?.name.orEmpty(),
+        holderName = this.holderName.orEmpty(),
         totalNet = this.totalNet ?: 0.0,
         currency = this.currency.orEmpty(),
         hotel = HotelBookingInfo(

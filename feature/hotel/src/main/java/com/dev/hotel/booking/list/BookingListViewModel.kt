@@ -55,9 +55,10 @@ class BookingListViewModel @Inject constructor(
         }
     }
 
-    fun onBookingClicked(reference: String) {
+    fun onBookingClicked(booking: com.example.domain.model.hotel.booking.BookingItem) {
         viewModelScope.launch {
-            _event.send(BookingListEvent.NavigateToDetail(reference))
+            val ref = booking.hotelbedsReference ?: booking.reference
+            _event.send(BookingListEvent.NavigateToDetail(ref))
         }
     }
 

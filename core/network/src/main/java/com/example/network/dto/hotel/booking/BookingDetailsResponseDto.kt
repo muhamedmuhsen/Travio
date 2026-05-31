@@ -14,15 +14,11 @@ data class BookingDetailsDataDto(
     @SerializedName("clientReference") val clientReference: String?,
     @SerializedName("status") val status: String?,
     @SerializedName("creationDate") val creationDate: String?,
-    @SerializedName("holder") val holder: HolderDto?,
+    @SerializedName("holderName") val holderName: String?,
     @SerializedName("totalNet") val totalNet: Double?,
     @SerializedName("currency") val currency: String?,
     @SerializedName("hotel") val hotel: HotelBookingInfoDto?,
     @SerializedName("cancellationReference") val cancellationReference: String?
-)
-
-data class HolderDto(
-    @SerializedName("name") val name: String?
 )
 
 data class HotelBookingInfoDto(

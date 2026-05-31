@@ -11,6 +11,7 @@ data class BookingListResponseDto(
 
 data class BookingItemDto(
     @SerializedName("id") val id: String?,
+    @SerializedName("hotelbedsReference") val hotelbedsReference: String?,
     @SerializedName("hotelName") val hotelName: String?,
     @SerializedName("bookingStatus") val bookingStatus: String?,
     @SerializedName("checkIn") val checkIn: String?,

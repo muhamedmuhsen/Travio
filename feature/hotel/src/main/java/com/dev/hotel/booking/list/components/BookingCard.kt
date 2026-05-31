@@ -94,6 +94,7 @@ private fun BookingCardPreview() {
         BookingCard(
             booking = BookingItem(
                 reference = "REF12345",
+                hotelbedsReference = "HB-12345",
                 hotelName = "Grand Plaza Hotel",
                 status = BookingStatus.CONFIRMED,
                 checkIn = "2026-10-01",

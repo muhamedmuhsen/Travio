@@ -11,6 +11,7 @@ class BookingMapperTest {
     fun `toDomain should correctly map BookingItemDto to BookingItem`() {
         val dto = BookingItemDto(
             id = "019e761e-8ca6-711b-bf97-a72549b47f36",
+            hotelbedsReference = "HB-12345",
             hotelName = "Amarante Pyramids",
             bookingStatus = "PendingPayment",
             checkIn = "2026-05-31",
@@ -23,6 +24,7 @@ class BookingMapperTest {
         val domain = dto.toDomain()
 
         assertEquals("019e761e-8ca6-711b-bf97-a72549b47f36", domain.reference)
+        assertEquals("HB-12345", domain.hotelbedsReference)
         assertEquals("Amarante Pyramids", domain.hotelName)
         assertEquals(BookingStatus.PENDING_PAYMENT, domain.status)
         assertEquals("2026-05-31", domain.checkIn)

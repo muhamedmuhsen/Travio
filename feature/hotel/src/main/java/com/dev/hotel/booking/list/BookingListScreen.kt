@@ -106,7 +106,7 @@ fun BookingListScreen(
                         ) { booking ->
                             BookingCard(
                                 booking = booking,
-                                onClick = { viewModel.onBookingClicked(booking.reference) }
+                                onClick = { viewModel.onBookingClicked(booking) }
                             )
                             Spacer(modifier = Modifier.height(MaterialTheme.spacing.sm))
                         }
