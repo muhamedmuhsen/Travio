@@ -66,6 +66,10 @@ class CheckoutHotelUseCaseTest {
             )
         )
 
+        override suspend fun getUserBookings(): Result<List<com.example.domain.model.hotel.booking.BookingItem>, DataError> = Result.Error(DataError.UnknownError)
+        override suspend fun getBookingDetails(reference: String): Result<com.example.domain.model.hotel.booking.BookingDetails, DataError> = Result.Error(DataError.UnknownError)
+        override suspend fun cancelBooking(reference: String): Result<com.example.domain.model.hotel.booking.CancellationResult, DataError> = Result.Error(DataError.UnknownError)
+
         override suspend fun checkoutHotel(request: HotelCheckoutRequest): Result<HotelCheckoutResult, DataError> {
             capturedRequest = request
             return if (isSuccess) {

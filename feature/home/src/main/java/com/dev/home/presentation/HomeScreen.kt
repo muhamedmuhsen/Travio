@@ -3,7 +3,6 @@ package com.dev.home.presentation
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.res.Configuration
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -15,6 +14,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyRow
@@ -41,9 +41,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -229,7 +227,7 @@ private fun HomeContent(
                         )
                         .background(MaterialTheme.colorScheme.surface)
                 ) {
-                    Spacer(modifier = Modifier.height(MaterialTheme.spacing.sm))
+                    // Spacer(modifier = Modifier.height(MaterialTheme.spacing.sm))
                     CountryStateHandling(
                         state = state.countriesState,
                         onRetry = { onAction(HomeAction.OnRetrySection(HomeSection.Countries)) }
@@ -331,25 +329,18 @@ private fun HomeTopSection(
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .height(MaterialTheme.spacing.xxxl * 4)
+            .height(MaterialTheme.spacing.xxxl * 2.5f)
     ) {
-        Image(
-            painterResource(R.drawable.search_background),
-            contentDescription = null,
-            contentScale = ContentScale.Crop,
-            modifier = Modifier.fillMaxSize()
-        )
-
         HomeSearchBar(
             value = searchQuery,
             onValueChange = onSearchQueryChanged,
             onSearchClicked = onSearchClicked,
-            // Tapping anywhere on the bar navigates directly to the Search screen
             onClick = onSearchClicked,
             modifier = Modifier
                 .align(Alignment.TopCenter)
+                .statusBarsPadding()
                 .padding(
-                    top = MaterialTheme.spacing.xxxl,
+                    top = MaterialTheme.spacing.sm,
                     start = MaterialTheme.spacing.md,
                     end = MaterialTheme.spacing.md
                 )
@@ -467,7 +458,6 @@ private fun RecentViewedStateHandling(
             title = stringResource(R.string.section_recently_viewed),
             onRetry = onRetry
         )
-        // Not yet wired up — hide the section entirely until the use-case is ready.
         UiState.Idle -> Unit
         UiState.Loading -> {
             HorizontalSection(title = stringResource(R.string.section_recently_viewed)) {

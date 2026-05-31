@@ -273,6 +273,11 @@ fun TravioNavHost(
                         launchSingleTop = true
                     }
                 },
+                navigateToBookings = {
+                    navController.navigate(Screen.BookingListScreen.route) {
+                        launchSingleTop = true
+                    }
+                },
                 navController = navController
             )
         }
@@ -672,6 +677,33 @@ fun TravioNavHost(
                 onNavigateToHome = {
                     navController.navigate(Screen.HomeScreen.route) {
                         popUpTo(Screen.HomeScreen.route) { inclusive = false }
+                        launchSingleTop = true
+                    }
+                }
+            )
+        }
+
+        composable(Screen.BookingListScreen.route) {
+            com.dev.hotel.booking.list.BookingListScreen(
+                onNavigateBack = { navController.popBackStack() },
+                onNavigateToDetail = { reference ->
+                    navController.navigate(Screen.BookingDetailScreen.createRoute(reference))
+                },
+                onNavigateToHotels = {
+                    navController.navigate(Screen.HotelSearchScreen.route)
+                }
+            )
+        }
+
+        composable(
+            route = Screen.BookingDetailScreen.routePattern,
+            arguments = listOf(navArgument(Screen.BookingDetailScreen.ARG_REFERENCE) { type = NavType.StringType })
+        ) {
+            com.dev.hotel.booking.detail.BookingDetailScreen(
+                onNavigateBack = { navController.popBackStack() },
+                onNavigateToLogin = {
+                    navController.navigate(Screen.LoginScreen.route) {
+                        popUpTo(0) { inclusive = true }
                         launchSingleTop = true
                     }
                 }
