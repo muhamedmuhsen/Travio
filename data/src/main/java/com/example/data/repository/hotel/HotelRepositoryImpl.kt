@@ -234,54 +234,69 @@ class HotelRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getUserBookings(): Result<List<BookingItem>, DataError> {
-        val result = safeApiCall { api.getUserBookings() }
-        return when (result) {
-            is Result.Success -> {
-                val response = result.data
-                if (!response.success) {
-                    Result.Error(DataError.Logical(response.message))
-                } else {
-                    val bookings = response.data?.bookings?.map { it.toDomain() } ?: emptyList()
-                    Result.Success(bookings)
-                }
-            }
-            is Result.Error -> Result.Error(result.error)
-        }
+        kotlinx.coroutines.delay(1000)
+        return Result.Success(
+            listOf(
+                BookingItem(
+                    reference = "REF-12345",
+                    hotelName = "Grand Plaza Hotel",
+                    status = com.example.domain.model.hotel.booking.BookingStatus.CONFIRMED,
+                    checkIn = "2026-07-15",
+                    checkOut = "2026-07-20",
+                    totalPrice = 500.0,
+                    currency = "USD",
+                    bookingDate = "2026-06-01"
+                ),
+                BookingItem(
+                    reference = "REF-67890",
+                    hotelName = "Seaside Resort",
+                    status = com.example.domain.model.hotel.booking.BookingStatus.CANCELLED,
+                    checkIn = "2026-08-10",
+                    checkOut = "2026-08-15",
+                    totalPrice = 850.0,
+                    currency = "USD",
+                    bookingDate = "2026-05-20"
+                )
+            )
+        )
     }
 
     override suspend fun getBookingDetails(reference: String): Result<BookingDetails, DataError> {
-        val result = safeApiCall { api.getBookingDetails(reference) }
-        return when (result) {
-            is Result.Success -> {
-                val response = result.data
-                val data = response.data
-                if (!response.success) {
-                    Result.Error(DataError.Logical(response.message))
-                } else if (data == null) {
-                    Result.Error(DataError.Data.NotFound)
-                } else {
-                    Result.Success(data.toDomain())
-                }
-            }
-            is Result.Error -> Result.Error(result.error)
+        kotlinx.coroutines.delay(1000)
+        val status = if (reference == "REF-67890") {
+            com.example.domain.model.hotel.booking.BookingStatus.CANCELLED
+        } else {
+            com.example.domain.model.hotel.booking.BookingStatus.CONFIRMED
         }
+        return Result.Success(
+            BookingDetails(
+                reference = reference,
+                clientReference = "CLI-$reference",
+                status = status,
+                creationDate = "2026-06-01",
+                holderName = "John Doe",
+                totalNet = if (reference == "REF-67890") 850.0 else 500.0,
+                currency = "USD",
+                hotel = com.example.domain.model.hotel.booking.HotelBookingInfo(
+                    code = 1,
+                    name = if (reference == "REF-67890") "Seaside Resort" else "Grand Plaza Hotel",
+                    checkIn = if (reference == "REF-67890") "2026-08-10" else "2026-07-15",
+                    checkOut = if (reference == "REF-67890") "2026-08-15" else "2026-07-20",
+                    roomCount = 1
+                ),
+                cancellationReference = if (status == com.example.domain.model.hotel.booking.BookingStatus.CANCELLED) "CANC-999" else null
+            )
+        )
     }
 
     override suspend fun cancelBooking(reference: String): Result<CancellationResult, DataError> {
-        val result = safeApiCall { api.cancelBooking(reference) }
-        return when (result) {
-            is Result.Success -> {
-                val response = result.data
-                val data = response.data
-                if (!response.success) {
-                    Result.Error(DataError.Logical(response.message))
-                } else if (data == null) {
-                    Result.Error(DataError.Data.NotFound)
-                } else {
-                    Result.Success(data.toDomain())
-                }
-            }
-            is Result.Error -> Result.Error(result.error)
-        }
+        kotlinx.coroutines.delay(1500)
+        return Result.Success(
+            CancellationResult(
+                reference = reference,
+                status = com.example.domain.model.hotel.booking.BookingStatus.CANCELLED,
+                cancellationReference = "CANC-${System.currentTimeMillis()}"
+            )
+        )
     }
 }
