@@ -6,14 +6,16 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import com.dev.destination.R
 import com.example.designsystem.theme.spacing
 
@@ -24,20 +26,20 @@ fun AboutSection(
 ) {
     if (description.isEmpty()) return
 
-    Surface(
+    Card(
         modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(MaterialTheme.spacing.md),
-        // Fallback mimicking containerHighestLight
-        color = MaterialTheme.colorScheme.surfaceVariant
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.background),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
         Column(modifier = Modifier.padding(MaterialTheme.spacing.md)) {
             Text(
                 text = stringResource(id = R.string.destination_about_title),
-                style = MaterialTheme.typography.titleMedium,
+                style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onSurface
             )
-            Spacer(modifier = Modifier.height(MaterialTheme.spacing.xs))
+            Spacer(modifier = Modifier.height(MaterialTheme.spacing.md))
             Text(
                 text = description,
                 style = MaterialTheme.typography.bodyMedium,

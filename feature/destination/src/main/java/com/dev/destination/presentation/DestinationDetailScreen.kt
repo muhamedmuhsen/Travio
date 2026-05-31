@@ -3,9 +3,9 @@ package com.dev.destination.presentation
 import android.content.Intent
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -21,39 +21,31 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
-import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.Refresh
-import androidx.compose.material.icons.outlined.Star
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -63,7 +55,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -74,6 +65,7 @@ import com.dev.destination.R
 import com.dev.destination.components.AboutSection
 import com.dev.destination.components.AnotherDestinationsRow
 import com.dev.destination.components.DestinationLocationSection
+import com.dev.destination.components.DestinationReviewsSection
 import com.dev.destination.components.DetailErrorState
 import com.dev.destination.components.DetailLoadingState
 import com.example.designsystem.components.shimmerEffect
@@ -87,9 +79,6 @@ import com.example.domain.model.destination.Interest
 import com.example.domain.model.review.Review
 import kotlinx.coroutines.launch
 import java.time.Instant
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
-import java.time.format.FormatStyle
 
 @Composable
 fun DestinationDetailScreen(
@@ -141,8 +130,7 @@ private fun DestinationDetailContent(
     uiState: DestinationDetailUiState,
     onAction: (DestinationDetailAction) -> Unit,
     modifier: Modifier = Modifier,
-    snackbarHostState: SnackbarHostState,
-    initialTabIndex: Int = 0
+    snackbarHostState: SnackbarHostState
 ) {
     val overlayContentColor = Color.White
 
@@ -153,7 +141,6 @@ private fun DestinationDetailContent(
         when (val detailState = uiState.detailState) {
             is UiState.Success -> {
                 val destination = detailState.data
-                val heroImage = destination.imageUrls.firstOrNull()
 
                 Column(
                     modifier = Modifier
@@ -355,7 +342,7 @@ private fun DestinationDetailContent(
                             modifier = Modifier.padding(bottom = MaterialTheme.spacing.md)
                         )
 
-                        ReviewSection(
+                        DestinationReviewsSection(
                             uiState = uiState,
                             onAction = onAction,
                             modifier = Modifier.padding(bottom = MaterialTheme.spacing.lg)
@@ -534,281 +521,6 @@ private fun RelatedDestinationsErrorSection(
     }
 }
 
-@Composable
-private fun ReviewSection(
-    uiState: DestinationDetailUiState,
-    onAction: (DestinationDetailAction) -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Column(modifier = modifier) {
-        ReviewSubmissionCard(
-            text = uiState.reviewText,
-            rating = uiState.reviewRating,
-            isSubmitting = uiState.isSubmittingReview,
-            onTextChanged = { onAction(DestinationDetailAction.OnReviewTextChanged(it)) },
-            onRatingChanged = { onAction(DestinationDetailAction.OnReviewRatingChanged(it)) },
-            onSubmitClicked = { onAction(DestinationDetailAction.OnSubmitReviewClicked) },
-            modifier = Modifier.padding(bottom = MaterialTheme.spacing.lg)
-        )
-
-        when (val state = uiState.reviewsState) {
-            is UiState.Loading -> {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(MaterialTheme.spacing.xxxl * 4 + MaterialTheme.spacing.xs),
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator()
-                }
-            }
-
-            is UiState.Success -> {
-                if (state.data.isEmpty()) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(MaterialTheme.spacing.xxxl * 4 + MaterialTheme.spacing.xs),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = stringResource(id = R.string.destination_no_reviews),
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
-                } else {
-                    state.data.forEach { review ->
-                        ReviewItem(
-                            review = review,
-                            onDelete = if (review.isOwnedByCurrentUser) {
-                                { onAction(DestinationDetailAction.OnDeleteReviewClicked) }
-                            } else {
-                                null
-                            },
-                            modifier = Modifier.padding(bottom = MaterialTheme.spacing.md)
-                        )
-                    }
-                }
-            }
-
-            is UiState.Error -> {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = MaterialTheme.spacing.xl),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Text(
-                        text = state.message,
-                        color = MaterialTheme.colorScheme.error,
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-                    Spacer(modifier = Modifier.height(MaterialTheme.spacing.xs))
-                    OutlinedButton(onClick = {
-                        // ViewModel already triggers load on init, maybe add retry action?
-                    }) {
-                        Text(stringResource(id = R.string.destination_retry))
-                    }
-                }
-            }
-
-            else -> {}
-        }
-    }
-}
-
-@Composable
-private fun ReviewSubmissionCard(
-    text: String,
-    rating: Int,
-    isSubmitting: Boolean,
-    onTextChanged: (String) -> Unit,
-    onRatingChanged: (Int) -> Unit,
-    onSubmitClicked: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Card(
-        modifier = modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(MaterialTheme.spacing.md),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
-        )
-    ) {
-        Column(
-            modifier = Modifier.padding(MaterialTheme.spacing.md),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            InteractiveRatingBar(
-                rating = rating,
-                onRatingChanged = onRatingChanged,
-                modifier = Modifier.padding(bottom = MaterialTheme.spacing.md)
-            )
-
-            OutlinedTextField(
-                value = text,
-                onValueChange = onTextChanged,
-                placeholder = { Text(stringResource(id = R.string.destination_reviews_placeholder)) },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(MaterialTheme.spacing.xxxl * 2 + MaterialTheme.spacing.xxs),
-                shape = MaterialTheme.shapes.medium,
-                colors = TextFieldDefaults.colors(
-                    focusedContainerColor = Color.Transparent,
-                    unfocusedContainerColor = Color.Transparent,
-                    disabledContainerColor = Color.Transparent
-                ),
-                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done)
-            )
-
-            Spacer(modifier = Modifier.height(MaterialTheme.spacing.md))
-
-            Button(
-                onClick = onSubmitClicked,
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(MaterialTheme.spacing.sm),
-                enabled = !isSubmitting && text.isNotBlank() && rating > 0
-            ) {
-                if (isSubmitting) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(MaterialTheme.spacing.lg),
-                        color = MaterialTheme.colorScheme.onPrimary,
-                        strokeWidth = MaterialTheme.elevation.sm
-                    )
-                } else {
-                    Text(stringResource(id = com.example.designsystem.R.string.next))
-                }
-            }
-        }
-    }
-}
-
-@Composable
-private fun InteractiveRatingBar(
-    rating: Int,
-    onRatingChanged: (Int) -> Unit,
-    modifier: Modifier = Modifier,
-    starCount: Int = 5
-) {
-    Row(
-        modifier = modifier,
-        horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.xs)
-    ) {
-        repeat(starCount) { index ->
-            val starRating = index + 1
-            Icon(
-                imageVector = if (rating >= starRating) Icons.Filled.Star else Icons.Outlined.Star,
-                contentDescription = null,
-                tint = if (rating >= starRating) MaterialTheme.colorScheme.star else MaterialTheme.colorScheme.outline,
-                modifier = Modifier
-                    .size(MaterialTheme.spacing.xl)
-                    .clickable { onRatingChanged(starRating) }
-            )
-        }
-    }
-}
-
-@Composable
-private fun ReviewItem(
-    review: Review,
-    onDelete: (() -> Unit)? = null,
-    modifier: Modifier = Modifier
-) {
-    Card(
-        modifier = modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(MaterialTheme.spacing.md),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f)
-        )
-    ) {
-        Column(modifier = Modifier.padding(MaterialTheme.spacing.md)) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    AsyncImage(
-                        model = ImageRequest.Builder(LocalContext.current)
-                            .data(review.authorAvatarUrl)
-                            .crossfade(true)
-                            .error(com.example.designsystem.R.drawable.profile_fill)
-                            .placeholder(com.example.designsystem.R.drawable.profile_fill)
-                            .build(),
-                        contentDescription = null,
-                        modifier = Modifier
-                            .size(MaterialTheme.spacing.xxxl - MaterialTheme.spacing.xs)
-                            .clip(CircleShape),
-                        contentScale = ContentScale.Crop
-                    )
-                    Spacer(modifier = Modifier.width(MaterialTheme.spacing.sm))
-                    Column {
-                        Text(
-                            text = review.authorName,
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.Bold
-                        )
-                        val dateText = review.createdAt.atZone(ZoneId.systemDefault())
-                            .format(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM))
-                        Text(
-                            text = dateText,
-                            style = MaterialTheme.typography.labelSmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
-                }
-
-                if (review.isOwnedByCurrentUser && onDelete != null) {
-                    IconButton(onClick = onDelete) {
-                        Icon(
-                            imageVector = Icons.Default.Delete,
-                            contentDescription = stringResource(R.string.delete_review),
-                            tint = MaterialTheme.colorScheme.error
-                        )
-                    }
-                }
-            }
-
-            Spacer(modifier = Modifier.height(MaterialTheme.spacing.xs))
-
-            Row(horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.xxs)) {
-                repeat(5) { index ->
-                    Icon(
-                        imageVector = Icons.Filled.Star,
-                        contentDescription = null,
-                        tint = if (index < review.rating) {
-                            MaterialTheme.colorScheme.star
-                        } else {
-                            MaterialTheme.colorScheme.outline.copy(
-                                alpha = 0.3f
-                            )
-                        },
-                        modifier = Modifier.size(MaterialTheme.spacing.md)
-                    )
-                }
-            }
-
-            Spacer(modifier = Modifier.height(MaterialTheme.spacing.sm))
-
-            Text(
-                text = review.content,
-                style = MaterialTheme.typography.bodyMedium
-            )
-
-            Spacer(modifier = Modifier.height(MaterialTheme.spacing.sm))
-
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(
-                    text = stringResource(id = R.string.destination_helpful_count, review.helpfulCount),
-                    style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.primary,
-                    fontWeight = FontWeight.SemiBold
-                )
-            }
-        }
-    }
-}
-
 @Preview(showBackground = true)
 @Composable
 fun DestinationDetailScreenPreview() {
@@ -863,15 +575,14 @@ fun DestinationDetailScreenPreview() {
                 uiState = sampleUiState,
                 onAction = {},
                 modifier = Modifier.padding(padding),
-                snackbarHostState = remember { SnackbarHostState() },
-                initialTabIndex = 1
+                snackbarHostState = remember { SnackbarHostState() }
             )
         }
     }
 }
 
 @Composable
-private fun androidx.compose.foundation.layout.BoxScope.PagerLeftArrow(
+private fun BoxScope.PagerLeftArrow(
     pagerState: androidx.compose.foundation.pager.PagerState,
     scope: kotlinx.coroutines.CoroutineScope
 ) {
@@ -901,7 +612,7 @@ private fun androidx.compose.foundation.layout.BoxScope.PagerLeftArrow(
 }
 
 @Composable
-private fun androidx.compose.foundation.layout.BoxScope.PagerRightArrow(
+private fun BoxScope.PagerRightArrow(
     pagerState: androidx.compose.foundation.pager.PagerState,
     imageUrls: List<String>,
     scope: kotlinx.coroutines.CoroutineScope
@@ -933,7 +644,7 @@ private fun androidx.compose.foundation.layout.BoxScope.PagerRightArrow(
 }
 
 @Composable
-private fun androidx.compose.foundation.layout.BoxScope.PagerPillIndicator(
+private fun BoxScope.PagerPillIndicator(
     imageUrls: List<String>,
     pagerState: androidx.compose.foundation.pager.PagerState
 ) {

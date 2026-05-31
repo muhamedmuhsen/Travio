@@ -37,6 +37,8 @@
     <string name="image_n_of_m">Image %1$d of %2$d</string>
     <string name="destination_no_reviews">No reviews yet</string>
     <string name="destination_reviews_count">%1$s reviews</string>
+    <string name="destination_reviews_and_ratings">Reviews &amp; Ratings</string>
+    <string name="destination_show_all_reviews">Show all reviews</string>
     <string name="destination_helpful_count">Helpful (%1$d)</string>
 </resources>
 

@@ -6,6 +6,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -14,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 import com.dev.destination.R
 import com.example.designsystem.theme.spacing
 import com.example.domain.model.destination.Destination
@@ -34,38 +37,43 @@ fun DestinationLocationSection(
         position = CameraPosition.fromLatLngZoom(location, 15f)
     }
 
-    Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(vertical = MaterialTheme.spacing.md)
+    Card(
+        modifier = modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(MaterialTheme.spacing.md),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.background),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
-        Text(
-            text = stringResource(R.string.destination_location_title),
-            style = MaterialTheme.typography.titleMedium,
-            fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.onSurface
-        )
-
-        Spacer(modifier = Modifier.height(MaterialTheme.spacing.md))
-
-        GoogleMap(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height((MaterialTheme.spacing.xxxl * 4) + MaterialTheme.spacing.xs)
-                .clip(RoundedCornerShape(MaterialTheme.spacing.md)),
-            cameraPositionState = cameraPositionState,
-            uiSettings = com.google.maps.android.compose.MapUiSettings(
-                zoomControlsEnabled = false,
-                scrollGesturesEnabled = false,
-                zoomGesturesEnabled = false,
-                tiltGesturesEnabled = false,
-                rotationGesturesEnabled = false
-            )
+        Column(
+            modifier = Modifier.padding(MaterialTheme.spacing.md)
         ) {
-            Marker(
-                state = remember(location) { MarkerState(position = location) },
-                title = destination.name
+            Text(
+                text = stringResource(R.string.destination_location_title),
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onSurface
             )
+
+            Spacer(modifier = Modifier.height(MaterialTheme.spacing.md))
+
+            GoogleMap(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height((MaterialTheme.spacing.xxxl * 4) + MaterialTheme.spacing.xs)
+                    .clip(RoundedCornerShape(MaterialTheme.spacing.md)),
+                cameraPositionState = cameraPositionState,
+                uiSettings = com.google.maps.android.compose.MapUiSettings(
+                    zoomControlsEnabled = false,
+                    scrollGesturesEnabled = false,
+                    zoomGesturesEnabled = false,
+                    tiltGesturesEnabled = false,
+                    rotationGesturesEnabled = false
+                )
+            ) {
+                Marker(
+                    state = remember(location) { MarkerState(position = location) },
+                    title = destination.name
+                )
+            }
         }
     }
 }
