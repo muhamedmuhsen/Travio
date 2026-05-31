@@ -147,6 +147,7 @@
     <string name="status_pending">Pending</string>
     <string name="status_cancelled">Cancelled</string>
     <string name="status_unknown">Unknown</string>
+    <string name="status_pending_payment">Pending Payment</string>
     <string name="booking_info">Booking Information</string>
     <string name="guest_info">Guest Information</string>
     <string name="hotel_info">Hotel Information</string>

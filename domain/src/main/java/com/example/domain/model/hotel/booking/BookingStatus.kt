@@ -3,6 +3,7 @@ package com.example.domain.model.hotel.booking
 enum class BookingStatus(val value: String) {
     CONFIRMED("Confirmed"),
     PENDING("Pending"),
+    PENDING_PAYMENT("PendingPayment"),
     CANCELLED("Cancelled"),
     UNKNOWN("Unknown");
 

@@ -27,6 +27,7 @@ fun BookingStatusChip(
         BookingStatus.PENDING -> Triple(Color(0xFFFFF3E0), Color(0xFFEF6C00), R.string.status_pending)
         BookingStatus.CANCELLED -> Triple(Color(0xFFFFEBEE), Color(0xFFC62828), R.string.status_cancelled)
         BookingStatus.UNKNOWN -> Triple(Color(0xFFEEEEEE), Color(0xFF616161), R.string.status_unknown)
+        BookingStatus.PENDING_PAYMENT -> Triple(Color(0xFFE3F2FD), Color(0xFF1565C0), R.string.status_pending_payment)
     }
 
     Box(

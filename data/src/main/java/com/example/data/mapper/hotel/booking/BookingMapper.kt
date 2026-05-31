@@ -11,14 +11,14 @@ import com.example.network.dto.hotel.booking.CancelBookingDataDto
 
 fun BookingItemDto.toDomain(): BookingItem {
     return BookingItem(
-        reference = this.reference.orEmpty(),
+        reference = this.id.orEmpty(),
         hotelName = this.hotelName.orEmpty(),
-        status = BookingStatus.fromString(this.status),
+        status = BookingStatus.fromString(this.bookingStatus),
         checkIn = this.checkIn.orEmpty(),
         checkOut = this.checkOut.orEmpty(),
         totalPrice = this.totalPrice ?: 0.0,
         currency = this.currency.orEmpty(),
-        bookingDate = this.bookingDate.orEmpty()
+        bookingDate = this.createdAt.orEmpty()
     )
 }
 

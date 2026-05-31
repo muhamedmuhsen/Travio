@@ -32,7 +32,7 @@ interface HotelApi {
     @POST("Hotels/checkout")
     suspend fun checkoutHotel(@Body request: HotelCheckoutRequestDto): HotelCheckoutResponseDto
 
-    @GET("Hotels/bookings")
+    @GET("Hotels/my-bookings")
     suspend fun getUserBookings(): BookingListResponseDto
 
     @GET("Hotels/bookings/{reference}")
