@@ -93,6 +93,9 @@ dependencies {
     // Timber
     implementation(libs.timber)
 
+    // Maps
+    implementation(libs.maps.compose)
+
     // Flow/State collection
     implementation(libs.androidx.lifecycle.runtime.compose)
 

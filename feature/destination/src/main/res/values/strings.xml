@@ -18,6 +18,7 @@
     <string name="destination_retry">Retry</string>
 
     <string name="destination_about_title">About</string>
+    <string name="destination_location_title">Location</string>
     <string name="destination_suggested_title">Suggested Destinations</string>
     <string name="destination_suggested_favorite_cd">Toggle suggested destination favorite</string>
     <string name="destination_explore">Explore</string>

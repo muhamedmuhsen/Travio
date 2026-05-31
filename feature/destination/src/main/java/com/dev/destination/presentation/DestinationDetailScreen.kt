@@ -46,17 +46,12 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Tab
-import androidx.compose.material3.TabRow
-import androidx.compose.material3.TabRowDefaults.SecondaryIndicator
-import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -78,6 +73,7 @@ import coil.request.ImageRequest
 import com.dev.destination.R
 import com.dev.destination.components.AboutSection
 import com.dev.destination.components.AnotherDestinationsRow
+import com.dev.destination.components.DestinationLocationSection
 import com.dev.destination.components.DetailErrorState
 import com.dev.destination.components.DetailLoadingState
 import com.example.designsystem.components.shimmerEffect
@@ -148,11 +144,6 @@ private fun DestinationDetailContent(
     snackbarHostState: SnackbarHostState,
     initialTabIndex: Int = 0
 ) {
-    var selectedTabIndex by remember { mutableIntStateOf(initialTabIndex) }
-    val tabs = listOf(
-        stringResource(id = R.string.destination_tab_overview),
-        stringResource(id = R.string.destination_tab_reviews)
-    )
     val overlayContentColor = Color.White
 
     Scaffold(
@@ -350,63 +341,33 @@ private fun DestinationDetailContent(
                         }
                     }
 
-                    // TabRow
-                    TabRow(
-                        selectedTabIndex = selectedTabIndex,
-                        containerColor = MaterialTheme.colorScheme.surface,
-                        indicator = { tabPositions ->
-                            if (selectedTabIndex < tabPositions.size) {
-                                SecondaryIndicator(
-                                    modifier = Modifier.tabIndicatorOffset(tabPositions[selectedTabIndex]),
-                                    color = MaterialTheme.colorScheme.primary
-                                )
-                            }
-                        }
+                    // Content
+                    Column(
+                        modifier = Modifier.padding(MaterialTheme.spacing.md)
                     ) {
-                        tabs.forEachIndexed { index, title ->
-                            Tab(
-                                selected = selectedTabIndex == index,
-                                onClick = { selectedTabIndex = index },
-                                text = {
-                                    Text(
-                                        text = title,
-                                        fontWeight = if (selectedTabIndex == index) FontWeight.Bold else FontWeight.Normal,
-                                        color = if (selectedTabIndex == index) {
-                                            MaterialTheme.colorScheme.primary
-                                        } else {
-                                            MaterialTheme.colorScheme.onSurfaceVariant
-                                        }
-                                    )
-                                },
-                                modifier = Modifier.background(MaterialTheme.colorScheme.surfaceVariant)
-                            )
-                        }
-                    }
+                        AboutSection(
+                            description = destination.description,
+                            modifier = Modifier.padding(bottom = MaterialTheme.spacing.md)
+                        )
 
-                    // Content Below Tabs
-                    if (selectedTabIndex == 0) {
-                        Column(
-                            modifier = Modifier.padding(MaterialTheme.spacing.md)
-                        ) {
-                            AboutSection(
-                                description = destination.description,
-                                modifier = Modifier.padding(bottom = MaterialTheme.spacing.lg)
-                            )
+                        DestinationLocationSection(
+                            destination = destination,
+                            modifier = Modifier.padding(bottom = MaterialTheme.spacing.md)
+                        )
 
-                            RelatedDestinationsStateHandling(
-                                state = uiState.relatedDestinationsState,
-                                onRetry = { onAction(DestinationDetailAction.OnRetryRelatedDestinations) },
-                                onDestinationClick = { destinationId ->
-                                    onAction(DestinationDetailAction.OnRelatedDestinationClicked(destinationId))
-                                },
-                                modifier = Modifier.padding(bottom = MaterialTheme.spacing.md)
-                            )
-                        }
-                    } else {
                         ReviewSection(
                             uiState = uiState,
                             onAction = onAction,
-                            modifier = Modifier.padding(MaterialTheme.spacing.md)
+                            modifier = Modifier.padding(bottom = MaterialTheme.spacing.lg)
+                        )
+
+                        RelatedDestinationsStateHandling(
+                            state = uiState.relatedDestinationsState,
+                            onRetry = { onAction(DestinationDetailAction.OnRetryRelatedDestinations) },
+                            onDestinationClick = { destinationId ->
+                                onAction(DestinationDetailAction.OnRelatedDestinationClicked(destinationId))
+                            },
+                            modifier = Modifier.padding(bottom = MaterialTheme.spacing.md)
                         )
                     }
                 }

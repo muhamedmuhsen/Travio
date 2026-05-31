@@ -18,6 +18,7 @@
     <string name="destination_retry">إعادة المحاولة</string>
 
     <string name="destination_about_title">عن المكان</string>
+    <string name="destination_location_title">الموقع</string>
     <string name="destination_suggested_title">وجهات مقترحة</string>
     <string name="destination_suggested_favorite_cd">تبديل مفضلة الوجهة المقترحة</string>
     <string name="destination_explore">استكشف</string>
