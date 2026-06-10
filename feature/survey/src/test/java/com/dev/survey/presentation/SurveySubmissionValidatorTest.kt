@@ -58,7 +58,7 @@ class SurveySubmissionValidatorTest {
     }
 
     @Test
-    fun givenConflictingSelectionsInSingleStep_whenValidate_thenReturnsConflictError() {
+    fun givenMultipleSelectionsInSingleStep_whenValidate_thenReturnsValid() {
         val result = validator.validate(
             selectedPerStep = mapOf(
                 0 to setOf(TravelCategory.BEACHES, TravelCategory.CITY_LIFE),
@@ -67,10 +67,7 @@ class SurveySubmissionValidatorTest {
             totalSteps = 2
         )
 
-        assertEquals(
-            SurveySubmissionValidationResult.Invalid(ValidationError.ConflictingSelectionSameCategory),
-            result
-        )
+        assert(result is SurveySubmissionValidationResult.Valid)
     }
 
     @Test

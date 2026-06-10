@@ -267,7 +267,6 @@ private fun ValidationError.toMessage(context: android.content.Context): String 
         ValidationError.EmptySelection -> R.string.survey_validation_empty
         ValidationError.PartialCompletion -> R.string.survey_validation_partial
         ValidationError.DuplicateExactPair -> R.string.survey_validation_duplicate
-        ValidationError.ConflictingSelectionSameCategory -> R.string.survey_validation_conflict
         ValidationError.InvalidCategoryId -> R.string.survey_validation_invalid_category
         ValidationError.InvalidOptionId -> R.string.survey_validation_invalid_option
     }

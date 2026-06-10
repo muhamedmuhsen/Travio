@@ -6,7 +6,6 @@ sealed interface ValidationError {
     data object EmptySelection : ValidationError
     data object PartialCompletion : ValidationError
     data object DuplicateExactPair : ValidationError
-    data object ConflictingSelectionSameCategory : ValidationError
     data object InvalidCategoryId : ValidationError
     data object InvalidOptionId : ValidationError
 }

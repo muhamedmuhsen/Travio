@@ -37,14 +37,6 @@ internal class SurveySubmissionValidator {
                     .toSet()
             }
 
-        val hasConflict = selectedPerStep.values.any { stepCategories ->
-            val categoryIds = stepCategories.map { it.categoryId }
-            categoryIds.size != categoryIds.distinct().size
-        }
-        if (hasConflict) {
-            return SurveySubmissionValidationResult.Invalid(ValidationError.ConflictingSelectionSameCategory)
-        }
-
         val hasDuplicates = flattened
             .map { it.categoryId to it.optionId }
             .let { pairs -> pairs.size != pairs.distinct().size }
