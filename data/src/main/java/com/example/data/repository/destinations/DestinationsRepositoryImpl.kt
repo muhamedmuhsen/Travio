@@ -79,7 +79,7 @@ class DestinationsRepositoryImpl @Inject constructor(
         interestIds: List<Int>?
     ): Result<List<Destination>, DataError> =
         safeApiCall {
-            val response = api.searchForDestinations(keyword, pageIndex, pageSize, interestIds)
+            val response = api.searchForDestinations(keyword ?: "", pageIndex, pageSize, interestIds)
             response.data.map { it.toDomain() }
         }
 

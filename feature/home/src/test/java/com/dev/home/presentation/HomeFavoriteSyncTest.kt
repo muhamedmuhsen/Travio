@@ -161,6 +161,11 @@ class HomeFavoriteSyncTest {
         ): Result<List<Destination>, DataError> = Result.Success(emptyList())
 
         override suspend fun getFamousCountries(): Result<List<Country>, DataError> = Result.Success(emptyList())
+
+        override suspend fun getSuggestedDestinations(
+            destinationId: Int,
+            count: Int
+        ): Result<List<Destination>, DataError> = Result.Success(emptyList())
     }
 }
 

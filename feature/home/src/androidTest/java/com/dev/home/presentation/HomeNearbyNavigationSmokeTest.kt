@@ -139,12 +139,20 @@ class HomeNearbyNavigationSmokeTest {
         override suspend fun searchForDestinations(
             keyword: String?,
             pageIndex: Int,
-            pageSize: Int
+            pageSize: Int,
+            interestIds: List<Int>?
         ): Result<List<Destination>, DataError> {
             return Result.Success(emptyList())
         }
 
         override suspend fun getFamousCountries(): Result<List<Country>, DataError> {
+            return Result.Success(emptyList())
+        }
+
+        override suspend fun getSuggestedDestinations(
+            destinationId: Int,
+            count: Int
+        ): Result<List<Destination>, DataError> {
             return Result.Success(emptyList())
         }
     }

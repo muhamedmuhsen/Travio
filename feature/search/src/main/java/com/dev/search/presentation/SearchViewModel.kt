@@ -189,7 +189,7 @@ class SearchViewModel @Inject constructor(
         _uiState.update { it.copy(searchResultsState = UiState.Loading) }
         when (
             val result = searchForDestinationsUseCase(
-                keyword = query.ifBlank { null },
+                keyword = query,
                 pageIndex = 1,
                 pageSize = 20,
                 interestIds = interestIds.ifEmpty { null }

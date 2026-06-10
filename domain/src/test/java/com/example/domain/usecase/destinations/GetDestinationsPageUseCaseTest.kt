@@ -123,6 +123,13 @@ class GetDestinationsPageUseCaseTest {
         override suspend fun getFamousCountries(): Result<List<Country>, DataError> {
             return Result.Success(emptyList())
         }
+
+        override suspend fun getSuggestedDestinations(
+            destinationId: Int,
+            count: Int
+        ): Result<List<Destination>, DataError> {
+            return Result.Success(emptyList())
+        }
     }
 
     private companion object {
