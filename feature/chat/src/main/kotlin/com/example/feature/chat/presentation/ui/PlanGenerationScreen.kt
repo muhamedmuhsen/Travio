@@ -24,6 +24,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.AutoAwesome
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -307,7 +309,7 @@ fun GlowingAiIcon(
             contentAlignment = Alignment.Center
         ) {
             Icon(
-                painter = painterResource(id = com.example.feature.chat.R.drawable.launch_icon),
+                imageVector = Icons.Rounded.AutoAwesome,
                 contentDescription = null,
                 tint = Color.White,
                 modifier = Modifier

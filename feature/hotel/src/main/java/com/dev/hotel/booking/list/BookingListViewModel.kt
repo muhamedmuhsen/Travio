@@ -42,11 +42,14 @@ class BookingListViewModel @Inject constructor(
                     }
                 }
                 is Result.Error -> {
-                    val errorMessage = when (result.error) {
-                        is DataError.Network -> UiText.DynamicString("Network error. Please check your connection.")
-                        DataError.Data.NotFound -> UiText.DynamicString("Bookings not found.")
-                        is DataError.Logical -> UiText.DynamicString((result.error as DataError.Logical).message ?: "Error")
-                        else -> UiText.DynamicString("An unexpected error occurred.")
+                    val errorMessage = when (val error = result.error) {
+                        is DataError.Network -> UiText.StringResource(com.example.feature.hotel.R.string.booking_network_error)
+                        DataError.Data.NotFound -> UiText.StringResource(com.example.feature.hotel.R.string.booking_not_found)
+                        is DataError.Logical -> UiText.DynamicString(
+                            error.message ?: ""
+                        ).takeIf { error.message != null }
+                            ?: UiText.StringResource(com.example.feature.hotel.R.string.booking_unexpected_error)
+                        else -> UiText.StringResource(com.example.feature.hotel.R.string.booking_unexpected_error)
                     }
                     _uiState.value = BookingListUiState.Error(errorMessage)
                     _event.send(BookingListEvent.ShowError(errorMessage))

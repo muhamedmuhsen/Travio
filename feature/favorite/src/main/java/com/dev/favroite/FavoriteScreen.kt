@@ -57,6 +57,10 @@ fun FavoriteScreen(
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
+    LaunchedEffect(Unit) {
+        viewModel.refreshData()
+    }
+
     FavoriteContent(
         modifier = modifier,
         state = state,

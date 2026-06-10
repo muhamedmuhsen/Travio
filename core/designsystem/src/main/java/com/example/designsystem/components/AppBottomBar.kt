@@ -5,6 +5,16 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.People
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.outlined.FavoriteBorder
+import androidx.compose.material.icons.outlined.Home
+import androidx.compose.material.icons.outlined.People
+import androidx.compose.material.icons.outlined.Person
+import androidx.compose.material.icons.rounded.AutoAwesome
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
@@ -15,7 +25,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -25,36 +35,35 @@ import com.example.designsystem.theme.spacing
 
 data class BottomNavigationItem(
     @StringRes val title: Int,
-    val selectedIcon: Int,
-    val unselectedIcon: Int
-    // TODO: add route to navigate to
+    val selectedIcon: ImageVector,
+    val unselectedIcon: ImageVector
 )
 
 val items = listOf(
     BottomNavigationItem(
         title = R.string.bottom_nav_home,
-        selectedIcon = R.drawable.home_fill,
-        unselectedIcon = R.drawable.home_icon
+        selectedIcon = Icons.Filled.Home,
+        unselectedIcon = Icons.Outlined.Home
     ),
     BottomNavigationItem(
         title = R.string.bottom_nav_favorite,
-        selectedIcon = R.drawable.favorite_fill,
-        unselectedIcon = R.drawable.favorite_outline
+        selectedIcon = Icons.Filled.Favorite,
+        unselectedIcon = Icons.Outlined.FavoriteBorder
     ),
     BottomNavigationItem(
         title = R.string.bottom_nav_community,
-        selectedIcon = R.drawable.community_fill,
-        unselectedIcon = R.drawable.comunity_icon
+        selectedIcon = Icons.Filled.People,
+        unselectedIcon = Icons.Outlined.People
     ),
     BottomNavigationItem(
         title = R.string.bottom_nav_trips,
-        selectedIcon = R.drawable.ai_chat_fill,
-        unselectedIcon = R.drawable.ai_chat_icon
+        selectedIcon = Icons.Rounded.AutoAwesome,
+        unselectedIcon = Icons.Rounded.AutoAwesome
     ),
     BottomNavigationItem(
         title = R.string.bottom_nav_profile,
-        selectedIcon = R.drawable.profile_fill,
-        unselectedIcon = R.drawable.profile_icon
+        selectedIcon = Icons.Filled.Person,
+        unselectedIcon = Icons.Outlined.Person
     )
 )
 
@@ -95,7 +104,7 @@ fun AppBottomBar(
                     )
                 },
                 icon = {
-                    val iconR =
+                    val icon =
                         if (selectedItem == index) item.selectedIcon else item.unselectedIcon
                     val iconTint = if (selectedItem == index) {
                         MaterialTheme.colorScheme.primary
@@ -103,7 +112,7 @@ fun AppBottomBar(
                         MaterialTheme.colorScheme.onBackground
                     }
                     Icon(
-                        painterResource(iconR),
+                        imageVector = icon,
                         contentDescription = stringResource(id = item.title),
                         modifier = Modifier.size(MaterialTheme.spacing.lg),
                         tint = iconTint

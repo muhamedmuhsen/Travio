@@ -18,7 +18,7 @@ import androidx.compose.ui.graphics.Color
 // ============================================
 // Light Theme - Standard Contrast
 // ============================================
-val primaryLight = Color(0xFF00535B)
+val primaryLight = Color(0xFF006D77)
 val onPrimaryLight = Color(0xFFFFFFFF)
 val primaryContainerLight = Color(0xFF006D77)
 val onPrimaryContainerLight = Color(0xFF9BECF7)
@@ -57,7 +57,7 @@ val surfaceContainerHighestLight = Color(0xFFE4E2E1)
 // ============================================
 // Light Theme - Medium Contrast (Enhanced Accessibility)
 // ============================================
-val primaryLightMediumContrast = Color(0xFF003D43)
+val primaryLightMediumContrast = Color(0xFF006D77)
 val onPrimaryLightMediumContrast = Color(0xFFFFFFFF)
 val primaryContainerLightMediumContrast = Color(0xFF006D77)
 val onPrimaryContainerLightMediumContrast = Color(0xFFFFFFFF)
@@ -96,7 +96,7 @@ val surfaceContainerHighestLightMediumContrast = Color(0xFFD3D1D0)
 // ============================================
 // Light Theme - High Contrast (WCAG AAA Compliant)
 // ============================================
-val primaryLightHighContrast = Color(0xFF003237)
+val primaryLightHighContrast = Color(0xFF006D77)
 val onPrimaryLightHighContrast = Color(0xFFFFFFFF)
 val primaryContainerLightHighContrast = Color(0xFF005159)
 val onPrimaryContainerLightHighContrast = Color(0xFFFFFFFF)

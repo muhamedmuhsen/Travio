@@ -43,7 +43,7 @@ class ChatViewModel @Inject constructor(
     private val _snackbarEvent = Channel<String>()
     val snackbarEvent = _snackbarEvent.receiveAsFlow()
 
-    private val currentThreadId: String = java.util.UUID.randomUUID().toString()
+    private var currentThreadId: String = java.util.UUID.randomUUID().toString()
 
     init {
         loadMessages()
@@ -57,6 +57,12 @@ class ChatViewModel @Inject constructor(
         viewModelScope.launch {
             connectUseCase()
         }
+    }
+
+    fun startNewChat() {
+        currentThreadId = java.util.UUID.randomUUID().toString()
+        _state.value = ChatUiState.Success(messages = emptyList())
+        loadMessages()
     }
 
     private fun loadMessages() {

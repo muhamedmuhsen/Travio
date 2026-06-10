@@ -64,6 +64,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.example.designsystem.components.AppBottomBar
@@ -229,9 +230,11 @@ fun TripDetailScreen(
                         key = { it.id }
                     ) { activity ->
                         val index = day.activities.indexOf(activity)
+                        val isFirst = index == 0
                         val isLast = index == day.activities.size - 1
                         TimelineActivityNode(
                             activity = activity,
+                            isFirst = isFirst,
                             isLast = isLast
                         )
                     }
@@ -257,25 +260,45 @@ fun DaySelectorTabs(
             val isSelected = day.id == selectedDayId
             Surface(
                 shape = CircleShape,
-                color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surface,
-                border = if (!isSelected) {
-                    androidx.compose.foundation.BorderStroke(
-                        width = MaterialTheme.elevation.xs / 2,
-                        color = MaterialTheme.colorScheme.outlineVariant
-                    )
+                color = if (isSelected) {
+                    Color(0xFF006D77)
                 } else {
-                    null
+                    MaterialTheme.colorScheme.surfaceContainerHigh
                 },
                 modifier = Modifier
                     .clip(CircleShape)
                     .clickable { onDaySelected(day.id) }
             ) {
-                Text(
-                    text = "${day.title}: ${day.subtitle}",
-                    style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.SemiBold),
-                    color = if (isSelected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface,
-                    modifier = Modifier.padding(horizontal = MaterialTheme.spacing.lg, vertical = MaterialTheme.spacing.sm)
-                )
+                Column(
+                    modifier = Modifier.padding(
+                        horizontal = MaterialTheme.spacing.lg,
+                        vertical = MaterialTheme.spacing.sm
+                    ),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        text = day.title,
+                        style = MaterialTheme.typography.labelLarge.copy(
+                            fontWeight = FontWeight.Bold
+                        ),
+                        color = if (isSelected) {
+                            MaterialTheme.colorScheme.onPrimary
+                        } else {
+                            MaterialTheme.colorScheme.onSurface
+                        }
+                    )
+                    Text(
+                        text = day.subtitle,
+                        style = MaterialTheme.typography.labelSmall,
+                        color = if (isSelected) {
+                            MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.8f)
+                        } else {
+                            MaterialTheme.colorScheme.onSurfaceVariant
+                        },
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
             }
         }
     }
@@ -312,41 +335,48 @@ fun HotelRecommendationCard(
     Card(
         modifier = modifier
             .width(MaterialTheme.spacing.xxxl * 4 + MaterialTheme.spacing.lg + MaterialTheme.spacing.xxs)
-            .height(MaterialTheme.spacing.xxxl * 3 + MaterialTheme.spacing.xl + MaterialTheme.spacing.xs),
+            .height(
+                MaterialTheme.spacing.xxxl * 3 + MaterialTheme.spacing.xl + MaterialTheme.spacing.xs
+            ),
         shape = RoundedCornerShape(MaterialTheme.spacing.md),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        elevation = CardDefaults.cardElevation(defaultElevation = MaterialTheme.elevation.sm)
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surface
+        ),
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = MaterialTheme.elevation.sm
+        )
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
-            AsyncImage(
-                model = hotel.imageUrl ?: com.example.designsystem.R.drawable.image_placeholder,
-                contentDescription = hotel.name,
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f)
-                    .clip(RoundedCornerShape(topStart = MaterialTheme.spacing.md, topEnd = MaterialTheme.spacing.md))
-            )
+            Box(modifier = Modifier.weight(1f)) {
+                AsyncImage(
+                    model = hotel.imageUrl
+                        ?: com.example.designsystem.R.drawable.image_placeholder,
+                    contentDescription = hotel.name,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .clip(
+                            RoundedCornerShape(
+                                topStart = MaterialTheme.spacing.md,
+                                topEnd = MaterialTheme.spacing.md
+                            )
+                        )
+                )
 
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(MaterialTheme.spacing.sm)
-            ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
+                Surface(
+                    shape = RoundedCornerShape(MaterialTheme.spacing.sm),
+                    color = MaterialTheme.colorScheme.surface.copy(alpha = 0.9f),
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .padding(MaterialTheme.spacing.sm)
                 ) {
-                    Text(
-                        text = hotel.name,
-                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        modifier = Modifier.weight(1f)
-                    )
-
-                    Row(verticalAlignment = Alignment.CenterVertically) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.padding(
+                            horizontal = MaterialTheme.spacing.xs,
+                            vertical = MaterialTheme.spacing.xxs
+                        )
+                    ) {
                         Icon(
                             imageVector = Icons.Default.Star,
                             contentDescription = "Rating",
@@ -360,6 +390,21 @@ fun HotelRecommendationCard(
                         )
                     }
                 }
+            }
+
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(MaterialTheme.spacing.sm)
+            ) {
+                Text(
+                    text = hotel.name,
+                    style = MaterialTheme.typography.titleMedium.copy(
+                        fontWeight = FontWeight.Bold
+                    ),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
 
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
@@ -368,8 +413,10 @@ fun HotelRecommendationCard(
                     Icon(
                         imageVector = Icons.Default.LocationOn,
                         contentDescription = "Location",
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.size(MaterialTheme.spacing.md - MaterialTheme.spacing.xxs / 2)
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(
+                            MaterialTheme.spacing.md - MaterialTheme.spacing.xxs / 2
+                        )
                     )
                     Spacer(modifier = Modifier.width(MaterialTheme.spacing.xxs))
                     Text(
@@ -389,10 +436,11 @@ fun HotelRecommendationCard(
 @Composable
 fun TimelineActivityNode(
     activity: ActivityItem,
+    isFirst: Boolean,
     isLast: Boolean,
     modifier: Modifier = Modifier
 ) {
-    val lineColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
+    val lineColor = MaterialTheme.colorScheme.outlineVariant
     val activityIcon = when {
         activity.tag.contains("breakfast", ignoreCase = true) -> Icons.Filled.BreakfastDining
         activity.tag.contains("lunch", ignoreCase = true) -> Icons.Filled.LunchDining
@@ -404,109 +452,159 @@ fun TimelineActivityNode(
         activity.tag.contains(
             "restaurant",
             ignoreCase = true
-        ) || activity.tag.contains("food", ignoreCase = true) -> Icons.Filled.Restaurant
-        activity.tag.contains("cafe", ignoreCase = true) || activity.tag.contains("coffee", ignoreCase = true) -> Icons.Filled.LocalCafe
+        ) || activity.tag.contains(
+            "food",
+            ignoreCase = true
+        ) -> Icons.Filled.Restaurant
+        activity.tag.contains(
+            "cafe",
+            ignoreCase = true
+        ) || activity.tag.contains(
+            "coffee",
+            ignoreCase = true
+        ) -> Icons.Filled.LocalCafe
         else -> Icons.Default.LocationOn
     }
 
     val strokeWidthDp = MaterialTheme.elevation.sm
-    val xDp = MaterialTheme.spacing.sm
-    val startYDp = MaterialTheme.spacing.lg
+    val leftColumnWidth = 72.dp
+    val xDp = leftColumnWidth / 2
+    val iconSize = 32.dp
+    val innerIconSize = 16.dp
+
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = MaterialTheme.spacing.md)
+            .padding(horizontal = MaterialTheme.spacing.xs)
             .drawBehind {
-                if (!isLast) {
-                    // Draw a line down the left side connecting to the next item
-                    val strokeWidth = strokeWidthDp.toPx()
-                    val x = xDp.toPx() // Centers with the circular icon
-                    val startY = startYDp.toPx()
-                    drawLine(
-                        color = lineColor,
-                        start = Offset(x, startY),
-                        end = Offset(x, size.height),
-                        strokeWidth = strokeWidth
-                    )
-                }
+                val strokeWidth = strokeWidthDp.toPx()
+                val x = xDp.toPx()
+                // Top padding is 16dp, icon size is 32dp, center is 16 + 16 = 32dp
+                val iconCenterY = (16.dp + (iconSize / 2)).toPx()
+                // Top padding (16) + icon (32) + spacer (8) + approx text height (20)
+                val textBottomY = (16.dp + iconSize + 8.dp + 20.dp).toPx()
+
+                val startY = if (isFirst) textBottomY else 0f
+                val endY = if (isLast) iconCenterY else size.height
+
+                drawLine(
+                    color = lineColor,
+                    start = Offset(x, startY),
+                    end = Offset(x, endY),
+                    strokeWidth = strokeWidth
+                )
             }
     ) {
-        // Timeline Indicator
-        Box(
+        // Left Column (Timeline Icon and Time)
+        Column(
             modifier = Modifier
-                .padding(top = MaterialTheme.spacing.md, end = MaterialTheme.spacing.sm)
-                .size(MaterialTheme.spacing.lg)
-                .clip(CircleShape)
-                .background(MaterialTheme.colorScheme.primary),
-            contentAlignment = Alignment.Center
+                .width(leftColumnWidth)
+                .padding(top = 16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Small inner dot or icon
-            // Or any custom path icon
-            Icon(
-                imageVector = activityIcon,
-                contentDescription = activity.tag,
-                tint = MaterialTheme.colorScheme.onPrimary,
-                modifier = Modifier.size(MaterialTheme.spacing.md - MaterialTheme.spacing.xxs / 2)
+            Box(
+                modifier = Modifier
+                    .size(iconSize)
+                    .clip(CircleShape)
+                    .background(MaterialTheme.colorScheme.primary),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = activityIcon,
+                    contentDescription = activity.tag,
+                    tint = MaterialTheme.colorScheme.onPrimary,
+                    modifier = Modifier.size(innerIconSize)
+                )
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Text(
+                text = activity.time,
+                style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
+                color = MaterialTheme.colorScheme.primary,
+                modifier = Modifier
+                    .background(MaterialTheme.colorScheme.background)
+                    .padding(vertical = 2.dp, horizontal = 4.dp)
             )
         }
 
-        // Activity Card
+        // Right Column (Activity Card)
         Card(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = MaterialTheme.spacing.md),
-            shape = RoundedCornerShape(MaterialTheme.spacing.md),
-            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-            elevation = CardDefaults.cardElevation(defaultElevation = MaterialTheme.elevation.sm)
+                .weight(1f)
+                .padding(bottom = 24.dp, end = 8.dp),
+            shape = RoundedCornerShape(16.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surface
+            ),
+            elevation = CardDefaults.cardElevation(
+                defaultElevation = 2.dp
+            )
         ) {
-            Column {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(12.dp),
+                verticalAlignment = Alignment.Top
+            ) {
+                // Square Image
                 AsyncImage(
-                    model = activity.imageUrl ?: com.example.designsystem.R.drawable.ishan_seefromthesky,
+                    model = activity.imageUrl
+                        ?: com.example.designsystem.R.drawable.image_placeholder,
                     contentDescription = activity.title,
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .height(MaterialTheme.spacing.xxxl * 2 + MaterialTheme.spacing.xxs)
+                        .size(90.dp)
+                        .clip(RoundedCornerShape(12.dp))
                 )
 
-                Column(modifier = Modifier.padding(MaterialTheme.spacing.sm)) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
+                // Details Column
+                Column(
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(start = 12.dp),
+                    verticalArrangement = Arrangement.spacedBy(4.dp)
+                ) {
+                    // Category Tag
+                    Surface(
+                        color = MaterialTheme.colorScheme.primary,
+                        shape = CircleShape
                     ) {
-                        Surface(
-                            color = MaterialTheme.colorScheme.primary,
-                            shape = CircleShape
-                        ) {
-                            Text(
-                                text = activity.tag,
-                                style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
-                                color = MaterialTheme.colorScheme.onPrimary,
-                                modifier = Modifier.padding(horizontal = MaterialTheme.spacing.xs, vertical = MaterialTheme.spacing.xxs / 2)
-                            )
-                        }
-
                         Text(
-                            text = activity.time,
-                            style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                            text = activity.tag,
+                            style = MaterialTheme.typography.labelSmall.copy(
+                                fontWeight = FontWeight.SemiBold
+                            ),
+                            color = MaterialTheme.colorScheme.onPrimary,
+                            modifier = Modifier.padding(
+                                horizontal = 8.dp,
+                                vertical = 4.dp
+                            )
                         )
                     }
 
+                    Spacer(modifier = Modifier.height(2.dp))
+
+                    // Title
                     Text(
                         text = activity.title,
-                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                        modifier = Modifier.padding(top = MaterialTheme.spacing.xs)
+                        style = MaterialTheme.typography.titleSmall.copy(
+                            fontWeight = FontWeight.Bold
+                        ),
+                        color = MaterialTheme.colorScheme.onSurface,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis
                     )
 
+                    // Description
                     Text(
                         text = activity.description,
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.padding(top = MaterialTheme.spacing.xxs),
-                        maxLines = 2,
-                        overflow = TextOverflow.Ellipsis
+                        maxLines = 3,
+                        overflow = TextOverflow.Ellipsis,
+                        lineHeight = MaterialTheme.typography.bodySmall.fontSize * 1.2
                     )
                 }
             }

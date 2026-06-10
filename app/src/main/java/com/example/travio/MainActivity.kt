@@ -43,7 +43,7 @@ class MainActivity : ComponentActivity() {
                 }
             }
 
-            TravioTheme(darkTheme = isDarkMode) {
+            TravioTheme(darkTheme = isDarkMode, dynamicColor = false) {
                 Box {
                     if (startDestination != null) {
                         val destination = when (startDestination) {

@@ -9,6 +9,7 @@ import com.example.domain.usecase.hotel.CancelBookingUseCase
 import com.example.domain.usecase.hotel.GetBookingDetailsUseCase
 import com.example.domain.utils.DataError
 import com.example.domain.utils.Result
+import com.example.feature.hotel.R
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -45,11 +46,14 @@ class BookingDetailViewModel @Inject constructor(
                     _uiState.value = BookingDetailUiState.Success(result.data)
                 }
                 is Result.Error -> {
-                    val errorMessage = when (result.error) {
-                        is DataError.Network -> UiText.DynamicString("Network error. Please check your connection.")
-                        DataError.Data.NotFound -> UiText.DynamicString("Booking details not found.")
-                        is DataError.Logical -> UiText.DynamicString((result.error as DataError.Logical).message ?: "Error")
-                        else -> UiText.DynamicString("An unexpected error occurred.")
+                    val errorMessage = when (val error = result.error) {
+                        is DataError.Network -> UiText.StringResource(R.string.booking_network_error)
+                        DataError.Data.NotFound -> UiText.StringResource(R.string.booking_not_found)
+                        is DataError.Logical -> UiText.DynamicString(
+                            error.message ?: ""
+                        ).takeIf { error.message != null }
+                            ?: UiText.StringResource(R.string.booking_unexpected_error)
+                        else -> UiText.StringResource(R.string.booking_unexpected_error)
                     }
                     _uiState.value = BookingDetailUiState.Error(errorMessage)
                     _event.send(BookingDetailEvent.ShowError(errorMessage))
@@ -66,7 +70,11 @@ class BookingDetailViewModel @Inject constructor(
                 when (val result = cancelBookingUseCase(reference)) {
                     is Result.Success -> {
                         _uiState.value = currentState.copy(isCancelling = false)
-                        _event.send(BookingDetailEvent.CancelSuccess(UiText.DynamicString("Booking cancelled successfully.")))
+                        _event.send(
+                            BookingDetailEvent.CancelSuccess(
+                                UiText.StringResource(R.string.booking_cancelled_success)
+                            )
+                        )
                         loadBookingDetails()
                     }
                     is Result.Error -> {
@@ -74,11 +82,12 @@ class BookingDetailViewModel @Inject constructor(
                         if (result.error == DataError.Authentication.UnauthorizedAccess) {
                             _event.send(BookingDetailEvent.NavigateToLogin)
                         } else {
-                            val errorMessage = when (result.error) {
+                            val errorMessage = when (val error = result.error) {
                                 is DataError.Logical -> UiText.DynamicString(
-                                    (result.error as DataError.Logical).message ?: "Unable to cancel booking."
-                                )
-                                else -> UiText.DynamicString("Unable to cancel booking.")
+                                    error.message ?: ""
+                                ).takeIf { error.message != null }
+                                    ?: UiText.StringResource(R.string.unable_to_cancel_booking)
+                                else -> UiText.StringResource(R.string.unable_to_cancel_booking)
                             }
                             _event.send(BookingDetailEvent.ShowError(errorMessage))
                         }

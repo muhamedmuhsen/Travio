@@ -285,7 +285,7 @@ fun TripCard(
     ) {
         Row(modifier = Modifier.fillMaxSize()) {
             AsyncImage(
-                model = trip.coverImage ?: com.example.designsystem.R.drawable.ishan_seefromthesky,
+                model = trip.coverImage ?: com.example.designsystem.R.drawable.image_placeholder,
                 contentDescription = trip.title,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier

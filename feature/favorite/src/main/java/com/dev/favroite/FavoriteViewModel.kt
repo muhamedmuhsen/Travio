@@ -130,6 +130,13 @@ class FavoriteViewModel @Inject constructor(
         }
     }
 
+    fun refreshData() {
+        hasLoadedDestinations = false
+        hasLoadedTrips = false
+        loadDestinationsIfNeeded()
+        loadTripsIfNeeded()
+    }
+
     private fun loadSelectedTabIfNeeded() {
         when (_state.value.selectedTab) {
             SectionTab.Destinations -> loadDestinationsIfNeeded()

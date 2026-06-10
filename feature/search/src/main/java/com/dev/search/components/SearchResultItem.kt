@@ -4,6 +4,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -41,6 +43,7 @@ import com.example.feature.home.R as HomeR
 
 private val ThumbnailSize @Composable get() = MaterialTheme.spacing.xxxl * 2
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun SearchResultItem(
     modifier: Modifier = Modifier,
@@ -97,9 +100,15 @@ fun SearchResultItem(
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
-                val firstInterest = destination.interests.firstOrNull()
-                if (firstInterest != null) {
-                    InterestChip(label = firstInterest.interestName)
+                if (destination.interests.isNotEmpty()) {
+                    FlowRow(
+                        horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.xxs),
+                        verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.xxs)
+                    ) {
+                        destination.interests.take(3).forEach { interest ->
+                            InterestChip(label = interest.interestName)
+                        }
+                    }
                 }
             }
         }

@@ -18,6 +18,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
@@ -74,7 +75,7 @@ fun BottomBookingBar(
                     .width(MaterialTheme.spacing.xxxl * 3 + MaterialTheme.spacing.lg)
                     .height(MaterialTheme.spacing.xxxl),
                 shape = RoundedCornerShape(MaterialTheme.spacing.sm),
-                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF006D77))
             ) {
                 Text(
                     text = stringResource(R.string.hotel_details_book_now),
