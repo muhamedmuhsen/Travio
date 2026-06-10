@@ -26,7 +26,6 @@ android {
 
     defaultConfig {
         minSdk = 29
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
     }
     buildTypes {
@@ -86,15 +85,4 @@ dependencies {
 
     // Stripe
     implementation(libs.stripe.android)
-
-    // Unit Tests
-    testImplementation(libs.junit)
-    testImplementation(libs.kotlinx.coroutines.test)
-
-    // Android UI Tests
-    androidTestImplementation(platform(libs.androidx.compose.bom))
-    androidTestImplementation(libs.androidx.compose.ui.test.junit4)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
-    debugImplementation(libs.androidx.compose.ui.test.manifest)
 }

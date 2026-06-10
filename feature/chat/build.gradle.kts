@@ -26,7 +26,6 @@ android {
 
     defaultConfig {
         minSdk = 29
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
     }
 
@@ -49,12 +48,6 @@ android {
 
     buildFeatures {
         compose = true
-    }
-
-    testOptions {
-        unitTests {
-            isReturnDefaultValues = true
-        }
     }
 }
 
@@ -96,10 +89,4 @@ dependencies {
 
     // Image Loading
     implementation(libs.coil.compose)
-
-    // Testing
-    testImplementation(libs.junit)
-    testImplementation(libs.kotlinx.coroutines.test)
-    testImplementation(libs.mockito.core)
-    testImplementation(libs.mockito.kotlin)
 }

@@ -11,7 +11,6 @@ android {
     defaultConfig {
         minSdk = 29
 
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
     }
     buildTypes {
@@ -40,8 +39,6 @@ dependencies {
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
     // implementation(libs.androidx.compose.ui.text)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
 
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.compose.ui)
@@ -55,5 +52,4 @@ dependencies {
 
     // Splash
     implementation(libs.androidx.core.splashscreen)
-    testImplementation(libs.junit)
 }

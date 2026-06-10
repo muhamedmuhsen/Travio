@@ -29,7 +29,6 @@ android {
 
     defaultConfig {
         minSdk = 29
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
     }
     buildTypes {
@@ -101,16 +100,4 @@ dependencies {
 
     // Typed navigation argument extraction
     implementation(libs.androidx.navigation.runtime.ktx)
-
-    // Unit Tests
-    testImplementation(project(":core:common"))
-    testImplementation(project(":core:network"))
-    testImplementation(libs.junit)
-    testImplementation(libs.kotlinx.coroutines.test)
-
-    // UI Tests
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
-    androidTestImplementation(libs.androidx.compose.ui.test.junit4)
-    debugImplementation(libs.androidx.compose.ui.test.manifest)
 }

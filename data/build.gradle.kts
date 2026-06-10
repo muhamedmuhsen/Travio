@@ -93,7 +93,6 @@ android {
     defaultConfig {
         minSdk = 29
 
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
 
         val googleWebClientId = localProperties.getProperty("GOOGLE_WEB_CLIENT_ID", "")
@@ -147,16 +146,6 @@ dependencies {
     implementation(libs.androidx.credentials.play.services.auth)
     implementation(libs.googleid)
     implementation(libs.facebook.login)
-
-    // Testing
-    testImplementation(project(":core:common"))
-    testImplementation(project(":core:network"))
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
-    testImplementation(libs.junit)
-    testImplementation(libs.kotlinx.coroutines.test)
-    testImplementation(libs.mockito.core)
-    testImplementation(libs.mockito.kotlin)
 
     // Location
     implementation(libs.play.services.location)
