@@ -33,6 +33,10 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -63,6 +67,8 @@ fun DestinationReviewsSection(
     onAction: (DestinationDetailAction) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    var isExpanded by remember { mutableStateOf(false) }
+
     Card(
         modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(MaterialTheme.spacing.md),
@@ -158,7 +164,8 @@ fun DestinationReviewsSection(
                             modifier = Modifier.align(Alignment.CenterHorizontally)
                         )
                     } else {
-                        state.data.forEachIndexed { index, review ->
+                        val reviewsToShow = if (isExpanded) state.data else state.data.take(4)
+                        reviewsToShow.forEachIndexed { index, review ->
                             DestinationReviewItem(
                                 review = review,
                                 onDelete = if (review.isOwnedByCurrentUser) {
@@ -167,8 +174,29 @@ fun DestinationReviewsSection(
                                     null
                                 }
                             )
-                            if (index < state.data.size - 1) {
+                            if (index < reviewsToShow.size - 1) {
                                 Spacer(modifier = Modifier.height(MaterialTheme.spacing.md))
+                            }
+                        }
+
+                        if (state.data.size > 4) {
+                            Spacer(modifier = Modifier.height(MaterialTheme.spacing.md))
+
+                            OutlinedButton(
+                                onClick = { isExpanded = !isExpanded },
+                                modifier = Modifier.fillMaxWidth(),
+                                shape = RoundedCornerShape(MaterialTheme.spacing.xs),
+                                colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.onSurface)
+                            ) {
+                                Text(
+                                    text = stringResource(
+                                        if (isExpanded) {
+                                            R.string.destination_show_less_reviews
+                                        } else {
+                                            R.string.destination_show_more_reviews
+                                        }
+                                    )
+                                )
                             }
                         }
                     }
@@ -184,17 +212,6 @@ fun DestinationReviewsSection(
                 }
 
                 else -> {}
-            }
-
-            Spacer(modifier = Modifier.height(MaterialTheme.spacing.md))
-
-            OutlinedButton(
-                onClick = { /* Navigate to full reviews if applicable */ },
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(MaterialTheme.spacing.xs),
-                colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.onSurface)
-            ) {
-                Text(text = stringResource(R.string.destination_show_all_reviews))
             }
         }
     }

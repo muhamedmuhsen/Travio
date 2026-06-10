@@ -39,6 +39,8 @@
     <string name="destination_reviews_count">%1$s reviews</string>
     <string name="destination_reviews_and_ratings">Reviews &amp; Ratings</string>
     <string name="destination_show_all_reviews">Show all reviews</string>
+    <string name="destination_show_more_reviews">Show more</string>
+    <string name="destination_show_less_reviews">Show less</string>
     <string name="destination_helpful_count">Helpful (%1$d)</string>
 </resources>
 

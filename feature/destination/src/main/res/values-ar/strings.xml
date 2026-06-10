@@ -39,5 +39,7 @@
     <string name="destination_reviews_count">%1$s مراجعة</string>
     <string name="destination_reviews_and_ratings">المراجعات والتقييمات</string>
     <string name="destination_show_all_reviews">إظهار كل المراجعات</string>
+    <string name="destination_show_more_reviews">إظهار المزيد</string>
+    <string name="destination_show_less_reviews">إظهار أقل</string>
     <string name="destination_helpful_count">مفيد (%1$d)</string>
 </resources>

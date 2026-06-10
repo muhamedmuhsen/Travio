@@ -23,5 +23,7 @@
 
     <string name="destination_error_icon_cd">خطأ</string>
     <string name="delete_review">حذف المراجعة</string>
+    <string name="destination_show_more_reviews">إظهار المزيد</string>
+    <string name="destination_show_less_reviews">إظهار أقل</string>
 </resources>
 
