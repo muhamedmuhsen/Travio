@@ -28,11 +28,18 @@ class TokenAuthenticator(
         route: Route?,
         response: Response
     ): Request? {
-        Timber.d("authenticate() called | code=${response.code}")
+        Timber.d("authenticate() called | code=${response.code} | url=${response.request.url}")
 
         @Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
         if (response.request.tag(java.lang.Boolean::class.java) == true) {
             Timber.d("Already retried this request, giving up")
+            return null
+        }
+
+        // Avoid infinite loop if the refresh request itself fails with 401
+        if (response.request.url.encodedPath.endsWith("Auth/refreshToken")) {
+            Timber.w("Refresh token request failed with 401, giving up to avoid loop")
+            runBlocking { invalidateSession() }
             return null
         }
 

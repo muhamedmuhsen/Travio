@@ -422,7 +422,7 @@ private fun CountryStateHandling(
 ) {
     when (state) {
         is UiState.Error -> ErrorSection(
-            title = stringResource(R.string.section_famous_places),
+            title = stringResource(R.string.section_famous_countries),
             onRetry = onRetry
         )
 
@@ -436,7 +436,7 @@ private fun CountryStateHandling(
         is UiState.Success -> {
             val countries = state.data ?: emptyList()
             if (countries.isNotEmpty()) {
-                HorizontalSection(title = stringResource(R.string.section_famous_places)) {
+                HorizontalSection(title = stringResource(R.string.section_famous_countries)) {
                     // key prevents unnecessary recompositions when the list is updated
                     items(countries, key = { it.countryID }) { country ->
                         CountryCard(country = country)

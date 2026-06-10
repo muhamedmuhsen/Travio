@@ -167,6 +167,18 @@ class FakeHotelRepository : HotelRepository {
     ): Result<com.example.domain.model.hotel.HotelCheckoutResult, DataError> {
         return Result.Error(DataError.UnknownError)
     }
+
+    override suspend fun getUserBookings(): Result<List<com.example.domain.model.hotel.booking.BookingItem>, DataError> {
+        return Result.Success(emptyList())
+    }
+
+    override suspend fun getBookingDetails(reference: String): Result<com.example.domain.model.hotel.booking.BookingDetails, DataError> {
+        return Result.Error(DataError.UnknownError)
+    }
+
+    override suspend fun cancelBooking(reference: String): Result<com.example.domain.model.hotel.booking.CancellationResult, DataError> {
+        return Result.Error(DataError.UnknownError)
+    }
 }
 
 data class HotelSearchRequest(
