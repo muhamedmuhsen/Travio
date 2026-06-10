@@ -39,4 +39,9 @@ interface DestinationsRepository {
     ): Result<List<Destination>, DataError>
 
     suspend fun getFamousCountries(): Result<List<Country>, DataError>
+
+    suspend fun getSuggestedDestinations(
+        destinationId: Int,
+        count: Int = 10
+    ): Result<List<Destination>, DataError>
 }

@@ -41,4 +41,10 @@ interface DestinationsApi {
 
     @GET("Destinations/famous-countries")
     suspend fun getFamousCountries(): List<Country>
+
+    @GET("Destinations/{id}/suggested")
+    suspend fun getSuggestedDestinations(
+        @Path("id") destinationId: Int,
+        @Query("count") count: Int = 10
+    ): List<Destination>
 }

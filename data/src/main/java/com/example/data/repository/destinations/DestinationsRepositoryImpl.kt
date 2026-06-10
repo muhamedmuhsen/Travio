@@ -88,4 +88,13 @@ class DestinationsRepositoryImpl @Inject constructor(
             val response = api.getFamousCountries()
             response.map { it.toDomain() }
         }
+
+    override suspend fun getSuggestedDestinations(
+        destinationId: Int,
+        count: Int
+    ): Result<List<Destination>, DataError> =
+        safeApiCall {
+            val response = api.getSuggestedDestinations(destinationId, count)
+            response.map { it.toDomain() }
+        }
 }

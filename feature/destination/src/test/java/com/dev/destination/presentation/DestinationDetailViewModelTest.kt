@@ -13,8 +13,8 @@ import com.example.domain.repository.destinations.DestinationsRepository
 import com.example.domain.repository.favorite.FavoritePlaceRepository
 import com.example.domain.repository.review.ReviewRepository
 import com.example.domain.repository.usermanagement.UserManagementRepository
-import com.example.domain.usecase.destinations.GetAllDestinationsUseCase
 import com.example.domain.usecase.destinations.GetDestinationByIdUseCase
+import com.example.domain.usecase.destinations.GetSuggestedDestinationsUseCase
 import com.example.domain.usecase.favorite.place.FavoritePlaceUseCase
 import com.example.domain.usecase.favorite.place.GetAllPlacesUseCase
 import com.example.domain.utils.DataError
@@ -45,7 +45,7 @@ class DestinationDetailViewModelTest {
     private val testDispatcher = StandardTestDispatcher()
 
     private lateinit var getDestinationByIdUseCase: GetDestinationByIdUseCase
-    private lateinit var getAllDestinationsUseCase: GetAllDestinationsUseCase
+    private lateinit var getSuggestedDestinationsUseCase: GetSuggestedDestinationsUseCase
     private lateinit var favoritePlaceUseCase: FavoritePlaceUseCase
     private lateinit var getAllPlacesUseCase: GetAllPlacesUseCase
     private lateinit var fakeDestinationsRepository: FakeDestinationsRepository
@@ -71,7 +71,7 @@ class DestinationDetailViewModelTest {
         val savedStateHandle = SavedStateHandle(mapOf("id" to id))
         return DestinationDetailViewModel(
             getDestinationByIdUseCase = getDestinationByIdUseCase,
-            getAllDestinationsUseCase = getAllDestinationsUseCase,
+            getSuggestedDestinationsUseCase = getSuggestedDestinationsUseCase,
             addDestinationFavoriteUseCase = com.example.domain.usecase.favorite.destination.AddDestinationFavoriteUseCase(fakeFavoriteDestinationRepository),
             removeDestinationFavoriteUseCase = com.example.domain.usecase.favorite.destination.RemoveDestinationFavoriteUseCase(fakeFavoriteDestinationRepository),
             observeFavoriteDestinationIdsUseCase = com.example.domain.usecase.favorite.destination.ObserveFavoriteDestinationIdsUseCase(fakeFavoriteDestinationRepository),
@@ -90,7 +90,7 @@ class DestinationDetailViewModelTest {
         fakeReviewRepository = FakeReviewRepository()
         fakeUserManagementRepository = FakeUserManagementRepository()
         getDestinationByIdUseCase = GetDestinationByIdUseCase(fakeDestinationsRepository)
-        getAllDestinationsUseCase = GetAllDestinationsUseCase(fakeDestinationsRepository)
+        getSuggestedDestinationsUseCase = GetSuggestedDestinationsUseCase(fakeDestinationsRepository)
         favoritePlaceUseCase = FavoritePlaceUseCase(fakeFavoritePlaceRepository)
         getAllPlacesUseCase = GetAllPlacesUseCase(fakeFavoritePlaceRepository)
     }
@@ -103,7 +103,7 @@ class DestinationDetailViewModelTest {
     @Test
     fun should_setSuccessState_when_viewModelInitialized_andDestinationLoads() = runTest {
         fakeDestinationsRepository.destinationByIdResult = Result.Success(sampleDestination)
-        fakeDestinationsRepository.allDestinationsResult = Result.Success(listOf(sampleDestination.copy(destinationID = 2)))
+        fakeDestinationsRepository.suggestedDestinationsResult = Result.Success(listOf(sampleDestination.copy(destinationID = 2)))
 
         val viewModel = createViewModel()
         advanceUntilIdle()
@@ -124,7 +124,7 @@ class DestinationDetailViewModelTest {
         assertTrue(initialState is UiState.Error)
 
         fakeDestinationsRepository.destinationByIdResult = Result.Success(sampleDestination)
-        fakeDestinationsRepository.allDestinationsResult = Result.Success(emptyList())
+        fakeDestinationsRepository.suggestedDestinationsResult = Result.Success(emptyList())
 
         viewModel.onAction(DestinationDetailAction.OnRetry)
         advanceUntilIdle()
@@ -136,7 +136,7 @@ class DestinationDetailViewModelTest {
     @Test
     fun should_emitSuccessSnackbar_when_favoriteClicked_and_useCaseSucceeds() = runTest {
         fakeDestinationsRepository.destinationByIdResult = Result.Success(sampleDestination)
-        fakeDestinationsRepository.allDestinationsResult = Result.Success(emptyList())
+        fakeDestinationsRepository.suggestedDestinationsResult = Result.Success(emptyList())
 
         val viewModel = createViewModel()
         advanceUntilIdle()
@@ -154,7 +154,7 @@ class DestinationDetailViewModelTest {
     fun should_setFavoriteTrue_when_destinationAlreadyFavorite_onViewModelInit() = runTest {
         fakeFavoriteDestinationRepository.favoriteIds.value = setOf(sampleDestination.destinationID)
         fakeDestinationsRepository.destinationByIdResult = Result.Success(sampleDestination)
-        fakeDestinationsRepository.allDestinationsResult = Result.Success(emptyList())
+        fakeDestinationsRepository.suggestedDestinationsResult = Result.Success(emptyList())
 
         val viewModel = createViewModel()
         advanceUntilIdle()
@@ -165,7 +165,7 @@ class DestinationDetailViewModelTest {
     @Test
     fun should_emitNavigateToDestination_when_relatedDestinationClicked() = runTest {
         fakeDestinationsRepository.destinationByIdResult = Result.Success(sampleDestination)
-        fakeDestinationsRepository.allDestinationsResult = Result.Success(emptyList())
+        fakeDestinationsRepository.suggestedDestinationsResult = Result.Success(emptyList())
 
         val viewModel = createViewModel()
         advanceUntilIdle()
@@ -180,36 +180,15 @@ class DestinationDetailViewModelTest {
     }
 
     @Test
-    fun should_sortRelatedDestinations_deterministically_when_loaded() = runTest {
-        val second = sampleDestination.copy(destinationID = 2, name = "B", rating = 4.8, totalReviews = 50)
-        val third = sampleDestination.copy(destinationID = 3, name = "C", rating = 4.9, totalReviews = 10)
-        val fourth = sampleDestination.copy(destinationID = 4, name = "D", rating = 4.8, totalReviews = 120)
-
-        fakeDestinationsRepository.destinationByIdResult = Result.Success(sampleDestination)
-        fakeDestinationsRepository.allDestinationsResult = Result.Success(
-            listOf(sampleDestination, second, third, fourth)
-        )
-
-        val viewModel = createViewModel()
-        advanceUntilIdle()
-
-        val relatedState = viewModel.uiState.value.relatedDestinationsState
-        assertTrue(relatedState is UiState.Success)
-
-        val ids = (relatedState as UiState.Success).data.map { it.destinationID }
-        assertEquals(listOf(3, 4, 2), ids)
-    }
-
-    @Test
     fun should_retryRelatedDestinations_when_retryRelatedActionTriggered() = runTest {
         fakeDestinationsRepository.destinationByIdResult = Result.Success(sampleDestination)
-        fakeDestinationsRepository.allDestinationsResult = Result.Error(DataError.Network.ServerError)
+        fakeDestinationsRepository.suggestedDestinationsResult = Result.Error(DataError.Network.ServerError)
 
         val viewModel = createViewModel()
         advanceUntilIdle()
         assertTrue(viewModel.uiState.value.relatedDestinationsState is UiState.Error)
 
-        fakeDestinationsRepository.allDestinationsResult = Result.Success(
+        fakeDestinationsRepository.suggestedDestinationsResult = Result.Success(
             listOf(sampleDestination.copy(destinationID = 2))
         )
 
@@ -217,53 +196,6 @@ class DestinationDetailViewModelTest {
         advanceUntilIdle()
 
         assertTrue(viewModel.uiState.value.relatedDestinationsState is UiState.Success)
-    }
-
-    @Test
-    fun should_discardDifferentCategories_when_relatedDestinationsLoaded() = runTest {
-        val sameCategory = sampleDestination.copy(destinationID = 2)
-        val differentCategory = sampleDestination.copy(
-            destinationID = 3,
-            interests = listOf(Interest(99, "Beaches"))
-        )
-
-        fakeDestinationsRepository.destinationByIdResult = Result.Success(sampleDestination)
-        fakeDestinationsRepository.allDestinationsResult = Result.Success(
-            listOf(sampleDestination, sameCategory, differentCategory)
-        )
-
-        val viewModel = createViewModel()
-        advanceUntilIdle()
-
-        val relatedState = viewModel.uiState.value.relatedDestinationsState
-        assertTrue(relatedState is UiState.Success)
-
-        val ids = (relatedState as UiState.Success).data.map { it.destinationID }
-        assertEquals(listOf(2), ids)
-    }
-
-    @Test
-    fun should_fallbackToUnfilteredQuery_when_interestQueryTimesOut() = runTest {
-        val sameCategory = sampleDestination.copy(destinationID = 2)
-        val differentCategory = sampleDestination.copy(
-            destinationID = 3,
-            interests = listOf(Interest(99, "Beaches"))
-        )
-
-        fakeDestinationsRepository.destinationByIdResult = Result.Success(sampleDestination)
-        fakeDestinationsRepository.allDestinationsResultByInterest[1] =
-            Result.Error(DataError.Network.Timeout)
-        fakeDestinationsRepository.allDestinationsResultByInterest[null] =
-            Result.Success(listOf(sampleDestination, sameCategory, differentCategory))
-
-        val viewModel = createViewModel()
-        advanceUntilIdle()
-
-        val relatedState = viewModel.uiState.value.relatedDestinationsState
-        assertTrue(relatedState is UiState.Success)
-        val ids = (relatedState as UiState.Success).data.map { it.destinationID }
-        assertEquals(listOf(2), ids)
-        assertEquals(listOf(1, null), fakeDestinationsRepository.requestedInterestIds)
     }
 
     @Test
@@ -365,6 +297,7 @@ class DestinationDetailViewModelTest {
             )
         )
         var allDestinationsResult: Result<List<Destination>, DataError> = Result.Success(emptyList())
+        var suggestedDestinationsResult: Result<List<Destination>, DataError> = Result.Success(emptyList())
         val allDestinationsResultByInterest: MutableMap<Int?, Result<List<Destination>, DataError>> =
             mutableMapOf()
         val requestedInterestIds: MutableList<Int?> = mutableListOf()
@@ -415,6 +348,11 @@ class DestinationDetailViewModelTest {
         ): Result<List<Destination>, DataError> = Result.Success(emptyList())
 
         override suspend fun getFamousCountries(): Result<List<Country>, DataError> = Result.Success(emptyList())
+
+        override suspend fun getSuggestedDestinations(
+            destinationId: Int,
+            count: Int
+        ): Result<List<Destination>, DataError> = suggestedDestinationsResult
     }
 
     private class FakeFavoritePlaceRepository : FavoritePlaceRepository {

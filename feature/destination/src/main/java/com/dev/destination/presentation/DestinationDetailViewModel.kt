@@ -10,8 +10,8 @@ import com.example.common.navigation.DestinationDetailRoute
 import com.example.domain.model.review.ReviewSummary
 import com.example.domain.repository.review.ReviewRepository
 import com.example.domain.repository.usermanagement.UserManagementRepository
-import com.example.domain.usecase.destinations.GetAllDestinationsUseCase
 import com.example.domain.usecase.destinations.GetDestinationByIdUseCase
+import com.example.domain.usecase.destinations.GetSuggestedDestinationsUseCase
 import com.example.domain.usecase.favorite.destination.AddDestinationFavoriteUseCase
 import com.example.domain.usecase.favorite.destination.ObserveFavoriteDestinationIdsUseCase
 import com.example.domain.usecase.favorite.destination.RemoveDestinationFavoriteUseCase
@@ -33,7 +33,7 @@ import kotlin.math.roundToInt
 @HiltViewModel
 class DestinationDetailViewModel @Inject constructor(
     private val getDestinationByIdUseCase: GetDestinationByIdUseCase,
-    private val getAllDestinationsUseCase: GetAllDestinationsUseCase,
+    private val getSuggestedDestinationsUseCase: GetSuggestedDestinationsUseCase,
     private val addDestinationFavoriteUseCase: AddDestinationFavoriteUseCase,
     private val removeDestinationFavoriteUseCase: RemoveDestinationFavoriteUseCase,
     private val observeFavoriteDestinationIdsUseCase: ObserveFavoriteDestinationIdsUseCase,
@@ -248,7 +248,7 @@ class DestinationDetailViewModel @Inject constructor(
             when (val result = getDestinationByIdUseCase(currentDestinationId)) {
                 is Result.Success -> {
                     _uiState.value = _uiState.value.copy(detailState = UiState.Success(result.data))
-                    loadRelatedDestinations(result.data)
+                    loadRelatedDestinations(currentDestinationId)
                 }
                 is Result.Error -> {
                     // Handling Not Found vs Error later (Task US3), but for now generic Error
@@ -258,103 +258,25 @@ class DestinationDetailViewModel @Inject constructor(
         }
     }
 
-    private fun loadRelatedDestinations(destination: com.example.domain.model.destination.Destination) {
-        val interestId = destination.interests.firstOrNull()?.interestID ?: return // If no interest, skip
-
+    private fun loadRelatedDestinations(destinationId: Int) {
         viewModelScope.launch {
-            _uiState.value = _uiState.value.copy(relatedDestinationsState = UiState.Loading)
-            when (
-                val result = getAllDestinationsUseCase(
-                    pageIndex = 1,
-                    pageSize = RELATED_PAGE_SIZE,
-                    cityId = null,
-                    interestId = interestId
-                )
-            ) {
+            _uiState.update { it.copy(relatedDestinationsState = UiState.Loading) }
+            when (val result = getSuggestedDestinationsUseCase(destinationId, RELATED_PAGE_SIZE)) {
                 is Result.Success -> {
-                    _uiState.value = _uiState.value.copy(
-                        relatedDestinationsState = UiState.Success(
-                            buildRelatedDestinations(result.data, destination.destinationID, interestId)
-                        )
-                    )
+                    _uiState.update {
+                        it.copy(relatedDestinationsState = UiState.Success(result.data))
+                    }
                 }
 
                 is Result.Error -> {
-                    if (result.error == DataError.Network.Timeout) {
-                        // Fallback: avoid blocking UI on slow category-filter endpoint.
-                        when (
-                            val fallback = getAllDestinationsUseCase(
-                                pageIndex = 1,
-                                pageSize = RELATED_PAGE_SIZE,
-                                cityId = null,
-                                interestId = null
-                            )
-                        ) {
-                            is Result.Success -> {
-                                _uiState.value = _uiState.value.copy(
-                                    relatedDestinationsState = UiState.Success(
-                                        buildFallbackRelatedDestinations(
-                                            fallback.data,
-                                            destination.destinationID,
-                                            interestId
-                                        )
-                                    )
-                                )
-                            }
-
-                            is Result.Error -> {
-                                _uiState.value = _uiState.value.copy(
-                                    relatedDestinationsState = UiState.Success(emptyList())
-                                )
-                            }
-                        }
-                    } else {
-                        _uiState.value = _uiState.value.copy(
-                            relatedDestinationsState = UiState.Error("Failed to load related destinations")
+                    _uiState.update {
+                        it.copy(
+                            relatedDestinationsState = UiState.Error("Failed to load suggested destinations")
                         )
                     }
                 }
             }
         }
-    }
-
-    private fun buildRelatedDestinations(
-        source: List<com.example.domain.model.destination.Destination>,
-        currentDestinationId: Int,
-        interestId: Int
-    ): List<com.example.domain.model.destination.Destination> {
-        return source
-            .filter { candidate ->
-                candidate.destinationID != currentDestinationId &&
-                    candidate.interests.any { it.interestID == interestId }
-            }
-            .sortedWith(
-                compareByDescending<com.example.domain.model.destination.Destination> { it.rating }
-                    .thenByDescending { it.totalReviews }
-                    .thenBy { it.destinationID }
-            )
-            .take(10)
-    }
-
-    private fun buildFallbackRelatedDestinations(
-        source: List<com.example.domain.model.destination.Destination>,
-        currentDestinationId: Int,
-        preferredInterestId: Int
-    ): List<com.example.domain.model.destination.Destination> {
-        val strictMatches = buildRelatedDestinations(source, currentDestinationId, preferredInterestId)
-        if (strictMatches.isNotEmpty()) return strictMatches
-
-        return source
-            .filter { candidate -> candidate.destinationID != currentDestinationId }
-            .sortedWith(
-                compareByDescending<com.example.domain.model.destination.Destination> { candidate ->
-                    candidate.interests.count { it.interestID == preferredInterestId }
-                }
-                    .thenByDescending { it.rating }
-                    .thenByDescending { it.totalReviews }
-                    .thenBy { it.destinationID }
-            )
-            .take(10)
     }
 
     fun onAction(action: DestinationDetailAction) {
@@ -477,7 +399,7 @@ class DestinationDetailViewModel @Inject constructor(
     private fun retryRelatedDestinations() {
         val detailState = _uiState.value.detailState
         if (detailState is UiState.Success) {
-            loadRelatedDestinations(detailState.data)
+            loadRelatedDestinations(detailState.data.destinationID)
         }
     }
 }

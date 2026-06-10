@@ -16,8 +16,8 @@ import com.example.domain.repository.favorite.FavoriteDestinationRepository
 import com.example.domain.repository.favorite.FavoritePlaceRepository
 import com.example.domain.repository.review.ReviewRepository
 import com.example.domain.repository.usermanagement.UserManagementRepository
-import com.example.domain.usecase.destinations.GetAllDestinationsUseCase
 import com.example.domain.usecase.destinations.GetDestinationByIdUseCase
+import com.example.domain.usecase.destinations.GetSuggestedDestinationsUseCase
 import com.example.domain.usecase.favorite.destination.AddDestinationFavoriteUseCase
 import com.example.domain.usecase.favorite.destination.ObserveFavoriteDestinationIdsUseCase
 import com.example.domain.usecase.favorite.destination.RemoveDestinationFavoriteUseCase
@@ -63,7 +63,7 @@ class DestinationFavoriteSyncTest {
 
         val viewModel = DestinationDetailViewModel(
             getDestinationByIdUseCase = GetDestinationByIdUseCase(destinationRepo),
-            getAllDestinationsUseCase = GetAllDestinationsUseCase(destinationRepo),
+            getSuggestedDestinationsUseCase = GetSuggestedDestinationsUseCase(destinationRepo),
             addDestinationFavoriteUseCase = AddDestinationFavoriteUseCase(favoriteRepo),
             removeDestinationFavoriteUseCase = RemoveDestinationFavoriteUseCase(favoriteRepo),
             observeFavoriteDestinationIdsUseCase = ObserveFavoriteDestinationIdsUseCase(favoriteRepo),
@@ -195,6 +195,11 @@ class DestinationFavoriteSyncTest {
         ): Result<List<Destination>, DataError> = Result.Success(emptyList())
 
         override suspend fun getFamousCountries(): Result<List<Country>, DataError> = Result.Success(emptyList())
+
+        override suspend fun getSuggestedDestinations(
+            destinationId: Int,
+            count: Int
+        ): Result<List<Destination>, DataError> = Result.Success(emptyList())
     }
 }
 

@@ -41,6 +41,7 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.dev.destination.R
 import com.example.designsystem.theme.spacing
+import com.example.designsystem.theme.star
 import com.example.domain.model.destination.Destination
 
 @Composable
@@ -158,7 +159,7 @@ fun AnotherDestinationCard(
                         Icon(
                             imageVector = Icons.Default.Star,
                             contentDescription = null,
-                            tint = MaterialTheme.colorScheme.primary,
+                            tint = MaterialTheme.colorScheme.star,
                             modifier = Modifier.size(MaterialTheme.spacing.md - MaterialTheme.spacing.xxs / 2)
                         )
                         Spacer(modifier = Modifier.width(MaterialTheme.spacing.xxs / 2))

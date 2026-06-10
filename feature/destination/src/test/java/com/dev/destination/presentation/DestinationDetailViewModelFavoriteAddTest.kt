@@ -16,8 +16,8 @@ import com.example.domain.repository.favorite.FavoriteDestinationRepository
 import com.example.domain.repository.favorite.FavoritePlaceRepository
 import com.example.domain.repository.review.ReviewRepository
 import com.example.domain.repository.usermanagement.UserManagementRepository
-import com.example.domain.usecase.destinations.GetAllDestinationsUseCase
 import com.example.domain.usecase.destinations.GetDestinationByIdUseCase
+import com.example.domain.usecase.destinations.GetSuggestedDestinationsUseCase
 import com.example.domain.usecase.favorite.destination.AddDestinationFavoriteUseCase
 import com.example.domain.usecase.favorite.destination.ObserveFavoriteDestinationIdsUseCase
 import com.example.domain.usecase.favorite.place.FavoritePlaceUseCase
@@ -105,7 +105,7 @@ class DestinationDetailViewModelFavoriteAddTest {
 
         return DestinationDetailViewModel(
             getDestinationByIdUseCase = GetDestinationByIdUseCase(destinationsRepository),
-            getAllDestinationsUseCase = GetAllDestinationsUseCase(destinationsRepository),
+            getSuggestedDestinationsUseCase = GetSuggestedDestinationsUseCase(destinationsRepository),
             addDestinationFavoriteUseCase = AddDestinationFavoriteUseCase(favoriteDestinationRepository),
             removeDestinationFavoriteUseCase = com.example.domain.usecase.favorite.destination.RemoveDestinationFavoriteUseCase(favoriteDestinationRepository),
             observeFavoriteDestinationIdsUseCase = ObserveFavoriteDestinationIdsUseCase(favoriteDestinationRepository),
@@ -234,6 +234,11 @@ class DestinationDetailViewModelFavoriteAddTest {
         ): Result<List<Destination>, DataError> = Result.Success(emptyList())
 
         override suspend fun getFamousCountries(): Result<List<Country>, DataError> = Result.Success(emptyList())
+
+        override suspend fun getSuggestedDestinations(
+            destinationId: Int,
+            count: Int
+        ): Result<List<Destination>, DataError> = Result.Success(emptyList())
     }
 }
 
