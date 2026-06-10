@@ -1,11 +1,10 @@
 package com.dev.search.components
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -13,6 +12,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
@@ -43,7 +43,6 @@ import com.example.feature.home.R as HomeR
 
 private val ThumbnailSize @Composable get() = MaterialTheme.spacing.xxxl * 2
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun SearchResultItem(
     modifier: Modifier = Modifier,
@@ -101,9 +100,10 @@ fun SearchResultItem(
                     overflow = TextOverflow.Ellipsis
                 )
                 if (destination.interests.isNotEmpty()) {
-                    FlowRow(
+                    Row(
                         horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.xxs),
-                        verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.xxs)
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.horizontalScroll(rememberScrollState())
                     ) {
                         destination.interests.take(3).forEach { interest ->
                             InterestChip(label = interest.interestName)
