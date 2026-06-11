@@ -57,6 +57,9 @@ material = "1.13.0"
 # Spotless
 spotless = "6.25.0"
 
+# Testing
+junit = "4.13.2"
+
 # Stripe & Other
 navigationRuntimeKtx = "2.9.6"
 googleFirebaseAppdistribution = "5.2.1"
@@ -131,6 +134,9 @@ coil-svg = { group = "io.coil-kt", name = "coil-svg", version.ref = "coil" }
 
 # UI & Material
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
+
+# Testing
+junit = { group = "junit", name = "junit", version.ref = "junit" }
 
 androidx-navigation-runtime-ktx = { group = "androidx.navigation", name = "navigation-runtime-ktx", version.ref = "navigationRuntimeKtx" }
 stripe-android = { group = "com.stripe", name = "stripe-android", version.ref = "stripe" }

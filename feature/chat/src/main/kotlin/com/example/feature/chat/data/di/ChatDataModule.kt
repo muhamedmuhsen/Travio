@@ -4,6 +4,8 @@ import com.example.feature.chat.data.remote.SignalRService
 import com.example.feature.chat.data.remote.SignalRServiceImpl
 import com.example.feature.chat.data.repository.SignalRChatRepositoryImpl
 import com.example.feature.chat.domain.repository.ChatRepository
+import com.example.feature.chat.presentation.analytics.AiAnalyticsTracker
+import com.example.feature.chat.presentation.analytics.DefaultAiAnalyticsTracker
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -30,6 +32,9 @@ abstract class ChatDataModule {
     @Binds
     @Singleton
     abstract fun bindSignalRService(signalRServiceImpl: SignalRServiceImpl): SignalRService
+
+    @Binds
+    abstract fun bindAiAnalyticsTracker(impl: DefaultAiAnalyticsTracker): AiAnalyticsTracker
 
     @Module
     @InstallIn(SingletonComponent::class)

@@ -35,7 +35,7 @@ fun PlanStatusDto.toPlanGenerationState(): PlanGenerationState {
     return PlanGenerationState(
         threadId = threadId,
         status = status,
-        error = errorMessage,
+        error = if (isFailed) AiErrorMapper.classify(errorMessage) else null,
         tripId = tripId
     )
 }

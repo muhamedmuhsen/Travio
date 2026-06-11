@@ -165,15 +165,17 @@ open class SignalRServiceImpl @Inject constructor(
 
         // 6. ReceiveError
         hubConnection?.on("ReceiveError", { errorMessage: String ->
-            Timber.e("Received error: $errorMessage")
+            Timber.e("Received error (raw): $errorMessage")
             scope.launch {
                 statusFlow.emit("idle")
+                val sanitized = com.example.feature.chat.data.mapper.AiErrorMapper
+                    .sanitize(errorMessage)
                 planStatusFlow.emit(
                     PlanStatusDto(
                         threadId = currentThreadId ?: "unknown",
                         isCompleted = false,
                         isFailed = true,
-                        errorMessage = errorMessage
+                        errorMessage = sanitized
                     )
                 )
             }

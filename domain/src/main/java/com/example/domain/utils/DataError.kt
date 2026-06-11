@@ -83,4 +83,11 @@ sealed interface DataError : Error {
         LocationDisabled,
         Timeout
     }
+
+    enum class AiService : DataError {
+        ConnectionRefused,
+        Timeout,
+        Unavailable,
+        ProcessingFailed
+    }
 }

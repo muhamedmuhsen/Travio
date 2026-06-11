@@ -184,7 +184,10 @@ fun ChatScreenContent(
                 }
                 is ChatUiState.Success -> {
                     Column(modifier = Modifier.fillMaxSize()) {
-                        ConnectionIndicator(state = state.connectionState)
+                        ConnectionIndicator(
+                            state = state.connectionState,
+                            error = state.error
+                        )
 
                         if (state.messages.isEmpty() && !state.isAiThinking) {
                             EmptyStateContent(modifier = Modifier.weight(1f))

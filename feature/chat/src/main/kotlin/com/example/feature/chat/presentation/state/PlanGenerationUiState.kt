@@ -12,5 +12,9 @@ sealed interface PlanGenerationUiState {
 
     data class Success(val tripId: String) : PlanGenerationUiState
 
-    data class Error(val message: UiText) : PlanGenerationUiState
+    data class Error(
+        val message: UiText,
+        val canRetry: Boolean = true,
+        val threadId: String = ""
+    ) : PlanGenerationUiState
 }

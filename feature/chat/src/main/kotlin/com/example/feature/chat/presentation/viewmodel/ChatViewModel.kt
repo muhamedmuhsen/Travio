@@ -18,6 +18,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -43,14 +44,27 @@ class ChatViewModel @Inject constructor(
     private val _snackbarEvent = Channel<String>()
     val snackbarEvent = _snackbarEvent.receiveAsFlow()
 
-    private var currentThreadId: String = java.util.UUID.randomUUID().toString()
+    private val _currentThreadId = MutableStateFlow(java.util.UUID.randomUUID().toString())
+    val currentThreadId: String get() = _currentThreadId.value
 
     init {
-        loadMessages()
-        observeConnection()
-        observePlanStatus()
-        observeAiStatus()
+        observeThreadChanges()
         connect()
+    }
+
+    private fun observeThreadChanges() {
+        viewModelScope.launch {
+            _currentThreadId.collectLatest { threadId ->
+                // Clean up previous observations implicitly via collectLatest if we were using it inside,
+                // but here we launch separate jobs for clarity or use a combined flow.
+                // However, common pattern is to just restart everything relevant to the thread.
+                loadMessages(threadId)
+                observePlanStatus(threadId)
+            }
+        }
+        // These are global or independent of threadId
+        observeConnection()
+        observeAiStatus()
     }
 
     private fun connect() {
@@ -60,20 +74,19 @@ class ChatViewModel @Inject constructor(
     }
 
     fun startNewChat() {
-        currentThreadId = java.util.UUID.randomUUID().toString()
+        _currentThreadId.value = java.util.UUID.randomUUID().toString()
         _state.value = ChatUiState.Success(messages = emptyList())
-        loadMessages()
     }
 
-    private fun loadMessages() {
+    private fun loadMessages(threadId: String) {
         viewModelScope.launch {
-            val historyResult = getThreadHistoryUseCase(currentThreadId)
+            val historyResult = getThreadHistoryUseCase(threadId)
             val history = if (historyResult is Result.Success) historyResult.data else emptyList()
 
             _state.value = ChatUiState.Success(messages = history)
 
-            observeMessagesUseCase(currentThreadId).collect { message ->
-                if (message.threadId != currentThreadId) return@collect
+            observeMessagesUseCase(threadId).collect { message ->
+                if (message.threadId != threadId) return@collect
                 _state.update { currentState ->
                     if (currentState is ChatUiState.Success) {
                         val messages = currentState.messages
@@ -111,9 +124,9 @@ class ChatViewModel @Inject constructor(
         }
     }
 
-    private fun observePlanStatus() {
+    private fun observePlanStatus(threadId: String) {
         viewModelScope.launch {
-            observePlanStatusUseCase(currentThreadId).collect { planState ->
+            observePlanStatusUseCase(threadId).collect { planState ->
                 _state.update { currentState ->
                     if (currentState is ChatUiState.Success) {
                         val genStatus = when (planState.status) {
@@ -124,14 +137,20 @@ class ChatViewModel @Inject constructor(
                         currentState.copy(
                             isGeneratingPlan = planState.status == PlanStatus.IN_PROGRESS,
                             generatedTripId = planState.tripId,
-                            generationStatus = genStatus
+                            generationStatus = genStatus,
+                            error = if (planState.status == PlanStatus.FAILED) planState.error else null
                         )
                     } else {
                         currentState
                     }
                 }
                 if (planState.status == PlanStatus.IN_PROGRESS) {
-                    _navigationEvent.send(ChatNavigationEvent.NavigateToPlanGeneration(currentThreadId))
+                    _navigationEvent.send(ChatNavigationEvent.NavigateToPlanGeneration(threadId))
+                } else if (planState.status == PlanStatus.FAILED) {
+                    val hasMessages = (_state.value as? ChatUiState.Success)?.messages?.isNotEmpty() == true
+                    if (hasMessages) {
+                        _navigationEvent.send(ChatNavigationEvent.NavigateToPlanGeneration(threadId))
+                    }
                 }
             }
         }

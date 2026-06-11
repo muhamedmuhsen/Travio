@@ -13,19 +13,32 @@ import androidx.compose.ui.graphics.Color
 import com.example.designsystem.theme.onWarning
 import com.example.designsystem.theme.spacing
 import com.example.designsystem.theme.warning
+import com.example.feature.chat.domain.model.AiGenerationError
 import com.example.feature.chat.domain.model.ConnectionState
 
 @Composable
 fun ConnectionIndicator(
     state: ConnectionState,
+    error: AiGenerationError? = null,
     modifier: Modifier = Modifier
 ) {
-    if (state == ConnectionState.CONNECTED) return
+    if (state == ConnectionState.CONNECTED && error == null) return
 
-    val (backgroundColor, textColor, text) = when (state) {
-        ConnectionState.RECONNECTING -> Triple(MaterialTheme.colorScheme.warning, MaterialTheme.colorScheme.onWarning, "Reconnecting...")
-        ConnectionState.DISCONNECTED -> Triple(MaterialTheme.colorScheme.error, MaterialTheme.colorScheme.onError, "Disconnected")
-        ConnectionState.CONNECTED -> Triple(Color.Transparent, Color.Transparent, "")
+    val (backgroundColor, textColor, text) = when {
+        state == ConnectionState.RECONNECTING -> Triple(
+            MaterialTheme.colorScheme.warning,
+            MaterialTheme.colorScheme.onWarning,
+            "Reconnecting..."
+        )
+        state == ConnectionState.DISCONNECTED -> Triple(MaterialTheme.colorScheme.error, MaterialTheme.colorScheme.onError, "Disconnected")
+        error != null -> {
+            val message = when (error) {
+                is AiGenerationError.AiConnectionRefused -> "AI Travel Assistant is temporarily offline."
+                else -> "AI Service Error"
+            }
+            Triple(MaterialTheme.colorScheme.errorContainer, MaterialTheme.colorScheme.onErrorContainer, message)
+        }
+        else -> Triple(Color.Transparent, Color.Transparent, "")
     }
 
     Box(

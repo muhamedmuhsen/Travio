@@ -70,6 +70,11 @@ fun DataError.asUiText(): UiText {
         DataError.Location.PermissionDenied -> StringResource(R.string.error_location_permission_denied)
         DataError.Location.LocationDisabled -> StringResource(R.string.error_location_disabled)
         DataError.Location.Timeout -> StringResource(R.string.error_location_timeout)
+
+        DataError.AiService.ConnectionRefused -> StringResource(R.string.error_server)
+        DataError.AiService.Timeout -> StringResource(R.string.error_timeout)
+        DataError.AiService.Unavailable -> StringResource(R.string.error_server)
+        DataError.AiService.ProcessingFailed -> StringResource(R.string.error_server)
     }
 }
 

@@ -147,7 +147,12 @@ class DestinationDetailViewModel @Inject constructor(
 
                         val updatedDetailState = when (val detail = state.detailState) {
                             is UiState.Success -> {
-                                val exactRating = aggregate?.averageRating ?: if (mergedReviews.isNotEmpty()) mergedReviews.map { it.rating }.average() else 0.0
+                                val exactRating = aggregate?.averageRating
+                                    ?: if (mergedReviews.isNotEmpty()) {
+                                        mergedReviews.map { it.rating }.average()
+                                    } else {
+                                        0.0
+                                    }
                                 UiState.Success(
                                     detail.data.copy(
                                         rating = exactRating,
@@ -169,7 +174,10 @@ class DestinationDetailViewModel @Inject constructor(
                             reviewsState = UiState.Success(mergedReviews)
                         )
                     }
-                    _events.send(DestinationDetailEvent.ShowSuccessSnackbar(UiText.DynamicString("Review submitted successfully")))
+                    _events.send(
+                        DestinationDetailEvent
+                            .ShowSuccessSnackbar(UiText.DynamicString("Review submitted successfully"))
+                    )
                 }
 
                 is Result.Error -> {
@@ -201,7 +209,14 @@ class DestinationDetailViewModel @Inject constructor(
                         val newAverageRating = state.reviewSummary?.averageRating ?: 0
                         val updatedDetailState = when (val detail = state.detailState) {
                             is UiState.Success -> {
-                                val exactRating = if (updatedReviews is UiState.Success && updatedReviews.data.isNotEmpty()) updatedReviews.data.map { it.rating }.average() else 0.0
+                                val exactRating = if
+                                    (updatedReviews is UiState.Success &&
+                                        updatedReviews.data.isNotEmpty()
+                                ) {
+                                    updatedReviews.data.map { it.rating }.average()
+                                } else {
+                                    0.0
+                                }
                                 UiState.Success(
                                     detail.data.copy(
                                         rating = exactRating,

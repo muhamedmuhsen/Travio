@@ -21,7 +21,8 @@ sealed interface ChatUiState {
         val isAiThinking: Boolean = false,
         val isGeneratingPlan: Boolean = false,
         val generatedTripId: String? = null,
-        val generationStatus: GenerationStatus = GenerationStatus.IDLE
+        val generationStatus: GenerationStatus = GenerationStatus.IDLE,
+        val error: com.example.feature.chat.domain.model.AiGenerationError? = null
     ) : ChatUiState
 
     data class Error(val message: String) : ChatUiState

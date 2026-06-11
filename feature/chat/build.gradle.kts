@@ -89,4 +89,10 @@ dependencies {
 
     // Image Loading
     implementation(libs.coil.compose)
+
+    // Testing
+    testImplementation(libs.junit)
+    testImplementation(libs.retrofit)
+    testImplementation(libs.retrofit.converter.gson)
+    testImplementation(libs.okhttp)
 }

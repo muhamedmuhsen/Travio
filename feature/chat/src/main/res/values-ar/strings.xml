@@ -37,4 +37,7 @@
     <string name="error_failed_toggle_favorite">فشل تحديث حالة المفضلة.</string>
     <string name="error_sync_trip_id_failed">فشل استرداد رقم الرحلة المتزامن من الخادم. يرجى إعادة المحاولة.</string>
     <string name="plan_generation_timed_out">انتهت مهلة إنشاء الخطة</string>
+    <string name="error_ai_unavailable">إنشاء مسار الرحلة بالذكاء الاصطناعي غير متاح مؤقتاً.</string>
+    <string name="error_ai_try_again">نواجه مشكلة في إنشاء رحلتك حالياً. يرجى المحاولة مرة أخرى بعد بضع دقائق.</string>
+    <string name="error_ai_unavailable_subtitle">خدمة الذكاء الاصطناعي تواجه مشاكل. تم حفظ طلبك — يمكنك إعادة المحاولة دون فقدان التقدم.</string>
 </resources>

@@ -105,8 +105,34 @@ class SignalRChatRepositoryImpl @Inject constructor(
                 }
             } catch (e: Exception) {
                 Timber.e(e, "REST API fallback failed")
-                // Don't emit FAILED here, let SignalR handle errors if possible.
-                // We only emit FAILED if SignalR also fails, but for now we just log.
+                val classifiedError = com.example.feature.chat.data.mapper.AiErrorMapper
+                    .classifyException(e)
+
+                val cachedTrips = tripRepository.getTripsForThread(threadId)
+                val completedTrip = cachedTrips.find {
+                    it.status == TripPlanStatus.COMPLETED
+                }
+
+                if (completedTrip != null) {
+                    Timber.d("REST API failed, but cached trip found: ${completedTrip.id}")
+                    emit(
+                        PlanGenerationState(
+                            threadId = threadId,
+                            status = com.example.feature.chat.domain.model.PlanStatus.COMPLETED,
+                            tripId = completedTrip.id
+                        )
+                    )
+                    return@flow
+                }
+
+                Timber.d("No cached trip fallback. Emitting error: $classifiedError")
+                emit(
+                    PlanGenerationState(
+                        threadId = threadId,
+                        status = com.example.feature.chat.domain.model.PlanStatus.FAILED,
+                        error = classifiedError
+                    )
+                )
             }
 
             signalRFlow.collect { emit(it) }

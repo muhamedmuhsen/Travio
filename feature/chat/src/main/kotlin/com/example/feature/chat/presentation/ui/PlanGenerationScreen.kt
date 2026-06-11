@@ -190,22 +190,34 @@ fun PlanGenerationScreenContent(
                         modifier = Modifier.padding(horizontal = MaterialTheme.spacing.lg)
                     )
 
-                    Spacer(modifier = Modifier.height(MaterialTheme.spacing.lg))
+                    Spacer(modifier = Modifier.height(MaterialTheme.spacing.xxs))
 
-                    Button(
-                        onClick = onRetry,
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = buttonColor,
-                            contentColor = buttonTextColor
-                        ),
-                        shape = RoundedCornerShape(MaterialTheme.spacing.xlg),
-                        modifier = Modifier.height(MaterialTheme.spacing.xxxl + MaterialTheme.spacing.xxs)
-                    ) {
-                        Text(
-                            text = stringResource(R.string.retry),
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.SemiBold
-                        )
+                    Text(
+                        text = stringResource(R.string.error_ai_unavailable_subtitle),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = subtitleColor.copy(alpha = 0.7f),
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.padding(horizontal = MaterialTheme.spacing.xl)
+                    )
+
+                    if (state.canRetry) {
+                        Spacer(modifier = Modifier.height(MaterialTheme.spacing.lg))
+
+                        Button(
+                            onClick = onRetry,
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = buttonColor,
+                                contentColor = buttonTextColor
+                            ),
+                            shape = RoundedCornerShape(MaterialTheme.spacing.xlg),
+                            modifier = Modifier.height(MaterialTheme.spacing.xxxl + MaterialTheme.spacing.xxs)
+                        ) {
+                            Text(
+                                text = stringResource(R.string.retry),
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.SemiBold
+                            )
+                        }
                     }
                 }
             }
@@ -434,7 +446,25 @@ fun PlanGenerationScreenLoadingPreview() {
 @Composable
 fun PlanGenerationScreenErrorPreview() {
     PlanGenerationScreenContent(
-        state = PlanGenerationUiState.Error(com.dev.utils.uitext.UiText.DynamicString("Failed to fetch server response")),
+        state = PlanGenerationUiState.Error(
+            message = com.dev.utils.uitext.UiText.DynamicString("Failed to fetch server response"),
+            canRetry = true,
+            threadId = "preview-thread"
+        ),
+        onDismiss = {},
+        onRetry = {}
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+fun PlanGenerationScreenAiUnavailablePreview() {
+    PlanGenerationScreenContent(
+        state = PlanGenerationUiState.Error(
+            message = com.dev.utils.uitext.UiText.DynamicString("AI itinerary generation is temporarily unavailable."),
+            canRetry = true,
+            threadId = "preview-thread"
+        ),
         onDismiss = {},
         onRetry = {}
     )
