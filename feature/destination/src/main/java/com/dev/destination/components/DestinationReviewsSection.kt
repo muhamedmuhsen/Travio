@@ -88,8 +88,9 @@ fun DestinationReviewsSection(
             Spacer(modifier = Modifier.height(MaterialTheme.spacing.md))
 
             // Rating Summary
-            val averageRating = uiState.reviewSummary?.averageRating ?: 0.0
-            val totalReviews = uiState.reviewSummary?.totalReviews ?: 0
+            val detailState = uiState.detailState as? UiState.Success
+            val averageRatingDouble = detailState?.data?.rating ?: uiState.reviewSummary?.averageRating?.toDouble() ?: 0.0
+            val totalReviews = detailState?.data?.totalReviews ?: uiState.reviewSummary?.totalReviews ?: 0
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -97,10 +98,9 @@ fun DestinationReviewsSection(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    val averageRatingDouble = averageRating.toDouble()
                     val ratingInt = averageRatingDouble.toInt()
                     Text(
-                        text = if (averageRatingDouble > 0) "%.1f".format(averageRatingDouble) else "0.0",
+                        text = if (averageRatingDouble > 0) "%.1f".format(java.util.Locale.US, averageRatingDouble) else "0.0",
                         style = MaterialTheme.typography.displayMedium,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onSurface

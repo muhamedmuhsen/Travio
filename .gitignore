@@ -75,3 +75,4 @@ specs
 .DS_Store
 Thumbs.db
 
+/app/config/environment.defaults.properties

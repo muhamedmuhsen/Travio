@@ -317,7 +317,7 @@ private fun DestinationDetailContent(
                                         text =
                                         stringResource(
                                             id = R.string.destination_reviews_count,
-                                            "${displayedSummary?.averageRating ?: destination.rating.toInt()} " +
+                                            "${"%.1f".format(java.util.Locale.US, destination.rating)} " +
                                                 "(${displayedSummary?.totalReviews ?: destination.totalReviews})"
                                         ),
                                         style = MaterialTheme.typography.labelLarge,

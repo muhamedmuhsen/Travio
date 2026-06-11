@@ -147,9 +147,10 @@ class DestinationDetailViewModel @Inject constructor(
 
                         val updatedDetailState = when (val detail = state.detailState) {
                             is UiState.Success -> {
+                                val exactRating = aggregate?.averageRating ?: if (mergedReviews.isNotEmpty()) mergedReviews.map { it.rating }.average() else 0.0
                                 UiState.Success(
                                     detail.data.copy(
-                                        rating = resolvedSummary.averageRating.toDouble(),
+                                        rating = exactRating,
                                         totalReviews = resolvedSummary.totalReviews
                                     )
                                 )
@@ -196,14 +197,31 @@ class DestinationDetailViewModel @Inject constructor(
                                 else -> rs
                             }
                         }
+                        val newTotalReviews = (state.reviewSummary?.totalReviews ?: 1) - 1
+                        val newAverageRating = state.reviewSummary?.averageRating ?: 0
+                        val updatedDetailState = when (val detail = state.detailState) {
+                            is UiState.Success -> {
+                                val exactRating = if (updatedReviews is UiState.Success && updatedReviews.data.isNotEmpty()) updatedReviews.data.map { it.rating }.average() else 0.0
+                                UiState.Success(
+                                    detail.data.copy(
+                                        rating = exactRating,
+                                        totalReviews = newTotalReviews
+                                    )
+                                )
+                            }
+                            else -> state.detailState
+                        }
+
                         state.copy(
                             isSubmittingReview = false,
                             currentUserReview = null,
                             reviewText = "",
                             reviewRating = 0,
+                            detailState = updatedDetailState,
                             reviewsState = updatedReviews,
                             reviewSummary = state.reviewSummary?.copy(
-                                totalReviews = (state.reviewSummary?.totalReviews ?: 1) - 1
+                                totalReviews = newTotalReviews,
+                                averageRating = newAverageRating
                             )
                         )
                     }
