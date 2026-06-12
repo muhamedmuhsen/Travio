@@ -11,7 +11,6 @@ import com.example.domain.usecase.community.AddCommentUseCase
 import com.example.domain.usecase.community.DeleteCommentUseCase
 import com.example.domain.usecase.community.DeletePostUseCase
 import com.example.domain.usecase.community.GetPostByIdUseCase
-import com.example.domain.usecase.community.ToggleBookmarkUseCase
 import com.example.domain.usecase.community.ToggleLikeUseCase
 import com.example.domain.utils.Result
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -30,7 +29,6 @@ class PostDetailViewModel @Inject constructor(
     private val userManagementRepository: UserManagementRepository,
     private val getPostById: GetPostByIdUseCase,
     private val toggleLike: ToggleLikeUseCase,
-    private val toggleBookmark: ToggleBookmarkUseCase,
     private val addComment: AddCommentUseCase,
     private val deletePost: DeletePostUseCase,
     private val deleteComment: DeleteCommentUseCase,
@@ -60,7 +58,11 @@ class PostDetailViewModel @Inject constructor(
     private fun loadCurrentUser() {
         viewModelScope.launch {
             when (val result = userManagementRepository.getUser()) {
-                is Result.Success -> currentUser = result.data
+                is Result.Success -> {
+                    currentUser = result.data
+                    val authorName = "${result.data.firstName} ${result.data.lastName}".trim()
+                    _uiState.update { it.copy(currentUserName = authorName) }
+                }
                 else -> { /* Fallback handled when used */ }
             }
         }
@@ -94,14 +96,6 @@ class PostDetailViewModel @Inject constructor(
             )
         }
         viewModelScope.launch { toggleLike(postId) }
-    }
-
-    fun onBookmarkClicked() {
-        _uiState.update { state ->
-            val post = (state.postState as? UiState.Success)?.data ?: return@update state
-            state.copy(postState = UiState.Success(post.copy(isBookmarked = !post.isBookmarked)))
-        }
-        viewModelScope.launch { toggleBookmark(postId) }
     }
 
     fun onCommentTextChanged(text: String) {

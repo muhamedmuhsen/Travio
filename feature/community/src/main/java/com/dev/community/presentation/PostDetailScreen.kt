@@ -5,6 +5,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -75,7 +77,10 @@ fun PostDetailScreen(
                 CommentInputBar(
                     value = commentText,
                     onValueChange = viewModel::onCommentTextChanged,
-                    onSendClicked = viewModel::onCommentSubmitted
+                    onSendClicked = viewModel::onCommentSubmitted,
+                    modifier = Modifier
+                        .navigationBarsPadding()
+                        .imePadding()
                 )
             }
         }
@@ -83,7 +88,6 @@ fun PostDetailScreen(
         PostDetailScreenContent(
             state = state,
             onLikeClicked = viewModel::onLikeClicked,
-            onBookmarkClicked = viewModel::onBookmarkClicked,
             onDeleteClicked = viewModel::onDeleteClicked,
             onDeleteConfirmed = viewModel::onDeleteConfirmed,
             onDeleteDismissed = viewModel::onDeleteDismissed,
@@ -102,7 +106,6 @@ fun PostDetailScreen(
 fun PostDetailScreenContent(
     state: PostDetailUiState,
     onLikeClicked: () -> Unit,
-    onBookmarkClicked: () -> Unit,
     onDeleteClicked: () -> Unit,
     onDeleteConfirmed: () -> Unit,
     onDeleteDismissed: () -> Unit,
@@ -179,8 +182,8 @@ fun PostDetailScreenContent(
             val post = postState.data ?: return
             PostDetailBody(
                 post = post,
+                currentUserName = state.currentUserName,
                 onLikeClicked = onLikeClicked,
-                onBookmarkClicked = onBookmarkClicked,
                 onDeleteClicked = onDeleteClicked,
                 onCommentLongPressed = onCommentLongPressed,
                 onNavigateBack = onNavigateBack,
@@ -193,8 +196,8 @@ fun PostDetailScreenContent(
 @Composable
 private fun PostDetailBody(
     post: CommunityPost,
+    currentUserName: String?,
     onLikeClicked: () -> Unit,
-    onBookmarkClicked: () -> Unit,
     onDeleteClicked: () -> Unit,
     onCommentLongPressed: (Int) -> Unit,
     onNavigateBack: () -> Unit,
@@ -208,8 +211,7 @@ private fun PostDetailBody(
                 authorName = post.author,
                 avatarUrl = post.avatarUrl,
                 location = post.location,
-                isBookmarked = post.isBookmarked,
-                onBookmarkClicked = onBookmarkClicked,
+                showDeleteButton = post.author == currentUserName,
                 onDeleteClicked = onDeleteClicked,
                 onCloseClicked = onNavigateBack
             )
@@ -287,7 +289,11 @@ private fun PostDetailBody(
             items(items = post.comments, key = { it.id }) { comment ->
                 CommentItem(
                     comment = comment,
-                    onLongClick = { onCommentLongPressed(comment.id) }
+                    onLongClick = { 
+                        if (comment.authorName == currentUserName) {
+                            onCommentLongPressed(comment.id) 
+                        }
+                    }
                 )
                 Spacer(modifier = Modifier.height(MaterialTheme.spacing.xs))
             }
@@ -332,7 +338,6 @@ private fun PostDetailScreenPreview() {
                 )
             ),
             onLikeClicked = {},
-            onBookmarkClicked = {},
             onDeleteClicked = {},
             onDeleteConfirmed = {},
             onDeleteDismissed = {},
@@ -351,7 +356,6 @@ private fun PostDetailScreenLoadingPreview() {
         PostDetailScreenContent(
             state = PostDetailUiState(postState = UiState.Loading),
             onLikeClicked = {},
-            onBookmarkClicked = {},
             onDeleteClicked = {},
             onDeleteConfirmed = {},
             onDeleteDismissed = {},
@@ -384,7 +388,6 @@ private fun PostDetailDeleteDialogPreview() {
                 showDeleteConfirmation = true
             ),
             onLikeClicked = {},
-            onBookmarkClicked = {},
             onDeleteClicked = {},
             onDeleteConfirmed = {},
             onDeleteDismissed = {},
@@ -425,7 +428,6 @@ private fun CommentDeleteDialogPreview() {
                 commentToDelete = 10
             ),
             onLikeClicked = {},
-            onBookmarkClicked = {},
             onDeleteClicked = {},
             onDeleteConfirmed = {},
             onDeleteDismissed = {},

@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -218,7 +217,6 @@ private fun HomeContent(
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .offset(y = -MaterialTheme.spacing.xl)
                         .clip(
                             MaterialTheme.shapes.extraLarge.copy(
                                 bottomStart = CornerSize(MaterialTheme.spacing.none),
@@ -329,7 +327,7 @@ private fun HomeTopSection(
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .height(MaterialTheme.spacing.xxxl * 2.5f)
+            .padding(bottom = MaterialTheme.spacing.md)
     ) {
         HomeSearchBar(
             value = searchQuery,

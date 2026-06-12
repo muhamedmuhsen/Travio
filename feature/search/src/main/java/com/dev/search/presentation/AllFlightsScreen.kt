@@ -736,13 +736,14 @@ private fun FlightResultCard(
                         time = firstSegment.departureTime.substringAfter("T").substring(0, 5),
                         code = firstSegment.origin,
                         city = firstSegment.originCityName,
-                        modifier = Modifier.width(MaterialTheme.spacing.xxxl + MaterialTheme.spacing.sm)
+                        alignment = Alignment.Start,
+                        modifier = Modifier.weight(1f)
                     )
 
                     // Line with Plane Icon
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
-                        modifier = Modifier.weight(1f)
+                        modifier = Modifier.weight(1.5f)
                     ) {
                         Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxWidth()) {
                             HorizontalDivider(
@@ -774,8 +775,8 @@ private fun FlightResultCard(
                         time = lastSegment.arrivalTime.substringAfter("T").substring(0, 5),
                         code = lastSegment.destination,
                         city = lastSegment.destinationCityName,
-                        alignment = Alignment.Start,
-                        modifier = Modifier.width(MaterialTheme.spacing.xxxl + MaterialTheme.spacing.sm)
+                        alignment = Alignment.End,
+                        modifier = Modifier.weight(1f)
                     )
                 }
 

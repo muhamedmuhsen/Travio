@@ -33,8 +33,7 @@ fun PostDetailHeader(
     authorName: String,
     avatarUrl: String,
     location: String,
-    isBookmarked: Boolean,
-    onBookmarkClicked: () -> Unit,
+    showDeleteButton: Boolean = false,
     onDeleteClicked: () -> Unit,
     onCloseClicked: () -> Unit,
     modifier: Modifier = Modifier
@@ -76,26 +75,15 @@ fun PostDetailHeader(
             }
         }
 
-        IconButton(onClick = onBookmarkClicked) {
-            Icon(
-                imageVector = if (isBookmarked) Icons.Filled.Bookmark else Icons.Outlined.BookmarkBorder,
-                contentDescription = stringResource(R.string.post_detail_bookmark_cd),
-                tint = if (isBookmarked) {
-                    MaterialTheme.colorScheme.primary
-                } else {
-                    MaterialTheme.colorScheme.onSurfaceVariant
-                },
-                modifier = Modifier.size(MaterialTheme.spacing.lg - MaterialTheme.spacing.xxs)
-            )
-        }
-
-        IconButton(onClick = onDeleteClicked) {
-            Icon(
-                imageVector = Icons.Filled.Delete,
-                contentDescription = stringResource(R.string.post_detail_delete_cd),
-                tint = MaterialTheme.colorScheme.error,
-                modifier = Modifier.size(MaterialTheme.spacing.lg - MaterialTheme.spacing.xxs)
-            )
+        if (showDeleteButton) {
+            IconButton(onClick = onDeleteClicked) {
+                Icon(
+                    imageVector = Icons.Filled.Delete,
+                    contentDescription = stringResource(R.string.post_detail_delete_cd),
+                    tint = MaterialTheme.colorScheme.error,
+                    modifier = Modifier.size(MaterialTheme.spacing.lg - MaterialTheme.spacing.xxs)
+                )
+            }
         }
 
         IconButton(onClick = onCloseClicked) {
@@ -125,8 +113,6 @@ private fun PostDetailHeaderPreview() {
             authorName = "Ahmed Ali",
             avatarUrl = "",
             location = "Santorini, Greece",
-            isBookmarked = false,
-            onBookmarkClicked = {},
             onCloseClicked = {},
             onDeleteClicked = { }
         )
