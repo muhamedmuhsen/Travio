@@ -33,7 +33,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.dev.favroite.components.PlaceCard
+import com.dev.favroite.components.FavoriteDestinationCard
 import com.dev.favroite.components.Section
 import com.dev.favroite.components.SectionTab
 import com.dev.favroite.components.TripCard
@@ -231,7 +231,7 @@ private fun FavoriteList(
 ) {
     LazyColumn(
         modifier = modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.xs),
+        verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.md),
         contentPadding = PaddingValues(bottom = MaterialTheme.spacing.md)
     ) {
         items(
@@ -247,10 +247,11 @@ private fun FavoriteList(
                     }
                 }
             }
-            PlaceCard(
-                country = place.name,
-                city = place.description,
+            FavoriteDestinationCard(
+                name = place.name,
+                description = place.description,
                 imageUrl = place.imageUrls.firstOrNull().orEmpty(),
+                rating = place.rating,
                 isFavorite = true,
                 isFavoriteActionEnabled = place.id !in inFlightMutationIds,
                 onFavoriteClick = { onDeletePlace(place.id.toString()) },
@@ -468,15 +469,15 @@ private fun FavoriteScreenWithDataPreview() {
                         id = 1,
                         name = "Eiffel Tower",
                         description = "Paris, France",
-                        imageUrls = listOf("")
-
+                        imageUrls = listOf(""),
+                        rating = 4.7
                     ),
                     Place(
                         id = 2,
                         name = "Colosseum",
                         description = "Rome, Italy",
-                        imageUrls = listOf("")
-
+                        imageUrls = listOf(""),
+                        rating = 4.5
                     )
                 ),
                 loadedTrips = listOf(
@@ -491,7 +492,7 @@ private fun FavoriteScreenWithDataPreview() {
                 ),
                 destinationsState = FavoritesTabUiState.Success(
                     listOf(
-                        Place(id = 1, name = "Eiffel Tower", description = "Paris, France", imageUrls = listOf(""))
+                        Place(id = 1, name = "Eiffel Tower", description = "Paris, France", imageUrls = listOf(""), rating = 4.7)
                     )
                 ),
                 tripsState = FavoritesTabUiState.Success(

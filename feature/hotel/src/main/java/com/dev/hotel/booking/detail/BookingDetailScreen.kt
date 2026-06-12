@@ -45,6 +45,7 @@ import com.dev.hotel.booking.detail.components.BookingDetailSection
 import com.dev.hotel.booking.detail.components.BookingDetailShimmer
 import com.dev.hotel.booking.detail.components.CancelBookingDialog
 import com.dev.hotel.booking.list.components.BookingStatusChip
+import com.example.common.extensions.formatCurrency
 import com.example.designsystem.theme.spacing
 import com.example.domain.model.hotel.booking.BookingStatus
 import com.example.feature.hotel.R
@@ -54,6 +55,7 @@ import com.example.feature.hotel.R
 fun BookingDetailScreen(
     onNavigateBack: () -> Unit,
     onNavigateToLogin: () -> Unit = {},
+    onBookingCancelled: () -> Unit = {},
     viewModel: BookingDetailViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -68,6 +70,7 @@ fun BookingDetailScreen(
                 }
                 is BookingDetailEvent.CancelSuccess -> {
                     Toast.makeText(context, event.message.asString(context), Toast.LENGTH_SHORT).show()
+                    onBookingCancelled()
                 }
                 BookingDetailEvent.NavigateToLogin -> {
                     Toast.makeText(context, context.getString(R.string.session_expired_login), Toast.LENGTH_LONG).show()
@@ -163,7 +166,7 @@ fun BookingDetailScreen(
                         BookingDetailSection(title = stringResource(id = R.string.payment_info)) {
                             BookingDetailRow(
                                 label = stringResource(id = R.string.hotel_checkout_total_price),
-                                value = "${details.currency} ${details.totalNet}",
+                                value = formatCurrency(details.currency, details.totalNet),
                                 isBold = true
                             )
                         }

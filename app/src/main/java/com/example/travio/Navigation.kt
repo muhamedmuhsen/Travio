@@ -683,7 +683,14 @@ fun TravioNavHost(
             )
         }
 
-        composable(Screen.BookingListScreen.route) {
+        composable(Screen.BookingListScreen.route) { backStackEntry ->
+            val bookingUpdated = backStackEntry
+                .savedStateHandle
+                .get<Boolean>("booking_updated") == true
+            if (bookingUpdated) {
+                backStackEntry.savedStateHandle.remove<Boolean>("booking_updated")
+            }
+
             com.dev.hotel.booking.list.BookingListScreen(
                 onNavigateBack = { navController.popBackStack() },
                 onNavigateToDetail = { reference ->
@@ -691,7 +698,8 @@ fun TravioNavHost(
                 },
                 onNavigateToHotels = {
                     navController.navigate(Screen.HotelSearchScreen.route)
-                }
+                },
+                shouldRefresh = bookingUpdated
             )
         }
 
@@ -701,6 +709,11 @@ fun TravioNavHost(
         ) {
             com.dev.hotel.booking.detail.BookingDetailScreen(
                 onNavigateBack = { navController.popBackStack() },
+                onBookingCancelled = {
+                    navController.previousBackStackEntry
+                        ?.savedStateHandle
+                        ?.set("booking_updated", true)
+                },
                 onNavigateToLogin = {
                     navController.navigate(Screen.LoginScreen.route) {
                         popUpTo(0) { inclusive = true }

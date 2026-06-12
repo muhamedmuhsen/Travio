@@ -229,7 +229,8 @@ class FavoriteViewModel @Inject constructor(
                         destination.cityName.ifBlank { destination.description }
                     },
                     description = destination.cityName.ifBlank { destination.description },
-                    imageUrls = destination.imageUrls
+                    imageUrls = destination.imageUrls,
+                    rating = destination.rating
                 )
             }
 

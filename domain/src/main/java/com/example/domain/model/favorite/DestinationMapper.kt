@@ -7,5 +7,6 @@ fun Destination.toPlace(): Place =
         id = destinationID,
         name = name,
         description = description,
-        imageUrls = imageUrls
+        imageUrls = imageUrls,
+        rating = rating
     )

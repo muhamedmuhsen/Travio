@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import com.example.common.extensions.formatCurrency
 import com.example.designsystem.theme.TravioTheme
 import com.example.designsystem.theme.elevation
 import com.example.designsystem.theme.spacing
@@ -77,7 +78,7 @@ fun BookingCard(
                     )
                 }
                 Text(
-                    text = "${booking.currency} ${booking.totalPrice}",
+                    text = formatCurrency(booking.currency, booking.totalPrice),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.primary

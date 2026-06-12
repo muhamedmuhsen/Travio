@@ -67,68 +67,53 @@ fun TripCard(
         modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(MaterialTheme.spacing.lg),
         elevation = CardDefaults.cardElevation(defaultElevation = MaterialTheme.elevation.sm),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface
-        ),
         onClick = onClick
     ) {
-        Column(
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            // Header Image Section
+        Box(modifier = Modifier.fillMaxWidth().height(200.dp)) {
+            Image(
+                painter = painterResource(id = com.example.designsystem.R.drawable.image_placeholder),
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.fillMaxSize()
+            )
+
             Box(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .height(140.dp)
-            ) {
-                Image(
-                    painter = painterResource(id = com.example.designsystem.R.drawable.image_placeholder),
-                    contentDescription = null,
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier.fillMaxSize()
-                )
-
-                // Gradient overlay for better contrast
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(
-                            Brush.verticalGradient(
-                                colors = listOf(
-                                    Color.Transparent,
-                                    Color.Black.copy(alpha = 0.3f)
-                                ),
-                                startY = 100f
-                            )
+                    .fillMaxSize()
+                    .background(
+                        Brush.verticalGradient(
+                            colors = listOf(
+                                Color.Transparent,
+                                Color.Black.copy(alpha = 0.7f)
+                            ),
+                            startY = 60f
                         )
-                )
-
-                // Favorite Button overlaid on the top right
-                Box(
-                    modifier = Modifier
-                        .align(Alignment.TopEnd)
-                        .padding(MaterialTheme.spacing.sm)
-                ) {
-                    TripFavoriteButton(
-                        isFavorite = isFavorite,
-                        onFavoriteClick = onFavoriteClick
                     )
-                }
+            )
+
+            Box(
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .padding(MaterialTheme.spacing.sm)
+            ) {
+                TripFavoriteButton(
+                    isFavorite = isFavorite,
+                    onFavoriteClick = onFavoriteClick
+                )
             }
 
-            // Details Section
             Column(
                 modifier = Modifier
+                    .align(Alignment.BottomStart)
                     .fillMaxWidth()
                     .padding(MaterialTheme.spacing.md),
-                verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.sm)
+                verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.xs)
             ) {
                 Text(
                     text = title,
-                    style = MaterialTheme.typography.titleMedium.copy(
-                        fontWeight = FontWeight.Bold
-                    ),
-                    color = MaterialTheme.colorScheme.onSurface,
+                    color = Color.White,
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis
                 )
@@ -142,12 +127,12 @@ fun TripCard(
                             imageVector = Icons.Filled.LocationOn,
                             contentDescription = null,
                             modifier = Modifier.size(MaterialTheme.spacing.md),
-                            tint = MaterialTheme.colorScheme.primary
+                            tint = Color.White.copy(alpha = 0.9f)
                         )
                         Text(
                             text = destinationName,
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            style = MaterialTheme.typography.bodySmall,
+                            color = Color.White.copy(alpha = 0.85f),
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
                         )
@@ -161,23 +146,25 @@ fun TripCard(
                 ) {
                     DaysPill(totalDays = totalDays)
 
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.xxs)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Filled.CalendarMonth,
-                            contentDescription = null,
-                            modifier = Modifier.size(
-                                MaterialTheme.spacing.md - MaterialTheme.spacing.xxs / 2
-                            ),
-                            tint = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                        Text(
-                            text = formattedDate,
-                            style = MaterialTheme.typography.labelMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
+                    if (formattedDate.isNotBlank()) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.xxs)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Filled.CalendarMonth,
+                                contentDescription = null,
+                                modifier = Modifier.size(
+                                    MaterialTheme.spacing.md - MaterialTheme.spacing.xxs / 2
+                                ),
+                                tint = Color.White.copy(alpha = 0.8f)
+                            )
+                            Text(
+                                text = formattedDate,
+                                style = MaterialTheme.typography.labelMedium,
+                                color = Color.White.copy(alpha = 0.8f)
+                            )
+                        }
                     }
                 }
             }
@@ -192,7 +179,6 @@ private fun formatTripDate(isoString: String): String {
         val formatter = DateTimeFormatter.ofPattern("MMM dd, yyyy")
         parsed.format(formatter)
     } catch (e: DateTimeParseException) {
-        // Fallback in case the string is not a valid ISO date
         isoString
     }
 }
@@ -201,7 +187,7 @@ private fun formatTripDate(isoString: String): String {
 private fun DaysPill(totalDays: Int) {
     Surface(
         shape = RoundedCornerShape(MaterialTheme.spacing.xlg),
-        color = MaterialTheme.colorScheme.primaryContainer
+        color = Color.White.copy(alpha = 0.2f)
     ) {
         Row(
             modifier = Modifier.padding(
@@ -217,14 +203,14 @@ private fun DaysPill(totalDays: Int) {
                 modifier = Modifier.size(
                     MaterialTheme.spacing.md - MaterialTheme.spacing.xxs / 2
                 ),
-                tint = MaterialTheme.colorScheme.onPrimaryContainer
+                tint = Color.White
             )
             Text(
                 text = stringResource(R.string.trip_days_format, totalDays),
                 style = MaterialTheme.typography.labelMedium.copy(
                     fontWeight = FontWeight.SemiBold
                 ),
-                color = MaterialTheme.colorScheme.onPrimaryContainer
+                color = Color.White
             )
         }
     }
@@ -239,9 +225,7 @@ private fun TripFavoriteButton(
         modifier = Modifier
             .size(MaterialTheme.spacing.xxxl)
             .clip(CircleShape)
-            .background(
-                color = MaterialTheme.colorScheme.surface.copy(alpha = 0.9f)
-            )
+            .background(color = Color.White.copy(alpha = 0.9f))
             .clickable(onClick = onFavoriteClick),
         contentAlignment = Alignment.Center
     ) {
@@ -255,7 +239,7 @@ private fun TripFavoriteButton(
             tint = if (isFavorite) {
                 MaterialTheme.colorScheme.error
             } else {
-                MaterialTheme.colorScheme.onSurfaceVariant
+                Color.Gray
             },
             modifier = Modifier.size(MaterialTheme.spacing.lg)
         )

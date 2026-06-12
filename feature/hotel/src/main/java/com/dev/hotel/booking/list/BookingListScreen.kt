@@ -42,10 +42,17 @@ fun BookingListScreen(
     onNavigateBack: () -> Unit,
     onNavigateToDetail: (String) -> Unit,
     onNavigateToHotels: () -> Unit,
+    shouldRefresh: Boolean = false,
     viewModel: BookingListViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
+
+    LaunchedEffect(shouldRefresh) {
+        if (shouldRefresh) {
+            viewModel.loadBookings()
+        }
+    }
 
     LaunchedEffect(Unit) {
         viewModel.event.collect { event ->
@@ -53,7 +60,6 @@ fun BookingListScreen(
                 is BookingListEvent.NavigateToDetail -> onNavigateToDetail(event.reference)
                 BookingListEvent.NavigateToHotels -> onNavigateToHotels()
                 is BookingListEvent.ShowError -> {
-                    // Handled locally or via snackbar
                 }
             }
         }
