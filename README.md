@@ -38,7 +38,7 @@
 | 👥 **Community** | Social feed where users share travel moments with photos, locations, likes, and comments |
 | 👤 **Profile Management** | View and edit user profiles with photo upload |
 | 📝 **Travel Preference Survey** | Onboarding survey to personalize recommendations |
-| 🔐 **Authentication** | Full auth flow with email/password, Google Sign-In, Facebook Login, email verification, and password reset |
+| 🔐 **Authentication** | Full auth flow with email/password, Google Sign-In, email verification, and password reset |
 | 💳 **Stripe Payments** | Secure payment processing for flight and hotel bookings |
 | 🌐 **Real-Time Sync** | SignalR-based real-time updates for trip generation and data synchronization |
 
@@ -159,7 +159,6 @@ Travio/
 | Technology | Purpose |
 |------------|---------|
 | **Google Credential Manager** | Google Sign-In |
-| **Facebook SDK** (17.0.0) | Facebook Login |
 | **JWT Decode** (2.0.2) | Token decoding & validation |
 | **Tink** (1.18.0) | Cryptographic operations |
 | **Secrets Gradle Plugin** | Secure secrets management |
