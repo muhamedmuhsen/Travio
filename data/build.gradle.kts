@@ -145,7 +145,6 @@ dependencies {
     implementation(libs.androidx.credentials)
     implementation(libs.androidx.credentials.play.services.auth)
     implementation(libs.googleid)
-    implementation(libs.facebook.login)
 
     // Location
     implementation(libs.play.services.location)

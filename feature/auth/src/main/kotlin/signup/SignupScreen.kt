@@ -271,15 +271,6 @@ fun SignupScreenContent(
                 modifier = Modifier.fillMaxWidth()
             )
 
-            Spacer(modifier = Modifier.height(MaterialTheme.spacing.sm))
-
-            SigninOptionsButton(
-                onClick = { /* viewModel.onFacebookSigninClicked() */ },
-                text = stringResource(id = R.string.continue_with_facebook),
-                icon = DesignSystemR.drawable.facebook_icon,
-                modifier = Modifier.fillMaxWidth()
-            )
-
             Spacer(modifier = Modifier.height(MaterialTheme.spacing.md))
 
             Row(

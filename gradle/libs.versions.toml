@@ -4,7 +4,7 @@ accompanist = "0.36.0"
 agp = "8.13.0"
 credentials = "1.6.0-beta03"
 credentialsPlayServicesAuth = "1.6.0-beta03"
-facebookLogin = "17.0.0"
+
 googleid = "1.1.1"
 javaxInject = "1"
 kotlin = "2.0.21"
@@ -95,7 +95,7 @@ androidx-lifecycle-runtime-compose = { group = "androidx.lifecycle", name = "lif
 androidx-lifecycle-viewmodel-compose = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "lifecycleRuntimeKtx" }
 
 # Dependency Injection - Hilt
-facebook-login = { module = "com.facebook.android:facebook-login", version.ref = "facebookLogin" }
+
 googleid = { module = "com.google.android.libraries.identity.googleid:googleid", version.ref = "googleid" }
 hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
 hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", version.ref = "hilt" }

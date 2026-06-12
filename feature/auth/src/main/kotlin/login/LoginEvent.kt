@@ -8,6 +8,5 @@ sealed interface LoginEvent {
     data object NavigateToSignup : LoginEvent
     data object NavigateToForgotPassword : LoginEvent
     data object ContinueWithGoogle : LoginEvent
-    data object ContinueWithFacebook : LoginEvent
     data class ShowAuthError(val message: UiText) : LoginEvent
 }

@@ -11,5 +11,4 @@ interface LoginRepository {
     ): Result<Unit, DataError>
 
     suspend fun signInWithGoogle(idToken: String): Result<Unit, DataError>
-    suspend fun signInWithFacebook(accessToken: String): Result<Unit, DataError>
 }

@@ -77,9 +77,6 @@ fun StarterLogin(
                     /* handled via onClick */
                 }
 
-                StarterLoginEvent.FacebookSignIn -> {
-                    /* TODO: facebook login */
-                }
                 StarterLoginEvent.NavigateToHome -> navigateToHome()
                 StarterLoginEvent.NavigateToSurvey -> navigateToSurvey()
                 is StarterLoginEvent.ShowAuthError -> errorMessage = event.message.asString(context)
@@ -181,14 +178,6 @@ fun StarterLoginContent(
                 modifier = Modifier.fillMaxWidth()
             )
 
-            Spacer(modifier = Modifier.height(MaterialTheme.spacing.md))
-
-            SigninOptionsButton(
-                onClick = { /*TODO: facebook login*/ },
-                text = stringResource(id = R.string.continue_with_facebook),
-                icon = com.example.designsystem.R.drawable.facebook_icon,
-                modifier = Modifier.fillMaxWidth()
-            )
             Spacer(modifier = Modifier.height(MaterialTheme.spacing.xl))
             Row(
                 horizontalArrangement = Arrangement.Center,

@@ -78,6 +78,4 @@ dependencies {
     ksp(libs.hilt.compiler)
     // Logging
     implementation(libs.timber)
-    // Facebook login
-    implementation(libs.facebook.login)
 }

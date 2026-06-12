@@ -50,9 +50,4 @@ class LoginRepositoryImpl @Inject constructor(
             )
             preferencesManager.setLoggedIn(true)
         }
-
-    override suspend fun signInWithFacebook(accessToken: String): Result<Unit, DataError> =
-        safeApiCall {
-            // Implementation placeholder
-        }
 }

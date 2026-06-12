@@ -100,9 +100,6 @@ fun LoginScreen(
                 LoginEvent.NavigateToSurvey -> navigateToSurvey()
                 LoginEvent.NavigateToSignup -> navigateToSignUp()
                 is LoginEvent.ShowAuthError -> errorMessage = event.message.asString(context)
-                LoginEvent.ContinueWithFacebook -> {
-                    /* TODO */
-                }
 
                 LoginEvent.ContinueWithGoogle -> {
                     /* handled via onClick directly */
@@ -249,15 +246,6 @@ fun LoginScreenContent(
                 onClick = onGoogleSignIn,
                 text = stringResource(id = R.string.continue_with_google),
                 icon = DesignSystemR.drawable.google_icon,
-                modifier = Modifier.fillMaxWidth()
-            )
-
-            Spacer(modifier = Modifier.height(MaterialTheme.spacing.sm))
-
-            SigninOptionsButton(
-                onClick = { /*viewModel.onFacebookSigninClicked() */ },
-                text = stringResource(id = R.string.continue_with_facebook),
-                icon = DesignSystemR.drawable.facebook_icon,
                 modifier = Modifier.fillMaxWidth()
             )
 
