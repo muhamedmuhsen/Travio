@@ -106,7 +106,11 @@ class CommunityRepositoryImpl @Inject constructor(
             return Result.Error(DataError.Validation.InvalidUri)
         }
 
-        return safeApiCall { api.uploadPostImages(postId, parts.filterNotNull()) }
+        val result = safeApiCall { api.uploadPostImages(postId, parts.filterNotNull()) }
+        if (result is Result.Success) {
+            refreshPosts()
+        }
+        return result
     }
 
     override suspend fun deletePost(postId: Int): Result<Unit, DataError> {

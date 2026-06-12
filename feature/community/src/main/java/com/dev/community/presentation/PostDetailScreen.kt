@@ -289,9 +289,9 @@ private fun PostDetailBody(
             items(items = post.comments, key = { it.id }) { comment ->
                 CommentItem(
                     comment = comment,
-                    onLongClick = { 
+                    onLongClick = {
                         if (comment.authorName == currentUserName) {
-                            onCommentLongPressed(comment.id) 
+                            onCommentLongPressed(comment.id)
                         }
                     }
                 )
