@@ -109,11 +109,9 @@ class SignalRChatRepositoryImpl @Inject constructor(
                     .classifyException(e)
 
                 val isNotFound = com.example.feature.chat.data.mapper.AiErrorMapper.extractHttpCode(e) == 404
-                val isConnectionError = classifiedError == com.example.feature.chat.domain.model.AiGenerationError.AiConnectionRefused ||
-                    classifiedError == com.example.feature.chat.domain.model.AiGenerationError.AiTimeout
 
-                if (isNotFound || isConnectionError) {
-                    Timber.d("Ignoring expected REST API failure on startup: $classifiedError")
+                if (isNotFound) {
+                    Timber.d("Ignoring expected REST API failure on startup (404 Not Found)")
                 } else {
                     val cachedTrips = tripRepository.getTripsForThread(threadId)
                     val completedTrip = cachedTrips.find {
