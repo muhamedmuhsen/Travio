@@ -67,6 +67,8 @@ specs
 .vscode
 .artifacts
 *.txt
+/app/config/environment.defaults.properties
+
 # Common temp/log/env noise
 *.log
 .env*
@@ -74,5 +76,3 @@ specs
 *.swp
 .DS_Store
 Thumbs.db
-
-/app/config/environment.defaults.properties

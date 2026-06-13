@@ -105,7 +105,7 @@ android {
         applicationId = "com.example.travio"
         minSdk = 29
         targetSdk = 36
-        versionCode = 15
+        versionCode = 20
         versionName = "1.0"
 
         val googleWebClientId = localProperties.getProperty("GOOGLE_WEB_CLIENT_ID", "")
