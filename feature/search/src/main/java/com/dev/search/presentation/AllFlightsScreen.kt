@@ -724,7 +724,7 @@ private fun FlightResultCard(
                         time = firstSegment.departureTime.substringAfter("T").substring(0, 5),
                         code = firstSegment.origin,
                         city = firstSegment.originCityName,
-                        alignment = Alignment.Start
+                        alignment = Alignment.CenterHorizontally
                     )
 
                     // Line with Plane Icon
@@ -762,7 +762,7 @@ private fun FlightResultCard(
                         time = lastSegment.arrivalTime.substringAfter("T").substring(0, 5),
                         code = lastSegment.destination,
                         city = lastSegment.destinationCityName,
-                        alignment = Alignment.End
+                        alignment = Alignment.CenterHorizontally
                     )
                 }
 
