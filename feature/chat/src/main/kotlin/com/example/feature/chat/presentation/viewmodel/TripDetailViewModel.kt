@@ -62,6 +62,7 @@ data class ActivityItem(
     val description: String,
     val price: String,
     val tag: String,
+    val location: String,
     val imageUrl: String?
 )
 
@@ -125,6 +126,7 @@ class TripDetailViewModel @Inject constructor(
                                     description = act.description,
                                     price = "",
                                     tag = act.activityType,
+                                    location = act.address,
                                     imageUrl = act.featuredImage.ifEmpty { null }
                                 )
                             }
@@ -169,6 +171,7 @@ class TripDetailViewModel @Inject constructor(
                                         description = act.description ?: "",
                                         price = "",
                                         tag = act.type,
+                                        location = act.address ?: "Unknown",
                                         imageUrl = act.imageUrl
                                     )
                                 }

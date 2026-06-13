@@ -58,7 +58,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -153,7 +152,7 @@ fun TripDetailScreen(
                         Icon(
                             imageVector = if (uiState.isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
                             contentDescription = if (uiState.isFavorite) "Remove from favorites" else "Add to favorites",
-                            tint = if (uiState.isFavorite) Color.Red else MaterialTheme.colorScheme.onSurface
+                            tint = if (uiState.isFavorite) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurface
                         )
                     }
                     IconButton(onClick = { viewModel.showDeleteDialog() }) {
@@ -261,7 +260,7 @@ fun DaySelectorTabs(
             Surface(
                 shape = CircleShape,
                 color = if (isSelected) {
-                    Color(0xFF006D77)
+                    MaterialTheme.colorScheme.primary
                 } else {
                     MaterialTheme.colorScheme.surfaceContainerHigh
                 },
@@ -334,10 +333,8 @@ fun HotelRecommendationCard(
 ) {
     Card(
         modifier = modifier
-            .width(MaterialTheme.spacing.xxxl * 4 + MaterialTheme.spacing.lg + MaterialTheme.spacing.xxs)
-            .height(
-                MaterialTheme.spacing.xxxl * 3 + MaterialTheme.spacing.xl + MaterialTheme.spacing.xs
-            ),
+            .width(MaterialTheme.spacing.xxxl * 5)
+            .height(MaterialTheme.spacing.xxxl * 4 + MaterialTheme.spacing.xl),
         shape = RoundedCornerShape(MaterialTheme.spacing.md),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface
@@ -347,76 +344,63 @@ fun HotelRecommendationCard(
         )
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
-            Box(modifier = Modifier.weight(1f)) {
-                AsyncImage(
-                    model = hotel.imageUrl
-                        ?: com.example.designsystem.R.drawable.image_placeholder,
-                    contentDescription = hotel.name,
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .clip(
-                            RoundedCornerShape(
-                                topStart = MaterialTheme.spacing.md,
-                                topEnd = MaterialTheme.spacing.md
-                            )
-                        )
-                )
-
-                Surface(
-                    shape = RoundedCornerShape(MaterialTheme.spacing.sm),
-                    color = MaterialTheme.colorScheme.surface.copy(alpha = 0.9f),
-                    modifier = Modifier
-                        .align(Alignment.TopEnd)
-                        .padding(MaterialTheme.spacing.sm)
-                ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.padding(
-                            horizontal = MaterialTheme.spacing.xs,
-                            vertical = MaterialTheme.spacing.xxs
-                        )
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Star,
-                            contentDescription = "Rating",
-                            tint = MaterialTheme.colorScheme.star,
-                            modifier = Modifier.size(MaterialTheme.spacing.md)
-                        )
-                        Text(
-                            text = hotel.rating.toString(),
-                            style = MaterialTheme.typography.labelMedium,
-                            fontWeight = FontWeight.Bold
-                        )
-                    }
-                }
-            }
+            AsyncImage(
+                model = hotel.imageUrl
+                    ?: com.example.designsystem.R.drawable.image_placeholder,
+                contentDescription = hotel.name,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f)
+            )
 
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(MaterialTheme.spacing.sm)
             ) {
-                Text(
-                    text = hotel.name,
-                    style = MaterialTheme.typography.titleMedium.copy(
-                        fontWeight = FontWeight.Bold
-                    ),
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(
+                        text = hotel.name,
+                        style = MaterialTheme.typography.titleMedium.copy(
+                            fontWeight = FontWeight.Bold
+                        ),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.weight(1f).padding(end = MaterialTheme.spacing.xs)
+                    )
+
+                    Row(horizontalArrangement = Arrangement.spacedBy(2.dp)) {
+                        val ratingInt = hotel.rating.toInt()
+                        repeat(5) { index ->
+                            Icon(
+                                imageVector = Icons.Default.Star,
+                                contentDescription = null,
+                                tint = if (index < ratingInt) {
+                                    MaterialTheme.colorScheme.star
+                                } else {
+                                    MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.3f)
+                                },
+                                modifier = Modifier.size(MaterialTheme.spacing.md)
+                            )
+                        }
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(MaterialTheme.spacing.xxs))
 
                 Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.padding(top = MaterialTheme.spacing.xxs)
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(
                         imageVector = Icons.Default.LocationOn,
                         contentDescription = "Location",
-                        tint = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.size(
-                            MaterialTheme.spacing.md - MaterialTheme.spacing.xxs / 2
-                        )
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.size(MaterialTheme.spacing.md - MaterialTheme.spacing.xxs / 2)
                     )
                     Spacer(modifier = Modifier.width(MaterialTheme.spacing.xxs))
                     Text(
@@ -467,24 +451,22 @@ fun TimelineActivityNode(
     }
 
     val strokeWidthDp = MaterialTheme.elevation.sm
-    val leftColumnWidth = 72.dp
+    val leftColumnWidth = MaterialTheme.spacing.xxxl + MaterialTheme.spacing.xs
     val xDp = leftColumnWidth / 2
-    val iconSize = 32.dp
-    val innerIconSize = 16.dp
+    val iconSize = MaterialTheme.spacing.xl
+    val innerIconSize = MaterialTheme.spacing.md
+    val topPadding = MaterialTheme.spacing.md
 
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = MaterialTheme.spacing.xs)
+            .padding(horizontal = MaterialTheme.spacing.md)
             .drawBehind {
                 val strokeWidth = strokeWidthDp.toPx()
                 val x = xDp.toPx()
-                // Top padding is 16dp, icon size is 32dp, center is 16 + 16 = 32dp
-                val iconCenterY = (16.dp + (iconSize / 2)).toPx()
-                // Top padding (16) + icon (32) + spacer (8) + approx text height (20)
-                val textBottomY = (16.dp + iconSize + 8.dp + 20.dp).toPx()
+                val iconCenterY = (topPadding + (iconSize / 2)).toPx()
 
-                val startY = if (isFirst) textBottomY else 0f
+                val startY = if (isFirst) iconCenterY else 0f
                 val endY = if (isLast) iconCenterY else size.height
 
                 drawLine(
@@ -495,11 +477,11 @@ fun TimelineActivityNode(
                 )
             }
     ) {
-        // Left Column (Timeline Icon and Time)
+        // Left Column (Timeline Icon ONLY)
         Column(
             modifier = Modifier
                 .width(leftColumnWidth)
-                .padding(top = 16.dp),
+                .padding(top = MaterialTheme.spacing.md),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Box(
@@ -517,94 +499,116 @@ fun TimelineActivityNode(
                 )
             }
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(MaterialTheme.spacing.xs))
 
-            Text(
-                text = activity.time,
-                style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
-                color = MaterialTheme.colorScheme.primary,
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier
                     .background(MaterialTheme.colorScheme.background)
-                    .padding(vertical = 2.dp, horizontal = 4.dp)
-            )
+                    .padding(vertical = MaterialTheme.spacing.xxs / 2, horizontal = MaterialTheme.spacing.xxs)
+            ) {
+                val timeParts = activity.time.split(" ")
+                if (timeParts.size >= 2) {
+                    Text(
+                        text = timeParts[0],
+                        style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                    Text(
+                        text = timeParts.drop(1).joinToString(" "),
+                        style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                } else {
+                    Text(
+                        text = activity.time,
+                        style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                }
+            }
         }
 
         // Right Column (Activity Card)
         Card(
             modifier = Modifier
                 .weight(1f)
-                .padding(bottom = 24.dp, end = 8.dp),
-            shape = RoundedCornerShape(16.dp),
+                .padding(top = MaterialTheme.spacing.md, bottom = MaterialTheme.spacing.md),
+            shape = RoundedCornerShape(MaterialTheme.spacing.md),
             colors = CardDefaults.cardColors(
                 containerColor = MaterialTheme.colorScheme.surface
             ),
             elevation = CardDefaults.cardElevation(
-                defaultElevation = 2.dp
+                defaultElevation = MaterialTheme.elevation.xs
+            ),
+            border = androidx.compose.foundation.BorderStroke(
+                width = strokeWidthDp,
+                color = MaterialTheme.colorScheme.outlineVariant
             )
         ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(12.dp),
-                verticalAlignment = Alignment.Top
-            ) {
-                // Square Image
+            Column(modifier = Modifier.fillMaxWidth()) {
+                // Top full-width image
                 AsyncImage(
                     model = activity.imageUrl
                         ?: com.example.designsystem.R.drawable.image_placeholder,
                     contentDescription = activity.title,
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
-                        .size(90.dp)
-                        .clip(RoundedCornerShape(12.dp))
+                        .fillMaxWidth()
+                        .height(MaterialTheme.spacing.xxxl * 3)
                 )
 
-                // Details Column
+                // Details
                 Column(
                     modifier = Modifier
-                        .weight(1f)
-                        .padding(start = 12.dp),
-                    verticalArrangement = Arrangement.spacedBy(4.dp)
+                        .fillMaxWidth()
+                        .padding(MaterialTheme.spacing.md)
                 ) {
-                    // Category Tag
-                    Surface(
-                        color = MaterialTheme.colorScheme.primary,
-                        shape = CircleShape
+                    // Tag row
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Start,
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text(
-                            text = activity.tag,
-                            style = MaterialTheme.typography.labelSmall.copy(
-                                fontWeight = FontWeight.SemiBold
-                            ),
-                            color = MaterialTheme.colorScheme.onPrimary,
-                            modifier = Modifier.padding(
-                                horizontal = 8.dp,
-                                vertical = 4.dp
+                        Surface(
+                            color = MaterialTheme.colorScheme.primary,
+                            shape = CircleShape
+                        ) {
+                            Text(
+                                text = activity.tag.replaceFirstChar {
+                                    if (it.isLowerCase()) it.titlecase() else it.toString()
+                                },
+                                style = MaterialTheme.typography.labelSmall.copy(
+                                    fontWeight = FontWeight.SemiBold
+                                ),
+                                color = MaterialTheme.colorScheme.onPrimary,
+                                modifier = Modifier.padding(
+                                    horizontal = MaterialTheme.spacing.sm,
+                                    vertical = MaterialTheme.spacing.xs - MaterialTheme.spacing.xxs / 2
+                                )
                             )
-                        )
+                        }
                     }
 
-                    Spacer(modifier = Modifier.height(2.dp))
+                    Spacer(modifier = Modifier.height(MaterialTheme.spacing.sm))
 
-                    // Title
                     Text(
                         text = activity.title,
-                        style = MaterialTheme.typography.titleSmall.copy(
-                            fontWeight = FontWeight.Bold
-                        ),
+                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                         color = MaterialTheme.colorScheme.onSurface,
                         maxLines = 2,
                         overflow = TextOverflow.Ellipsis
                     )
 
-                    // Description
+                    Spacer(modifier = Modifier.height(MaterialTheme.spacing.xxs))
+
                     Text(
                         text = activity.description,
-                        style = MaterialTheme.typography.bodySmall,
+                        style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         maxLines = 3,
                         overflow = TextOverflow.Ellipsis,
-                        lineHeight = MaterialTheme.typography.bodySmall.fontSize * 1.2
+                        lineHeight = MaterialTheme.typography.bodyMedium.fontSize * 1.2
                     )
                 }
             }
