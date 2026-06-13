@@ -211,12 +211,17 @@ fun ChatScreenContent(
                             }
                         }
 
+                        val isOffline = state.error is com.example.feature.chat.domain.model.AiGenerationError.AiServiceUnavailable ||
+                            state.error is com.example.feature.chat.domain.model.AiGenerationError.AiConnectionRefused ||
+                            state.error is com.example.feature.chat.domain.model.AiGenerationError.AiTimeout
+
                         ChatInputArea(
                             text = state.inputText,
                             onTextChanged = onInputTextChanged,
                             onSend = onSendMessage,
                             isSending = state.isSending,
-                            isConnected = state.connectionState == com.example.feature.chat.domain.model.ConnectionState.CONNECTED
+                            isConnected = state.connectionState == com.example.feature.chat.domain.model.ConnectionState.CONNECTED &&
+                                !isOffline
                         )
                     }
                 }

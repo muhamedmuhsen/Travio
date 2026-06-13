@@ -33,7 +33,9 @@ fun ConnectionIndicator(
         state == ConnectionState.DISCONNECTED -> Triple(MaterialTheme.colorScheme.error, MaterialTheme.colorScheme.onError, "Disconnected")
         error != null -> {
             val message = when (error) {
-                is AiGenerationError.AiConnectionRefused -> "AI Travel Assistant is temporarily offline."
+                is AiGenerationError.AiConnectionRefused,
+                is AiGenerationError.AiServiceUnavailable,
+                is AiGenerationError.AiTimeout -> "AI Travel Assistant is temporarily offline."
                 else -> "AI Service Error"
             }
             Triple(MaterialTheme.colorScheme.errorContainer, MaterialTheme.colorScheme.onErrorContainer, message)
