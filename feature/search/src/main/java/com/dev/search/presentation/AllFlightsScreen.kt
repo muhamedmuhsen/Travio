@@ -70,6 +70,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import coil.compose.AsyncImage
 import com.dev.search.presentation.flights.FlightSearchAction
 import com.dev.search.presentation.flights.FlightSearchEvent
 import com.dev.search.presentation.flights.FlightSearchUiState
@@ -669,24 +670,26 @@ private fun FlightResultCard(
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Box(
                         modifier = Modifier
-                            .size(MaterialTheme.spacing.xxl)
-                            .background(MaterialTheme.colorScheme.primary, CircleShape)
-                            .clip(CircleShape),
+                            .size(MaterialTheme.spacing.xxxl - MaterialTheme.spacing.xs)
+                            .clip(CircleShape)
+                            .background(MaterialTheme.colorScheme.surfaceVariant),
                         contentAlignment = Alignment.Center
                     ) {
-                        Surface(
-                            modifier = Modifier.fillMaxSize(),
-                            color = MaterialTheme.colorScheme.primary,
-                            shape = CircleShape
-                        ) {
-                            Box(contentAlignment = Alignment.Center) {
-                                Image(
-                                    painter = painterResource(R.drawable.plane_icon2),
-                                    contentDescription = null,
-                                    modifier = Modifier.size(MaterialTheme.spacing.md),
-                                    colorFilter = ColorFilter.tint(Color.White)
-                                )
-                            }
+                        if (firstSegment.airlineLogoUrl != null) {
+                            AsyncImage(
+                                model = firstSegment.airlineLogoUrl,
+                                contentDescription = null,
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(MaterialTheme.spacing.xs)
+                            )
+                        } else {
+                            Text(
+                                text = firstSegment.airlineName.take(2).uppercase(),
+                                style = MaterialTheme.typography.labelMedium,
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
                         }
                     }
                     Spacer(modifier = Modifier.width(MaterialTheme.spacing.sm))
@@ -703,21 +706,6 @@ private fun FlightResultCard(
                             color = MaterialTheme.colorScheme.outline
                         )
                     }
-                }
-                Surface(
-                    shape = MaterialTheme.shapes.medium,
-                    color = MaterialTheme.colorScheme.secondaryContainer
-                ) {
-                    Text(
-                        text = stringResource(R.string.all_flights_on_time),
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.padding(
-                            horizontal = MaterialTheme.spacing.xs,
-                            vertical = MaterialTheme.spacing.xxs
-                        ),
-                        fontWeight = FontWeight.Bold
-                    )
                 }
             }
 
@@ -736,14 +724,13 @@ private fun FlightResultCard(
                         time = firstSegment.departureTime.substringAfter("T").substring(0, 5),
                         code = firstSegment.origin,
                         city = firstSegment.originCityName,
-                        alignment = Alignment.Start,
-                        modifier = Modifier.weight(1f)
+                        alignment = Alignment.Start
                     )
 
                     // Line with Plane Icon
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
-                        modifier = Modifier.weight(1.5f)
+                        modifier = Modifier.weight(1f)
                     ) {
                         Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxWidth()) {
                             HorizontalDivider(
@@ -775,8 +762,7 @@ private fun FlightResultCard(
                         time = lastSegment.arrivalTime.substringAfter("T").substring(0, 5),
                         code = lastSegment.destination,
                         city = lastSegment.destinationCityName,
-                        alignment = Alignment.End,
-                        modifier = Modifier.weight(1f)
+                        alignment = Alignment.End
                     )
                 }
 
@@ -871,7 +857,9 @@ private fun FlightTimeBlock(
             text = time,
             style = MaterialTheme.typography.titleLarge,
             fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.onSurface
+            color = MaterialTheme.colorScheme.onSurface,
+            maxLines = 1,
+            softWrap = false
         )
         Text(
             text = code,
