@@ -95,7 +95,7 @@ object AiErrorMapper {
         }
     }
 
-    private fun extractHttpCode(exception: Exception): Int? {
+    fun extractHttpCode(exception: Exception): Int? {
         val className = exception::class.qualifiedName.orEmpty()
         if (className.contains("HttpException") || className.contains("retrofit2")) {
             return try {

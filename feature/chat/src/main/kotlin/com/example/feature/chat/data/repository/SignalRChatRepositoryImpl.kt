@@ -108,31 +108,39 @@ class SignalRChatRepositoryImpl @Inject constructor(
                 val classifiedError = com.example.feature.chat.data.mapper.AiErrorMapper
                     .classifyException(e)
 
-                val cachedTrips = tripRepository.getTripsForThread(threadId)
-                val completedTrip = cachedTrips.find {
-                    it.status == TripPlanStatus.COMPLETED
-                }
+                val isNotFound = com.example.feature.chat.data.mapper.AiErrorMapper.extractHttpCode(e) == 404
+                val isConnectionError = classifiedError == com.example.feature.chat.domain.model.AiGenerationError.AiConnectionRefused ||
+                    classifiedError == com.example.feature.chat.domain.model.AiGenerationError.AiTimeout
 
-                if (completedTrip != null) {
-                    Timber.d("REST API failed, but cached trip found: ${completedTrip.id}")
+                if (isNotFound || isConnectionError) {
+                    Timber.d("Ignoring expected REST API failure on startup: $classifiedError")
+                } else {
+                    val cachedTrips = tripRepository.getTripsForThread(threadId)
+                    val completedTrip = cachedTrips.find {
+                        it.status == TripPlanStatus.COMPLETED
+                    }
+
+                    if (completedTrip != null) {
+                        Timber.d("REST API failed, but cached trip found: ${completedTrip.id}")
+                        emit(
+                            PlanGenerationState(
+                                threadId = threadId,
+                                status = com.example.feature.chat.domain.model.PlanStatus.COMPLETED,
+                                tripId = completedTrip.id
+                            )
+                        )
+                        return@flow
+                    }
+
+                    Timber.d("No cached trip fallback. Emitting error: $classifiedError")
                     emit(
                         PlanGenerationState(
                             threadId = threadId,
-                            status = com.example.feature.chat.domain.model.PlanStatus.COMPLETED,
-                            tripId = completedTrip.id
+                            status = com.example.feature.chat.domain.model.PlanStatus.FAILED,
+                            error = classifiedError
                         )
                     )
-                    return@flow
                 }
-
-                Timber.d("No cached trip fallback. Emitting error: $classifiedError")
-                emit(
-                    PlanGenerationState(
-                        threadId = threadId,
-                        status = com.example.feature.chat.domain.model.PlanStatus.FAILED,
-                        error = classifiedError
-                    )
-                )
             }
 
             signalRFlow.collect { emit(it) }

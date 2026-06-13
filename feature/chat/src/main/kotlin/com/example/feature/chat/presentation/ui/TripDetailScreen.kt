@@ -341,6 +341,10 @@ fun HotelRecommendationCard(
         ),
         elevation = CardDefaults.cardElevation(
             defaultElevation = MaterialTheme.elevation.sm
+        ),
+        border = androidx.compose.foundation.BorderStroke(
+            width = MaterialTheme.elevation.xs,
+            color = MaterialTheme.colorScheme.outlineVariant
         )
     ) {
         Column(modifier = Modifier.fillMaxSize()) {

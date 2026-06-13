@@ -147,9 +147,15 @@ class ChatViewModel @Inject constructor(
                 if (planState.status == PlanStatus.IN_PROGRESS) {
                     _navigationEvent.send(ChatNavigationEvent.NavigateToPlanGeneration(threadId))
                 } else if (planState.status == PlanStatus.FAILED) {
-                    val hasMessages = (_state.value as? ChatUiState.Success)?.messages?.isNotEmpty() == true
-                    if (hasMessages) {
-                        _navigationEvent.send(ChatNavigationEvent.NavigateToPlanGeneration(threadId))
+                    val isOfflineError = planState.error is com.example.feature.chat.domain.model.AiGenerationError.AiServiceUnavailable ||
+                        planState.error is com.example.feature.chat.domain.model.AiGenerationError.AiConnectionRefused ||
+                        planState.error is com.example.feature.chat.domain.model.AiGenerationError.AiTimeout
+
+                    if (!isOfflineError) {
+                        val hasMessages = (_state.value as? ChatUiState.Success)?.messages?.isNotEmpty() == true
+                        if (hasMessages) {
+                            _navigationEvent.send(ChatNavigationEvent.NavigateToPlanGeneration(threadId))
+                        }
                     }
                 }
             }
