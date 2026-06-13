@@ -27,6 +27,7 @@ fun TripDto.toDomain(): TripItem {
         id = id,
         title = title ?: "",
         destinationName = destinationName ?: "",
+        cityHeroImage = cityHeroImage ?: "",
         totalDays = totalDays,
         isFavorite = isFavorite,
         createdAt = createdAt ?: ""
@@ -38,6 +39,7 @@ fun TripDetailsDto.toDomain(): TripDetails {
         id = id,
         title = title ?: "",
         destinationName = destinationName ?: "",
+        cityHeroImage = cityHeroImage ?: "",
         totalDays = totalDays,
         isFavorite = isFavorite,
         createdAt = createdAt ?: "",

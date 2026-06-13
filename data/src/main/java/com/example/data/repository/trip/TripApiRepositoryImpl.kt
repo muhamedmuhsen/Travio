@@ -32,6 +32,23 @@ class TripApiRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun getTrips(
+        pageIndex: Int,
+        pageSize: Int
+    ): Result<FavoriteTripsPage> {
+        return try {
+            val response = api.getTrips(pageIndex, pageSize)
+            val data = response.data
+            if (response.success && data != null) {
+                Result.success(data.toDomain())
+            } else {
+                Result.failure(Exception(response.message ?: "Failed to get trips"))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
     override suspend fun getTripDetails(id: Int): Result<TripDetails> {
         return try {
             val response = api.getTripDetails(id)

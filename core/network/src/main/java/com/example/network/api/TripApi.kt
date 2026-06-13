@@ -16,6 +16,12 @@ interface TripApi {
         @Query("pageSize") pageSize: Int
     ): TripResponseDto<TripPageDto>
 
+    @GET("Trip")
+    suspend fun getTrips(
+        @Query("pageIndex") pageIndex: Int,
+        @Query("pageSize") pageSize: Int
+    ): TripResponseDto<TripPageDto>
+
     @GET("Trip/{id}")
     suspend fun getTripDetails(@Path("id") id: Int): TripResponseDto<TripDetailsDto>
 

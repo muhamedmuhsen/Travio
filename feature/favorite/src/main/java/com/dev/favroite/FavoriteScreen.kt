@@ -485,6 +485,7 @@ private fun FavoriteScreenWithDataPreview() {
                         id = 1,
                         title = "Top 10 places in Europe",
                         destinationName = "Europe",
+                        cityHeroImage = "",
                         totalDays = 10,
                         isFavorite = true,
                         createdAt = "2026-04-11T10:00:00Z"
@@ -501,6 +502,7 @@ private fun FavoriteScreenWithDataPreview() {
                             id = 1,
                             title = "Top 10 places in Europe",
                             destinationName = "Europe",
+                            cityHeroImage = "",
                             totalDays = 10,
                             isFavorite = true,
                             createdAt = "2026-04-11T10:00:00Z"

@@ -54,12 +54,11 @@ import com.example.designsystem.components.AppBottomBar
 import com.example.designsystem.theme.TravioTheme
 import com.example.designsystem.theme.elevation
 import com.example.designsystem.theme.spacing
+import com.example.domain.model.trip.TripItem
 import com.example.feature.chat.R
-import com.example.feature.chat.domain.model.TripPlan
 import com.example.feature.chat.presentation.viewmodel.TripsUiState
 import com.example.feature.chat.presentation.viewmodel.TripsViewModel
 import java.text.SimpleDateFormat
-import java.util.Date
 import java.util.Locale
 
 data class TripUiModel(
@@ -139,9 +138,9 @@ fun TripsScreen(
                     items(trips, key = { it.id }) { trip ->
                         TripCard(
                             trip = trip,
-                            onClick = { onNavigateToTripDetail(trip.id) },
+                            onClick = { onNavigateToTripDetail(trip.id.toString()) },
                             onRemove = {
-                                viewModel.deleteTrip(trip.id)
+                                viewModel.deleteTrip(trip.id.toString())
                             }
                         )
                     }
@@ -269,7 +268,7 @@ fun AiPlanningCard(
 
 @Composable
 fun TripCard(
-    trip: TripPlan,
+    trip: TripItem,
     onClick: () -> Unit,
     onRemove: () -> Unit,
     modifier: Modifier = Modifier
@@ -285,7 +284,7 @@ fun TripCard(
     ) {
         Row(modifier = Modifier.fillMaxSize()) {
             AsyncImage(
-                model = trip.coverImage ?: com.example.designsystem.R.drawable.image_placeholder,
+                model = trip.cityHeroImage.ifEmpty { null } ?: com.example.designsystem.R.drawable.image_placeholder,
                 contentDescription = trip.title,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
@@ -320,7 +319,12 @@ fun TripCard(
                             tint = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                         val formattedDate = remember(trip.createdAt) {
-                            SimpleDateFormat("dd MMM yyyy", Locale.getDefault()).format(Date(trip.createdAt))
+                            try {
+                                val date = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault()).parse(trip.createdAt)
+                                date?.let { SimpleDateFormat("dd MMM yyyy", Locale.getDefault()).format(it) } ?: trip.createdAt
+                            } catch (e: Exception) {
+                                trip.createdAt
+                            }
                         }
                         Text(
                             text = formattedDate,
@@ -329,7 +333,7 @@ fun TripCard(
                         )
                     }
 
-                    val tripDays = trip.dailyPlans.size
+                    val tripDays = trip.totalDays
                     Text(
                         text = stringResource(R.string.days_trip_count, tripDays),
                         style = MaterialTheme.typography.bodyMedium,

@@ -10,6 +10,10 @@ interface TripApiRepository {
         pageIndex: Int,
         pageSize: Int
     ): Result<FavoriteTripsPage>
+    suspend fun getTrips(
+        pageIndex: Int,
+        pageSize: Int
+    ): Result<FavoriteTripsPage>
     suspend fun getTripDetails(id: Int): Result<TripDetails>
     suspend fun toggleFavorite(
         id: Int,
