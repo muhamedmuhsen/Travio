@@ -127,6 +127,7 @@ fun ChatScreen(
         snackbarHostState = snackbarHostState,
         onInputTextChanged = viewModel::onInputTextChanged,
         onSendMessage = viewModel::onSendMessage,
+        onClearError = viewModel::clearError,
         onNewChat = viewModel::startNewChat,
         onBottomBarItemSelected = { index ->
             when (index) {
@@ -147,6 +148,7 @@ fun ChatScreenContent(
     snackbarHostState: SnackbarHostState,
     onInputTextChanged: (String) -> Unit,
     onSendMessage: () -> Unit,
+    onClearError: () -> Unit,
     onNewChat: () -> Unit,
     onBottomBarItemSelected: (Int) -> Unit,
     modifier: Modifier = Modifier
@@ -186,7 +188,8 @@ fun ChatScreenContent(
                     Column(modifier = Modifier.fillMaxSize()) {
                         ConnectionIndicator(
                             state = state.connectionState,
-                            error = state.error
+                            error = state.error,
+                            onRetry = onClearError
                         )
 
                         if (state.messages.isEmpty() && !state.isAiThinking) {
@@ -466,6 +469,7 @@ fun ChatScreenPreview() {
             snackbarHostState = SnackbarHostState(),
             onInputTextChanged = {},
             onSendMessage = {},
+            onClearError = {},
             onNewChat = {},
             onBottomBarItemSelected = {}
         )
@@ -483,6 +487,7 @@ fun ChatScreenEmptyPreview() {
             snackbarHostState = SnackbarHostState(),
             onInputTextChanged = {},
             onSendMessage = {},
+            onClearError = {},
             onNewChat = {},
             onBottomBarItemSelected = {}
         )
@@ -498,6 +503,7 @@ fun ChatScreenLoadingPreview() {
             snackbarHostState = SnackbarHostState(),
             onInputTextChanged = {},
             onSendMessage = {},
+            onClearError = {},
             onNewChat = {},
             onBottomBarItemSelected = {}
         )
@@ -513,6 +519,7 @@ fun ChatScreenErrorPreview() {
             snackbarHostState = SnackbarHostState(),
             onInputTextChanged = {},
             onSendMessage = {},
+            onClearError = {},
             onNewChat = {},
             onBottomBarItemSelected = {}
         )

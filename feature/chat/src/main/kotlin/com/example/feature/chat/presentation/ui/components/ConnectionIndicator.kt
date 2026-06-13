@@ -1,6 +1,7 @@
 package com.example.feature.chat.presentation.ui.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -20,6 +21,7 @@ import com.example.feature.chat.domain.model.ConnectionState
 fun ConnectionIndicator(
     state: ConnectionState,
     error: AiGenerationError? = null,
+    onRetry: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     if (state == ConnectionState.CONNECTED && error == null) return
@@ -35,8 +37,8 @@ fun ConnectionIndicator(
             val message = when (error) {
                 is AiGenerationError.AiConnectionRefused,
                 is AiGenerationError.AiServiceUnavailable,
-                is AiGenerationError.AiTimeout -> "AI Travel Assistant is temporarily offline."
-                else -> "AI Service Error"
+                is AiGenerationError.AiTimeout -> "AI Travel Assistant is temporarily offline. Tap to retry."
+                else -> "AI Service Error. Tap to retry."
             }
             Triple(MaterialTheme.colorScheme.errorContainer, MaterialTheme.colorScheme.onErrorContainer, message)
         }
@@ -47,6 +49,7 @@ fun ConnectionIndicator(
         modifier = modifier
             .fillMaxWidth()
             .background(backgroundColor)
+            .then(if (error != null) Modifier.clickable { onRetry() } else Modifier)
             .padding(MaterialTheme.spacing.xxs),
         contentAlignment = Alignment.Center
     ) {

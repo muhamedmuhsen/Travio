@@ -176,6 +176,16 @@ class ChatViewModel @Inject constructor(
         }
     }
 
+    fun clearError() {
+        _state.update { currentState ->
+            if (currentState is ChatUiState.Success) {
+                currentState.copy(error = null)
+            } else {
+                currentState
+            }
+        }
+    }
+
     fun onInputTextChanged(text: String) {
         _state.update { currentState ->
             if (currentState is ChatUiState.Success) {
