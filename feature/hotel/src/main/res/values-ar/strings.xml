@@ -104,5 +104,13 @@
     <string name="hotel_checkout_success_message">شكراً لحجزكم مع ترافيو. تم تأكيد حجزكم.</string>
     <string name="hotel_checkout_booking_reference">رقم الحجز</string>
     <string name="hotel_checkout_done">تم</string>
+    <string name="status_confirmed">مؤكد</string>
+    <string name="status_cancelled">ملغى</string>
+    <string name="status_unknown">غير معروف</string>
     <string name="status_pending_payment">في انتظار الدفع</string>
+    <string name="status_processing_webhook">جاري المعالجة</string>
+    <string name="status_payment_failed">فشل الدفع</string>
+    <string name="status_supplier_failed">فشل المورد</string>
+    <string name="status_refund_issued">تم إصدار الاسترداد</string>
+    <string name="status_refunded">تم الاسترداد</string>
 </resources>

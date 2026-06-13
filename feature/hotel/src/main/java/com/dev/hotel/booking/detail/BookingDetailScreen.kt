@@ -171,7 +171,11 @@ fun BookingDetailScreen(
                             )
                         }
 
-                        if (details.status == BookingStatus.PENDING || details.status == BookingStatus.CONFIRMED) {
+                        if (
+                            details.status == BookingStatus.PENDING_PAYMENT ||
+                            details.status == BookingStatus.PROCESSING_WEBHOOK ||
+                            details.status == BookingStatus.CONFIRMED
+                        ) {
                             Spacer(modifier = Modifier.height(MaterialTheme.spacing.xl))
                             Button(
                                 onClick = { showCancelDialog = true },

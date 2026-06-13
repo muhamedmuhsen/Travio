@@ -144,10 +144,14 @@
     <string name="unable_to_cancel_booking">Unable to cancel booking</string>
     <string name="session_expired_login">Session expired. Please login again.</string>
     <string name="status_confirmed">Confirmed</string>
-    <string name="status_pending">Pending</string>
     <string name="status_cancelled">Cancelled</string>
     <string name="status_unknown">Unknown</string>
     <string name="status_pending_payment">Pending Payment</string>
+    <string name="status_processing_webhook">Processing Webhook</string>
+    <string name="status_payment_failed">Payment Failed</string>
+    <string name="status_supplier_failed">Supplier Failed</string>
+    <string name="status_refund_issued">Refund Issued</string>
+    <string name="status_refunded">Refunded</string>
     <string name="booking_info">Booking Information</string>
     <string name="guest_info">Guest Information</string>
     <string name="hotel_info">Hotel Information</string>

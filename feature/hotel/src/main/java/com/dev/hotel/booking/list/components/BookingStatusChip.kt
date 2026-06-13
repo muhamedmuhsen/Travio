@@ -24,10 +24,13 @@ fun BookingStatusChip(
 ) {
     val (backgroundColor, textColor, textRes) = when (status) {
         BookingStatus.CONFIRMED -> Triple(Color(0xFFE8F5E9), Color(0xFF2E7D32), R.string.status_confirmed)
-        BookingStatus.PENDING -> Triple(Color(0xFFFFF3E0), Color(0xFFEF6C00), R.string.status_pending)
-        BookingStatus.CANCELLED -> Triple(Color(0xFFFFEBEE), Color(0xFFC62828), R.string.status_cancelled)
+        BookingStatus.PENDING_PAYMENT -> Triple(Color(0xFFFFF3E0), Color(0xFFEF6C00), R.string.status_pending_payment)
+        BookingStatus.PROCESSING_WEBHOOK -> Triple(Color(0xFFE3F2FD), Color(0xFF1565C0), R.string.status_processing_webhook)
+        BookingStatus.PAYMENT_FAILED -> Triple(Color(0xFFFFEBEE), Color(0xFFC62828), R.string.status_payment_failed)
+        BookingStatus.SUPPLIER_FAILED -> Triple(Color(0xFFFFEBEE), Color(0xFFC62828), R.string.status_supplier_failed)
+        BookingStatus.REFUND_ISSUED -> Triple(Color(0xFFF3E5F5), Color(0xFF6A1B9A), R.string.status_refund_issued)
+        BookingStatus.REFUNDED -> Triple(Color(0xFFEDE7F6), Color(0xFF4527A0), R.string.status_refunded)
         BookingStatus.UNKNOWN -> Triple(Color(0xFFEEEEEE), Color(0xFF616161), R.string.status_unknown)
-        BookingStatus.PENDING_PAYMENT -> Triple(Color(0xFFE3F2FD), Color(0xFF1565C0), R.string.status_pending_payment)
     }
 
     Box(
