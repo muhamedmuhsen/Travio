@@ -26,7 +26,9 @@ data class TripActivityDto(
     @SerializedName("suggestedTime") val suggestedTime: String?,
     @SerializedName("description") val description: String?,
     @SerializedName("address") val address: String?,
-    @SerializedName("featuredImage") val featuredImage: String?
+    @SerializedName("featuredImage") val featuredImage: String?,
+    @SerializedName("latitude") val latitude: Double?,
+    @SerializedName("longitude") val longitude: Double?
 )
 
 data class TripHotelDto(
@@ -35,5 +37,7 @@ data class TripHotelDto(
     @SerializedName("rating") val rating: Int,
     @SerializedName("address") val address: String?,
     @SerializedName("link") val link: String?,
-    @SerializedName("featuredImage") val featuredImage: String?
+    @SerializedName("featuredImage") val featuredImage: String?,
+    @SerializedName("latitude") val latitude: Double?,
+    @SerializedName("longitude") val longitude: Double?
 )

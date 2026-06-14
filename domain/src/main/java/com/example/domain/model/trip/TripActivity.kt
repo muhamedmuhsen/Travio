@@ -6,5 +6,7 @@ data class TripActivity(
     val suggestedTime: String,
     val description: String,
     val address: String,
-    val featuredImage: String
+    val featuredImage: String,
+    val latitude: Double?,
+    val longitude: Double?
 )

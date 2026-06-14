@@ -331,10 +331,10 @@ fun HotelRecommendationCard(
     hotel: RecommendedHotel,
     modifier: Modifier = Modifier
 ) {
+    val context = LocalContext.current
     Card(
         modifier = modifier
-            .width(MaterialTheme.spacing.xxxl * 5)
-            .height(MaterialTheme.spacing.xxxl * 4 + MaterialTheme.spacing.xl),
+            .width(MaterialTheme.spacing.xxxl * 5),
         shape = RoundedCornerShape(MaterialTheme.spacing.md),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface
@@ -347,7 +347,7 @@ fun HotelRecommendationCard(
             color = MaterialTheme.colorScheme.outlineVariant
         )
     ) {
-        Column(modifier = Modifier.fillMaxSize()) {
+        Column(modifier = Modifier.fillMaxWidth()) {
             AsyncImage(
                 model = hotel.imageUrl
                     ?: com.example.designsystem.R.drawable.image_placeholder,
@@ -355,7 +355,7 @@ fun HotelRecommendationCard(
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .weight(1f)
+                    .height(120.dp)
             )
 
             Column(
@@ -416,6 +416,30 @@ fun HotelRecommendationCard(
                         modifier = Modifier.weight(1f)
                     )
                 }
+
+                if (hotel.latitude != null && hotel.longitude != null) {
+                    Spacer(modifier = Modifier.height(MaterialTheme.spacing.sm))
+                    androidx.compose.material3.OutlinedButton(
+                        onClick = {
+                            val encodedName = android.net.Uri.encode(hotel.name)
+                            val geoQuery = "geo:${hotel.latitude},${hotel.longitude}" +
+                                "?q=${hotel.latitude},${hotel.longitude}($encodedName)"
+                            val uri = android.net.Uri.parse(geoQuery)
+                            val mapIntent = android.content.Intent(android.content.Intent.ACTION_VIEW, uri)
+                            context.startActivity(mapIntent)
+                        },
+                        modifier = Modifier.fillMaxWidth().height(36.dp),
+                        contentPadding = PaddingValues(0.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.LocationOn,
+                            contentDescription = null,
+                            modifier = Modifier.size(MaterialTheme.spacing.sm)
+                        )
+                        Spacer(modifier = Modifier.width(MaterialTheme.spacing.xs))
+                        Text(stringResource(R.string.view_on_map), style = MaterialTheme.typography.labelMedium)
+                    }
+                }
             }
         }
     }
@@ -428,6 +452,7 @@ fun TimelineActivityNode(
     isLast: Boolean,
     modifier: Modifier = Modifier
 ) {
+    val context = LocalContext.current
     val lineColor = MaterialTheme.colorScheme.outlineVariant
     val activityIcon = when {
         activity.tag.contains("breakfast", ignoreCase = true) -> Icons.Filled.BreakfastDining
@@ -614,6 +639,29 @@ fun TimelineActivityNode(
                         overflow = TextOverflow.Ellipsis,
                         lineHeight = MaterialTheme.typography.bodyMedium.fontSize * 1.2
                     )
+
+                    if (activity.latitude != null && activity.longitude != null) {
+                        Spacer(modifier = Modifier.height(MaterialTheme.spacing.sm))
+                        androidx.compose.material3.OutlinedButton(
+                            onClick = {
+                                val encodedTitle = android.net.Uri.encode(activity.title)
+                                val geoQuery = "geo:${activity.latitude},${activity.longitude}" +
+                                    "?q=${activity.latitude},${activity.longitude}($encodedTitle)"
+                                val uri = android.net.Uri.parse(geoQuery)
+                                val mapIntent = android.content.Intent(android.content.Intent.ACTION_VIEW, uri)
+                                context.startActivity(mapIntent)
+                            },
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.LocationOn,
+                                contentDescription = null,
+                                modifier = Modifier.size(MaterialTheme.spacing.md)
+                            )
+                            Spacer(modifier = Modifier.width(MaterialTheme.spacing.xs))
+                            Text(stringResource(R.string.view_on_map))
+                        }
+                    }
                 }
             }
         }

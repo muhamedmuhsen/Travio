@@ -63,7 +63,9 @@ fun TripActivityDto.toDomain(): TripActivity {
         suggestedTime = suggestedTime ?: "",
         description = description ?: "",
         address = address ?: "",
-        featuredImage = featuredImage ?: ""
+        featuredImage = featuredImage ?: "",
+        latitude = latitude,
+        longitude = longitude
     )
 }
 
@@ -74,6 +76,8 @@ fun TripHotelDto.toDomain(): TripHotel {
         rating = rating,
         address = address ?: "",
         link = link ?: "",
-        featuredImage = featuredImage ?: ""
+        featuredImage = featuredImage ?: "",
+        latitude = latitude,
+        longitude = longitude
     )
 }

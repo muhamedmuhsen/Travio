@@ -23,7 +23,9 @@ data class Hotel(
     val rating: Double?,
     val address: String?,
     val link: String?,
-    val imageUrl: String?
+    val imageUrl: String?,
+    val latitude: Double? = null,
+    val longitude: Double? = null
 )
 
 data class TripDay(
@@ -38,5 +40,7 @@ data class TripActivity(
     val suggestedTime: String?,
     val description: String?,
     val address: String?,
-    val imageUrl: String?
+    val imageUrl: String?,
+    val latitude: Double? = null,
+    val longitude: Double? = null
 )

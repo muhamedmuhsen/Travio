@@ -6,5 +6,7 @@ data class TripHotel(
     val rating: Int,
     val address: String,
     val link: String,
-    val featuredImage: String
+    val featuredImage: String,
+    val latitude: Double?,
+    val longitude: Double?
 )

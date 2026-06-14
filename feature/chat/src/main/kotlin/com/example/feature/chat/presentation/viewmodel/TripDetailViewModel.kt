@@ -51,7 +51,9 @@ data class RecommendedHotel(
     val location: String,
     val price: String,
     val rating: Float,
-    val imageUrl: String?
+    val imageUrl: String?,
+    val latitude: Double? = null,
+    val longitude: Double? = null
 )
 
 @Immutable
@@ -63,7 +65,9 @@ data class ActivityItem(
     val price: String,
     val tag: String,
     val location: String,
-    val imageUrl: String?
+    val imageUrl: String?,
+    val latitude: Double? = null,
+    val longitude: Double? = null
 )
 
 @HiltViewModel
@@ -115,7 +119,9 @@ class TripDetailViewModel @Inject constructor(
                                     location = hotel.address,
                                     price = "",
                                     rating = hotel.rating.toFloat(),
-                                    imageUrl = hotel.featuredImage.ifEmpty { null }
+                                    imageUrl = hotel.featuredImage.ifEmpty { null },
+                                    latitude = hotel.latitude,
+                                    longitude = hotel.longitude
                                 )
                             },
                             activities = day.activities.mapIndexed { index, act ->
@@ -127,7 +133,9 @@ class TripDetailViewModel @Inject constructor(
                                     price = "",
                                     tag = act.activityType,
                                     location = act.address,
-                                    imageUrl = act.featuredImage.ifEmpty { null }
+                                    imageUrl = act.featuredImage.ifEmpty { null },
+                                    latitude = act.latitude,
+                                    longitude = act.longitude
                                 )
                             }
                         )
@@ -160,7 +168,9 @@ class TripDetailViewModel @Inject constructor(
                                         location = hotel.address ?: "Unknown",
                                         price = "",
                                         rating = hotel.rating?.toFloat() ?: 0f,
-                                        imageUrl = hotel.imageUrl
+                                        imageUrl = hotel.imageUrl,
+                                        latitude = hotel.latitude,
+                                        longitude = hotel.longitude
                                     )
                                 },
                                 activities = day.activities.mapIndexed { index, act ->
@@ -172,7 +182,9 @@ class TripDetailViewModel @Inject constructor(
                                         price = "",
                                         tag = act.type,
                                         location = act.address ?: "Unknown",
-                                        imageUrl = act.imageUrl
+                                        imageUrl = act.imageUrl,
+                                        latitude = act.latitude,
+                                        longitude = act.longitude
                                     )
                                 }
                             )
