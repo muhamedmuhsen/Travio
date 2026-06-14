@@ -111,6 +111,7 @@ class GetFlightDetailsUseCase @Inject constructor(
             isRefundable = payload.isRefundable,
             refundPenaltyAmount = payload.refundPenaltyAmount,
             pricePerPerson = payload.pricePerPerson,
+            passengerIds = payload.passengerIds,
             segments = domainSegments,
             stops = (domainSegments.size - 1).coerceAtLeast(0),
             originAirport = domainSegments.first().originAirport,

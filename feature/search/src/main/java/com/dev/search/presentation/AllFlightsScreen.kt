@@ -124,7 +124,7 @@ fun AllFlightsScreenRoute(
     modifier: Modifier = Modifier,
     viewModel: FlightSearchViewModel = hiltViewModel(),
     onBackClick: () -> Unit = {},
-    onFlightClick: (offerId: String) -> Unit = {},
+    onFlightClick: (offerId: String, passengerIds: List<String>) -> Unit = { _, _ -> },
     navigateToHome: () -> Unit = {},
     navigateToFavorite: () -> Unit = {},
     navigateToCommunity: () -> Unit = {},
@@ -139,7 +139,7 @@ fun AllFlightsScreenRoute(
         viewModel.events.collect { event ->
             when (event) {
                 is FlightSearchEvent.NavigateBack -> onBackClick()
-                is FlightSearchEvent.NavigateToFlightDetails -> onFlightClick(event.offerId)
+                is FlightSearchEvent.NavigateToFlightDetails -> onFlightClick(event.offerId, event.passengerIds)
                 is FlightSearchEvent.ShowSnackbar -> {
                     snackbarHostState.showAppSnackbar(
                         message = event.message.asString(context),
@@ -298,7 +298,7 @@ fun AllFlightsScreen(
                                 FlightResultCard(
                                     offer = offer,
                                     onFlightClick = {
-                                        onAction(FlightSearchAction.OnFlightClicked(offer.offerId))
+                                        onAction(FlightSearchAction.OnFlightClicked(offer.offerId, offer.passengerIds))
                                     }
                                 )
                             }
@@ -329,6 +329,7 @@ private fun FlightResultCardPreview() {
                     stops = 0,
                     totalDuration = "PT7H15M",
                     airlineLogoUrl = null,
+                    passengerIds = emptyList(),
                     segments = listOf(
                         FlightSegment(
                             origin = "CAI",

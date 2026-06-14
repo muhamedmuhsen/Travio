@@ -11,5 +11,5 @@ sealed interface FlightSearchAction {
     data object OnSearchClicked : FlightSearchAction
     data object OnRetrySearch : FlightSearchAction
     data object OnBackClicked : FlightSearchAction
-    data class OnFlightClicked(val offerId: String) : FlightSearchAction
+    data class OnFlightClicked(val offerId: String, val passengerIds: List<String>) : FlightSearchAction
 }

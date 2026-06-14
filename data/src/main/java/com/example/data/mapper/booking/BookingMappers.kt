@@ -14,6 +14,7 @@ fun PaymentIntentResponseDto.toDomain(): PaymentIntentInfo {
 
 fun Passenger.toDto(): PassengerDto {
     return PassengerDto(
+        id = id,
         title = title,
         givenName = givenName,
         familyName = familyName,

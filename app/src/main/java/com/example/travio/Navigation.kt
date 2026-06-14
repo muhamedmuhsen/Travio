@@ -204,8 +204,10 @@ fun TravioNavHost(
         composable(Screen.SeeAllFlightsScreen.route) {
             AllFlightsScreenRoute(
                 onBackClick = { navController.popBackStack() },
-                onFlightClick = { offerId ->
-                    navController.navigate(com.example.common.navigation.Screen.FlightDetailScreen.createRoute(offerId))
+                onFlightClick = { offerId, passengerIds ->
+                    navController.navigate(
+                        com.example.common.navigation.Screen.FlightDetailScreen.createRoute(offerId, passengerIds.joinToString(","))
+                    )
                 },
                 navigateToHome = {
                     navController.navigate(Screen.HomeScreen.route) {
@@ -236,12 +238,22 @@ fun TravioNavHost(
             )
         }
         // Flight detail route: receives offerId as a path argument
-        composable(route = Screen.FlightDetailScreen.route + "/{${Screen.FlightDetailScreen.ARG_OFFER_ID}}") { backStackEntry ->
+        composable(
+            route = Screen.FlightDetailScreen.routePattern,
+            arguments = listOf(
+                navArgument(Screen.FlightDetailScreen.ARG_OFFER_ID) { type = NavType.StringType },
+                navArgument(Screen.FlightDetailScreen.ARG_PASSENGER_IDS) {
+                    type = NavType.StringType
+                    nullable = true
+                }
+            )
+        ) { backStackEntry ->
             val offerId = backStackEntry.arguments?.getString(Screen.FlightDetailScreen.ARG_OFFER_ID) ?: ""
+            val passengerIdsStr = backStackEntry.arguments?.getString(Screen.FlightDetailScreen.ARG_PASSENGER_IDS) ?: ""
             FlightDetailScreen(
                 offerId = offerId,
                 onBack = { navController.popBackStack() },
-                onBookNow = { id -> navController.navigate(BookingRoute(id)) }
+                onBookNow = { id -> navController.navigate(BookingRoute(id, passengerIdsStr)) }
             )
         }
         composable(Screen.ProfileScreen.route) {

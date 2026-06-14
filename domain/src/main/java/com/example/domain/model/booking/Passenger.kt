@@ -1,6 +1,7 @@
 package com.example.domain.model.booking
 
 data class Passenger(
+    val id: String,
     val title: String,
     val givenName: String,
     val familyName: String,

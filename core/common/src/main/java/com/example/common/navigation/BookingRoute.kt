@@ -4,5 +4,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class BookingRoute(
-    val offerId: String
+    val offerId: String,
+    val passengerIds: String = ""
 )

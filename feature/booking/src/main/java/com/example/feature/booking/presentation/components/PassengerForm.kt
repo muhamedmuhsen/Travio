@@ -259,7 +259,7 @@ fun PassengerFormPreview() {
     MaterialTheme {
         PassengerForm(
             index = 0,
-            passenger = Passenger("Mr.", "Jonathan", "Doe", "1990-01-01", "john.doe@example.com", "123456789", "Male"),
+            passenger = Passenger("id123", "Mr.", "Jonathan", "Doe", "1990-01-01", "john.doe@example.com", "123456789", "Male"),
             onPassengerUpdated = {}
         )
     }

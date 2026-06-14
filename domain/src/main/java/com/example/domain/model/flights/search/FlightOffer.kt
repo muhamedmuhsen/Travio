@@ -13,5 +13,6 @@ data class FlightOffer(
     val stops: Int,
     val totalDuration: String,
     val airlineLogoUrl: String?,
+    val passengerIds: List<String>,
     val segments: List<FlightSegment>
 )

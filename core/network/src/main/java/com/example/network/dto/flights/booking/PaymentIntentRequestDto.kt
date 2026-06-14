@@ -8,6 +8,7 @@ data class PaymentIntentRequestDto(
 )
 
 data class PassengerDto(
+    @SerializedName("id") val id: String,
     @SerializedName("title") val title: String,
     @SerializedName("givenName") val givenName: String,
     @SerializedName("familyName") val familyName: String,

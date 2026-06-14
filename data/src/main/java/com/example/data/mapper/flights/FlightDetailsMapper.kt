@@ -28,6 +28,7 @@ fun FlightDetailsDto.toPayload(): FlightDetailsPayload? {
         isRefundable = resolvedRefundable,
         refundPenaltyAmount = refundPenaltyAmount,
         pricePerPerson = pricePerPerson,
+        passengerIds = passengerIds ?: emptyList(),
         segments = segmentPayloads
     )
 }

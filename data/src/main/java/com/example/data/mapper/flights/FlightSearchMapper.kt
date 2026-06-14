@@ -40,6 +40,7 @@ fun FlightOfferDto.toDomain(): FlightOffer? {
         stops = stops ?: (domainSegments.size - 1),
         totalDuration = totalDuration ?: "PT0H0M",
         airlineLogoUrl = airlineLogoUrl ?: domainSegments.firstOrNull()?.airlineLogoUrl,
+        passengerIds = passengerIds ?: emptyList(),
         segments = domainSegments
     )
 }

@@ -73,9 +73,16 @@ sealed class Screen(val route: String) {
     data object SeeAllFlightsScreen : Screen(Screens.SEE_ALL_FLIGHTS.name)
     data object FlightDetailScreen : Screen(Screens.FLIGHT_DETAIL.name) {
         const val ARG_OFFER_ID = "offerId"
-        val routePattern = "$route/{$ARG_OFFER_ID}"
+        const val ARG_PASSENGER_IDS = "passengerIds"
+        val routePattern = "$route/{$ARG_OFFER_ID}?$ARG_PASSENGER_IDS={$ARG_PASSENGER_IDS}"
 
-        fun createRoute(offerId: String): String = "$route/$offerId"
+        fun createRoute(
+            offerId: String,
+            passengerIds: String = ""
+        ): String {
+            val encodedIds = if (passengerIds.isNotBlank()) "?$ARG_PASSENGER_IDS=$passengerIds" else ""
+            return "$route/$offerId$encodedIds"
+        }
     }
 
     // EXCEPTION: S-03 — Added legacy routes for compatibility with task requirements while implementing type-safe serializable routes.

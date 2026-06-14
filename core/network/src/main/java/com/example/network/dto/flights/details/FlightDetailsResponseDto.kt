@@ -19,5 +19,6 @@ data class FlightDetailsDto(
     @SerializedName("isRefundable") val isRefundable: Boolean?,
     @SerializedName("refundPenaltyAmount") val refundPenaltyAmount: Double?,
     @SerializedName("pricePerPerson") val pricePerPerson: Double?,
+    @SerializedName("passengerIds") val passengerIds: List<String>?,
     @SerializedName("segments") val segments: List<FlightDetailsSegmentDto>?
 )

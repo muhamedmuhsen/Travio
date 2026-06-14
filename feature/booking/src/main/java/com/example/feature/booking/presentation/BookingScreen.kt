@@ -17,7 +17,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material3.CircularProgressIndicator
@@ -127,7 +126,6 @@ fun BookingScreen(
                 uiState = uiState,
                 onBack = onBack,
                 onPassengerUpdated = viewModel::onPassengerUpdated,
-                onAddPassenger = viewModel::onAddPassenger,
                 onCheckout = viewModel::onBookNow
             )
 
@@ -159,7 +157,6 @@ fun BookingContent(
     uiState: BookingUiState,
     onBack: () -> Unit,
     onPassengerUpdated: (Int, Passenger) -> Unit,
-    onAddPassenger: () -> Unit,
     onCheckout: () -> Unit
 ) {
     Scaffold(
@@ -193,25 +190,6 @@ fun BookingContent(
                             onPassengerUpdated(index, updated)
                         },
                         errors = uiState.validationErrors[index] ?: emptyList()
-                    )
-                }
-
-                item {
-                    com.example.designsystem.components.AppButton(
-                        onClick = onAddPassenger,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(MaterialTheme.spacing.lg),
-                        shape = MaterialTheme.shapes.medium,
-                        containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                        contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
-                        text = stringResource(id = R.string.booking_add_passenger),
-                        leadingIcon = {
-                            Icon(
-                                imageVector = Icons.Default.Add,
-                                contentDescription = null
-                            )
-                        }
                     )
                 }
             }
@@ -342,13 +320,12 @@ fun BookingScreenPreview() {
         BookingContent(
             uiState = BookingUiState(
                 passengers = listOf(
-                    Passenger("Mr.", "Jonathan", "Doe", "1990-01-01", "john.doe@example.com", "123456789", "Male")
+                    Passenger("id1", "Mr.", "Jonathan", "Doe", "1990-01-01", "john.doe@example.com", "123456789", "Male")
                 ),
                 totalPrice = "$1,248.50"
             ),
             onBack = {},
             onPassengerUpdated = { _, _ -> },
-            onAddPassenger = {},
             onCheckout = {}
         )
     }

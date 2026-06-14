@@ -5,7 +5,7 @@ import javax.annotation.concurrent.Immutable
 
 @Immutable
 data class BookingUiState(
-    val passengers: List<Passenger> = listOf(Passenger("", "", "", "", "", "", "")),
+    val passengers: List<Passenger> = emptyList(),
     val basePrice: Double = 0.0,
     val totalPrice: String = "",
     val isProcessing: Boolean = false,

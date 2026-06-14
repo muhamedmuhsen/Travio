@@ -10,6 +10,7 @@ data class FlightDetails(
     val isRefundable: Boolean,
     val refundPenaltyAmount: Double?,
     val pricePerPerson: Double?,
+    val passengerIds: List<String>,
     val segments: List<FlightDetailsSegment>,
     val stops: Int,
     val originAirport: String,

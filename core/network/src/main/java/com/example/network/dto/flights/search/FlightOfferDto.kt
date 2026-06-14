@@ -13,5 +13,6 @@ data class FlightOfferDto(
     @SerializedName("originCityName") val originCityName: String?,
     @SerializedName("destinationCityName") val destinationCityName: String?,
     @SerializedName("airlineLogoUrl") val airlineLogoUrl: String?,
+    @SerializedName("passengerIds") val passengerIds: List<String>?,
     @SerializedName("segments") val segments: List<FlightSegmentDto>?
 )

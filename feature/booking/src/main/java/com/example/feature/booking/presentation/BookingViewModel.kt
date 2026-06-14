@@ -27,6 +27,7 @@ class BookingViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val offerId: String = savedStateHandle.get<String>("offerId") ?: ""
+    private val passengerIdsStr: String = savedStateHandle.get<String>("passengerIds") ?: ""
 
     private val _uiState = MutableStateFlow(BookingUiState())
     val uiState: StateFlow<BookingUiState> = _uiState.asStateFlow()
@@ -46,11 +47,47 @@ class BookingViewModel @Inject constructor(
             when (val result = getFlightDetailsUseCase(offerId, forceRefresh = false)) {
                 is com.example.domain.utils.Result.Success -> {
                     val price = result.data.pricePerPerson ?: result.data.totalPrice
+                    val flightPassengerIds = result.data.passengerIds.ifEmpty {
+                        if (passengerIdsStr.isNotBlank()) passengerIdsStr.split(",") else emptyList()
+                    }
                     _uiState.update { state ->
+                        val initialPassengers = if (state.passengers.isEmpty()) {
+                            if (flightPassengerIds.isNotEmpty()) {
+                                flightPassengerIds.map { id ->
+                                    Passenger(
+                                        id = id,
+                                        title = "",
+                                        givenName = "",
+                                        familyName = "",
+                                        bornOn = "",
+                                        email = "",
+                                        phoneNumber = "",
+                                        gender = ""
+                                    )
+                                }
+                            } else {
+                                listOf(
+                                    Passenger(
+                                        id = "",
+                                        title = "",
+                                        givenName = "",
+                                        familyName = "",
+                                        bornOn = "",
+                                        email = "",
+                                        phoneNumber = "",
+                                        gender = ""
+                                    )
+                                )
+                            }
+                        } else {
+                            state.passengers
+                        }
+
                         state.copy(
                             isProcessing = false,
                             basePrice = price,
-                            totalPrice = calculateTotalPrice(state.passengers.size, price)
+                            totalPrice = calculateTotalPrice(initialPassengers.size, price),
+                            passengers = initialPassengers
                         )
                     }
                 }
@@ -71,29 +108,6 @@ class BookingViewModel @Inject constructor(
                 newList[index] = passenger
             }
             state.copy(passengers = newList)
-        }
-    }
-
-    fun onAddPassenger() {
-        _uiState.update { state ->
-            val newList = state.passengers + Passenger("", "", "", "", "", "", "")
-            state.copy(
-                passengers = newList,
-                totalPrice = calculateTotalPrice(newList.size, state.basePrice)
-            )
-        }
-    }
-
-    fun onRemovePassenger(index: Int) {
-        _uiState.update { state ->
-            val newList = state.passengers.toMutableList()
-            if (newList.size > 1 && index in newList.indices) {
-                newList.removeAt(index)
-            }
-            state.copy(
-                passengers = newList,
-                totalPrice = calculateTotalPrice(newList.size, state.basePrice)
-            )
         }
     }
 
