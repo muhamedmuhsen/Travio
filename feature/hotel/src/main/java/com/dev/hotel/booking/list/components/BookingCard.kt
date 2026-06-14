@@ -35,7 +35,10 @@ fun BookingCard(
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .clickable(onClick = onClick),
+            .clickable(
+                enabled = booking.status != BookingStatus.PENDING_PAYMENT,
+                onClick = onClick
+            ),
         elevation = CardDefaults.cardElevation(defaultElevation = MaterialTheme.elevation.xs),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
     ) {
