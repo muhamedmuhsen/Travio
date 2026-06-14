@@ -5,6 +5,10 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -19,7 +23,8 @@ import com.example.feature.home.R
 fun SectionHeader(
     title: String,
     modifier: Modifier = Modifier,
-    onSeeAllClick: (() -> Unit)? = null
+    onSeeAllClick: (() -> Unit)? = null,
+    onCloseClick: (() -> Unit)? = null
 ) {
     Row(
         modifier = modifier
@@ -50,6 +55,15 @@ fun SectionHeader(
                     .clickable { onSeeAllClick() }
                     .padding(MaterialTheme.spacing.xs)
             )
+        }
+        if (onCloseClick != null) {
+            IconButton(onClick = onCloseClick) {
+                Icon(
+                    imageVector = Icons.Default.Close,
+                    contentDescription = "Close section",
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
         }
     }
 }

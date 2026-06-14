@@ -226,10 +226,12 @@ private fun HomeContent(
                         .background(MaterialTheme.colorScheme.surface)
                 ) {
                     // Spacer(modifier = Modifier.height(MaterialTheme.spacing.sm))
+                    /* TODO: Re-enable later
                     CountryStateHandling(
                         state = state.countriesState,
                         onRetry = { onAction(HomeAction.OnRetrySection(HomeSection.Countries)) }
                     )
+                     */
                     RecentViewedStateHandling(
                         state = state.recentViewedDestinationsState,
                         onAction = onAction,
@@ -351,12 +353,14 @@ private fun HomeTopSection(
 private fun ErrorSection(
     title: String,
     onRetry: () -> Unit,
-    onSeeAllClick: (() -> Unit)? = null
+    onSeeAllClick: (() -> Unit)? = null,
+    onCloseClick: (() -> Unit)? = null
 ) {
     Column {
         SectionHeader(
             title = title,
-            onSeeAllClick = onSeeAllClick
+            onSeeAllClick = onSeeAllClick,
+            onCloseClick = onCloseClick
         )
         Box(
             modifier = Modifier
@@ -379,12 +383,14 @@ private fun EmptySection(
     title: String,
     message: String,
     icon: androidx.compose.ui.graphics.vector.ImageVector = Icons.Outlined.SearchOff,
-    onSeeAllClick: (() -> Unit)? = null
+    onSeeAllClick: (() -> Unit)? = null,
+    onCloseClick: (() -> Unit)? = null
 ) {
     Column {
         SectionHeader(
             title = title,
-            onSeeAllClick = onSeeAllClick
+            onSeeAllClick = onSeeAllClick,
+            onCloseClick = onCloseClick
         )
         Column(
             modifier = Modifier
@@ -420,13 +426,13 @@ private fun CountryStateHandling(
 ) {
     when (state) {
         is UiState.Error -> ErrorSection(
-            title = stringResource(R.string.section_famous_countries),
+            title = stringResource(R.string.section_famous_places),
             onRetry = onRetry
         )
 
         UiState.Idle -> Unit
         UiState.Loading -> {
-            HorizontalSection(title = stringResource(R.string.section_famous_countries)) {
+            HorizontalSection(title = stringResource(R.string.section_famous_places)) {
                 items(3) { LoadingCountryCard() }
             }
         }
@@ -434,7 +440,7 @@ private fun CountryStateHandling(
         is UiState.Success -> {
             val countries = state.data ?: emptyList()
             if (countries.isNotEmpty()) {
-                HorizontalSection(title = stringResource(R.string.section_famous_countries)) {
+                HorizontalSection(title = stringResource(R.string.section_famous_places)) {
                     // key prevents unnecessary recompositions when the list is updated
                     items(countries, key = { it.countryID }) { country ->
                         CountryCard(country = country)
@@ -671,12 +677,14 @@ private fun NearbyHotelsStateHandling(
 private fun HorizontalSection(
     title: String,
     onSeeAllClick: (() -> Unit)? = null,
+    onCloseClick: (() -> Unit)? = null,
     content: LazyListScope.() -> Unit
 ) {
     Column {
         SectionHeader(
             title = title,
-            onSeeAllClick = onSeeAllClick
+            onSeeAllClick = onSeeAllClick,
+            onCloseClick = onCloseClick
         )
         LazyRow(
             horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.sm),

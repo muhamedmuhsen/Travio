@@ -320,7 +320,8 @@ fun TripCard(
                         )
                         val formattedDate = remember(trip.createdAt) {
                             try {
-                                val date = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault()).parse(trip.createdAt)
+                                val datePart = trip.createdAt.substringBefore('T')
+                                val date = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).parse(datePart)
                                 date?.let { SimpleDateFormat("dd MMM yyyy", Locale.getDefault()).format(it) } ?: trip.createdAt
                             } catch (e: Exception) {
                                 trip.createdAt
