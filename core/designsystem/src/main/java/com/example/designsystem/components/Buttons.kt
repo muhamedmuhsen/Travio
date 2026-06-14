@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -43,13 +44,14 @@ fun AppButton(
     ),
     containerColor: Color = MaterialTheme.colorScheme.primary,
     contentColor: Color = MaterialTheme.colorScheme.onPrimary,
+    isLoading: Boolean = false,
     leadingIcon: @Composable (() -> Unit)? = null
 ) {
     Button(
         modifier = modifier.height(buttonHeight.dp),
         onClick = onClick,
         shape = shape,
-        enabled = isEnabled,
+        enabled = isEnabled && !isLoading,
         colors = ButtonDefaults.buttonColors(
             containerColor = containerColor,
             contentColor = contentColor,
@@ -61,14 +63,22 @@ fun AppButton(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center
         ) {
-            if (leadingIcon != null) {
-                leadingIcon()
-                Spacer(Modifier.width(MaterialTheme.spacing.xs))
+            if (isLoading) {
+                CircularProgressIndicator(
+                    modifier = Modifier.size(24.dp),
+                    color = contentColor,
+                    strokeWidth = 2.dp
+                )
+            } else {
+                if (leadingIcon != null) {
+                    leadingIcon()
+                    Spacer(Modifier.width(MaterialTheme.spacing.xs))
+                }
+                Text(
+                    text = text,
+                    style = style
+                )
             }
-            Text(
-                text = text,
-                style = style
-            )
         }
     }
 }

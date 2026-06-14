@@ -82,7 +82,7 @@ class VerifyEmailViewModel @Inject constructor(
         }
 
         clearErrors()
-        _state.update { it.copy(verificationState = UiState.Loading) }
+        _state.update { it.copy(verificationState = UiState.Loading, isLoading = true) }
 
         Timber.d("Verifying email OTP for: $email")
 
@@ -95,7 +95,7 @@ class VerifyEmailViewModel @Inject constructor(
 
                 is Result.Success -> {
                     Timber.d("Email verification successful! Navigating to home...")
-                    _state.update { it.copy(verificationState = UiState.Success(Unit)) }
+                    _state.update { it.copy(verificationState = UiState.Success(Unit), isLoading = false) }
                     sendEvent(VerifyEmailEvent.NavigateToSuccess)
                 }
             }
@@ -105,20 +105,28 @@ class VerifyEmailViewModel @Inject constructor(
     private fun handleVerificationError(error: DataError) {
         Timber.w("Handling verification error: $error")
 
-        val shouldShowFieldError = when (error) {
+        val isCodeError = when (error) {
             DataError.Validation.MissingFields,
-            DataError.Validation.InvalidOTPFormat -> true
-
+            DataError.Validation.InvalidOTPFormat,
+            DataError.Verification.InvalidCode,
+            DataError.Network.BadRequest -> true
             else -> false
+        }
+
+        val uiText = if (error == DataError.Network.BadRequest) {
+            com.dev.utils.uitext.UiText.StringResource(com.example.designsystem.R.string.error_invalid_code)
+        } else {
+            error.asUiText()
         }
 
         _state.update {
             it.copy(
-                isCodeError = shouldShowFieldError,
-                verificationState = UiState.Error(error.asUiText())
+                isCodeError = isCodeError,
+                verificationState = UiState.Error(uiText),
+                isLoading = false
             )
         }
-        sendEvent(VerifyEmailEvent.ShowError(error.asUiText()))
+        sendEvent(VerifyEmailEvent.ShowError(uiText))
     }
 
     private fun startCountdown(durationSeconds: Int = DEFAULT_COUNTDOWN_SECONDS) {

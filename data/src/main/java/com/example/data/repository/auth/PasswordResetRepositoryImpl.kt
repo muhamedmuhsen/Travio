@@ -28,7 +28,15 @@ class PasswordResetRepositoryImpl @Inject constructor(
         safeApiCall {
             val response =
                 api.sendVerificationCode(VerificationCodeRequest(email = email, otp = code))
-            tokenProvider.saveResetToken(response.resetToken)
+
+            if (response.status == 2) {
+                throw com.example.data.utils.BackendErrorException(response.status, response.message)
+            }
+            if (response.resetToken == null) {
+                throw com.example.data.utils.BackendErrorException(response.status, response.message ?: "Invalid code")
+            }
+
+            tokenProvider.saveResetToken(response.resetToken!!)
         }
 
     override suspend fun resetPassword(

@@ -7,5 +7,6 @@ data class CodeState(
     val isCodeError: Boolean = false,
     val isCodeFilled: Boolean = false,
     val timeLeft: Int = 600,
-    val codeState: UiState<Unit> = UiState.Idle
+    val codeState: UiState<Unit> = UiState.Idle,
+    val isLoading: Boolean = false
 )

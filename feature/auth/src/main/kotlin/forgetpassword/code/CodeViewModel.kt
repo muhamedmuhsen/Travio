@@ -54,21 +54,35 @@ class CodeViewModel @Inject constructor(
 
         _state.update { currentState -> currentState.copy(codeState = UiState.Loading) }
 
+        _state.update { it.copy(isLoading = true) }
         viewModelScope.launch {
             when (val result = verificationCodeUseCase(email = email, _state.value.code)) {
                 is Result.Error -> {
-                    if (result.error == DataError.Validation.MissingFields) {
+                    _state.update { it.copy(isLoading = false) }
+                    val isCodeError = result.error == DataError.Validation.MissingFields ||
+                        result.error == DataError.Verification.InvalidCode ||
+                        result.error == DataError.Validation.InvalidOTPFormat ||
+                        result.error == DataError.Network.BadRequest
+
+                    val uiText = if (result.error == DataError.Network.BadRequest) {
+                        com.dev.utils.uitext.UiText.StringResource(com.example.designsystem.R.string.error_invalid_code)
+                    } else {
+                        result.error.asUiText()
+                    }
+
+                    if (isCodeError) {
                         _state.update {
                             it.copy(
                                 isCodeError = true,
-                                codeState = UiState.Error(result.error.asUiText())
+                                codeState = UiState.Error(uiText)
                             )
                         }
                     }
-                    sendEvent(CodeEvent.ShowError(result.error.asUiText()))
+                    sendEvent(CodeEvent.ShowError(uiText))
                 }
 
                 is Result.Success -> {
+                    _state.update { it.copy(isLoading = false) }
                     sendEvent(CodeEvent.NavigateToResetPassword)
                 }
             }

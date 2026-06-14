@@ -190,6 +190,7 @@ fun NewPasswordScreenContent(
             AppButton(
                 onClick = onResetPasswordClicked,
                 text = stringResource(id = R.string.reset_your_password_button),
+                isLoading = state.isLoading,
                 modifier = Modifier.fillMaxWidth()
             )
         }

@@ -10,6 +10,8 @@ import java.io.IOException
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 
+class BackendErrorException(val status: Int?, message: String?) : Exception(message)
+
 suspend fun <T> safeApiCall(apiCall: suspend () -> T): Result<T, DataError> {
     return try {
         val result = apiCall()
@@ -41,6 +43,18 @@ suspend fun <T> safeApiCall(apiCall: suspend () -> T): Result<T, DataError> {
     } catch (e: CancellationException) {
         Timber.w("safeApiCall: coroutine was cancelled -> rethrowing")
         throw e
+    } catch (e: BackendErrorException) {
+        Timber.w("safeApiCall: backend error -> status=${e.status}, message=${e.message}")
+        val msg = e.message.orEmpty()
+        if (msg.contains("invalid", ignoreCase = true) &&
+            (msg.contains("code", ignoreCase = true) || msg.contains("otp", ignoreCase = true))
+        ) {
+            Result.Error(DataError.Verification.InvalidCode)
+        } else if (msg.contains("expired", ignoreCase = true)) {
+            Result.Error(DataError.Verification.CodeExpired)
+        } else {
+            Result.Error(DataError.Network.BadRequest)
+        }
     } catch (e: Exception) {
         Timber.e(e, "safeApiCall: unexpected error -> ${e::class.simpleName}: ${e.message}")
         Result.Error(DataError.Network.UnexpectedResponse)
@@ -56,6 +70,12 @@ private fun mapHttpError(e: HttpException): DataError {
             Timber.w("mapHttpError: 400 Bad Request -> errorBody=$errorBody")
             if (errorBody.contains("validation errors", ignoreCase = true)) {
                 DataError.Validation.MissingFields
+            } else if (errorBody.contains("invalid", ignoreCase = true) &&
+                (errorBody.contains("code", ignoreCase = true) || errorBody.contains("otp", ignoreCase = true))
+            ) {
+                DataError.Verification.InvalidCode
+            } else if (errorBody.contains("expired", ignoreCase = true)) {
+                DataError.Verification.CodeExpired
             } else {
                 DataError.Network.BadRequest
             }

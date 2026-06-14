@@ -13,5 +13,6 @@ data class NewPasswordState(
     val isLetterAndNumberMet: Boolean = false,
     val isUpperCaseMet: Boolean = false,
     val isSpecialCharMet: Boolean = false,
-    val newPasswordState: UiState<Unit> = UiState.Idle
+    val newPasswordState: UiState<Unit> = UiState.Idle,
+    val isLoading: Boolean = false
 )

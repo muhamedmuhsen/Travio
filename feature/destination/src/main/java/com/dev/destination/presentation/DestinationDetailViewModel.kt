@@ -397,15 +397,15 @@ class DestinationDetailViewModel @Inject constructor(
 
     private fun mapFavoriteMutationError(error: DataError): UiText {
         return when (error) {
-            DataError.Network.NoInternetConnection -> UiText.StringResource(R.string.error_no_internet)
-            DataError.Network.Timeout -> UiText.StringResource(R.string.error_timeout)
+            DataError.Network.NoInternetConnection -> UiText.StringResource(R.string.destination_error_no_internet)
+            DataError.Network.Timeout -> UiText.StringResource(R.string.destination_error_timeout)
             DataError.Network.BadRequest,
             DataError.Network.ServerError,
             DataError.Network.UnexpectedResponse,
-            DataError.Network.TooManyRequests -> UiText.StringResource(R.string.error_server)
+            DataError.Network.TooManyRequests -> UiText.StringResource(R.string.destination_error_server)
             DataError.Validation.InvalidInputs,
             DataError.Data.NotFound -> UiText.StringResource(R.string.error_destination_not_available)
-            else -> UiText.StringResource(R.string.error_unknown)
+            else -> UiText.StringResource(R.string.destination_error_unknown)
         }
     }
 

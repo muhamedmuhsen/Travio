@@ -33,7 +33,7 @@ class NewPasswordViewModel @Inject constructor(
     fun onResetPasswordClicked(email: String) {
         if (_state.value.newPasswordState is UiState.Loading) return
         clearErrors()
-        _state.update { currentState -> currentState.copy(newPasswordState = UiState.Loading) }
+        _state.update { currentState -> currentState.copy(newPasswordState = UiState.Loading, isLoading = true) }
 
         val password = _state.value.newPassword
         val confirmPassword = _state.value.confirmNewPassword
@@ -43,7 +43,7 @@ class NewPasswordViewModel @Inject constructor(
             when (val result = resetPasswordUseCase(resetToken, email, password, confirmPassword)) {
                 is Result.Error -> {
                     _state.update { currentState ->
-                        currentState.copy(newPasswordState = UiState.Error(result.error.asUiText()))
+                        currentState.copy(newPasswordState = UiState.Error(result.error.asUiText()), isLoading = false)
                     }
                     sendEvent(NewPasswordEvent.ShowError(result.error.asUiText()))
                 }
@@ -55,7 +55,8 @@ class NewPasswordViewModel @Inject constructor(
                             newPassword = "",
                             confirmNewPassword = "",
                             isPasswordsDoesnotMatch = false,
-                            isPasswordVisible = false
+                            isPasswordVisible = false,
+                            isLoading = false
                         )
                     }
                     sendEvent(NewPasswordEvent.NavigateToLogin)

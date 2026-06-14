@@ -27,7 +27,11 @@ class EmailVerificationRepositoryImpl @Inject constructor(
     ): Result<Unit, DataError> =
         safeApiCall {
             val request = VerifyEmailRequest(email, otp)
-            api.verifyEmail(request)
+            val response = api.verifyEmail(request)
+
+            if (response.status == 2) {
+                throw com.example.data.utils.BackendErrorException(response.status, response.message)
+            }
 
             preferencesManager.setLoggedIn(true)
         }

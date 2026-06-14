@@ -172,6 +172,7 @@ fun VerifyEmailScreenContent(
             AppButton(
                 onClick = onContinueClicked,
                 text = stringResource(id = R.string.continue_button),
+                isLoading = state.isLoading,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(bottom = MaterialTheme.spacing.md)

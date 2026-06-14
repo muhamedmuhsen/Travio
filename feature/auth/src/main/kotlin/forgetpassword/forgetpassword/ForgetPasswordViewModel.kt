@@ -48,15 +48,17 @@ class ForgetPasswordViewModel @Inject constructor(
             _state.update { it.copy(isEmailError = true) }
             return sendEvent(ForgetPasswordEvent.ShowError(UiText.StringResource(R.string.invalid_email)))
         }
+        _state.update { it.copy(isLoading = true) }
         viewModelScope.launch {
             when (val result = forgetPasswordUseCase(_state.value.email)) {
                 is Result.Error -> {
+                    _state.update { it.copy(isLoading = false) }
                     Timber.e("Forget password error: ${result.error}")
                     sendEvent(ForgetPasswordEvent.ShowError(result.error.asUiText()))
                 }
 
                 is Result.Success -> {
-                    _state.update { it.copy(isEmailError = false) }
+                    _state.update { it.copy(isEmailError = false, isLoading = false) }
                     Timber.d("Forget password success")
                     sendEvent(ForgetPasswordEvent.NavigateToCodeScreen)
                 }
