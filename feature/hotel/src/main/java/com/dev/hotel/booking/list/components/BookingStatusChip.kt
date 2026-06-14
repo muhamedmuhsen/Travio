@@ -26,6 +26,7 @@ fun BookingStatusChip(
         BookingStatus.CONFIRMED -> Triple(Color(0xFFE8F5E9), Color(0xFF2E7D32), R.string.status_confirmed)
         BookingStatus.PENDING_PAYMENT -> Triple(Color(0xFFFFF3E0), Color(0xFFEF6C00), R.string.status_pending_payment)
         BookingStatus.PROCESSING_WEBHOOK -> Triple(Color(0xFFE3F2FD), Color(0xFF1565C0), R.string.status_processing_webhook)
+        BookingStatus.CANCELLED -> Triple(Color(0xFFFFEBEE), Color(0xFFC62828), R.string.status_cancelled)
         BookingStatus.PAYMENT_FAILED -> Triple(Color(0xFFFFEBEE), Color(0xFFC62828), R.string.status_payment_failed)
         BookingStatus.SUPPLIER_FAILED -> Triple(Color(0xFFFFEBEE), Color(0xFFC62828), R.string.status_supplier_failed)
         BookingStatus.REFUND_ISSUED -> Triple(Color(0xFFF3E5F5), Color(0xFF6A1B9A), R.string.status_refund_issued)

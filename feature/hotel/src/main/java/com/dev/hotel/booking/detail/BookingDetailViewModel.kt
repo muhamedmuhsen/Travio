@@ -75,7 +75,6 @@ class BookingDetailViewModel @Inject constructor(
                                 UiText.StringResource(R.string.booking_cancelled_success)
                             )
                         )
-                        loadBookingDetails()
                     }
                     is Result.Error -> {
                         _uiState.value = currentState.copy(isCancelling = false)

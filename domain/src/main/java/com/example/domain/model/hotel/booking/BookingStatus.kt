@@ -4,6 +4,7 @@ enum class BookingStatus(val value: String) {
     PENDING_PAYMENT("PendingPayment"),
     PROCESSING_WEBHOOK("ProcessingWebhook"),
     CONFIRMED("Confirmed"),
+    CANCELLED("Cancelled"),
     PAYMENT_FAILED("PaymentFailed"),
     SUPPLIER_FAILED("SupplierFailed"),
     REFUND_ISSUED("RefundIssued"),

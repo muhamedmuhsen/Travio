@@ -713,6 +713,7 @@ fun TravioNavHost(
                     navController.previousBackStackEntry
                         ?.savedStateHandle
                         ?.set("booking_updated", true)
+                    navController.popBackStack()
                 },
                 onNavigateToLogin = {
                     navController.navigate(Screen.LoginScreen.route) {
