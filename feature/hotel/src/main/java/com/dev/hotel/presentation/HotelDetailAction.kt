@@ -11,7 +11,7 @@ sealed interface HotelDetailAction {
     data object LoadReviews : HotelDetailAction
     data object BackClicked : HotelDetailAction
     data object FavoriteClicked : HotelDetailAction
-    data class NearbyExploreClicked(val itemName: String) : HotelDetailAction
+    data class NearbyExploreClicked(val hotelCode: Int) : HotelDetailAction
     data object BookNowClicked : HotelDetailAction
 
     // Booking Card Actions

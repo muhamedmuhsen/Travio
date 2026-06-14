@@ -26,7 +26,7 @@ import com.example.feature.hotel.R
 @Composable
 fun PopularNearbySection(
     nearbyHotelsState: UiState<List<NearbyHotel>>,
-    onExploreClick: (String) -> Unit,
+    onExploreClick: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
     if (nearbyHotelsState is UiState.Error || nearbyHotelsState is UiState.Idle) {
@@ -70,7 +70,7 @@ fun PopularNearbySection(
                             showFavorite = false,
                             showPrice = true,
                             onFavoriteClicked = { },
-                            onCardClicked = { onExploreClick(hotel.name) }
+                            onCardClicked = { onExploreClick(hotel.code) }
                         )
                     }
                 }

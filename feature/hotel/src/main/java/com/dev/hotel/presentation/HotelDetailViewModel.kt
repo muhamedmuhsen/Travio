@@ -87,7 +87,7 @@ class HotelDetailViewModel @Inject constructor(
             HotelDetailAction.CheckAvailabilityClicked -> searchRooms()
             is HotelDetailAction.NearbyExploreClicked -> {
                 viewModelScope.launch {
-                    _event.send(HotelDetailEvent.NavigateToNearbyDetails(action.itemName))
+                    _event.send(HotelDetailEvent.NavigateToNearbyDetails(action.hotelCode))
                 }
             }
             HotelDetailAction.BookNowClicked -> {

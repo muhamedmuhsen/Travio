@@ -398,6 +398,13 @@ fun TravioNavHost(
         ) {
             HotelDetailScreen(
                 onBackClick = { navController.popBackStack() },
+                onNavigateToHotelDetails = { hotelCode ->
+                    navController.navigate(
+                        Screen.HotelDetailScreen.createRoute(
+                            hotelCode = hotelCode
+                        )
+                    )
+                },
                 onBookRoom = { rateKey, hotelCode, checkIn, checkOut, adults, children, childrenAges ->
                     navController.navigate(
                         Screen.HotelCheckoutScreen.createRoute(

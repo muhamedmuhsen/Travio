@@ -48,6 +48,7 @@ import java.time.format.DateTimeFormatter
 fun HotelDetailScreen(
     viewModel: HotelDetailViewModel = hiltViewModel(),
     onBackClick: () -> Unit = {},
+    onNavigateToHotelDetails: (hotelCode: Int) -> Unit = {},
     onBookRoom: (
         rateKey: String,
         hotelCode: Int,
@@ -70,7 +71,7 @@ fun HotelDetailScreen(
                     snackbarHostState.showSnackbar("Reviews screen coming soon")
                 }
                 is HotelDetailEvent.NavigateToNearbyDetails -> {
-                    snackbarHostState.showSnackbar("Exploring ${event.name} coming soon")
+                    onNavigateToHotelDetails(event.hotelCode)
                 }
                 is HotelDetailEvent.NavigateToBooking -> {
                     val hotelData = (uiState.hotelState as? UiState.Success)?.data
