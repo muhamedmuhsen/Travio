@@ -108,10 +108,14 @@ fun ReviewSubmitResponseDto.toAggregate(): ReviewAggregate =
     )
 
 private fun resolveImageUrl(path: String): String {
-    if (path.startsWith("http", ignoreCase = true)) return path
-    val base = BuildConfig.IMAGE_BASE_URL.trimEnd('/')
-    val normalizedPath = if (path.startsWith("/")) path else "/$path"
-    return base + normalizedPath
+    val url = if (path.startsWith("http", ignoreCase = true)) {
+        path
+    } else {
+        val base = BuildConfig.IMAGE_BASE_URL.trimEnd('/')
+        val normalizedPath = if (path.startsWith("/")) path else "/$path"
+        base + normalizedPath
+    }
+    return url.replace("localhost", "10.0.2.2").replace("127.0.0.1", "10.0.2.2")
 }
 
 private fun parseCreatedAt(value: String?): Instant? {
