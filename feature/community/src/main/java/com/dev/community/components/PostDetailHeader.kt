@@ -1,6 +1,8 @@
 package com.dev.community.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -8,9 +10,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -75,22 +79,36 @@ fun PostDetailHeader(
 
         if (showDeleteButton) {
             IconButton(onClick = onDeleteClicked) {
-                Icon(
-                    imageVector = Icons.Filled.Delete,
-                    contentDescription = stringResource(R.string.post_detail_delete_cd),
-                    tint = MaterialTheme.colorScheme.error,
-                    modifier = Modifier.size(MaterialTheme.spacing.lg - MaterialTheme.spacing.xxs)
-                )
+                Box(
+                    modifier = Modifier
+                        .size(MaterialTheme.spacing.xl)
+                        .background(color = MaterialTheme.colorScheme.surfaceVariant, shape = CircleShape),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        imageVector = Icons.Outlined.Delete,
+                        contentDescription = stringResource(R.string.post_detail_delete_cd),
+                        tint = MaterialTheme.colorScheme.error,
+                        modifier = Modifier.size(MaterialTheme.spacing.lg - MaterialTheme.spacing.xxs)
+                    )
+                }
             }
         }
 
         IconButton(onClick = onCloseClicked) {
-            Icon(
-                imageVector = Icons.Filled.Close,
-                contentDescription = stringResource(R.string.post_detail_close_cd),
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.size(MaterialTheme.spacing.lg - MaterialTheme.spacing.xxs)
-            )
+            Box(
+                modifier = Modifier
+                    .size(MaterialTheme.spacing.xl)
+                    .background(color = MaterialTheme.colorScheme.surfaceVariant, shape = CircleShape),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.Close,
+                    contentDescription = stringResource(R.string.post_detail_close_cd),
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.size(MaterialTheme.spacing.lg - MaterialTheme.spacing.xxs)
+                )
+            }
         }
     }
 }

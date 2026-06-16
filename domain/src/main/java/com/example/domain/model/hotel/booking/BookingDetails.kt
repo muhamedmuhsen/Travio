@@ -6,7 +6,7 @@ data class BookingDetails(
     val status: BookingStatus,
     val creationDate: String,
     val holderName: String,
-    val totalNet: Double,
+    val totalPrice: Double,
     val currency: String,
     val hotel: HotelBookingInfo,
     val cancellationReference: String?

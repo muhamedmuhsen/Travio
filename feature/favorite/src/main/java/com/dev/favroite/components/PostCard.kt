@@ -1,6 +1,5 @@
 package com.dev.favroite.components
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -34,12 +33,14 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.example.designsystem.theme.TravioTheme
 import com.example.designsystem.theme.elevation
 import com.example.designsystem.theme.spacing
@@ -53,6 +54,7 @@ fun TripCard(
     modifier: Modifier = Modifier,
     title: String,
     destinationName: String,
+    imageUrl: String,
     totalDays: Int,
     createdAt: String,
     isFavorite: Boolean,
@@ -70,8 +72,13 @@ fun TripCard(
         onClick = onClick
     ) {
         Box(modifier = Modifier.fillMaxWidth().height(200.dp)) {
-            Image(
-                painter = painterResource(id = com.example.designsystem.R.drawable.image_placeholder),
+            AsyncImage(
+                model = ImageRequest.Builder(LocalContext.current)
+                    .data(imageUrl.ifEmpty { null } ?: com.example.designsystem.R.drawable.image_placeholder)
+                    .crossfade(true)
+                    .placeholder(com.example.designsystem.R.drawable.image_placeholder)
+                    .error(com.example.designsystem.R.drawable.image_placeholder)
+                    .build(),
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier.fillMaxSize()
@@ -254,6 +261,7 @@ private fun TripCardPreview() {
             modifier = Modifier.padding(MaterialTheme.spacing.md),
             title = "Top 10 places to visit in Europe",
             destinationName = "Europe",
+            imageUrl = "",
             totalDays = 10,
             createdAt = "2026-06-10T04:41:46.1437962+00:00",
             isFavorite = true,
@@ -271,6 +279,7 @@ private fun TripCardUnfavoritedPreview() {
             modifier = Modifier.padding(MaterialTheme.spacing.md),
             title = "2-Day Trip: Parisian Flavors Exploration",
             destinationName = "",
+            imageUrl = "",
             totalDays = 2,
             createdAt = "2026-06-10T04:41:46.1437962+00:00",
             isFavorite = false,

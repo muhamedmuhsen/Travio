@@ -131,9 +131,22 @@ sealed class Screen(val route: String) {
     data object BookingListScreen : Screen(Screens.BOOKING_LIST.name)
     data object BookingDetailScreen : Screen(Screens.BOOKING_DETAIL.name) {
         const val ARG_REFERENCE = "reference"
-        val routePattern = "$route/{$ARG_REFERENCE}"
+        const val ARG_TOTAL_PRICE = "totalPrice"
+        const val ARG_CURRENCY = "currency"
+        val routePattern = "$route/{$ARG_REFERENCE}?$ARG_TOTAL_PRICE={$ARG_TOTAL_PRICE}&$ARG_CURRENCY={$ARG_CURRENCY}"
 
-        fun createRoute(reference: String): String = "$route/$reference"
+        fun createRoute(
+            reference: String,
+            totalPrice: String = "",
+            currency: String = ""
+        ): String {
+            val query = if (totalPrice.isNotBlank() && currency.isNotBlank()) {
+                "?$ARG_TOTAL_PRICE=$totalPrice&$ARG_CURRENCY=$currency"
+            } else {
+                ""
+            }
+            return "$route/$reference$query"
+        }
     }
 }
 

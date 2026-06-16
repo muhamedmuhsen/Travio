@@ -30,7 +30,7 @@ fun BookingDetailsDataDto.toDomain(): BookingDetails {
         status = BookingStatus.fromString(this.status),
         creationDate = this.creationDate.orEmpty(),
         holderName = this.holderName.orEmpty(),
-        totalNet = this.totalNet ?: 0.0,
+        totalPrice = this.totalPrice ?: this.totalNet ?: 0.0,
         currency = this.currency.orEmpty(),
         hotel = HotelBookingInfo(
             code = this.hotel?.code ?: 0,

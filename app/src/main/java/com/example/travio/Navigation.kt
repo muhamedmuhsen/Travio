@@ -712,8 +712,8 @@ fun TravioNavHost(
 
             com.dev.hotel.booking.list.BookingListScreen(
                 onNavigateBack = { navController.popBackStack() },
-                onNavigateToDetail = { reference ->
-                    navController.navigate(Screen.BookingDetailScreen.createRoute(reference))
+                onNavigateToDetail = { reference, totalPrice, currency ->
+                    navController.navigate(Screen.BookingDetailScreen.createRoute(reference, totalPrice, currency))
                 },
                 onNavigateToHotels = {
                     navController.navigate(Screen.HotelSearchScreen.route)
@@ -724,7 +724,19 @@ fun TravioNavHost(
 
         composable(
             route = Screen.BookingDetailScreen.routePattern,
-            arguments = listOf(navArgument(Screen.BookingDetailScreen.ARG_REFERENCE) { type = NavType.StringType })
+            arguments = listOf(
+                navArgument(Screen.BookingDetailScreen.ARG_REFERENCE) { type = NavType.StringType },
+                navArgument(Screen.BookingDetailScreen.ARG_TOTAL_PRICE) {
+                    type = NavType.StringType
+                    nullable = true
+                    defaultValue = ""
+                },
+                navArgument(Screen.BookingDetailScreen.ARG_CURRENCY) {
+                    type = NavType.StringType
+                    nullable = true
+                    defaultValue = ""
+                }
+            )
         ) {
             com.dev.hotel.booking.detail.BookingDetailScreen(
                 onNavigateBack = { navController.popBackStack() },

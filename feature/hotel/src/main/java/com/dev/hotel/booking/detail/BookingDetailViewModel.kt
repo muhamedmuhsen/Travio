@@ -27,6 +27,8 @@ class BookingDetailViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val reference: String = checkNotNull(savedStateHandle[Screen.BookingDetailScreen.ARG_REFERENCE])
+    private val listTotalPrice: String? = savedStateHandle[Screen.BookingDetailScreen.ARG_TOTAL_PRICE]
+    private val listCurrency: String? = savedStateHandle[Screen.BookingDetailScreen.ARG_CURRENCY]
 
     private val _uiState = MutableStateFlow<BookingDetailUiState>(BookingDetailUiState.Loading)
     val uiState: StateFlow<BookingDetailUiState> = _uiState.asStateFlow()
@@ -43,7 +45,14 @@ class BookingDetailViewModel @Inject constructor(
         viewModelScope.launch {
             when (val result = getBookingDetailsUseCase(reference)) {
                 is Result.Success -> {
-                    _uiState.value = BookingDetailUiState.Success(result.data)
+                    var details = result.data
+                    if (!listTotalPrice.isNullOrBlank() && !listCurrency.isNullOrBlank()) {
+                        details = details.copy(
+                            totalPrice = listTotalPrice.toDoubleOrNull() ?: details.totalPrice,
+                            currency = listCurrency
+                        )
+                    }
+                    _uiState.value = BookingDetailUiState.Success(details)
                 }
                 is Result.Error -> {
                     val errorMessage = when (val error = result.error) {

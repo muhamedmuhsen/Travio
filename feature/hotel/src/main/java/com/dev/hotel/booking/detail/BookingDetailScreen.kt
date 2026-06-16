@@ -166,7 +166,7 @@ fun BookingDetailScreen(
                         BookingDetailSection(title = stringResource(id = R.string.payment_info)) {
                             BookingDetailRow(
                                 label = stringResource(id = R.string.hotel_checkout_total_price),
-                                value = formatCurrency(details.currency, details.totalNet),
+                                value = formatCurrency(details.currency, details.totalPrice),
                                 isBold = true
                             )
                         }

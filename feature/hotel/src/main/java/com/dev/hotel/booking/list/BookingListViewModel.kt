@@ -61,7 +61,7 @@ class BookingListViewModel @Inject constructor(
     fun onBookingClicked(booking: com.example.domain.model.hotel.booking.BookingItem) {
         viewModelScope.launch {
             val ref = booking.hotelbedsReference ?: booking.reference
-            _event.send(BookingListEvent.NavigateToDetail(ref))
+            _event.send(BookingListEvent.NavigateToDetail(ref, booking.totalPrice.toString(), booking.currency))
         }
     }
 

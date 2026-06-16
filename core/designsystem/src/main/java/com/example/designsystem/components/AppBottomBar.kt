@@ -14,7 +14,6 @@ import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.People
 import androidx.compose.material.icons.outlined.Person
-import androidx.compose.material.icons.rounded.AutoAwesome
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
@@ -26,6 +25,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -33,37 +33,42 @@ import com.example.designsystem.R
 import com.example.designsystem.theme.TravioTheme
 import com.example.designsystem.theme.spacing
 
+sealed interface IconSource {
+    data class Vector(val imageVector: ImageVector) : IconSource
+    data class Resource(val id: Int) : IconSource
+}
+
 data class BottomNavigationItem(
     @StringRes val title: Int,
-    val selectedIcon: ImageVector,
-    val unselectedIcon: ImageVector
+    val selectedIcon: IconSource,
+    val unselectedIcon: IconSource
 )
 
 val items = listOf(
     BottomNavigationItem(
         title = R.string.bottom_nav_home,
-        selectedIcon = Icons.Filled.Home,
-        unselectedIcon = Icons.Outlined.Home
+        selectedIcon = IconSource.Vector(Icons.Filled.Home),
+        unselectedIcon = IconSource.Vector(Icons.Outlined.Home)
     ),
     BottomNavigationItem(
         title = R.string.bottom_nav_favorite,
-        selectedIcon = Icons.Filled.Favorite,
-        unselectedIcon = Icons.Outlined.FavoriteBorder
+        selectedIcon = IconSource.Vector(Icons.Filled.Favorite),
+        unselectedIcon = IconSource.Vector(Icons.Outlined.FavoriteBorder)
     ),
     BottomNavigationItem(
         title = R.string.bottom_nav_community,
-        selectedIcon = Icons.Filled.People,
-        unselectedIcon = Icons.Outlined.People
+        selectedIcon = IconSource.Vector(Icons.Filled.People),
+        unselectedIcon = IconSource.Vector(Icons.Outlined.People)
     ),
     BottomNavigationItem(
         title = R.string.bottom_nav_trips,
-        selectedIcon = Icons.Rounded.AutoAwesome,
-        unselectedIcon = Icons.Rounded.AutoAwesome
+        selectedIcon = IconSource.Resource(R.drawable.trip_icon),
+        unselectedIcon = IconSource.Resource(R.drawable.trip_icon)
     ),
     BottomNavigationItem(
         title = R.string.bottom_nav_profile,
-        selectedIcon = Icons.Filled.Person,
-        unselectedIcon = Icons.Outlined.Person
+        selectedIcon = IconSource.Vector(Icons.Filled.Person),
+        unselectedIcon = IconSource.Vector(Icons.Outlined.Person)
     )
 )
 
@@ -104,19 +109,31 @@ fun AppBottomBar(
                     )
                 },
                 icon = {
-                    val icon =
+                    val iconSource =
                         if (selectedItem == index) item.selectedIcon else item.unselectedIcon
                     val iconTint = if (selectedItem == index) {
                         MaterialTheme.colorScheme.primary
                     } else {
                         MaterialTheme.colorScheme.onBackground
                     }
-                    Icon(
-                        imageVector = icon,
-                        contentDescription = stringResource(id = item.title),
-                        modifier = Modifier.size(MaterialTheme.spacing.lg),
-                        tint = iconTint
-                    )
+                    when (iconSource) {
+                        is IconSource.Vector -> {
+                            Icon(
+                                imageVector = iconSource.imageVector,
+                                contentDescription = stringResource(id = item.title),
+                                modifier = Modifier.size(MaterialTheme.spacing.lg),
+                                tint = iconTint
+                            )
+                        }
+                        is IconSource.Resource -> {
+                            Icon(
+                                painter = painterResource(id = iconSource.id),
+                                contentDescription = stringResource(id = item.title),
+                                modifier = Modifier.size(MaterialTheme.spacing.lg),
+                                tint = iconTint
+                            )
+                        }
+                    }
                 }
             )
         }

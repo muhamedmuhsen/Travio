@@ -68,7 +68,7 @@ fun HotelDetailScreen(
             when (event) {
                 HotelDetailEvent.NavigateBack -> onBackClick()
                 HotelDetailEvent.NavigateToReviews -> {
-                    snackbarHostState.showSnackbar("Reviews screen coming soon")
+                    // Do nothing for now
                 }
                 is HotelDetailEvent.NavigateToNearbyDetails -> {
                     onNavigateToHotelDetails(event.hotelCode)

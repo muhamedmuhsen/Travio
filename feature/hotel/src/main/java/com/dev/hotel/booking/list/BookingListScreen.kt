@@ -40,7 +40,7 @@ import com.example.feature.hotel.R
 @Composable
 fun BookingListScreen(
     onNavigateBack: () -> Unit,
-    onNavigateToDetail: (String) -> Unit,
+    onNavigateToDetail: (String, String, String) -> Unit,
     onNavigateToHotels: () -> Unit,
     shouldRefresh: Boolean = false,
     viewModel: BookingListViewModel = hiltViewModel()
@@ -57,7 +57,7 @@ fun BookingListScreen(
     LaunchedEffect(Unit) {
         viewModel.event.collect { event ->
             when (event) {
-                is BookingListEvent.NavigateToDetail -> onNavigateToDetail(event.reference)
+                is BookingListEvent.NavigateToDetail -> onNavigateToDetail(event.reference, event.totalPrice, event.currency)
                 BookingListEvent.NavigateToHotels -> onNavigateToHotels()
                 is BookingListEvent.ShowError -> {
                 }

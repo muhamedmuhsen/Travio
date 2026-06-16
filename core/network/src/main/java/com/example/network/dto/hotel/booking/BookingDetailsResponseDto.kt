@@ -16,6 +16,7 @@ data class BookingDetailsDataDto(
     @SerializedName("creationDate") val creationDate: String?,
     @SerializedName("holderName") val holderName: String?,
     @SerializedName("totalNet") val totalNet: Double?,
+    @SerializedName("totalPrice") val totalPrice: Double?,
     @SerializedName("currency") val currency: String?,
     @SerializedName("hotel") val hotel: HotelBookingInfoDto?,
     @SerializedName("cancellationReference") val cancellationReference: String?

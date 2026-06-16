@@ -275,6 +275,7 @@ private fun FavoriteList(
             TripCard(
                 title = trip.title,
                 destinationName = trip.destinationName,
+                imageUrl = trip.cityHeroImage,
                 totalDays = trip.totalDays,
                 createdAt = trip.createdAt,
                 isFavorite = trip.isFavorite,

@@ -48,9 +48,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.example.designsystem.components.AppBottomBar
+import com.example.designsystem.components.shimmerEffect
 import com.example.designsystem.theme.TravioTheme
 import com.example.designsystem.theme.elevation
 import com.example.designsystem.theme.spacing
@@ -122,10 +124,8 @@ fun TripsScreen(
 
             when (uiState) {
                 is TripsUiState.Loading -> {
-                    item {
-                        androidx.compose.material3.CircularProgressIndicator(
-                            modifier = Modifier.padding(MaterialTheme.spacing.md).fillMaxWidth()
-                        )
+                    items(3) {
+                        TripCardShimmer()
                     }
                 }
                 is TripsUiState.Error -> {
@@ -358,6 +358,80 @@ fun TripCard(
                         modifier = Modifier.size(MaterialTheme.spacing.md)
                     )
                 }
+            }
+        }
+    }
+}
+
+@Composable
+fun TripCardShimmer(modifier: Modifier = Modifier) {
+    Card(
+        modifier = modifier
+            .fillMaxWidth()
+            .height(MaterialTheme.spacing.xxxl * 2 + MaterialTheme.spacing.sm),
+        shape = RoundedCornerShape(MaterialTheme.spacing.md),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        elevation = CardDefaults.cardElevation(defaultElevation = MaterialTheme.elevation.sm)
+    ) {
+        Row(modifier = Modifier.fillMaxSize()) {
+            Box(
+                modifier = Modifier
+                    .width(MaterialTheme.spacing.xxxl * 2 + MaterialTheme.spacing.xxs)
+                    .fillMaxSize()
+                    .shimmerEffect()
+            )
+
+            Box(modifier = Modifier.fillMaxSize()) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(MaterialTheme.spacing.sm),
+                    verticalArrangement = Arrangement.SpaceEvenly
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .height(20.dp)
+                            .fillMaxWidth(0.8f)
+                            .clip(MaterialTheme.shapes.small)
+                            .shimmerEffect()
+                    )
+
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.xxs)
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .size(MaterialTheme.spacing.md)
+                                .clip(MaterialTheme.shapes.small)
+                                .shimmerEffect()
+                        )
+                        Box(
+                            modifier = Modifier
+                                .height(16.dp)
+                                .fillMaxWidth(0.5f)
+                                .clip(MaterialTheme.shapes.small)
+                                .shimmerEffect()
+                        )
+                    }
+
+                    Box(
+                        modifier = Modifier
+                            .height(16.dp)
+                            .fillMaxWidth(0.4f)
+                            .clip(MaterialTheme.shapes.small)
+                            .shimmerEffect()
+                    )
+                }
+
+                Box(
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .padding(MaterialTheme.spacing.sm)
+                        .size(MaterialTheme.spacing.md)
+                        .clip(MaterialTheme.shapes.small)
+                        .shimmerEffect()
+                )
             }
         }
     }
