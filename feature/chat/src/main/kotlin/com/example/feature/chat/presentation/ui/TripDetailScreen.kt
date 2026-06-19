@@ -144,14 +144,23 @@ fun TripDetailScreen(
                 title = { Text("") },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(imageVector = Icons.Default.ArrowBack, contentDescription = stringResource(id = com.example.designsystem.R.string.back))
+                        Icon(
+                            imageVector = Icons.Default.ArrowBack,
+                            contentDescription = stringResource(id = com.example.designsystem.R.string.back)
+                        )
                     }
                 },
                 actions = {
                     IconButton(onClick = { viewModel.toggleFavorite() }) {
                         Icon(
                             imageVector = if (uiState.isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
-                            contentDescription = if (uiState.isFavorite) stringResource(R.string.remove_from_favorites) else stringResource(R.string.add_to_favorites),
+                            contentDescription = if (uiState.isFavorite) {
+                                stringResource(
+                                    R.string.remove_from_favorites
+                                )
+                            } else {
+                                stringResource(R.string.add_to_favorites)
+                            },
                             tint = if (uiState.isFavorite) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurface
                         )
                     }
