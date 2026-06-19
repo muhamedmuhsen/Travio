@@ -60,7 +60,7 @@ fun SectionHeader(
             IconButton(onClick = onCloseClick) {
                 Icon(
                     imageVector = Icons.Default.Close,
-                    contentDescription = "Close section",
+                    contentDescription = stringResource(R.string.close_section),
                     tint = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }

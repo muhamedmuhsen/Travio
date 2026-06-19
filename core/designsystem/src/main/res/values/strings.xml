@@ -105,5 +105,13 @@
     <string name="add_to_favorites">Add to favorites</string>
     <string name="remove_from_favorites">Remove from favorites</string>
     <string name="home_explore">Explore</string>
+    <!-- Common UI Elements -->
+    <string name="back">Back</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+    <string name="error">Error</string>
+    <string name="dismiss">Dismiss</string>
+    <string name="hi">Hi</string>
+    <string name="hello_world">Hello World</string>
     <string name="none">None</string>
 </resources>

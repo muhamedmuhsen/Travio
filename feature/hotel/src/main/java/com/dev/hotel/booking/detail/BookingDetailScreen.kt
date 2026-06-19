@@ -98,7 +98,7 @@ fun BookingDetailScreen(
                     IconButton(onClick = onNavigateBack) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back"
+                            contentDescription = stringResource(id = com.example.designsystem.R.string.back)
                         )
                     }
                 }

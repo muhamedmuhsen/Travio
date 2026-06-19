@@ -61,4 +61,5 @@
     <string name="nearby_hotels_location_rationale">اسمح بالوصول إلى الموقع حتى نتمكن من عرض الفنادق القريبة منك.</string>
     <string name="nearby_hotel_card_cd">فندق قريب %1$s في %2$s</string>
     <string name="nearby_hotel_price_from">تبدأ من %1$s</string>
+    <string name="close_section">إغلاق القسم</string>
 </resources>

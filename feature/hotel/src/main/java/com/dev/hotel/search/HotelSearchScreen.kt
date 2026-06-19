@@ -136,7 +136,7 @@ fun HotelSearchScreenContent(
                     ) {
                         Icon(
                             imageVector = Icons.Default.ArrowBack,
-                            contentDescription = "Back"
+                            contentDescription = stringResource(id = com.example.designsystem.R.string.back)
                         )
                     }
                 },

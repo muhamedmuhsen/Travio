@@ -91,7 +91,7 @@ fun HotelGallery(
                     ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back",
+                            contentDescription = stringResource(id = com.example.designsystem.R.string.back),
                             modifier = Modifier.size(MaterialTheme.spacing.lg - MaterialTheme.spacing.xxs)
                         )
                     }

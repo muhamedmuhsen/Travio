@@ -113,4 +113,18 @@
     <string name="status_supplier_failed">فشل المورد</string>
     <string name="status_refund_issued">تم إصدار الاسترداد</string>
     <string name="status_refunded">تم الاسترداد</string>
+
+    <!-- UI Components and Icons -->
+    <string name="increase">زيادة</string>
+    <string name="decrease_age">تقليل العمر</string>
+    <string name="increase_age">زيادة العمر</string>
+    <string name="error_icon">أيقونة الخطأ</string>
+    <string name="hotel_thumbnail">صورة الفندق المصغرة</string>
+    <string name="room_details">تفاصيل الغرفة</string>
+    <string name="holder_details">تفاصيل الحامل</string>
+    <string name="remarks_icon">أيقونة الملاحظات</string>
+    <string name="home_icon">أيقونة الرئيسية</string>
+    <string name="success_tick_icon">أيقونة النجاح</string>
+    <string name="calendar_icon">أيقونة التقويم</string>
+    <string name="booking_info_icon">أيقونة معلومات الحجز</string>
 </resources>

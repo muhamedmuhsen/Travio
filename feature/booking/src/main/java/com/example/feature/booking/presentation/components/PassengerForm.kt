@@ -77,12 +77,12 @@ fun PassengerForm(
                         showDatePicker = false
                     }
                 ) {
-                    Text("OK")
+                    Text(stringResource(id = com.example.designsystem.R.string.ok))
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showDatePicker = false }) {
-                    Text("Cancel")
+                    Text(stringResource(id = com.example.designsystem.R.string.cancel))
                 }
             }
         ) {

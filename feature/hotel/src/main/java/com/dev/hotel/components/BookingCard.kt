@@ -224,12 +224,12 @@ private fun HotelDatePickerDialog(
                     onDateSelected(date)
                 }
             }) {
-                Text("OK")
+                Text(stringResource(id = com.example.designsystem.R.string.ok))
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Cancel")
+                Text(stringResource(id = com.example.designsystem.R.string.cancel))
             }
         }
     ) {

@@ -25,6 +25,7 @@
 
     <!-- Profile Options -->
     <string name="my_profile">ملفي الشخصي</string>
+    <string name="my_bookings">حجوزاتي</string>
     <string name="addresses">العناوين</string>
     <string name="language">اللغة</string>
     <string name="dark_mode">الوضع الداكن</string>

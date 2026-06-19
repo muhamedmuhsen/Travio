@@ -88,7 +88,7 @@ fun BookingSuccessScreen(
                 ) {
                     Icon(
                         imageVector = Icons.Default.Home,
-                        contentDescription = "Home Icon",
+                        contentDescription = stringResource(R.string.home_icon),
                         tint = MaterialTheme.colorScheme.onPrimary
                     )
                     Spacer(modifier = Modifier.width(MaterialTheme.spacing.xs))
@@ -128,7 +128,7 @@ fun BookingSuccessScreen(
                 ) {
                     Icon(
                         imageVector = Icons.Default.Check,
-                        contentDescription = "Success tick icon",
+                        contentDescription = stringResource(R.string.success_tick_icon),
                         tint = MaterialTheme.colorScheme.onSuccess,
                         modifier = Modifier.size(MaterialTheme.spacing.xxl)
                     )
@@ -179,7 +179,7 @@ fun BookingSuccessScreen(
                     ) {
                         Icon(
                             imageVector = Icons.Default.DateRange,
-                            contentDescription = "Calendar icon",
+                            contentDescription = stringResource(R.string.calendar_icon),
                             tint = MaterialTheme.colorScheme.primary,
                             modifier = Modifier.size(MaterialTheme.spacing.lg - MaterialTheme.spacing.xxs)
                         )
@@ -202,7 +202,7 @@ fun BookingSuccessScreen(
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Icon(
                                 imageVector = Icons.Default.Info,
-                                contentDescription = "Booking info icon",
+                                contentDescription = stringResource(R.string.booking_info_icon),
                                 tint = MaterialTheme.colorScheme.primary,
                                 modifier = Modifier.size(MaterialTheme.spacing.lg - MaterialTheme.spacing.xxs)
                             )

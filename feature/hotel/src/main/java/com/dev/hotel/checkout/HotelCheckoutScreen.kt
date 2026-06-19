@@ -204,7 +204,7 @@ fun HotelCheckoutScreen(
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Info,
-                                contentDescription = "Error icon",
+                                contentDescription = stringResource(R.string.error_icon),
                                 tint = MaterialTheme.colorScheme.error,
                                 modifier = Modifier.size(MaterialTheme.spacing.xxxl + MaterialTheme.spacing.md)
                             )
@@ -356,7 +356,7 @@ private fun CheckoutContent(
                     ) {
                         Icon(
                             imageVector = Icons.Default.Info,
-                            contentDescription = "Error",
+                            contentDescription = stringResource(id = com.example.designsystem.R.string.error),
                             tint = MaterialTheme.colorScheme.error
                         )
                         Spacer(modifier = Modifier.width(MaterialTheme.spacing.sm))
@@ -394,7 +394,7 @@ private fun HotelCheckoutSummaryCard(
             val thumbnail = hotelDetails.images.firstOrNull()?.url
             AsyncImage(
                 model = thumbnail,
-                contentDescription = "Hotel thumbnail",
+                contentDescription = stringResource(R.string.hotel_thumbnail),
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .size(MaterialTheme.spacing.xxxl + MaterialTheme.spacing.xl)
@@ -476,7 +476,7 @@ private fun RoomOccupancyCard(
             ) {
                 Icon(
                     imageVector = Icons.Default.CardMembership,
-                    contentDescription = "Room details",
+                    contentDescription = stringResource(R.string.room_details),
                     tint = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.size(MaterialTheme.spacing.lg - MaterialTheme.spacing.xxs)
                 )
@@ -526,7 +526,7 @@ private fun BookingHolderCard(
             ) {
                 Icon(
                     imageVector = Icons.Default.Person,
-                    contentDescription = "Holder details",
+                    contentDescription = stringResource(R.string.holder_details),
                     tint = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.size(MaterialTheme.spacing.lg - MaterialTheme.spacing.xxs)
                 )
@@ -737,7 +737,7 @@ private fun RemarksCard(
             ) {
                 Icon(
                     imageVector = Icons.Default.Notes,
-                    contentDescription = "Remarks Icon",
+                    contentDescription = stringResource(R.string.remarks_icon),
                     tint = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.size(MaterialTheme.spacing.lg - MaterialTheme.spacing.xxs)
                 )

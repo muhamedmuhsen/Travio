@@ -42,4 +42,7 @@
     <string name="error_ai_try_again">We\'re having trouble generating your trip right now. Please try again in a few minutes.</string>
     <string name="error_ai_unavailable_subtitle">Our AI service is experiencing issues. Your request has been saved — you can retry without losing progress.</string>
     <string name="view_on_map">View on Map</string>
+    <string name="remove_from_favorites">Remove from favorites</string>
+    <string name="add_to_favorites">Add to favorites</string>
+    <string name="location">Location</string>
 </resources>

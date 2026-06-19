@@ -160,5 +160,19 @@
     <string name="booking_network_error">Network error. Please check your connection.</string>
     <string name="booking_not_found">Booking details not found.</string>
     <string name="booking_unexpected_error">An unexpected error occurred.</string>
+
+    <!-- UI Components and Icons -->
+    <string name="increase">Increase</string>
+    <string name="decrease_age">Decrease age</string>
+    <string name="increase_age">Increase age</string>
+    <string name="error_icon">Error icon</string>
+    <string name="hotel_thumbnail">Hotel thumbnail</string>
+    <string name="room_details">Room details</string>
+    <string name="holder_details">Holder details</string>
+    <string name="remarks_icon">Remarks Icon</string>
+    <string name="home_icon">Home Icon</string>
+    <string name="success_tick_icon">Success tick icon</string>
+    <string name="calendar_icon">Calendar icon</string>
+    <string name="booking_info_icon">Booking info icon</string>
 </resources>
 

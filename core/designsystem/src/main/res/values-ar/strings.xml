@@ -35,4 +35,13 @@
     <string name="remove_from_favorites">إزالة من المفضلة</string>
     <string name="home_explore">استكشف</string>
     <string name="none">لا يوجد</string>
+
+    <!-- Common UI Elements -->
+    <string name="back">رجوع</string>
+    <string name="ok">حسناً</string>
+    <string name="cancel">إلغاء</string>
+    <string name="error">خطأ</string>
+    <string name="dismiss">تجاهل</string>
+    <string name="hi">مرحباً</string>
+    <string name="hello_world">مرحبا بالعالم</string>
 </resources>

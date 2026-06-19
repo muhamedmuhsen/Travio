@@ -149,7 +149,7 @@ private fun AppBottomBarPreview() {
                 AppBottomBar()
             }
         ) { innerPadding ->
-            Column(Modifier.padding(innerPadding)) { Text(text = "Hi") }
+            Column(Modifier.padding(innerPadding)) { Text(text = stringResource(id = R.string.hi)) }
         }
     }
 }

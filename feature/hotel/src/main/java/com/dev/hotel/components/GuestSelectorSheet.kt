@@ -176,7 +176,7 @@ private fun CounterRow(
                 onClick = { if (count < maxCount) onCountChanged(count + 1) },
                 enabled = count < maxCount
             ) {
-                Icon(imageVector = Icons.Default.Add, contentDescription = "Increase")
+                Icon(imageVector = Icons.Default.Add, contentDescription = stringResource(R.string.increase))
             }
         }
     }
@@ -208,7 +208,7 @@ private fun ChildAgeSelector(
                 onClick = { if (age > 0) onAgeChanged(age - 1) },
                 enabled = age > 0
             ) {
-                Icon(imageVector = Icons.Default.Remove, contentDescription = "Decrease age")
+                Icon(imageVector = Icons.Default.Remove, contentDescription = stringResource(R.string.decrease_age))
             }
             Text(
                 text = if (age < 1) {
@@ -227,7 +227,7 @@ private fun ChildAgeSelector(
                 onClick = { if (age < 17) onAgeChanged(age + 1) },
                 enabled = age < 17
             ) {
-                Icon(imageVector = Icons.Default.Add, contentDescription = "Increase age")
+                Icon(imageVector = Icons.Default.Add, contentDescription = stringResource(R.string.increase_age))
             }
         }
     }

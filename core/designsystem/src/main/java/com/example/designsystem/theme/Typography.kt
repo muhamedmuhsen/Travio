@@ -4,11 +4,13 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.Typography
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
+import com.example.designsystem.R
 
 fun provideTypography(fontFamily: FontFamily): Typography {
     return Typography(
@@ -113,7 +115,7 @@ fun provideTypography(fontFamily: FontFamily): Typography {
 @Composable
 fun TypographyPreviewEnglish() {
     TravioTheme {
-        Text("Hello World", style = MaterialTheme.typography.headlineLarge)
+        Text(stringResource(R.string.hello_world), style = MaterialTheme.typography.headlineLarge)
     }
 }
 
@@ -121,6 +123,6 @@ fun TypographyPreviewEnglish() {
 @Composable
 fun TypographyPreviewArabic() {
     TravioTheme {
-        Text("مرحبا بالعالم", style = MaterialTheme.typography.headlineLarge)
+        Text(stringResource(R.string.hello_world), style = MaterialTheme.typography.headlineLarge)
     }
 }

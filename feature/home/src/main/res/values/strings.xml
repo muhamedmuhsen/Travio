@@ -62,4 +62,5 @@
     <string name="nearby_hotels_location_rationale">Allow location access so we can show hotels near you.</string>
     <string name="nearby_hotel_card_cd">Nearby Hotel %1$s in %2$s</string>
     <string name="nearby_hotel_price_from">From %1$s</string>
+    <string name="close_section">Close section</string>
 </resources>
